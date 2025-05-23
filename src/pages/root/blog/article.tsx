@@ -3,7 +3,6 @@ import {Link, useParams} from "react-router";
 import {ChevronLeft} from "lucide-react";
 import {Badge} from "@/components/ui/badge.tsx";
 import {useGetPostBySlug} from "@/api/endpoints/blog/hooks.ts";
-import {Helmet} from "react-helmet-async";
 
 
 
@@ -26,24 +25,6 @@ export default function ArticlePage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <Helmet>
-                <title>{article.meta.title} | Neemble Eat</title>
-                <meta name="description" content={article.meta.excerpt || 'Descubra insights e dicas para o sucesso do seu restaurante.'} />
-                <link rel="canonical" href={`https://neemble-eat.ao/blog/${article.meta.slug}`} />
-
-                {/* Open Graph */}
-                <meta property="og:title" content={article.meta.title} />
-                <meta property="og:description" content={article.meta.excerpt || 'Conteúdo exclusivo para donos de restaurantes'} />
-                <meta property="og:type" content="article" />
-                <meta property="og:image" content={article.meta.cover || 'https://neemble-eat.ao/default-og-image.png'} />
-                <meta property="og:url" content={`https://neemble-eat.ao/blog/${article.meta.slug}`} />
-
-                {/* Twitter */}
-                <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content={article.meta.title} />
-                <meta name="twitter:description" content={article.meta.excerpt || 'Conteúdo exclusivo para donos de restaurantes'} />
-                <meta name="twitter:image" content={article.meta.cover || 'https://neemble-eat.ao/default-og-image.png'} />
-            </Helmet>
             <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
                 {/* Back Button */}
