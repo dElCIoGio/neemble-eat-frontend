@@ -6,7 +6,7 @@ const appConfig: {
     env: "development" | "production",
 } = {
     appName: "Neemble Eat",
-    env: "development",
+    env: ENV.VITE_ENV || "development",
 }
 
 const apiConfig = {
