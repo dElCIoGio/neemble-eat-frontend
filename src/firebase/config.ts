@@ -13,6 +13,7 @@ const firebaseConfig = {
     measurementId: config.firebase.measurementId,
 }
 
+console.log(firebaseConfig)
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
