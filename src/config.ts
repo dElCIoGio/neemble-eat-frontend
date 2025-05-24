@@ -30,4 +30,6 @@ const config = {
     firebase: firebase
 }
 
+console.log(config)
+
 export default config
