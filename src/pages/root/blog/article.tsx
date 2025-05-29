@@ -1,8 +1,8 @@
-import {Button} from "@/components/ui/button.tsx";
+import {Button} from "@/components/ui/button";
 import {Link, useParams} from "react-router";
 import {ChevronLeft} from "lucide-react";
-import {Badge} from "@/components/ui/badge.tsx";
-import {useGetPostBySlug} from "@/api/endpoints/blog/hooks.ts";
+import {Badge} from "@/components/ui/badge";
+import {useGetPostBySlug} from "@/api/endpoints/blog/hooks";
 
 
 

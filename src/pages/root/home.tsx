@@ -1,10 +1,10 @@
-import {Hero} from "@/components/pages/home/Hero.tsx";
-import {Features} from "@/components/pages/home/Features.tsx";
-import Benefits from "@/components/pages/home/Benefits.tsx";
-import Pricing from "@/components/pages/home/Pricing.tsx";
-import {Testimonials} from "@/components/pages/home/Testimonials.tsx";
-import {Faq} from "@/components/pages/home/Faq.tsx";
-import {Cta} from "@/components/pages/home/CTA.tsx";
+import {Hero} from "@/components/pages/home/Hero";
+import {Features} from "@/components/pages/home/Features";
+import Benefits from "@/components/pages/home/Benefits";
+import Pricing from "@/components/pages/home/Pricing";
+import {Testimonials} from "@/components/pages/home/Testimonials";
+import {Faq} from "@/components/pages/home/Faq";
+import {Cta} from "@/components/pages/home/CTA";
 
 
 export function HomePage() {

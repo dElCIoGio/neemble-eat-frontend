@@ -1,5 +1,5 @@
 import {api} from "@/api";
-import {Invitation} from "@/types/invitation.ts";
+import {Invitation} from "@/types/invitation";
 
 
 const baseRoute = "/invitations"

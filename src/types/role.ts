@@ -16,3 +16,18 @@ export type Role = {
     description: string;
     permissions: SectionPermission[];
 };
+
+
+export interface TeamMember {
+    id: string
+    name: string
+    email: string
+    phone: string
+    role: string
+    status: "ativo" | "pendente" | "desativado"
+    permissions: string[]
+    lastAccess: string
+    avatar?: string
+    joinDate: string
+    department: string
+}

@@ -1,38 +1,43 @@
 import {Route, Routes} from "react-router";
-import HomeLayout from "@/components/layout/root/root-layout.tsx";
-import {HomePage} from "@/pages/root/home.tsx";
-import DashboardLayout from "@/components/layout/dashboard/dashboard-layout.tsx";
-import DashboardHome from "@/pages/dashboard/dashboard-home.tsx";
-import ForgotPasswordPage from "@/pages/auth/forgot-password.tsx";
-import LoginPage from "@/pages/auth/login.tsx";
-import RegisterPage from "@/pages/auth/register.tsx";
-import ResetPasswordPage from "@/pages/auth/reset-password.tsx";
-import Menu from "@/pages/dashboard/menu.tsx";
-import QrCodes from "@/pages/dashboard/qr-codes.tsx";
-import Staff from "@/pages/dashboard/staff.tsx";
-import Subscription from "@/pages/dashboard/subscription.tsx";
-import Settings from "@/pages/dashboard/settings.tsx";
-import Support from "@/pages/dashboard/support.tsx";
-import Bookings from "@/pages/dashboard/bookings.tsx";
-import NotFound from "@/pages/root/not-found.tsx";
+import HomeLayout from "@/components/layout/root/root-layout";
+import {HomePage} from "@/pages/root/home";
+import DashboardLayout from "@/components/layout/dashboard/dashboard-layout";
+import DashboardHome from "@/pages/dashboard/dashboard-home";
+import ForgotPasswordPage from "@/pages/auth/forgot-password";
+import LoginPage from "@/pages/auth/login";
+import RegisterPage from "@/pages/auth/register";
+import ResetPasswordPage from "@/pages/auth/reset-password";
+import Menu from "@/pages/dashboard/menu";
+import QrCodes from "@/pages/dashboard/qr-codes";
+import Staff from "@/pages/dashboard/staff";
+import Subscription from "@/pages/dashboard/subscription";
+import Settings from "@/pages/dashboard/settings";
+import Support from "@/pages/dashboard/support";
+import Bookings from "@/pages/dashboard/bookings";
+import NotFound from "@/pages/root/not-found";
 import BlogPage from "@/pages/root/blog";
-import ArticlePage from "@/pages/root/blog/article.tsx";
+import ArticlePage from "@/pages/root/blog/article";
+import OnboardingPage from "@/pages/root/onboarding";
+import StockManagement from "@/pages/dashboard/stock";
+import NotificationsPage from "@/pages/dashboard/notifications";
 
 function App() {
+
+
     return (
         <Routes>
             {/* Root */}
             <Route path="/" element={<HomeLayout/>}>
                 <Route index element={<HomePage/>}/>
 
+                {/* Blog */}
                 <Route path="blog">
                     <Route index element={<BlogPage/>}/>
                     <Route path=":articleId" element={<ArticlePage/>}/>
                 </Route>
+
+                <Route path="onboarding" element={<OnboardingPage/>}/>
             </Route>
-
-            {/* Blog */}
-
 
             {/* Dashboard */}
             <Route path="dashboard" element={<DashboardLayout/>}>
@@ -44,6 +49,8 @@ function App() {
                 <Route path="settings" element={<Settings/>}/>
                 <Route path="support" element={<Support/>}/>
                 <Route path="bookings" element={<Bookings/>}/>
+                <Route path="stock" element={<StockManagement/>}/>
+                <Route path="notifications" element={<NotificationsPage/>}/>
             </Route>
 
             {/* Auth */}

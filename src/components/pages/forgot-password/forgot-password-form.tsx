@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { CheckCircle } from "lucide-react"
-import {ForgotPasswordFormValues, forgotPasswordSchema} from "@/lib/schemas/auth.ts";
+import {ForgotPasswordFormValues, forgotPasswordSchema} from "@/lib/schemas/auth";
 
 interface ForgotPasswordFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string

@@ -1,5 +1,5 @@
 import {useQuery} from "@tanstack/react-query";
-import {invitationApi} from "@/api/endpoints/invitation/requests.ts";
+import {invitationApi} from "@/api/endpoints/invitation/requests";
 
 
 export function useGetEmailInvitations(email: string) {

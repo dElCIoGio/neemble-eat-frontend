@@ -7,7 +7,7 @@ export type Preferences = {
 }
 
 export type Membership = {
-    roleId: string;
+    roleId: string; // this maps to a Role, under src/types/role.ts
     isActive: boolean;
 }
 

@@ -1,6 +1,6 @@
 import type React from "react"
 import { GalleryVerticalEnd } from "lucide-react"
-import {LoginForm} from "@/components/pages/login/login-form.tsx";
+import {LoginForm} from "@/components/pages/login/login-form";
 
 
 export default function LoginPage(): React.ReactNode {

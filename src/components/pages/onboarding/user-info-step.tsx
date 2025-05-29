@@ -1,4 +1,3 @@
-"use client"
 
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -8,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { UserPlus } from "lucide-react"
-import {User} from "@/types/user.ts";
+import {User} from "@/types/user";
 
 const userInfoSchema = z.object({
     firstName: z.string().min(2, {

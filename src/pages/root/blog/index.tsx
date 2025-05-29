@@ -1,8 +1,8 @@
-import {Button} from "@/components/ui/button.tsx";
-import {Input} from "@/components/ui/input.tsx";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {Link} from "react-router";
-import {Badge} from "@/components/ui/badge.tsx";
-import {useGetPosts} from "@/api/endpoints/blog/hooks.ts";
+import {Badge} from "@/components/ui/badge";
+import {useGetPosts} from "@/api/endpoints/blog/hooks";
 
 const topics = ["Todos", "Gestão", "Tecnologia", "Marketing", "Tendências", "Casos de Sucesso", "Dicas"]
 

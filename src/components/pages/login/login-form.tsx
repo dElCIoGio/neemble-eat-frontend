@@ -4,11 +4,11 @@ import type React from "react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { cn } from "@/lib/utils.ts"
-import { Button } from "@/components/ui/button.tsx"
-import { Input } from "@/components/ui/input.tsx"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form.tsx"
-import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth.ts"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string

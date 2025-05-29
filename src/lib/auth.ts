@@ -10,10 +10,10 @@ import {
     sendEmailVerification,
     updateProfile
 } from "firebase/auth";
-import { auth } from "@/firebase/config.ts";
-import {User} from "@/types/user.ts";
-import {LoginPayload, RegisterPayload} from "@/api/endpoints/auth/types.ts";
-import {authApi} from "@/api/endpoints/auth/endpoints.ts";
+import { auth } from "@/firebase/config";
+import {User} from "@/types/user";
+import {LoginPayload, RegisterPayload} from "@/api/endpoints/auth/types";
+import {authApi} from "@/api/endpoints/auth/endpoints";
 
 interface RegisterProps {
     firstName: string,

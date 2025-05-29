@@ -3,18 +3,12 @@ export type LimitType = "UP_TO" | "EXACTLY" | "AT_LEAST" | "ALL";
 export type OptionLimitType = "UP_TO" | "UNLIMITED";
 
 export type CustomizationOption = {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
     name: string;
     priceModifier: number;
-    maxQuantity?: number | null;
+    maxQuantity: number;
 };
 
 export type CustomizationRule = {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
     name: string;
     description?: string | null;
     isRequired: boolean;
@@ -23,16 +17,21 @@ export type CustomizationRule = {
     options: CustomizationOption[];
 };
 
+export type ItemCreate = {
+    name: string;
+    price: number;
+    restaurantId: string;
+    categoryId: string;
+    description?: string;
+    customizations: CustomizationRule[];
+}
+
 export type Item = {
     id: string;
     createdAt: string;
     updatedAt: string;
-    name: string;
-    price: number;
+
     imageUrl: string;
-    restaurantId: string;
-    categoryId: string;
-    description?: string | null;
+
     isAvailable: boolean;
-    customizations: CustomizationRule[];
-};
+} & ItemCreate;

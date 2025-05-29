@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ClipboardCheck } from "lucide-react"
 import { useState } from "react"
-import {User} from "@/types/user.ts";
+import {User} from "@/types/user";
 
 interface DataConfirmationStepProps {
     userData: User

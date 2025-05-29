@@ -1,4 +1,4 @@
-import config from "@/config.ts";
+import config from "@/config";
 import axios from "axios";
 import { auth } from '@/firebase/config';
 

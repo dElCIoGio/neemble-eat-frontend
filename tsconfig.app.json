@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+
+    "composite": true,
+    "emitDeclarationOnly": false,
+
     "baseUrl": ".",
     "paths": {
       "@/*": [
@@ -15,10 +19,10 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+//    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
+//    "noEmit": true,
     "jsx": "react-jsx",
 
     /* Linting */

@@ -7,7 +7,8 @@ import {
     Icon,
     Lifebuoy,
     QrCode,
-    UsersThree
+    UsersThree,
+    Package,
 } from "@phosphor-icons/react";
 import {useLocation, useNavigate} from "react-router";
 import {
@@ -19,10 +20,9 @@ import {
     SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
     SidebarTrigger,
     useSidebar
-} from "@/components/ui/sidebar.tsx";
-import {useIsMobile} from "@/hooks/use-mobile.ts";
-import {Separator} from "@/components/ui/separator.tsx";
-import {Button} from "@/components/ui/button.tsx";
+} from "@/components/ui/sidebar";
+import {useIsMobile} from "@/hooks/use-mobile";
+import {Button} from "@/components/ui/button";
 
 const navigation: {
     label: string,
@@ -53,6 +53,11 @@ const navigation: {
         label: "Equipe",
         icon: UsersThree,
         href: "staff",
+    },
+    {
+        label: "Stock",
+        icon: Package,
+        href: "stock"
     },
     {
         label: "Subscrição",
@@ -91,12 +96,12 @@ export default function DashboardSidebar() {
     }
 
     return (
-        <Sidebar collapsible="icon">
-            <SidebarHeader>
+        <Sidebar className="border-r" collapsible="icon">
+            <SidebarHeader className="bg-white">
                 <div className="flex items-center justify-between gap-2 py-1">
                     <div className={`text-lg font-semibold flex items-center justify-center ${open ? "gap-1":"gap-3"} `}>
                         <div className={` rounded-md p-1 transition-all duration-300 ease-in-out`}></div>
-                        <span className={` transition-opacity duration-300 ease-in-out`}>
+                        <span className={` transition-opacity duration-300 ease-in-out py-1`}>
                             Neemble Eat
                         </span>
                     </div>
@@ -107,15 +112,13 @@ export default function DashboardSidebar() {
 
                 </div>
             </SidebarHeader>
-            <SidebarContent>
-                <div>
-                    <Separator className="max-w-[90%] mx-auto"/>
-                </div>
+            <SidebarContent className="bg-white">
+
                 <SidebarGroup>
                     <SidebarGroupLabel className="text-primary">Menu</SidebarGroupLabel>
                     <SidebarMenu>
                         {navigation.map((item) => (
-                            <SidebarMenuItem className={`${item.href == route? "bg-white border-[1.5px] flex rounded-full" : "rounded-full text-zinc-400"}`} key={item.label}>
+                            <SidebarMenuItem className={`${item.href == route? "bg-zinc-100 font-semibold border-[1px] flex rounded-full" : "rounded-full text-zinc-400"}`} key={item.label}>
                                 <SidebarMenuButton className="rounded-full flex mx-auto" asChild>
                                     <button onClick={() => handlePageChange(item.href)} className={`flex ${!open && !isMobile && "justify-center"} gap-2`}>
                                         <item.icon className={`${!open ? "ml-2": "ml-0"} ${route == item.href && ""} transition-all duration-100 ease-in-out h-4 w-4`}/>
@@ -127,7 +130,7 @@ export default function DashboardSidebar() {
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter className={`${ !isMobile && open? "opacity-100" : "opacity-0"} transition-opacity duration-300 ease-in-out`}>
+            <SidebarFooter className={`${ !isMobile && open? "opacity-100" : "opacity-0"} transition-opacity duration-300 ease-in-out bg-white`}>
                 <div className="bg-primary mx-auto w-full rounded-md h-28 p-3 flex flex-col justify-between">
                     <p className="text-zinc-200 text-xs font-semibold">
                         Looking for more detailed analytics to help you? Upgrade to Pro

@@ -1,13 +1,12 @@
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Building2, Check, ChevronLeft, Store } from "lucide-react"
+import { ChevronLeft, Store } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import {User} from "@/types/user.ts";
-
+import { Textarea } from "@/components/ui/textarea"
+import { User } from "@/types/user"
+import { RestaurantCreate } from "@/types/restaurant"
 
 interface RestaurantSetupStepProps {
     userData: User
@@ -16,10 +15,29 @@ interface RestaurantSetupStepProps {
     onBack: () => void
 }
 
-export function RestaurantSetupStep({ userData, onNext, onBack }: RestaurantSetupStepProps) {
+export function RestaurantSetupStep({ onNext, onBack }: RestaurantSetupStepProps) {
     const [isLoading, setIsLoading] = useState(false)
-    const [restaurantName, setRestaurantName] = useState("")
     const [option, setOption] = useState<"create" | "skip">("skip")
+    const [restaurantData, setRestaurantData] = useState<RestaurantCreate>({
+        name: "",
+        address: "",
+        description: "",
+        phoneNumber: "",
+        bannerFile: new File([], "")
+    })
+
+    const handleRestaurantDataChange = (field: keyof RestaurantCreate, value: string | File) => {
+        setRestaurantData(prev => ({
+            ...prev,
+            [field]: value
+        }))
+    }
+
+    const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            handleRestaurantDataChange("bannerFile", e.target.files[0])
+        }
+    }
 
     async function handleContinue() {
         setIsLoading(true)
@@ -27,7 +45,6 @@ export function RestaurantSetupStep({ userData, onNext, onBack }: RestaurantSetu
         try {
             // In a real app, you would save the restaurant data to your backend here
             await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
-
 
             // Move to next step
             onNext()
@@ -59,69 +76,92 @@ export function RestaurantSetupStep({ userData, onNext, onBack }: RestaurantSetu
                 <p className="text-balance text-muted-foreground">Vamos configurar seu restaurante no Neemble Eat</p>
             </div>
 
-            {userData ? (
-                <Card>
-                    <CardHeader className="pb-3">
-                        <CardTitle>Convite pendente</CardTitle>
-                        <CardDescription>Você foi convidado para participar de um restaurante</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex items-center gap-3 rounded-md border p-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
-                                <Building2 className="h-5 w-5" />
-                            </div>
-                            <div className="flex-1">
-                                <p className="font-medium">{userData.firstName}</p>
-                                <p className="text-sm text-muted-foreground">Convite pendente</p>
-                            </div>
-                            <Button size="sm" className="gap-1">
-                                <Check className="h-4 w-4" /> Aceitar
-                            </Button>
+            <div className="space-y-6">
+                <RadioGroup
+                    value={option}
+                    onValueChange={(value) => setOption(value as "create" | "skip")}
+                    className="grid gap-4"
+                >
+                    <div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="create" id="create" />
+                            <Label htmlFor="create" className="font-medium">
+                                Criar um novo restaurante
+                            </Label>
                         </div>
-                    </CardContent>
-                </Card>
-            ) : (
-                <div className="space-y-6">
-                    <RadioGroup
-                        value={option}
-                        onValueChange={(value) => setOption(value as "create" | "skip")}
-                        className="grid gap-4"
-                    >
-                        <div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="create" id="create" />
-                                <Label htmlFor="create" className="font-medium">
-                                    Criar um novo restaurante
-                                </Label>
-                            </div>
-                            {option === "create" && (
-                                <div className="mt-3 pl-6">
+                        {option === "create" && (
+                            <div className="mt-6 space-y-6">
+                                <div>
                                     <Label htmlFor="restaurant-name">Nome do restaurante</Label>
                                     <Input
                                         id="restaurant-name"
                                         placeholder="Digite o nome do seu restaurante"
                                         className="mt-1"
-                                        value={restaurantName}
-                                        onChange={(e) => setRestaurantName(e.target.value)}
+                                        value={restaurantData.name}
+                                        onChange={(e) => handleRestaurantDataChange("name", e.target.value)}
                                         disabled={isLoading}
                                     />
                                 </div>
-                            )}
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="skip" id="skip" />
-                            <Label htmlFor="skip" className="font-medium">
-                                Pular por enquanto
-                            </Label>
-                        </div>
-                    </RadioGroup>
-                </div>
-            )}
+                                <div>
+                                    <Label htmlFor="restaurant-address">Endereço</Label>
+                                    <Input
+                                        id="restaurant-address"
+                                        placeholder="Digite o endereço do restaurante"
+                                        className="mt-1"
+                                        value={restaurantData.address}
+                                        onChange={(e) => handleRestaurantDataChange("address", e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="restaurant-phone">Telefone</Label>
+                                    <Input
+                                        id="restaurant-phone"
+                                        placeholder="Digite o telefone do restaurante"
+                                        className="mt-1"
+                                        value={restaurantData.phoneNumber}
+                                        onChange={(e) => handleRestaurantDataChange("phoneNumber", e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="restaurant-description">Descrição</Label>
+                                    <Textarea
+                                        id="restaurant-description"
+                                        placeholder="Descreva seu restaurante"
+                                        className="mt-1"
+                                        value={restaurantData.description}
+                                        onChange={(e) => handleRestaurantDataChange("description", e.target.value)}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="restaurant-banner">Banner do restaurante</Label>
+                                    <Input
+                                        id="restaurant-banner"
+                                        type="file"
+                                        accept="image/*"
+                                        className="mt-1"
+                                        onChange={handleBannerChange}
+                                        disabled={isLoading}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="skip" id="skip" />
+                        <Label htmlFor="skip" className="font-medium">
+                            Pular por enquanto
+                        </Label>
+                    </div>
+                </RadioGroup>
+            </div>
 
             <Button
                 onClick={handleContinue}
                 className="w-full"
-                disabled={isLoading || (option === "create" && !restaurantName)}
+                disabled={isLoading || (option === "create" && !restaurantData.name)}
             >
                 {isLoading ? "Processando..." : "Continuar"}
             </Button>

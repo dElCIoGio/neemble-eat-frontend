@@ -1,3 +1,4 @@
+// tsconfig.json
 {
   "files": [],
   "references": [
@@ -13,5 +14,7 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["src/types"]
 }
+

@@ -1,14 +1,23 @@
+
+
+
+export type CategoryCreate = {
+    name: string;
+    restaurantId: string;
+    description: string;
+    menuId: string;
+    imageFile?: File
+}
+
 export type Category = {
     id: string;
     createdAt: string;
     updatedAt: string;
-    name: string;
-    restaurantId: string;
+
     itemIds: string[];
-    description?: string | null;
     imageUrl?: string | null;
     position: number;
     isActive: boolean;
     tags?: string[] | null;
     slug?: string | null;
-};
+} & CategoryCreate;

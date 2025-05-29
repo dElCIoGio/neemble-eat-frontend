@@ -1,6 +1,6 @@
 import {api} from "@/api";
-import {LoginPayload, RegisterPayload} from "@/api/endpoints/auth/types.ts";
-import {User} from "@/types/user.ts";
+import {LoginPayload, RegisterPayload} from "@/api/endpoints/auth/types";
+import {User} from "@/types/user";
 
 const baseRoute = "/auth"
 

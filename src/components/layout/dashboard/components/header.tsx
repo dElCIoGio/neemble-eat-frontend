@@ -1,10 +1,9 @@
-import {useDashboardContext} from "@/context/dashboard-context.ts";
+import {useDashboardContext} from "@/context/dashboard-context";
+import {Card} from "@/components/ui/card";
 
 function Header() {
 
     const { page } = useDashboardContext();
-
-    console.log(page);
 
     const getPageTitle = () => {
         switch (page) {
@@ -24,6 +23,8 @@ function Header() {
                 return 'Subscrição';
             case 'support':
                 return 'Suporte';
+            case "stock":
+                return "Stock"
         }
     }
 
@@ -32,26 +33,28 @@ function Header() {
             case '':
                 return 'Seja bem vindo ao seu painel de controle';
             case 'menu':
-                return 'Menu';
+                return 'Manage your restaurant menus, categories, and items';
             case 'qrcode':
                 return 'QR Codes';
             case 'bookings':
-                return 'Reservas';
+                return 'Acompanhe e gere as reservas do restaurante.';
             case 'staff':
                 return 'Equipe';
             case 'settings':
                 return 'Definição';
             case 'subscription':
-                return 'Subscrição';
+                return 'Gerencie sua subscrição e histórico de pagamentos.';
             case 'support':
-                return 'Suporte';
+                return 'Encontre ajuda e recursos para a sua experiência com o Neemble Eat';
+            case "stock":
+                return "Gerencie o stock do restaurante"
         }
     }
 
     return (
-        <div className="w-full p-8">
+        <Card className="w-full p-6">
             <div className="space-y-2">
-                <h1 className="text-3xl font-semibold">
+                <h1 className="text-3xl text-jost font-bold">
                     {getPageTitle()}
                 </h1>
                 <p className="text-gray-500 text-sm font-semibold">
@@ -59,7 +62,7 @@ function Header() {
                 </p>
 
             </div>
-        </div>
+        </Card>
     );
 }
 

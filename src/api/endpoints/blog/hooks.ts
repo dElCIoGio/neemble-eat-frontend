@@ -1,5 +1,5 @@
 import {useQuery} from "@tanstack/react-query";
-import {blogApi} from "@/api/endpoints/blog/requests.ts";
+import {blogApi} from "@/api/endpoints/blog/requests";
 
 
 export function useGetPostBySlug(slug: string) {

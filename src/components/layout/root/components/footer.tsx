@@ -1,5 +1,5 @@
 import {Link, NavLink} from "react-router";
-import {Button} from "@/components/ui/button.tsx";
+import {Button} from "@/components/ui/button";
 
 export function Footer() {
 

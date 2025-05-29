@@ -1,5 +1,5 @@
-import {BlogPost, BlogPostMeta} from "@/types/blog.ts";
-import {apiClient} from "@/api/axios.ts";
+import {BlogPost, BlogPostMeta} from "@/types/blog";
+import {apiClient} from "@/api/axios";
 import {AxiosResponse} from "axios";
 
 

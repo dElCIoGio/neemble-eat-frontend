@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react"
-import {OnboardingLayout} from "@/components/layout/onboarding/onboarding-layout.tsx";
+import {OnboardingLayout} from "@/components/layout/onboarding/onboarding-layout";
 
 export function LoadingScreen() {
     return (

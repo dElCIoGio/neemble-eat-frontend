@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import {SignupFormValues, signupSchema} from "@/lib/schemas/auth.ts";
-import {registerWithEmail} from "@/lib/auth.ts";
+import {SignupFormValues, signupSchema} from "@/lib/schemas/auth";
+import {registerWithEmail} from "@/lib/auth";
 import {useNavigate} from "react-router";
 import {GoogleAuthProvider, signInWithPopup} from "firebase/auth";
-import {auth} from "@/firebase/config.ts";
+import {auth} from "@/firebase/config";
 
 interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string

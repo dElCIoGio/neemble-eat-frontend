@@ -1,7 +1,7 @@
 import {AxiosRequestConfig, AxiosResponse} from "axios";
-import {apiClient} from "./axios.ts";
-import config from "@/config.ts";
-import {ApiResponse} from "@/api/types.ts";
+import {apiClient} from "./axios";
+import config from "@/config";
+import {ApiResponse} from "@/api/types";
 
 
 class ApiService {

@@ -1,4 +1,4 @@
-import {Button} from "@/components/ui/button.tsx";
+import {Button} from "@/components/ui/button";
 import {NavLink} from "react-router";
 import {motion} from "framer-motion";
 import img from "@/../public/chef-hero.png"

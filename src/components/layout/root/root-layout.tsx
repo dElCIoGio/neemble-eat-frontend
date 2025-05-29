@@ -1,8 +1,8 @@
 import {Outlet, useLocation} from "react-router";
 
 import {useEffect} from "react";
-import {Footer} from "@/components/layout/root/components/footer.tsx";
-import {Header} from "@/components/layout/root/components/header.tsx";
+import {Footer} from "@/components/layout/root/components/footer";
+import {Header} from "@/components/layout/root/components/header";
 
 function HomeLayout() {
     const location = useLocation();
