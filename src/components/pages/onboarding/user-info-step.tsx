@@ -19,7 +19,7 @@ const userInfoSchema = z.object({
     email: z.string().email({
         message: "Por favor, digite um email válido",
     }),
-    phone: z.string().min(10, {
+    phoneNumber: z.string().min(10, {
         message: "Por favor, digite um número de telefone válido",
     }),
 })
@@ -39,7 +39,7 @@ export function UserInfoStep({ userData, updateUserData, onNext }: UserInfoStepP
             firstName: userData.firstName,
             lastName: userData.lastName,
             email: userData.email,
-            phone: userData.phoneNumber,
+            phoneNumber: userData.phoneNumber,
         },
     })
 
@@ -127,7 +127,7 @@ export function UserInfoStep({ userData, updateUserData, onNext }: UserInfoStepP
 
                     <FormField
                         control={form.control}
-                        name="phone"
+                        name="phoneNumber"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Telefone</FormLabel>

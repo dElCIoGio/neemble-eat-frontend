@@ -36,34 +36,34 @@ export default function Settings() {
                 </div>
 
                 <Tabs defaultValue="geral">
-                    <TabsList className="mb-4 w-full justify-start border-b bg-transparent p-0">
+                    <TabsList className="mb-4 w-full bg-transparent p-0">
                         <TabsTrigger
                             value="geral"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Geral
                         </TabsTrigger>
                         <TabsTrigger
                             value="restaurante"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Restaurante
                         </TabsTrigger>
                         <TabsTrigger
                             value="pedidos"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Pedidos
                         </TabsTrigger>
                         <TabsTrigger
                             value="notificacoes"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Notificações
                         </TabsTrigger>
                         <TabsTrigger
                             value="integracao"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Integração
                         </TabsTrigger>

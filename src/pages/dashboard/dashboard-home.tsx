@@ -1,4 +1,3 @@
-
 import React, {JSX} from "react"
 
 import { useState, useCallback } from "react"
@@ -27,7 +26,6 @@ import {
 import type {
     SalesData,
     OrdersData,
-    PopularItem,
     SessionsData,
     Insight,
     DailySales,
@@ -40,6 +38,16 @@ import type {
 import {downloadCSV, downloadPDF} from "@/lib/helpers/export";
 import {toast} from "sonner";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {useDashboardContext} from "@/context/dashboard-context";
+import {
+    useGetSalesSummary,
+    useGetInvoiceSummary,
+    useGetOrdersSummary,
+    useGetCancelledOrdersSummary,
+    useGetTopItemsSummary,
+    useGetSessionDurationSummary,
+    useGetActiveSessionsSummary, useGetLastSevenDaysCount
+} from "@/api/endpoints/analytics/hooks";
 
 
 // Dados mockados com tipos
@@ -63,17 +71,6 @@ const ordersData: OrdersData = {
     ordersGrowth: 5.2,
     cancelledGrowth: -8.1,
 }
-
-const popularItems: PopularItem[] = [
-    { itemName: "Francesinha Especial", quantity: 34 },
-    { itemName: "Bacalhau à Brás", quantity: 28 },
-    { itemName: "Bifana no Prato", quantity: 25 },
-    { itemName: "Caldo Verde", quantity: 22 },
-    { itemName: "Pastéis de Nata", quantity: 19 },
-    { itemName: "Arroz de Marisco", quantity: 16 },
-    { itemName: "Bitoque", quantity: 14 },
-    { itemName: "Sopa da Pedra", quantity: 12 },
-]
 
 const sessionsData: SessionsData = {
     averageDurationMinutes: 47,
@@ -124,11 +121,91 @@ export default function RestaurantDashboard(): JSX.Element {
     const [itemsTimeRange, setItemsTimeRange] = useState<ItemsTimeRange>("today")
     const [isExporting, setIsExporting] = useState<boolean>(false)
 
+    const {
+        restaurant
+    } = useDashboardContext()
+
+    // Helper function to get date range from filter
+    const getDateRangeFromFilter = useCallback((filter: DateFilter | ItemsTimeRange) => {
+        const today = new Date()
+        const from = new Date()
+        
+        switch (filter) {
+            case "today":
+                from.setHours(0, 0, 0, 0)
+                break
+            case "yesterday":
+                from.setDate(today.getDate() - 1)
+                from.setHours(0, 0, 0, 0)
+                today.setDate(today.getDate() - 1)
+                today.setHours(23, 59, 59, 999)
+                break
+            case "7days":
+            case "week":
+                from.setDate(today.getDate() - 7)
+                break
+            case "30days":
+            case "month":
+                from.setDate(today.getDate() - 30)
+                break
+        }
+
+        return {
+            from: from.toISOString(),
+            to: today.toISOString()
+        }
+    }, [])
+
+    // Analytics hooks
+    const { data: salesSummary } = useGetSalesSummary({
+        restaurantId: restaurant._id,
+        fromDate: getDateRangeFromFilter(dateFilter).from,
+        toDate: getDateRangeFromFilter(dateFilter).to
+    })
+
+    const { data: invoiceSummary } = useGetInvoiceSummary({
+        restaurantId: restaurant._id,
+        status: "completed",
+        fromDate: getDateRangeFromFilter(dateFilter).from,
+        toDate: getDateRangeFromFilter(dateFilter).to
+    })
+
+    const { data: ordersSummary } = useGetOrdersSummary({
+        restaurantId: restaurant._id,
+        fromDate: getDateRangeFromFilter(dateFilter).from,
+        toDate: getDateRangeFromFilter(dateFilter).to
+    })
+
+    const { data: cancelledOrdersSummary } = useGetCancelledOrdersSummary({
+        restaurantId: restaurant._id,
+        fromDate: getDateRangeFromFilter(dateFilter).from,
+        toDate: getDateRangeFromFilter(dateFilter).to
+    })
+
+    const { data: topItemsSummary } = useGetTopItemsSummary({
+        restaurantId: restaurant._id,
+        topN: 8,
+        fromDate: getDateRangeFromFilter(itemsTimeRange).from,
+        toDate: getDateRangeFromFilter(itemsTimeRange).to
+    })
+
+
+    const { data: sessionDurationSummary } = useGetSessionDurationSummary({
+        restaurantId: restaurant._id
+    })
+
+    const { data: activeSessionsSummary } = useGetActiveSessionsSummary({
+        restaurantId: restaurant._id
+    })
+
+    const { data: lastSevenDaysOrdersCount } = useGetLastSevenDaysCount({
+        restaurantId: restaurant._id,
+    })
 
     const formatValue = useCallback((val: number, format: MetricFormat): string => {
         switch (format) {
             case "currency":
-                return `€${val.toLocaleString("pt-PT", { minimumFractionDigits: 2 })}`
+                return `Kz ${val.toLocaleString("pt-PT", { minimumFractionDigits: 2 })}`
             case "percentage":
                 return `${val.toFixed(1)}%`
             default:
@@ -142,7 +219,6 @@ export default function RestaurantDashboard(): JSX.Element {
             yesterday: "Ontem",
             "7days": "Últimos 7 dias",
             "30days": "Últimos 30 dias",
-            custom: "Intervalo personalizado",
         }
         return labels[filter]
     }, [])
@@ -160,7 +236,7 @@ export default function RestaurantDashboard(): JSX.Element {
         return {
             salesData,
             ordersData,
-            popularItems,
+            popularItems: topItemsSummary? topItemsSummary: [],
             sessionsData,
             insights,
             dailySales,
@@ -214,7 +290,7 @@ export default function RestaurantDashboard(): JSX.Element {
             <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-                    <Icon className="h-4 w-4 text-muted-foreground" />
+                    <Icon className="h-4 w-4 text-purple-700" />
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl font-bold">{formatValue(value, format)}</div>
@@ -236,8 +312,8 @@ export default function RestaurantDashboard(): JSX.Element {
             </CardHeader>
             <CardContent>
                 <div className="h-[200px] flex items-end justify-between space-x-2">
-                    {dailySales.map((data) => (
-                        <TooltipProvider>
+                    {lastSevenDaysOrdersCount && lastSevenDaysOrdersCount.map((data) => (
+                        <TooltipProvider key={data.day}>
                             <Tooltip>
                                 <TooltipTrigger className="w-full">
                                     <div key={data.date} className="flex flex-col items-center space-y-2 flex-1">
@@ -249,9 +325,9 @@ export default function RestaurantDashboard(): JSX.Element {
                                     </div>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>
+                                    <span>
                                         {data.sales} pedidos
-                                    </p>
+                                    </span>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -262,39 +338,46 @@ export default function RestaurantDashboard(): JSX.Element {
         </Card>
     )
 
-    const OrdersChart = (): JSX.Element => (
-        <Card>
-            <CardHeader>
-                <CardTitle>Pedidos vs Cancelamentos</CardTitle>
-                <CardDescription>Comparação de pedidos realizados e cancelados</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                    <span className="text-sm">Pedidos Realizados</span>
-                        <span className="font-medium">{ordersData.orderCount - ordersData.cancelledCount}</span>
-                    </div>
-                    <Progress
-                        value={((ordersData.orderCount - ordersData.cancelledCount) / ordersData.orderCount) * 100}
-                        className="h-2"
-                    />
+    const OrdersChart = (): JSX.Element => {
+        const totalOrders = ordersSummary?.orderCount ?? 0
+        const cancelledOrders = cancelledOrdersSummary?.cancelledCount ?? 0
+        const completedOrders = totalOrders - cancelledOrders
+        const cancelledRate = totalOrders > 0 ? (cancelledOrders / totalOrders) * 100 : 0
 
-                    <div className="flex items-center justify-between">
-                        <span className="text-sm">Pedidos Cancelados</span>
-                        <span className="font-medium">{ordersData.cancelledCount}</span>
-                    </div>
-                    <Progress value={(ordersData.cancelledCount / ordersData.orderCount) * 100} className="h-2" />
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Pedidos vs Cancelamentos</CardTitle>
+                    <CardDescription>Comparação de pedidos realizados e cancelados</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm">Pedidos Realizados</span>
+                            <span className="font-medium">{completedOrders}</span>
+                        </div>
+                        <Progress
+                            value={(completedOrders / totalOrders) * 100}
+                            className="h-2"
+                        />
 
-                    <div className="flex items-center justify-between pt-2 border-t">
-                        <span className="text-sm font-medium">Taxa de Cancelamento</span>
-                        <Badge variant={ordersData.cancelledRate > 15 ? "destructive" : "secondary"}>
-                            {ordersData.cancelledRate.toFixed(1)}%
-                        </Badge>
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm">Pedidos Cancelados</span>
+                            <span className="font-medium">{cancelledOrders}</span>
+                        </div>
+                        <Progress value={(cancelledOrders / totalOrders) * 100} className="h-2" />
+
+                        <div className="flex items-center justify-between pt-2 border-t">
+                            <span className="text-sm font-medium">Taxa de Cancelamento</span>
+                            <Badge variant={cancelledRate > 15 ? "destructive" : "secondary"}>
+                                {cancelledRate.toFixed(1)}%
+                            </Badge>
+                        </div>
                     </div>
-                </div>
-            </CardContent>
-        </Card>
-    )
+                </CardContent>
+            </Card>
+        )
+    }
 
     const PopularItemsChart = (): JSX.Element => (
         <Card>
@@ -316,7 +399,8 @@ export default function RestaurantDashboard(): JSX.Element {
             </CardHeader>
             <CardContent>
                 <div className="space-y-3">
-                    {popularItems.slice(0, 6).map((item, index) => (
+                    {/* TODO: Need to update the API to return an array of items */}
+                    {topItemsSummary && topItemsSummary.map((item, index) => (
                         <div key={`${item.itemName}-${index}`} className="flex items-center space-x-3">
                             <div className="w-8 text-sm font-medium text-muted-foreground">#{index + 1}</div>
                             <div className="flex-1">
@@ -324,7 +408,10 @@ export default function RestaurantDashboard(): JSX.Element {
                                     <span className="text-sm font-medium">{item.itemName}</span>
                                     <span className="text-sm text-muted-foreground">{item.quantity}</span>
                                 </div>
-                                <Progress value={(item.quantity / popularItems[0].quantity) * 100} className="h-1" />
+                                <Progress 
+                                    value={(item.quantity / topItemsSummary[0].quantity) * 100}
+                                    className="h-1" 
+                                />
                             </div>
                         </div>
                     ))}
@@ -346,10 +433,11 @@ export default function RestaurantDashboard(): JSX.Element {
                         <span className="text-sm">Duração Média</span>
                     </div>
                     <div className="text-right">
-                        <div className="font-medium">{sessionsData.averageDurationMinutes} min</div>
+                        <div className="font-medium">{sessionDurationSummary?.averageDurationMinutes ?? 0} min</div>
                         <div className="flex items-center text-xs text-green-500">
                             <TrendingUp className="h-3 w-3 mr-1" />
-                            {sessionsData.durationGrowth}%
+                            {/* TODO: Need growth data */}
+                            0%
                         </div>
                     </div>
                 </div>
@@ -360,10 +448,11 @@ export default function RestaurantDashboard(): JSX.Element {
                         <span className="text-sm">Sessões Ativas</span>
                     </div>
                     <div className="text-right">
-                        <div className="font-medium">{sessionsData.activeSessions}</div>
+                        <div className="font-medium">{activeSessionsSummary?.activeSessions ?? 0}</div>
                         <div className="flex items-center text-xs text-green-500">
                             <TrendingUp className="h-3 w-3 mr-1" />
-                            {sessionsData.activeGrowth}%
+                            {/* TODO: Need growth data */}
+                            0%
                         </div>
                     </div>
                 </div>
@@ -371,6 +460,7 @@ export default function RestaurantDashboard(): JSX.Element {
                 <div className="pt-2">
                     <div className="text-xs text-muted-foreground mb-2">Distribuição de Duração</div>
                     <div className="flex space-x-1 h-16 items-end">
+                        {/* TODO: Need session duration distribution data */}
                         {[20, 35, 45, 60, 40, 25, 15].map((height, index) => (
                             <div
                                 key={`duration-${index}`}
@@ -448,7 +538,7 @@ export default function RestaurantDashboard(): JSX.Element {
                                 <SelectItem value="yesterday">Ontem</SelectItem>
                                 <SelectItem value="7days">Últimos 7 dias</SelectItem>
                                 <SelectItem value="30days">Últimos 30 dias</SelectItem>
-                                <SelectItem value="custom">Intervalo personalizado</SelectItem>
+                                {/*<SelectItem value="custom">Intervalo personalizado</SelectItem>*/}
                             </SelectContent>
                         </Select>
 
@@ -470,36 +560,36 @@ export default function RestaurantDashboard(): JSX.Element {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                     <MetricCard
                         title="Total de Vendas"
-                        value={salesData.totalSales}
-                        growth={salesData.salesGrowth}
+                        value={salesSummary?.totalSales ?? 0}
+                        growth={0}
                         icon={DollarSign}
                         format="currency"
                     />
                     <MetricCard
                         title="Faturas Emitidas"
-                        value={salesData.invoiceCount}
-                        growth={salesData.invoiceGrowth}
+                        value={invoiceSummary?.invoiceCount ?? 0}
+                        growth={0}
                         icon={Receipt}
                         format="number"
                     />
                     <MetricCard
                         title="Valor Médio por Fatura"
-                        value={salesData.averageInvoice}
-                        growth={salesData.averageGrowth}
+                        value={salesSummary?.averageInvoice ?? 0}
+                        growth={0}
                         icon={ShoppingCart}
                         format="currency"
                     />
                     <MetricCard
                         title="Mesas Servidas"
-                        value={salesData.distinctTables}
-                        growth={salesData.tableGrowth}
+                        value={salesSummary?.distinctTables ?? 0}
+                        growth={0}
                         icon={Users}
                         format="number"
                     />
                     <MetricCard
                         title="Receita por Mesa"
-                        value={salesData.revenuePerTable}
-                        growth={salesData.revenueGrowth}
+                        value={salesSummary?.revenuePerTable ?? 0}
+                        growth={0}
                         icon={TrendingUp}
                         format="currency"
                     />

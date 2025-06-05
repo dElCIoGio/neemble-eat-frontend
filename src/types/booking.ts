@@ -1,6 +1,6 @@
 
 export interface Booking {
-    id: string; // Unique identifier
+    id: string;
     restaurantId: string;
     tableId: string;
     startTime: string;
@@ -14,6 +14,7 @@ export interface Booking {
     notes: string;
     createdAt: string;
     updatedAt: string;
+    status: "upcoming" | "seated" | "completed" | "delayed";
 }
 
 export interface NewBooking {

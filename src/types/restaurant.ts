@@ -1,16 +1,14 @@
 export type OpeningHours = {
-    monday?: string;
-    tuesday?: string;
-    wednesday?: string;
-    thursday?: string;
-    friday?: string;
-    saturday?: string;
-    sunday?: string;
+    monday?: string; // eg (always 24h format): 09:00-22:00
+    tuesday?: string; // eg (always 24h format): 09:00-22:00
+    wednesday?: string; // eg (always 24h format): 09:00-22:00
+    thursday?: string; // eg (always 24h format): 09:00-22:00
+    friday?: string; // eg (always 24h format): 09:00-22:00
+    saturday?: string; // eg (always 24h format): 09:00-22:00
+    sunday?: string; // eg (always 24h format): 09:00-22:00
 };
 
 export type RestaurantSettings = {
-    acceptsOnlineOrders: boolean;
-    autoAcceptOrders: boolean;
     openingHours?: OpeningHours | null;
 };
 
@@ -21,18 +19,22 @@ export type RestaurantCreate = {
     description: string;
     phoneNumber: string;
     bannerFile: File
+    logoFile?: File
+    settings: RestaurantSettings;
 }
 
 export type Restaurant = {
-    id: string;
+    _id: string;
     createdAt: string;
     updatedAt: string;
-    bannerUrl: string | null;
+    bannerUrl: string;
+    logoUrl: string | null;
 
     isActive: boolean;
+    currentMenuId: string;
     menuIds: string[];
     tableIds: string[];
     sessionIds: string[];
     orderIds: string[];
-    settings: RestaurantSettings;
-} & RestaurantCreate;
+    slug: string | null;
+} & Omit<RestaurantCreate, "bannerFile" | "logoFile">;

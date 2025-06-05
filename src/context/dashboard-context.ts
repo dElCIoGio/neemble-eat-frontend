@@ -1,7 +1,11 @@
 import {createContext, useContext} from "react";
+import {User} from "@/types/user";
+import {Restaurant} from "@/types/restaurant";
 
 type DashboardContextProps = {
-    page: string
+    page: string,
+    user: User
+    restaurant: Restaurant
 }
 
 

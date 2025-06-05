@@ -1,4 +1,5 @@
 import {Icon} from "@phosphor-icons/react";
+import {ItemOrderQuantity} from "@/types/analytics";
 
 export interface SalesData {
     totalSales: number
@@ -48,7 +49,7 @@ export interface DailySales {
 export interface ExportData {
     salesData: SalesData
     ordersData: OrdersData
-    popularItems: PopularItem[]
+    popularItems: ItemOrderQuantity[]
     sessionsData: SessionsData
     insights: Insight[]
     dailySales: DailySales[]
@@ -57,7 +58,7 @@ export interface ExportData {
     shiftFilter: string
 }
 
-export type DateFilter = "today" | "yesterday" | "7days" | "30days" | "custom"
+export type DateFilter = "today" | "yesterday" | "7days" | "30days"
 export type ShiftFilter = "all" | "lunch" | "dinner"
 export type ItemsTimeRange = "today" | "week" | "month"
 export type MetricFormat = "currency" | "number" | "percentage"

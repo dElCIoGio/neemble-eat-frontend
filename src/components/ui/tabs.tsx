@@ -1,7 +1,9 @@
+"use client"
+
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
-import {cn} from "@/lib/utils"
+import { cn } from "@/lib/utils"
 
 function Tabs({
                 className,
@@ -20,12 +22,11 @@ function TabsList({
                     className,
                     ...props
                   }: React.ComponentProps<typeof TabsPrimitive.List>) {
-  // The bg was set on the className below
   return (
       <TabsPrimitive.List
           data-slot="tabs-list"
           className={cn(
-              " text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-none p-[3px]",
+              "bg-transparent space-x-2 text-muted-foreground inline-flex justify-start h-9 w-fit items-center rounded-lg p-[3px]",
               className
           )}
           {...props}
@@ -41,7 +42,7 @@ function TabsTrigger({
       <TabsPrimitive.Trigger
           data-slot="tabs-trigger"
           className={cn(
-              "data-[state=active]:text-black-500 data-[state=active]:text-black data-[state=active]:border-black hover:!border-gray-600 text-zinc-400 dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-none border-b border-gray-300 px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow,border-color] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:border-b-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+              "border-[1.5px] data-[state=inactive]:bg-zinc-100 data-[state=inactive]:text-zinc-600 items-center data-[state=active]:bg-purple-100 data-[state=active]:text-purple-600 data-[state=active]:border-purple-200 w-fit dark:data-[state=active]:text-foreground focus-visible:border-ring rounded-full focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:text-muted-foreground justify-center px-4 py-1 h-fit text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
               className
           )}
           {...props}
@@ -62,4 +63,4 @@ function TabsContent({
   )
 }
 
-export {Tabs, TabsList, TabsTrigger, TabsContent}
+export { Tabs, TabsList, TabsTrigger, TabsContent }

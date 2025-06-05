@@ -3,29 +3,22 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ClipboardCheck } from "lucide-react"
 import { useState } from "react"
 import {User} from "@/types/user";
+import {useOnboardingContext} from "@/context/onboarding-context";
 
 interface DataConfirmationStepProps {
     userData: User
     onBack: () => void
-    onComplete: () => void
 }
 
-export function DataConfirmationStep({ userData, onBack, onComplete }: DataConfirmationStepProps) {
+export function DataConfirmationStep({ userData, onBack }: DataConfirmationStepProps) {
     const [isLoading, setIsLoading] = useState(false)
+
+    const {handleSubmit} = useOnboardingContext()
 
     async function handleComplete() {
         setIsLoading(true)
-
-        try {
-            // In a real app, you would finalize the onboarding process here
-            await new Promise((resolve) => setTimeout(resolve, 1500)) // Simulate API call
-
-            // Complete onboarding
-            onComplete()
-        } catch (error) {
-            console.error("Error completing onboarding:", error)
-            setIsLoading(false)
-        }
+        handleSubmit()
+        setIsLoading(false)
     }
 
 

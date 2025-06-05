@@ -72,34 +72,34 @@ export default function Support() {
                 </div>
 
                 <Tabs defaultValue="faq">
-                    <TabsList className="mb-4 w-full justify-start border-b bg-transparent p-0">
+                    <TabsList className="mb-4 w-full">
                         <TabsTrigger
                             value="faq"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Perguntas Frequentes
                         </TabsTrigger>
                         <TabsTrigger
                             value="contact"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Contacto
                         </TabsTrigger>
                         <TabsTrigger
                             value="knowledge"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Base de Conhecimento
                         </TabsTrigger>
                         <TabsTrigger
                             value="chat"
-                            className="rounded-none hidden border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Chat de Suporte
                         </TabsTrigger>
                         <TabsTrigger
                             value="tickets"
-                            className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-[#6941c6] data-[state=active]:bg-transparent data-[state=active]:text-[#6941c6] data-[state=active]:shadow-none"
+                            className=""
                         >
                             Meus Tickets
                         </TabsTrigger>

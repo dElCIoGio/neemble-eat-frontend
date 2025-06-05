@@ -1,3 +1,4 @@
+
 export type LimitType = "UP_TO" | "EXACTLY" | "AT_LEAST" | "ALL";
 
 export type OptionLimitType = "UP_TO" | "UNLIMITED";
@@ -24,14 +25,25 @@ export type ItemCreate = {
     categoryId: string;
     description?: string;
     customizations: CustomizationRule[];
+    imageFile?: File;
 }
 
 export type Item = {
-    id: string;
+    _id: string;
     createdAt: string;
     updatedAt: string;
 
     imageUrl: string;
 
     isAvailable: boolean;
-} & ItemCreate;
+    slug?: string
+} & Omit<ItemCreate, "imageFile">;
+
+
+type OptionalItemFields = Partial<Omit<Item, '_id' | 'createdAt' | 'updatedAt'>>;
+
+export type PartialItem = OptionalItemFields & {
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+};

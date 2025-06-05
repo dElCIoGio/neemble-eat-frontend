@@ -57,6 +57,8 @@ import {
     ChevronRight,
 } from "lucide-react"
 import { toast } from "sonner"
+import {useGetAllMembers} from "@/api/endpoints/restaurants/hooks";
+import {useDashboardContext} from "@/context/dashboard-context";
 
 
 interface Permission {
@@ -66,138 +68,6 @@ interface Permission {
     category: string
 }
 
-const teamMembers: User[] = [
-    {
-        id: "1",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        firstName: "João",
-        lastName: "Silva",
-        email: "joao.silva@restaurant.com",
-        phoneNumber: "+351 912 345 678",
-        firebaseUUID: "firebase-uuid-1",
-        isAdmin: true,
-        currentRestaurantId: "restaurant-1",
-        isDeveloper: false,
-        isOnboardingCompleted: true,
-        isVerified: true,
-        isActive: true,
-        memberships: [
-            {
-                roleId: "1",
-                isActive: true
-            }
-        ],
-        preferences: {
-            language: "pt-BR",
-            notificationsEnabled: true,
-            darkMode: false
-        }
-    },
-    {
-        id: "2",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        firstName: "Maria",
-        lastName: "Santos",
-        email: "maria.santos@restaurant.com",
-        phoneNumber: "+351 923 456 789",
-        firebaseUUID: "firebase-uuid-2",
-        isAdmin: false,
-        currentRestaurantId: "restaurant-1",
-        isDeveloper: false,
-        isOnboardingCompleted: true,
-        isVerified: true,
-        isActive: true,
-        memberships: [
-            {
-                roleId: "2",
-                isActive: true
-            }
-        ],
-        preferences: {
-            language: "pt-BR",
-            notificationsEnabled: true,
-            darkMode: false
-        }
-    },
-    {
-        id: "3",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        firstName: "Carlos",
-        lastName: "Ferreira",
-        email: "carlos.ferreira@restaurant.com",
-        phoneNumber: "+351 934 567 890",
-        firebaseUUID: "firebase-uuid-3",
-        isAdmin: false,
-        currentRestaurantId: "restaurant-1",
-        isDeveloper: false,
-        isOnboardingCompleted: false,
-        isVerified: false,
-        isActive: false,
-        memberships: [],
-        preferences: {
-            language: "pt-BR",
-            notificationsEnabled: true,
-            darkMode: false
-        }
-    },
-    {
-        id: "4",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        firstName: "Ana",
-        lastName: "Costa",
-        email: "ana.costa@restaurant.com",
-        phoneNumber: "+351 945 678 901",
-        firebaseUUID: "firebase-uuid-4",
-        isAdmin: false,
-        currentRestaurantId: "restaurant-1",
-        isDeveloper: false,
-        isOnboardingCompleted: true,
-        isVerified: true,
-        isActive: true,
-        memberships: [
-            {
-                roleId: "3",
-                isActive: true
-            }
-        ],
-        preferences: {
-            language: "pt-BR",
-            notificationsEnabled: true,
-            darkMode: false
-        }
-    },
-    {
-        id: "5",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        firstName: "Pedro",
-        lastName: "Oliveira",
-        email: "pedro.oliveira@restaurant.com",
-        phoneNumber: "+351 956 789 012",
-        firebaseUUID: "firebase-uuid-5",
-        isAdmin: false,
-        currentRestaurantId: "restaurant-1",
-        isDeveloper: false,
-        isOnboardingCompleted: true,
-        isVerified: true,
-        isActive: true,
-        memberships: [
-            {
-                roleId: "4",
-                isActive: true
-            }
-        ],
-        preferences: {
-            language: "pt-BR",
-            notificationsEnabled: true,
-            darkMode: false
-        }
-    },
-]
 
 const availablePermissions: Permission[] = [
     {
@@ -209,7 +79,7 @@ const availablePermissions: Permission[] = [
     { id: "manage_orders", name: "Gerir Pedidos", description: "Criar, editar e cancelar pedidos", category: "Pedidos" },
     { id: "edit_menu", name: "Editar Menu", description: "Adicionar, editar e remover itens do menu", category: "Menu" },
     {
-        id: "view_analytics",
+        id: "viewytics",
         name: "Ver Analíticos",
         description: "Acesso ao painel de análise e relatórios",
         category: "Relatórios",
@@ -313,6 +183,8 @@ const defaultRoles: RoleType[] = [
     },
 ]
 
+type SortableUserFields = keyof Pick<User, 'firstName' | 'lastName' | 'email' | 'isActive' | 'updatedAt'>
+
 export default function Staff() {
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("todos")
@@ -322,12 +194,16 @@ export default function Staff() {
     const [, setSelectedMember] = useState<User | null>(null)
     const [, setIsEditDialogOpen] = useState(false)
     const [selectedMembers, setSelectedMembers] = useState<string[]>([])
-    const [sortField, setSortField] = useState<keyof User>("firstName")
+    const [sortField, setSortField] = useState<SortableUserFields>("firstName")
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage] = useState(10)
     const [roles, setRoles] = useState<RoleType[]>(defaultRoles)
     const [viewMode, setViewMode] = useState<"table" | "cards">("table")
+
+    const {
+        restaurant
+    } = useDashboardContext()
 
     // Form states
     const [inviteForm, setInviteForm] = useState({
@@ -346,11 +222,18 @@ export default function Staff() {
         color: "bg-gray-100 text-gray-800"
     })
 
-    const filteredMembers = teamMembers.filter((member) => {
+    const {
+        data: users = []
+    } = useGetAllMembers({
+        restaurantId: restaurant._id
+    })
+
+
+    const filteredMembers = users.filter((member) => {
         const matchesSearch =
             member.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             member.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            member.email.toLowerCase().includes(searchTerm.toLowerCase())
+            (member.email?.toLowerCase() || "").includes(searchTerm.toLowerCase())
         const matchesStatus = statusFilter === "todos" || member.isActive === (statusFilter === "ativo")
         const matchesDepartment = departmentFilter === "todos" || member.currentRestaurantId === departmentFilter
         return matchesSearch && matchesStatus && matchesDepartment
@@ -373,7 +256,7 @@ export default function Staff() {
 
     const totalPages = Math.ceil(sortedMembers.length / itemsPerPage)
 
-    const departments = Array.from(new Set(teamMembers.map((member) => member.currentRestaurantId).filter(Boolean)))
+    const departments = Array.from(new Set(users.map((member) => member.currentRestaurantId).filter(Boolean)))
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -463,7 +346,7 @@ export default function Staff() {
         setIsEditDialogOpen(true)
     }
 
-    const handleSort = (field: keyof User) => {
+    const handleSort = (field: SortableUserFields) => {
         if (sortField === field) {
             setSortDirection(sortDirection === "asc" ? "desc" : "asc")
         } else {
@@ -503,10 +386,10 @@ export default function Staff() {
     )
 
     const stats = {
-        total: teamMembers.length,
-        active: teamMembers.filter((m) => m.isActive).length,
-        pending: teamMembers.filter((m) => !m.isActive && m.isVerified).length,
-        inactive: teamMembers.filter((m) => !m.isActive && !m.isVerified).length,
+        total: users.length,
+        active: users.filter((m) => m.isActive).length,
+        pending: users.filter((m) => !m.isActive && m.isVerified).length,
+        inactive: users.filter((m) => !m.isActive && !m.isVerified).length,
     }
 
 

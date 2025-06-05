@@ -463,7 +463,7 @@ export default function Subscription() {
                     </Alert>
 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                        <TabsList className="grid w-full grid-cols-4">
+                        <TabsList className="">
                             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
                             <TabsTrigger value="plans">Planos</TabsTrigger>
                             <TabsTrigger value="history">Histórico</TabsTrigger>

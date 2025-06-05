@@ -1,9 +1,8 @@
-
 import type React from "react"
 
 import { useState } from "react"
 import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
+import { format, addMinutes, isWithinInterval, subMinutes } from "date-fns"
 import { pt } from "date-fns/locale"
 
 import { Button } from "@/components/ui/button"
@@ -15,12 +14,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
-import {NewBooking} from "@/types/booking";
+import { NewBooking, Booking } from "@/types/booking"
+import { useGetRestaurantUpcomingBookings } from "@/api/endpoints/booking/hooks"
 
 interface NewBookingSheetProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     onSubmit: (booking: NewBooking) => void
+    restaurantId: string
 }
 
 // Mesas disponíveis
@@ -55,9 +56,11 @@ const commonOccasions = [
     "Outro",
 ]
 
-export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingSheetProps) {
+export function NewBookingSheet({ open, onOpenChange, onSubmit, restaurantId }: NewBookingSheetProps) {
+    const { data: existingBookings = [] } = useGetRestaurantUpcomingBookings({ restaurantId })
+    
     const [formData, setFormData] = useState<NewBooking>({
-        restaurantId: "rest-001",
+        restaurantId,
         tableId: "",
         startTime: "",
         endTime: "",
@@ -71,9 +74,8 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
     })
 
     const [startDate, setStartDate] = useState<Date>()
-    const [endDate, setEndDate] = useState<Date>()
     const [startTime, setStartTime] = useState("")
-    const [endTime, setEndTime] = useState("")
+    const [duration, setDuration] = useState(60) // Default duration in minutes
     const [errors, setErrors] = useState<Partial<Record<keyof NewBooking, string>>>({})
 
     const validateForm = (): boolean => {
@@ -87,7 +89,6 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
         if (!formData.occasion) newErrors.occasion = "Ocasião é obrigatória"
         if (formData.numberOfGuest < 1) newErrors.numberOfGuest = "Número de pessoas deve ser pelo menos 1"
         if (!startDate || !startTime) newErrors.startTime = "Data e hora de início são obrigatórias"
-        if (!endDate || !endTime) newErrors.endTime = "Data e hora de fim são obrigatórias"
 
         // Validar email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -96,9 +97,40 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
         }
 
         // Validar telefone português
-        const phoneRegex = /^(\+351\s?)?[0-9]{9}$/
+        const phoneRegex = /^(\+244\s?)?[0-9]{9}$/
         if (formData.phoneNumber && !phoneRegex.test(formData.phoneNumber.replace(/\s/g, ""))) {
             newErrors.phoneNumber = "Telefone inválido (formato: +351 912345678)"
+        }
+
+        // Validar sobreposição de reservas
+        if (startDate && startTime && formData.tableId) {
+            const startDateTime = new Date(startDate)
+            const [startHour, startMinute] = startTime.split(":")
+            startDateTime.setHours(Number.parseInt(startHour), Number.parseInt(startMinute))
+            
+            const endDateTime = addMinutes(startDateTime, duration)
+            
+            // Verificar sobreposição com reservas existentes
+            const hasOverlap = existingBookings.some((booking: Booking) => {
+                if (booking.tableId !== formData.tableId) return false
+                
+                const bookingStart = new Date(booking.startTime)
+                const bookingEnd = new Date(booking.endTime)
+                
+                // Adicionar 15 minutos de buffer antes e depois
+                const bookingStartWithBuffer = subMinutes(bookingStart, 15)
+                const bookingEndWithBuffer = addMinutes(bookingEnd, 15)
+                
+                return (
+                    isWithinInterval(startDateTime, { start: bookingStartWithBuffer, end: bookingEndWithBuffer }) ||
+                    isWithinInterval(endDateTime, { start: bookingStartWithBuffer, end: bookingEndWithBuffer }) ||
+                    isWithinInterval(bookingStart, { start: startDateTime, end: endDateTime })
+                )
+            })
+            
+            if (hasOverlap) {
+                newErrors.startTime = "Esta mesa já tem uma reserva neste horário"
+            }
         }
 
         setErrors(newErrors)
@@ -115,9 +147,7 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
         const [startHour, startMinute] = startTime.split(":")
         startDateTime.setHours(Number.parseInt(startHour), Number.parseInt(startMinute))
 
-        const endDateTime = new Date(endDate!)
-        const [endHour, endMinute] = endTime.split(":")
-        endDateTime.setHours(Number.parseInt(endHour), Number.parseInt(endMinute))
+        const endDateTime = addMinutes(startDateTime, duration)
 
         const bookingData: NewBooking = {
             ...formData,
@@ -131,7 +161,7 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
 
     const resetForm = () => {
         setFormData({
-            restaurantId: "rest-001",
+            restaurantId,
             tableId: "",
             startTime: "",
             endTime: "",
@@ -144,9 +174,8 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
             notes: "",
         })
         setStartDate(undefined)
-        setEndDate(undefined)
         setStartTime("")
-        setEndTime("")
+        setDuration(60)
         setErrors({})
     }
 
@@ -158,15 +187,18 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
         }
     }
 
+    const handleDurationChange = (minutes: number) => {
+        setDuration(minutes)
+    }
+
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-lg overflow-y-auto">
                 <SheetHeader>
                     <SheetTitle>Nova Reserva</SheetTitle>
                     <SheetDescription>Preencha os dados para criar uma nova reserva no restaurante.</SheetDescription>
                 </SheetHeader>
-
-                <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+                <SheetContent className="sm:max-w-lg py-8 px-4 overflow-y-auto">
+                    <form onSubmit={handleSubmit} className="space-y-6 mt-6">
                     {/* Informações do Cliente */}
                     <div className="space-y-4">
                         <h3 className="font-semibold text-lg border-b pb-2">Informações do Cliente</h3>
@@ -262,44 +294,32 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Data de Fim *</Label>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            className={cn(
-                                                "w-full justify-start text-left font-normal",
-                                                !endDate && "text-muted-foreground",
-                                                errors.endTime && "border-red-500",
-                                            )}
-                                        >
-                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {endDate ? format(endDate, "dd/MM/yyyy", { locale: pt }) : "Selecionar data"}
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0">
-                                        <Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus locale={pt} />
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="endTime">Hora de Fim *</Label>
-                                <Input
-                                    id="endTime"
-                                    type="time"
-                                    value={endTime}
-                                    onChange={(e) => setEndTime(e.target.value)}
-                                    className={errors.endTime ? "border-red-500" : ""}
-                                />
+                        <div className="space-y-2">
+                            <Label htmlFor="duration">Duração da Reserva *</Label>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDurationChange(Math.max(15, duration - 15))}
+                                >
+                                    -
+                                </Button>
+                                <div className="flex-1 text-center">
+                                    {duration} minutos
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleDurationChange(Math.min(240, duration + 15))}
+                                >
+                                    +
+                                </Button>
                             </div>
                         </div>
 
-                        {(errors.startTime || errors.endTime) && (
-                            <p className="text-sm text-red-500">{errors.startTime || errors.endTime}</p>
-                        )}
+                        {errors.startTime && <p className="text-sm text-red-500">{errors.startTime}</p>}
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
@@ -373,7 +393,7 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit }: NewBookingShee
                         </Button>
                     </div>
                 </form>
-            </SheetContent>
+                </SheetContent>
         </Sheet>
     )
 }

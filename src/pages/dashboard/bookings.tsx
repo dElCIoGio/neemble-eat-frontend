@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { format } from "date-fns"
 import { pt } from "date-fns/locale"
@@ -13,93 +12,22 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import type { Booking, NewBooking } from "@/types/booking"
 import { NewBookingSheet } from "@/components/pages/dashboard-booking/new-booking-sheet"
+import {useDashboardContext} from "@/context/dashboard-context";
+import {useGetRestaurantUpcomingBookings} from "@/api/endpoints/booking/hooks";
 
 
-const initialReservations: Booking[] = [
-    {
-        id: "1",
-        restaurantId: "rest-001",
-        firstName: "João",
-        lastName: "Silva",
-        email: "joao.silva@email.com",
-        phoneNumber: "+351 912 345 678",
-        startTime: "2024-01-15T19:30:00",
-        endTime: "2024-01-15T21:30:00",
-        numberOfGuest: 4,
-        tableId: "Mesa 12",
-        occasion: "Jantar de Aniversário",
-        notes: "Cliente prefere mesa junto à janela. Alergia a frutos do mar.",
-        createdAt: "2024-01-10T10:00:00",
-        updatedAt: "2024-01-10T10:00:00",
-    },
-    {
-        id: "2",
-        restaurantId: "rest-001",
-        firstName: "Maria",
-        lastName: "Santos",
-        email: "maria.santos@email.com",
-        phoneNumber: "+351 963 789 012",
-        startTime: "2024-01-15T20:00:00",
-        endTime: "2024-01-15T22:00:00",
-        numberOfGuest: 2,
-        tableId: "Mesa 5",
-        occasion: "Jantar Romântico",
-        notes: "Pedido especial para decoração da mesa.",
-        createdAt: "2024-01-11T14:30:00",
-        updatedAt: "2024-01-11T14:30:00",
-    },
-    {
-        id: "3",
-        restaurantId: "rest-001",
-        firstName: "Carlos",
-        lastName: "Ferreira",
-        email: "carlos.ferreira@email.com",
-        phoneNumber: "+351 934 567 890",
-        startTime: "2024-01-16T12:30:00",
-        endTime: "2024-01-16T14:30:00",
-        numberOfGuest: 6,
-        tableId: "Mesa 8",
-        occasion: "Almoço de Negócios",
-        notes: "Grupo empresarial. Necessita de ambiente mais reservado.",
-        createdAt: "2024-01-12T09:15:00",
-        updatedAt: "2024-01-12T09:15:00",
-    },
-    {
-        id: "4",
-        restaurantId: "rest-001",
-        firstName: "Ana",
-        lastName: "Costa",
-        email: "ana.costa@email.com",
-        phoneNumber: "+351 987 654 321",
-        startTime: "2024-01-16T19:00:00",
-        endTime: "2024-01-16T21:00:00",
-        numberOfGuest: 3,
-        tableId: "Mesa 3",
-        occasion: "Jantar em Família",
-        notes: "Uma criança de 5 anos no grupo.",
-        createdAt: "2024-01-13T16:45:00",
-        updatedAt: "2024-01-13T16:45:00",
-    },
-    {
-        id: "5",
-        restaurantId: "rest-001",
-        firstName: "Pedro",
-        lastName: "Oliveira",
-        email: "pedro.oliveira@email.com",
-        phoneNumber: "+351 912 876 543",
-        startTime: "2024-01-17T20:30:00",
-        endTime: "2024-01-17T22:30:00",
-        numberOfGuest: 8,
-        tableId: "Mesa 15",
-        occasion: "Celebração",
-        notes: "Festa de despedida de solteiro. Grupo animado.",
-        createdAt: "2024-01-14T11:20:00",
-        updatedAt: "2024-01-14T11:20:00",
-    },
-]
 
 export default function ReservationsPage() {
-    const [reservations, setReservations] = useState<Booking[]>(initialReservations)
+
+    const { restaurant } = useDashboardContext()
+
+    const {
+        data: bookings
+    } = useGetRestaurantUpcomingBookings({ restaurantId: restaurant._id })
+
+    console.log(bookings)
+
+    const [reservations, setReservations] = useState<Booking[]>(bookings? bookings : [])
     const [selectedReservation, setSelectedReservation] = useState<Booking | null>(null)
     const [searchTerm, setSearchTerm] = useState("")
     const [filterByGuests, setFilterByGuests] = useState<string>("all")
@@ -121,6 +49,8 @@ export default function ReservationsPage() {
         return matchesSearch && matchesGuestFilter
     })
 
+
+
     const handleReservationClick = (reservation: Booking) => {
         setSelectedReservation(reservation)
         setIsSheetOpen(true)
@@ -132,6 +62,7 @@ export default function ReservationsPage() {
             id: `booking-${Date.now()}`,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
+            status: "upcoming"
         }
 
         setReservations((prev) => [booking, ...prev])
@@ -245,113 +176,121 @@ export default function ReservationsPage() {
 
             {/* Sheet com Detalhes da Reserva */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetContent className="sm:max-w-md">
-                    <SheetHeader>
+
+                    <SheetHeader className="px-4">
                         <SheetTitle>Detalhes da Reserva</SheetTitle>
                         <SheetDescription>Informações completas sobre a reserva selecionada.</SheetDescription>
                     </SheetHeader>
+                    <SheetContent className="sm:px-4 flex flex-col py-8">
+                        <div className="overflow-auto">
+                        {selectedReservation && (
+                            <div className="space-y-6">
+                                {/* Informações do Cliente */}
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-lg border-b pb-2">Informações do Cliente</h3>
 
-                    {selectedReservation && (
-                        <div className="space-y-6 mt-6">
-                            {/* Informações do Cliente */}
-                            <div className="space-y-4">
-                                <h3 className="font-semibold text-lg border-b pb-2">Informações do Cliente</h3>
-
-                                <div className="space-y-3">
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Nome Completo</Label>
-                                        <p className="text-sm font-medium">
-                                            {selectedReservation.firstName} {selectedReservation.lastName}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Contacto Telefónico</Label>
-                                        <div className="flex items-center gap-2">
-                                            <Phone className="h-4 w-4 text-muted-foreground" />
-                                            <p className="text-sm">{selectedReservation.phoneNumber}</p>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Nome Completo</Label>
+                                            <p className="text-sm font-medium">
+                                                {selectedReservation.firstName} {selectedReservation.lastName}
+                                            </p>
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Email</Label>
-                                        <div className="flex items-center gap-2">
-                                            <Mail className="h-4 w-4 text-muted-foreground" />
-                                            <p className="text-sm">{selectedReservation.email}</p>
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Contacto Telefónico</Label>
+                                            <div className="flex items-center gap-2">
+                                                <Phone className="text-purple-600 h-4 w-4" />
+                                                <p className="text-sm">{selectedReservation.phoneNumber}</p>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+                                            <div className="flex items-center gap-2">
+                                                <Mail className="text-purple-600 h-4 w-4" />
+                                                <p className="text-sm">{selectedReservation.email}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Detalhes da Reserva */}
-                            <div className="space-y-4">
-                                <h3 className="font-semibold text-lg border-b pb-2">Detalhes da Reserva</h3>
+                                {/* Detalhes da Reserva */}
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-lg border-b pb-2">Detalhes da Reserva</h3>
 
-                                <div className="space-y-3">
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Data e Hora de Início</Label>
-                                        <div className="flex items-center gap-2">
-                                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                                            <p className="text-sm">
-                                                {format(new Date(selectedReservation.startTime), "dd/MM/yyyy 'às' HH:mm", { locale: pt })}
-                                            </p>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Data e Hora de Início</Label>
+                                            <div className="flex items-center gap-2">
+                                                <Calendar className="text-purple-600 h-4 w-4 " />
+                                                <p className="text-sm">
+                                                    {format(new Date(selectedReservation.startTime), "dd/MM/yyyy 'às' HH:mm", { locale: pt })}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Data e Hora de Fim</Label>
-                                        <div className="flex items-center gap-2">
-                                            <Clock className="h-4 w-4 text-muted-foreground" />
-                                            <p className="text-sm">
-                                                {format(new Date(selectedReservation.endTime), "dd/MM/yyyy 'às' HH:mm", { locale: pt })}
-                                            </p>
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Data e Hora de Fim</Label>
+                                            <div className="flex items-center gap-2">
+                                                <Clock className="text-purple-600 h-4 w-4" />
+                                                <p className="text-sm">
+                                                    {format(new Date(selectedReservation.endTime), "dd/MM/yyyy 'às' HH:mm", { locale: pt })}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Número de Pessoas</Label>
-                                        <div className="flex items-center gap-2">
-                                            <Users className="h-4 w-4 text-muted-foreground" />
-                                            <p className="text-sm">{selectedReservation.numberOfGuest} pessoa(s)</p>
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Número de Pessoas</Label>
+                                            <div className="flex items-center gap-2">
+                                                <Users className="text-purple-600 h-4 w-4 " />
+                                                <p className="text-sm">{selectedReservation.numberOfGuest} pessoa(s)</p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Mesa Reservada</Label>
-                                        <div className="flex items-center gap-2">
-                                            <MapPin className="h-4 w-4 text-muted-foreground" />
-                                            <p className="text-sm">{selectedReservation.tableId}</p>
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Mesa Reservada</Label>
+                                            <div className="flex items-center gap-2">
+                                                <MapPin className="h-4 w-4 text-purple-600" />
+                                                <p className="text-sm">{selectedReservation.tableId}</p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Ocasião</Label>
-                                        <p className="text-sm">{selectedReservation.occasion}</p>
-                                    </div>
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Ocasião</Label>
+                                            <p className="text-sm">{selectedReservation.occasion}</p>
+                                        </div>
 
-                                    <div>
-                                        <Label className="text-sm font-medium text-muted-foreground">Notas</Label>
-                                        <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md">{selectedReservation.notes}</p>
+                                        <div>
+                                            <Label className="text-sm font-medium text-muted-foreground">Notas</Label>
+                                            <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md">{selectedReservation.notes}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Botões de Ação */}
-                            <div className="space-y-3 pt-4 border-t">
-                                <Button className="w-full" variant="default">
-                                    Editar Reserva
-                                </Button>
-                                <Button className="w-full" variant="destructive">
-                                    Cancelar Reserva
-                                </Button>
+                                {/* Botões de Ação */}
+                                <div className="space-y-3 pt-4 border-t">
+                                    <Button className="w-full" variant="default">
+                                        Editar Reserva
+                                    </Button>
+                                    <Button className="w-full" variant="destructive">
+                                        Cancelar Reserva
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </SheetContent>
+                        )}
+                    </div>
+
+                    </SheetContent>
             </Sheet>
 
             {/* Nova Reserva Sheet */}
-            <NewBookingSheet open={isNewBookingOpen} onOpenChange={setIsNewBookingOpen} onSubmit={handleNewBooking} />
+            <NewBookingSheet 
+                open={isNewBookingOpen} 
+                onOpenChange={setIsNewBookingOpen} 
+                onSubmit={handleNewBooking}
+                restaurantId={restaurant._id}
+            />
         </div>
     )
 }

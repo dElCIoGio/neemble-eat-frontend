@@ -2,16 +2,7 @@ import * as z from "zod"
 
 export const signupSchema = z
     .object({
-        firstName: z.string().min(2, {
-            message: "O nome deve ter pelo menos 2 caracteres",
-        }),
-        lastName: z.string().min(2, {
-            message: "O sobrenome deve ter pelo menos 2 caracteres",
-        }),
         email: z.string().email({ message: "Por favor, digite um email válido" }),
-        phone: z.string().min(10, {
-            message: "Por favor, digite um número de telefone válido",
-        }),
         password: z
             .string()
             .min(8, {

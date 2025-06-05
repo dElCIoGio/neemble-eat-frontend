@@ -9,14 +9,22 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {useDashboardContext} from "@/context/dashboard-context";
+import RestaurantSelection from "@/components/layout/dashboard/components/restaurant-selection";
+import {Link} from "react-router";
+import {useAuth} from "@/context/auth-context";
 
 
 function DashboardNavbar() {
 
     const isMobile = useIsMobile()
     const { open, toggleSidebar } = useSidebar()
-
+    const {
+        user
+    } = useDashboardContext()
+    const {
+        logout
+    } = useAuth()
 
     return (
         <header className="w-full h-16 bg-zinc-50/50 backdrop-blur-md sticky top-0 z-10">
@@ -34,24 +42,13 @@ function DashboardNavbar() {
                             <SidebarTrigger/>
                         )
                     }
-
-                    <Select>
-                        <SelectTrigger className=" bg-white rounded-full">
-                            <SelectValue placeholder="Selecione o restaurante" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl">
-                            <SelectItem className="rounded-lg" value="light">Light</SelectItem>
-                            <SelectItem className="rounded-lg" value="dark">Dark</SelectItem>
-                            <SelectItem className="rounded-lg" value="system">System</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <RestaurantSelection/>
                 </div>
 
 
                 {/* Right side - Actions */}
                 <div className="flex items-center gap-2 ml-auto">
 
-                    {/* User dropdown */}
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -60,7 +57,7 @@ function DashboardNavbar() {
                                     <Avatar className="w-8 h-8">
                                         <AvatarImage src="/profile-pic.jpg" alt="User"/>
                                         <AvatarFallback>
-                                            DA
+                                            {user.firstName.toUpperCase()[0] + user.lastName.toUpperCase()[0]}
                                         </AvatarFallback>
                                     </Avatar>
                                 </div>
@@ -74,15 +71,17 @@ function DashboardNavbar() {
                                              className="w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md">
                             <DropdownMenuItem className="flex items-center space-x-2">
                                 <User size={18}/>
-                                <span>Profile</span>
+                                <span>Perfil</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="flex items-center space-x-2">
-                                <Settings size={18}/>
-                                <span>Settings</span>
+                            <DropdownMenuItem asChild className="flex items-center space-x-2">
+                                <Link to="/dashboard/settings">
+                                    <Settings size={18}/>
+                                    <span>Definições</span>
+                                </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="flex items-center space-x-2 text-red-500">
+                            <DropdownMenuItem onClick={logout} className="flex items-center space-x-2 text-red-500">
                                 <LogOut size={18}/>
-                                <span>Logout</span>
+                                <span>Terminar Sessão</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

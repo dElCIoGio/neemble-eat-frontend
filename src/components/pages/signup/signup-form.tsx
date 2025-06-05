@@ -1,6 +1,9 @@
 
 import type React from "react"
-
+import {
+    Eye,
+    EyeClosed
+} from "@phosphor-icons/react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -9,9 +12,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import {SignupFormValues, signupSchema} from "@/lib/schemas/auth";
-import {registerWithEmail} from "@/lib/auth";
 import {useNavigate} from "react-router";
-import {GoogleAuthProvider, signInWithPopup} from "firebase/auth";
+import {createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
 import {auth} from "@/firebase/config";
 
 interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -19,16 +21,17 @@ interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
 }
 
 export function SignupForm({ className, ...props }: SignupFormProps) {
+
+
+    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
+    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const navigate = useNavigate()
     const form = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
-            firstName: "",
-            lastName: "",
             email: "",
-            phone: "",
             password: "",
             confirmPassword: "",
         },
@@ -41,19 +44,28 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
             navigate("/onboarding")
         });
     }
+    
+    function togglePasswordVisibility() {
+        setIsPasswordVisible(!isPasswordVisible)
+    }
+    
+    function toggleConfirmPasswordVisibility() {
+        setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+    }
 
     function onSubmit(data: SignupFormValues) {
         setIsLoading(true)
-        const { email, password, lastName, phone, firstName } = data
-        registerWithEmail({password, email, lastName, phoneNumber: phone, firstName})
-            .then(() => {
-                navigate("/dashboard")
-                setIsLoading(false)
-            })
-            .catch(() => {
-                setIsLoading(false)
-            })
-
+        const { email, password } = data
+        createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+        ).then(() => {
+            navigate("/onboarding")
+            setIsLoading(false)
+        }).catch(() => {
+            setIsLoading(false)
+        })
     }
 
     return (
@@ -66,34 +78,6 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
             </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <FormField
-                            control={form.control}
-                            name="firstName"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Nome</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="João" disabled={isLoading} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="lastName"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Sobrenome</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Silva" disabled={isLoading} {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
                     <FormField
                         control={form.control}
                         name="email"
@@ -115,38 +99,61 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
                     />
                     <FormField
                         control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Telefone</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="(11) 98765-4321" type="tel" autoComplete="tel" disabled={isLoading} {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
                         name="password"
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Senha</FormLabel>
                                 <FormControl>
-                                    <Input type="password" autoComplete="new-password" disabled={isLoading} {...field} />
+                                    <div className="relative">
+                                        <Input
+                                            placeholder="******"
+                                            type={isPasswordVisible ? "text" : "password"}
+                                            autoComplete="new-password"
+                                            disabled={isLoading}
+                                            {...field}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={togglePasswordVisibility}
+                                            className="absolute right-2 top-1/2 text-zinc-400 hover:bg-transparent -translate-y-1/2"
+                                            tabIndex={-1}
+                                        >
+                                            {isPasswordVisible ? <Eye/> : <EyeClosed/>}
+                                        </Button>
+                                    </div>
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="confirmPassword"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Confirme a Senha</FormLabel>
                                 <FormControl>
-                                    <Input type="password" autoComplete="new-password" disabled={isLoading} {...field} />
+                                    <div className="relative">
+                                        <Input
+                                            placeholder="******"
+                                            type={isConfirmPasswordVisible ? "text" : "password"}
+                                            autoComplete="new-password"
+                                            disabled={isLoading}
+                                            {...field}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={toggleConfirmPasswordVisibility}
+                                            className="absolute right-2 top-1/2 text-zinc-400 hover:bg-transparent -translate-y-1/2"
+                                            tabIndex={-1}
+                                        >
+                                            {isConfirmPasswordVisible ? <Eye/> : <EyeClosed/>}
+                                        </Button>
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

@@ -118,11 +118,13 @@ export default function DashboardSidebar() {
                     <SidebarGroupLabel className="text-primary">Menu</SidebarGroupLabel>
                     <SidebarMenu>
                         {navigation.map((item) => (
-                            <SidebarMenuItem className={`${item.href == route? "bg-zinc-100 font-semibold border-[1px] flex rounded-full" : "rounded-full text-zinc-400"}`} key={item.label}>
-                                <SidebarMenuButton className="rounded-full flex mx-auto" asChild>
+                            <SidebarMenuItem className={`${item.href == route? "bg-purple-50 flex rounded-full " : "rounded-full text-zinc-400 hover"} transition-all duration-150 ease-in-out`} key={item.label}>
+                                <SidebarMenuButton className={`rounded-full flex mx-auto ${item.href == route? "hover:bg-purple-100":""} transition-all duration-150 ease-in-out`} asChild>
                                     <button onClick={() => handlePageChange(item.href)} className={`flex ${!open && !isMobile && "justify-center"} gap-2`}>
-                                        <item.icon className={`${!open ? "ml-2": "ml-0"} ${route == item.href && ""} transition-all duration-100 ease-in-out h-4 w-4`}/>
-                                        <span className={`${!open && ""}`}>{item.label}</span>
+                                        <item.icon className={`${!open ? "ml-2": "ml-0"} ${route == item.href && " text-purple-900"} transition-all duration-100 ease-in-out h-4 w-4`}/>
+                                        <span className={`${route == item.href && " text-purple-900"} `}>
+                                            {item.label}
+                                        </span>
                                     </button>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -132,7 +134,7 @@ export default function DashboardSidebar() {
             </SidebarContent>
             <SidebarFooter className={`${ !isMobile && open? "opacity-100" : "opacity-0"} transition-opacity duration-300 ease-in-out bg-white`}>
                 <div className="bg-primary mx-auto w-full rounded-md h-28 p-3 flex flex-col justify-between">
-                    <p className="text-zinc-200 text-xs font-semibold">
+                    <p className="text-zinc-200 text-xs">
                         Looking for more detailed analytics to help you? Upgrade to Pro
                     </p>
                     <Button variant="outline" size="sm">

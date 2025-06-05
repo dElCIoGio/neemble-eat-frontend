@@ -168,3 +168,31 @@
 .notion-image {
   @apply my-4 mx-auto max-w-[300px] rounded;
 }
+
+
+@theme {
+  --animate-shine: shine 3s ease-out infinite;
+  --animate-gradient-flow: gradientFlow 10s ease 0s infinite normal none running;
+
+  @keyframes shine {
+    0% {
+      background-position: 200% 0;
+    }
+    25%,
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  @keyframes gradientFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+}

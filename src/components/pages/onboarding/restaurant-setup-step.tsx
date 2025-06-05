@@ -23,7 +23,19 @@ export function RestaurantSetupStep({ onNext, onBack }: RestaurantSetupStepProps
         address: "",
         description: "",
         phoneNumber: "",
-        bannerFile: new File([], "")
+        bannerFile: new File([], ""),
+        logoFile: new File([], ""),
+        settings: {
+            openingHours: {
+                friday: "",
+                saturday: "",
+                monday: "",
+                thursday: "",
+                tuesday: "",
+                wednesday: "",
+                sunday: "",
+            }
+        }
     })
 
     const handleRestaurantDataChange = (field: keyof RestaurantCreate, value: string | File) => {

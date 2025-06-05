@@ -1,5 +1,4 @@
-
-import type React from "react"
+import React from "react"
 
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -9,6 +8,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
+import {signInWithEmailAndPassword} from "firebase/auth";
+import { auth } from "@/firebase/config";
+import {authApi} from "@/api/endpoints/auth/endpoints";
+import {userApi} from "@/api/endpoints/user/endpoints";
+import {toast} from "sonner";
+import {useNavigate} from "react-router";
+import {Eye, EyeClosed} from "@phosphor-icons/react";
+
+
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string
@@ -16,6 +24,8 @@ interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
     const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
 
     const form = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
@@ -25,13 +35,40 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         },
     })
 
+    function togglePasswordVisibility() {
+        setIsPasswordVisible(!isPasswordVisible)
+    }
+
+    const navigate = useNavigate()
+
     async function onSubmit(data: LoginFormValues): Promise<void> {
         setIsLoading(true)
-        // In a real application, you would handle authentication here
-        console.log(data)
-        setTimeout(() => {
+
+        try {
+            const credential = await signInWithEmailAndPassword(auth, data.email, data.password)
+            const token = await credential.user.getIdToken()
+            
+            await authApi.login({ idToken: token })
+            toast.success("Login realizado com sucesso")
+
+            const exists = await userApi.userExists()
+            if (!exists) {
+                toast.error("Deve completar o onboarding para poder continuar")
+                navigate("/onboarding")
+            } else {
+                navigate("/dashboard")
+            }
+        } catch (e: unknown) {
+            const error = e as Error
+            if (error.message === "Firebase: Error (auth/invalid-credential).")
+                toast.error("Palavra passe ou email errados. Tente novamente.")
+            else if (error.message === "Firebase: Error (auth/user-not-found).")
+                toast.error("Usuário não encontrado. Tente novamente.")
+            else
+                toast.error("Erro ao fazer login. Verifique suas credenciais.")
+        } finally {
             setIsLoading(false)
-        }, 1000)
+        }
     }
 
     return (
@@ -73,16 +110,35 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                                     </a>
                                 </div>
                                 <FormControl>
-                                    <Input type="password" autoComplete="current-password" disabled={isLoading} {...field} />
+                                    <div className="relative">
+                                        <Input
+                                            placeholder="******"
+                                            type={isPasswordVisible ? "text" : "password"}
+                                            autoComplete="new-password"
+                                            disabled={isLoading}
+                                            {...field}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={togglePasswordVisibility}
+                                            className="absolute right-2 top-1/2 text-zinc-400 hover:bg-transparent -translate-y-1/2"
+                                            tabIndex={-1}
+                                        >
+                                            {isPasswordVisible ? <Eye/> : <EyeClosed/>}
+                                        </Button>
+                                    </div>
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
                     <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? "Entrando..." : "Entrar"}
                     </Button>
-                    <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
+                    <div
+                        className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                         <span className="relative z-10 bg-background px-2 text-muted-foreground">Ou continue com</span>
                     </div>
                     <Button variant="outline" className="w-full" type="button">

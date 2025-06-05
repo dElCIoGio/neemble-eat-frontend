@@ -7,6 +7,11 @@ import {RestaurantSetupStep} from "@/components/pages/onboarding/restaurant-setu
 import {DataConfirmationStep} from "@/components/pages/onboarding/data-confirmation-step";
 import { OnboardingLayout } from "@/components/layout/onboarding/onboarding-layout";
 import {User} from "@/types/user";
+import {auth} from "@/firebase/config";
+import {Navigate, useNavigate} from "react-router";
+import {authApi} from "@/api/endpoints/auth/endpoints";
+import {toast} from "sonner";
+import {OnboardingContext} from "@/context/onboarding-context";
 
 // Mock function to check if user exists - replace with your actual implementation
 async function userExists(): Promise<{ exists: boolean; userData?: User }> {
@@ -18,6 +23,11 @@ export default function OnboardingPage() {
     const [currentStep, setCurrentStep] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [userExistsFlag, setUserExistsFlag] = useState(false)
+
+    const navigate = useNavigate();
+
+    const user = auth.currentUser
+    
     const [userData, setUserData] = useState<Partial<User>>({
         firstName: "",
         lastName: "",
@@ -72,6 +82,36 @@ export default function OnboardingPage() {
     const updateUserData = (data: Partial<User>) => {
         setUserData((prev) => ({ ...prev, ...data }))
     }
+    
+    const handleSubmit = () => {
+        if (!user) navigate("/auth/login");
+        
+        const {
+            firstName,
+            lastName,
+            phoneNumber,
+            email
+        } = userData;
+
+        if (user && firstName && lastName && phoneNumber && email) {
+            user.getIdToken()
+                .then((token) => {
+                    authApi.register({
+                        idToken: token,
+                        userData: {
+                            firstName,
+                            lastName,
+                            email,
+                            phoneNumber,
+                        }
+                    })
+                }).then(() => {
+                    navigate("/dashboard")
+                })
+        } else {
+            toast.error("Preencha todos os campos para poder avançar.")
+        }
+    }
 
     // Define total steps based on whether user exists
     const totalSteps = userExistsFlag ? 3 : 4
@@ -81,44 +121,49 @@ export default function OnboardingPage() {
         return <LoadingScreen />
     }
 
+    if (!user) {
+        return <Navigate to="/auth/login"/>
+    }
+
     return (
-        <OnboardingLayout>
-            <OnboardingProgress currentStep={currentStep} totalSteps={totalSteps} />
+        <OnboardingContext value={{
+            handleSubmit
+        }}>
+            <OnboardingLayout>
+                <OnboardingProgress currentStep={currentStep} totalSteps={totalSteps} />
 
-            {/* Step 0: User Info (only if user doesn't exist) */}
-            {!userExistsFlag && currentStep === 0 && (
-                <UserInfoStep userData={userData as User} updateUserData={updateUserData} onNext={nextStep} />
-            )}
+                {/* Step 0: User Info (only if user doesn't exist) */}
+                {!userExistsFlag && currentStep === 0 && (
+                    <UserInfoStep userData={userData as User} updateUserData={updateUserData} onNext={nextStep} />
+                )}
 
-            {/* Step 1: Welcome */}
-            {currentStep === 1 && (
-                <WelcomeStep
-                    firstName={userData.firstName || ""}
-                    onNext={nextStep}
-                />
-            )}
+                {/* Step 1: Welcome */}
+                {currentStep === 1 && (
+                    <WelcomeStep
+                        firstName={userData.firstName || ""}
+                        onNext={nextStep}
+                    />
+                )}
 
-            {/* Step 2: Restaurant Setup */}
-            {currentStep === 2 && (
-                <RestaurantSetupStep 
-                    userData={userData as User} 
-                    updateUserData={updateUserData} 
-                    onNext={nextStep} 
-                    onBack={prevStep} 
-                />
-            )}
+                {/* Step 2: Restaurant Setup */}
+                {currentStep === 2 && (
+                    <RestaurantSetupStep
+                        userData={userData as User}
+                        updateUserData={updateUserData}
+                        onNext={nextStep}
+                        onBack={prevStep}
+                    />
+                )}
 
-            {/* Step 3: Data Confirmation */}
-            {currentStep === 3 && (
-                <DataConfirmationStep
-                    userData={userData as User}
-                    onBack={prevStep}
-                    onComplete={() => {
-                        // Handle completion - e.g., redirect to dashboard
-                        window.location.href = "/dashboard"
-                    }}
-                />
-            )}
-        </OnboardingLayout>
+                {/* Step 3: Data Confirmation */}
+                {currentStep === 3 && (
+                    <DataConfirmationStep
+                        userData={userData as User}
+                        onBack={prevStep}
+
+                    />
+                )}
+            </OnboardingLayout>
+        </OnboardingContext>
     )
 }

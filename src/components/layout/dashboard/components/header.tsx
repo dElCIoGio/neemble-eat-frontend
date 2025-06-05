@@ -3,7 +3,11 @@ import {Card} from "@/components/ui/card";
 
 function Header() {
 
-    const { page } = useDashboardContext();
+    const { page, user } = useDashboardContext();
+
+    const excludeHeaderPaths = [
+        "create-restaurant",
+    ]
 
     const getPageTitle = () => {
         switch (page) {
@@ -31,7 +35,7 @@ function Header() {
     const getPageSubtitle = () => {
         switch (page) {
             case '':
-                return 'Seja bem vindo ao seu painel de controle';
+                return `Ola, ${user.firstName}! Seja bem vindo ao seu painel de controle`;
             case 'menu':
                 return 'Manage your restaurant menus, categories, and items';
             case 'qrcode':
@@ -49,6 +53,10 @@ function Header() {
             case "stock":
                 return "Gerencie o stock do restaurante"
         }
+    }
+
+    if (excludeHeaderPaths.includes(page)) {
+        return <div></div>
     }
 
     return (
