@@ -18,6 +18,7 @@ export const getEnv = (): Env => {
         const isProd = import.meta.env.MODE === 'production';
 
         console.log("VITE:", import.meta.env);
+
         console.log("RUNTIME:", window.ENV);
 
         if (isProd && typeof window !== 'undefined' && window.ENV) {
