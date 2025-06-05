@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 import {useIsMobile} from "@/hooks/use-mobile";
 import {Button} from "@/components/ui/button";
+import {useDashboardContext} from "@/context/dashboard-context";
 
 const navigation: {
     label: string,
@@ -81,6 +82,8 @@ export default function DashboardSidebar() {
 
     const location = useLocation();
 
+    const { restaurant } = useDashboardContext()
+
     const {open, toggleSidebar} = useSidebar()
 
     const route = location.pathname.split("/")[2] || "";
@@ -119,7 +122,7 @@ export default function DashboardSidebar() {
                     <SidebarMenu>
                         {navigation.map((item) => (
                             <SidebarMenuItem className={`${item.href == route? "bg-purple-50 flex rounded-full " : "rounded-full text-zinc-400 hover"} transition-all duration-150 ease-in-out`} key={item.label}>
-                                <SidebarMenuButton className={`rounded-full flex mx-auto ${item.href == route? "hover:bg-purple-100":""} transition-all duration-150 ease-in-out`} asChild>
+                                <SidebarMenuButton disabled={restaurant._id == "notfound"} className={`rounded-full flex mx-auto ${item.href == route? "hover:bg-purple-100":""} transition-all duration-150 ease-in-out`} asChild>
                                     <button onClick={() => handlePageChange(item.href)} className={`flex ${!open && !isMobile && "justify-center"} gap-2`}>
                                         <item.icon className={`${!open ? "ml-2": "ml-0"} ${route == item.href && " text-purple-900"} transition-all duration-100 ease-in-out h-4 w-4`}/>
                                         <span className={`${route == item.href && " text-purple-900"} `}>

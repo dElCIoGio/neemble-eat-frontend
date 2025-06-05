@@ -48,6 +48,7 @@ import {
     useGetSessionDurationSummary,
     useGetActiveSessionsSummary, useGetLastSevenDaysCount
 } from "@/api/endpoints/analytics/hooks";
+import WelcomePage from "@/components/layout/dashboard/components/welcome";
 
 
 // Dados mockados com tipos
@@ -521,6 +522,10 @@ export default function RestaurantDashboard(): JSX.Element {
             </CardContent>
         </Card>
     )
+
+    if (restaurant._id == "notfound"){
+        return <WelcomePage/>
+    }
 
     return (
         <div className="">

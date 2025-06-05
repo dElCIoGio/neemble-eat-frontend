@@ -63,7 +63,7 @@ function DashboardNavbar() {
                                 </div>
 
                                 <span
-                                    className="text-gray-700 dark:text-white font-medium hidden md:block">Delcio</span>
+                                    className="text-gray-700 dark:text-white font-medium hidden md:block">{user.firstName}</span>
                                 <ChevronDown size={18} className="text-gray-500 dark:text-gray-400 hidden md:block"/>
                             </Button>
                         </DropdownMenuTrigger>

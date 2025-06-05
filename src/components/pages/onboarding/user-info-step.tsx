@@ -107,26 +107,6 @@ export function UserInfoStep({ userData, updateUserData, onNext }: UserInfoStepP
 
                     <FormField
                         control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="seu@email.com"
-                                        type="email"
-                                        autoComplete="email"
-                                        disabled={isLoading}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
                         name="phoneNumber"
                         render={({ field }) => (
                             <FormItem>

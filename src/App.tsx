@@ -48,7 +48,11 @@ function App() {
                     <Route path=":articleId" element={<ArticlePage/>}/>
                 </Route>
 
-                <Route path="onboarding" element={<OnboardingPage/>}/>
+                <Route element={<ProtectedRoute/>}>
+                    <Route path="onboarding" element={<OnboardingPage/>}/>
+                </Route>
+
+
             </Route>
 
             {/* Dashboard */}

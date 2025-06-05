@@ -18,7 +18,8 @@ export function useGetSalesSummary(params: SalesSummaryProps){
     return useQuery({
         queryKey,
         queryFn: () => analyticsApi.getSalesSummary(params)
-            .then(data => data)
+            .then(data => data),
+        enabled: params.restaurantId != "notfound",
     })
 
 }
@@ -42,7 +43,9 @@ export function useGetOrdersSummary(params: OrdersSummaryProps){
 
     return useQuery({
         queryKey,
-        queryFn: () => analyticsApi.getOrdersSummary(params)
+        queryFn: () => analyticsApi.getOrdersSummary(params),
+        enabled: params.restaurantId != "notfound",
+
     })
 
 }
@@ -54,7 +57,9 @@ export function useGetTopItemsSummary(params: TopItemsSummaryProps){
 
     return useQuery({
         queryKey,
-        queryFn: () => analyticsApi.getTopItemsSummary(params)
+        queryFn: () => analyticsApi.getTopItemsSummary(params),
+        enabled: params.restaurantId != "notfound",
+
     })
 
 }
@@ -66,7 +71,9 @@ export function useGetCancelledOrdersSummary(params: CancelledOrdersSummaryProps
 
     return useQuery({
         queryKey,
-        queryFn: () => analyticsApi.getCancelledOrdersSummary(params)
+        queryFn: () => analyticsApi.getCancelledOrdersSummary(params),
+        enabled: params.restaurantId != "notfound",
+
 
     })
 
@@ -78,7 +85,9 @@ export function useGetSessionDurationSummary(params: SessionDurationSummaryProps
 
     return useQuery({
         queryKey,
-        queryFn: () => analyticsApi.getSessionDurationSummary(params)
+        queryFn: () => analyticsApi.getSessionDurationSummary(params),
+        enabled: params.restaurantId != "notfound",
+
     })
 
 }
@@ -89,7 +98,9 @@ export function useGetActiveSessionsSummary(params: ActiveSessionsSummaryProps){
 
     return useQuery({
         queryKey,
-        queryFn: () => analyticsApi.getActiveSessionsSummary(params)
+        queryFn: () => analyticsApi.getActiveSessionsSummary(params),
+        enabled: params.restaurantId != "notfound",
+
     })
 
 }
@@ -100,7 +111,9 @@ export function useGetLastSevenDaysCount (params: LastSevenDaysCount){
 
     return useQuery({
         queryKey,
-        queryFn: () => analyticsApi.getLastSevenDaysCount(params)
+        queryFn: () => analyticsApi.getLastSevenDaysCount(params),
+        enabled: params.restaurantId != "notfound",
+
     })
 
 }

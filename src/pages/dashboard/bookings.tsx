@@ -25,7 +25,6 @@ export default function ReservationsPage() {
         data: bookings
     } = useGetRestaurantUpcomingBookings({ restaurantId: restaurant._id })
 
-    console.log(bookings)
 
     const [reservations, setReservations] = useState<Booking[]>(bookings? bookings : [])
     const [selectedReservation, setSelectedReservation] = useState<Booking | null>(null)

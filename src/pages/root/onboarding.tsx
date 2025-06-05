@@ -3,15 +3,14 @@ import {LoadingScreen} from "@/components/pages/onboarding/loading-screen";
 import {OnboardingProgress} from "@/components/pages/onboarding/onboarding-progress";
 import {UserInfoStep} from "@/components/pages/onboarding/user-info-step";
 import {WelcomeStep} from "@/components/pages/onboarding/welcome-step";
-import {RestaurantSetupStep} from "@/components/pages/onboarding/restaurant-setup-step";
 import {DataConfirmationStep} from "@/components/pages/onboarding/data-confirmation-step";
 import { OnboardingLayout } from "@/components/layout/onboarding/onboarding-layout";
 import {User} from "@/types/user";
-import {auth} from "@/firebase/config";
 import {Navigate, useNavigate} from "react-router";
 import {authApi} from "@/api/endpoints/auth/endpoints";
 import {toast} from "sonner";
 import {OnboardingContext} from "@/context/onboarding-context";
+import {useAuth} from "@/context/auth-context";
 
 // Mock function to check if user exists - replace with your actual implementation
 async function userExists(): Promise<{ exists: boolean; userData?: User }> {
@@ -26,12 +25,12 @@ export default function OnboardingPage() {
 
     const navigate = useNavigate();
 
-    const user = auth.currentUser
+    const {user} = useAuth()
     
     const [userData, setUserData] = useState<Partial<User>>({
         firstName: "",
         lastName: "",
-        email: "",
+        email: user?.email? user.email: "",
         phoneNumber: "",
         memberships: [],
         isAdmin: false,
@@ -114,7 +113,7 @@ export default function OnboardingPage() {
     }
 
     // Define total steps based on whether user exists
-    const totalSteps = userExistsFlag ? 3 : 4
+    const totalSteps = 3
 
     // Show loading screen while checking user status
     if (isLoading) {
@@ -145,18 +144,9 @@ export default function OnboardingPage() {
                     />
                 )}
 
-                {/* Step 2: Restaurant Setup */}
-                {currentStep === 2 && (
-                    <RestaurantSetupStep
-                        userData={userData as User}
-                        updateUserData={updateUserData}
-                        onNext={nextStep}
-                        onBack={prevStep}
-                    />
-                )}
 
                 {/* Step 3: Data Confirmation */}
-                {currentStep === 3 && (
+                {currentStep === 2 && (
                     <DataConfirmationStep
                         userData={userData as User}
                         onBack={prevStep}
