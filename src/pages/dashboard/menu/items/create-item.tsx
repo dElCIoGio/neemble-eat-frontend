@@ -27,10 +27,10 @@ const mockCategories = [
 ]
 
 const limitTypeOptions: { value: LimitType; label: string; description: string }[] = [
-    { value: "UP_TO", label: "Up to", description: "Customer can select up to X options" },
-    { value: "EXACTLY", label: "Exactly", description: "Customer must select exactly X options" },
-    { value: "AT_LEAST", label: "At least", description: "Customer must select at least X options" },
-    { value: "ALL", label: "All", description: "Customer must select all options" },
+    { value: "UP_TO", label: "Até", description: "O cliente pode selecionar até X opções" },
+    { value: "EXACTLY", label: "Exatamente", description: "O cliente deve selecionar exatamente X opções" },
+    { value: "AT_LEAST", label: "Pelo menos", description: "O cliente deve selecionar pelo menos X opções" },
+    { value: "ALL", label: "Todos", description: "O cliente pode selecionar todas as opções" },
 ]
 
 export default function CreateItemPage() {
@@ -409,7 +409,7 @@ export default function CreateItemPage() {
                                                         <SelectContent>
                                                             {limitTypeOptions.map((option) => (
                                                                 <SelectItem key={option.value} value={option.value}>
-                                                                    <div>
+                                                                    <div className="flex flex-col justify-start">
                                                                         <div className="font-medium">{option.label}</div>
                                                                         <div className="text-xs text-gray-500">{option.description}</div>
                                                                     </div>

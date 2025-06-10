@@ -8,19 +8,22 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {Link, useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks";
 import {Loader} from "@/components/ui/loader";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {categoryApi} from "@/api/endpoints/categories/requests";
+import {Category} from "@/types/category";
 
 
 
 export function CategoriesTab() {
 
-    const { menuId } = useParams as unknown as { menuId: string }
+    const navigate = useNavigate();
 
-    const { data: categories, isLoading, removeCategory } = useGetMenuCategoriesBySlug(menuId)
+    const { menuId } = useParams() as unknown as { menuId: string }
+
+    const { data: categories, isLoading, removeCategory, setCategoryActive } = useGetMenuCategoriesBySlug(menuId)
 
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -66,10 +69,17 @@ export function CategoriesTab() {
         setSelectedCategories(selectedCategories.filter((id) => id !== categoryId))
     }
 
-    const handleToggleStatus = (categoryId: string) => {
-
-        console.log(categoryId)
-
+    const handleToggleStatus = (category: Category) => {
+        showPromiseToast(
+            categoryApi.switchCategoryAvailability(category._id, !category.isActive).then(() => {
+                setCategoryActive(category._id, !category.isActive)
+            }),
+            {
+                loading: "Atualizando categoria...",
+                success: `A categoria "${category.name} foi atualizada com sucesso!"`,
+                error: "Houve uma falha ao atualizar a categoria, tente novamente."
+            }
+        );
     }
 
     if (isLoading){
@@ -144,87 +154,85 @@ export function CategoriesTab() {
                         </TableHeader>
                         <TableBody className="divide-y divide-zinc-200">
                             {filteredCategories.map((category) => (
-                                <Link
+                                <TableRow
                                     key={category._id}
-                                    to={`categories/${category._id}`}
+                                    onClick={() => navigate(`categories/${category.slug}`)}
                                     className="contents"
                                 >
-                                    <TableRow>
-                                        {/* Prevent checkbox from triggering navigation */}
-                                        <TableCell onClick={(e) => e.stopPropagation()}>
-                                            <Checkbox
-                                                checked={selectedCategories.includes(category._id)}
-                                                onCheckedChange={(checked) =>
-                                                    handleSelectCategory(category._id, !!checked)
-                                                }
-                                            />
-                                        </TableCell>
+                                    {/* Prevent checkbox from triggering navigation */}
+                                    <TableCell onClick={(e) => e.stopPropagation()}>
+                                        <Checkbox
+                                            checked={selectedCategories.includes(category._id)}
+                                            onCheckedChange={(checked) =>
+                                                handleSelectCategory(category._id, !!checked)
+                                            }
+                                        />
+                                    </TableCell>
 
-                                        <TableCell>
-                                            <div className="flex items-center gap-3">
-                                                <div>
-                                                    <div className="font-medium">{category.name}</div>
-                                                    <div className="text-sm text-gray-500 sm:hidden">
-                                                        {category.itemIds.length} items
-                                                    </div>
+                                    <TableCell>
+                                        <div className="flex items-center gap-3">
+                                            <div>
+                                                <div className="font-medium">{category.name}</div>
+                                                <div className="text-sm text-gray-500 sm:hidden">
+                                                    {category.itemIds.length} items
                                                 </div>
                                             </div>
-                                        </TableCell>
+                                        </div>
+                                    </TableCell>
 
-                                        <TableCell className="hidden sm:table-cell">
-                                            <span className="text-sm text-gray-600">2 menus</span>
-                                        </TableCell>
+                                    <TableCell className="hidden sm:table-cell">
+                                        <span className="text-sm text-gray-600">2 menus</span>
+                                    </TableCell>
 
-                                        <TableCell className="hidden md:table-cell">
-                                      <span className="text-sm text-gray-600">
-                                        {category.itemIds.length} items
-                                      </span>
-                                        </TableCell>
+                                    <TableCell className="hidden md:table-cell">
+                                  <span className="text-sm text-gray-600">
+                                    {category.itemIds.length} items
+                                  </span>
+                                    </TableCell>
 
-                                        <TableCell className="hidden lg:table-cell">
-                                            <span className="text-sm text-gray-600">1 location</span>
-                                        </TableCell>
+                                    <TableCell className="hidden lg:table-cell">
+                                        <span className="text-sm text-gray-600">1 location</span>
+                                    </TableCell>
 
-                                        <TableCell className="hidden sm:table-cell">
-                                            <Badge variant={category.isActive ? "default" : "secondary"}>
-                                                {category.isActive ? "Active" : "Inactive"}
-                                            </Badge>
-                                        </TableCell>
+                                    <TableCell className="hidden sm:table-cell">
+                                        <Badge variant={category.isActive ? "default" : "secondary"}>
+                                            {category.isActive ? "Active" : "Inactive"}
+                                        </Badge>
+                                    </TableCell>
 
-                                        {/* Prevent dropdown from triggering navigation */}
-                                        <TableCell onClick={(e) => e.stopPropagation()}>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="sm">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem>
-                                                        <Eye className="h-4 w-4 mr-2" />
-                                                        View items
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        <Edit className="h-4 w-4 mr-2" />
-                                                        Edit
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleToggleStatus(category._id)}
-                                                    >
-                                                        {category.isActive ? "Deactivate" : "Activate"}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleDeleteCategory(category._id)}
-                                                        className="text-red-600"
-                                                    >
-                                                        <Trash2 className="h-4 w-4 mr-2" />
-                                                        Delete
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                </Link>
+                                    {/* Prevent dropdown from triggering navigation */}
+                                    <TableCell onClick={(e) => e.stopPropagation()}>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="sm">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem>
+                                                    <Eye className="h-4 w-4 mr-2" />
+                                                    View items
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem>
+                                                    <Edit className="h-4 w-4 mr-2" />
+                                                    Edit
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    onClick={() => handleToggleStatus(category)}
+                                                >
+                                                    {category.isActive ? "Deactivate" : "Activate"}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    onClick={() => handleDeleteCategory(category._id)}
+                                                    className="text-red-600"
+                                                >
+                                                    <Trash2 className="h-4 w-4 mr-2" />
+                                                    Delete
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+                                </TableRow>
                             ))}
                         </TableBody>
                     </Table>

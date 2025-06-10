@@ -69,8 +69,6 @@ function App() {
                         </Route>
                         <Route path=":menuId">
                             <Route index element={<MenuManagementPage/>}/>
-
-
                             <Route path="categories">
                                 <Route index element={<Navigate to=".."/>}/>
                                 <Route path=":categoryId" element={<CategoryDetailsPage/>}/>

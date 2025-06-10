@@ -7,8 +7,9 @@ export const showSuccessToast = (message: string): void => {
     });
 };
 
-export const showErrorToast = (message: string): void => {
+export const showErrorToast = (message: string, description?: string): void => {
     toast.error(message, {
+        description: description? description : "",
         duration: 5000,
         position: 'top-right',
     });

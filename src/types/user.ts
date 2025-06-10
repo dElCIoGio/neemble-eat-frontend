@@ -12,7 +12,7 @@ export type Membership = {
 }
 
 export type User = {
-    id: string
+    _id: string
     createdAt: Date
     updatedAt: Date
 

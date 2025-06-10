@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ChevronLeft, ChevronRight, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {toast} from "sonner";
-import {restaurantApi} from "@/api/endpoints/restaurants/endpoints";
+import {restaurantApi} from "@/api/endpoints/restaurants/requests";
 import {useNavigate} from "react-router";
 
 // Zod schema for validation

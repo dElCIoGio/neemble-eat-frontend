@@ -30,12 +30,12 @@ export function useGetRestaurantCategories(restaurantId: string){
 }
 
 
-export function useGetMenuCategoriesBySlug(menuSlug: string){
+export function useGetMenuCategoriesBySlug(menuSlug: string) {
 
-    const queryKey = ["menu categories", menuSlug]
-
+    const queryKey = ["menu categories", menuSlug];
     const queryClient = useQueryClient();
 
+    // Remove a category by ID
     const removeCategory = (categoryId: string) => {
         queryClient.setQueryData<Category[]>(queryKey, (oldData) => {
             if (!oldData) return [];
@@ -43,18 +43,30 @@ export function useGetMenuCategoriesBySlug(menuSlug: string){
         });
     };
 
-    const {data, ...query} = useQuery({
+    // Update isActive field of a category
+    const setCategoryActive = (categoryId: string, isActive: boolean) => {
+        queryClient.setQueryData<Category[]>(queryKey, (oldData) => {
+            if (!oldData) return [];
+            return oldData.map(category =>
+                category._id === categoryId
+                    ? { ...category, isActive }
+                    : category
+            );
+        });
+    };
+
+    const { data, ...query } = useQuery({
         queryKey,
         queryFn: () => categoryApi.getMenuCategoriesBySlug(menuSlug),
-        enabled: menuSlug != undefined
-    })
+        enabled: typeof menuSlug === "string"
+    });
 
     return {
-        data: data? data: [],
+        data: data ?? [],
         ...query,
         removeCategory,
-    }
-
+        setCategoryActive,
+    };
 }
 
 

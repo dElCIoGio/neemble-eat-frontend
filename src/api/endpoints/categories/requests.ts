@@ -33,7 +33,12 @@ export const categoryApi = {
     },
 
     updateCategory: async (categoryId: string, updateData: Partial<Category>) => {
-        const response = await apiClient.patch<Category>(`${baseRoute}/${categoryId}`, updateData)
+        const response = await apiClient.put<Category>(`${baseRoute}/${categoryId}`, updateData)
+        return response.data
+    },
+
+    switchCategoryAvailability: async (categoryId: string, isActive: boolean) => {
+        const response = await apiClient.put<boolean>(`${baseRoute}/availability/${categoryId}`, {isActive})
         return response.data
     }
 }
