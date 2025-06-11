@@ -8,18 +8,23 @@ export type OrderCustomizationSelection = {
     selectedOptions: string[];
 };
 
-export type Order = {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
+export type OrderCreate = {
     sessionId: string;
     itemId: string;
-    orderTime: string; // ISO 8601 datetime string
     quantity: number;
     unitPrice: number;
     total: number;
     orderedItemName?: string | null;
-    prepStatus: OrderPrepStatus;
+    restaurantId: string;
     customizations: OrderCustomizationSelection[];
     additionalNote?: string | null;
-};
+}
+
+export type Order = {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    prepStatus: OrderPrepStatus;
+    orderTime: string; // ISO 8601 datetime string
+
+} & OrderCreate;

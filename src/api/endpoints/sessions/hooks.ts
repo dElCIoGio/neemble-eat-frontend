@@ -36,7 +36,7 @@ export function useListSessions(tableId: string) {
     const removeSession = (sessionId: string) => {
         queryClient.setQueryData(queryKey, (oldData: TableSession[] | undefined) => {
             if (!oldData) return [];
-            return oldData.filter((session) => session.id !== sessionId);
+            return oldData.filter((session) => session._id !== sessionId);
         });
     };
 
@@ -47,3 +47,14 @@ export function useListSessions(tableId: string) {
     };
 }
 
+
+export function useGetActiveSessionByTableNumber(tableNumber: number, restaurantId: string){
+
+    const queryKey = ["active", tableNumber, restaurantId];
+
+    return useQuery({
+        queryKey,
+        queryFn: () => sessionApi.getActiveSessionByTableNumber(tableNumber, restaurantId)
+    })
+
+}

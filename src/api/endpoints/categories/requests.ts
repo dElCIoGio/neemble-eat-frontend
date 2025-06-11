@@ -44,7 +44,7 @@ export const categoryApi = {
     },
 
     getCategoryItems: async (categoryId: string) => {
-        const response = await apiClient.get<Item[]>(`${baseRoute}/${categoryId}`)
+        const response = await apiClient.get<Item[]>(`${baseRoute}/${categoryId}/items`)
         return response.data
     }
 }

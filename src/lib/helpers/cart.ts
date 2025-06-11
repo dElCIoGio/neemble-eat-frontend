@@ -10,27 +10,27 @@ export interface CartItem {
 }
 
 
-export const initializeCartInLocalStorage = () => {
+export const initializeCartInLocalStorage = (restaurantSlug: string) => {
     const cart: Array<CartItem> = [];
-    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem(`neembleeat_cart_${restaurantSlug}`, JSON.stringify(cart));
     return cart;
 };
 
-export const getCartFromLocalStorage = (): CartItem[] => {
-    const cart = localStorage.getItem('cart');
+export const getCartFromLocalStorage = (restaurantSlug: string): CartItem[] => {
+    const cart = localStorage.getItem(`neembleeat_cart_${restaurantSlug}`);
     return cart ? JSON.parse(cart) : [];
 };
 
-export function getCart() {
-    const existingCart = getCartFromLocalStorage();
+export function getCart(restaurantSlug: string) {
+    const existingCart = getCartFromLocalStorage(restaurantSlug);
     if (existingCart) {
         return existingCart;
     } else {
-        return initializeCartInLocalStorage();
+        return initializeCartInLocalStorage(restaurantSlug);
     }
 }
 
-export const saveCartToLocalStorage = (cart: Array<CartItem>) => {
+export const saveCartToLocalStorage = (cart: Array<CartItem>, restaurantSlug: string) => {
 
-    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem(`neembleeat_cart_${restaurantSlug}`, JSON.stringify(cart));
 };

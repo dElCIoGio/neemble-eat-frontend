@@ -9,7 +9,7 @@ export type TableSessionReview = {
 };
 
 export type TableSession = {
-    id: string;
+    _id: string;
     createdAt: string;
     updatedAt: string;
     tableId: string;

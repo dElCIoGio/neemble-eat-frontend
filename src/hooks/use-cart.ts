@@ -35,15 +35,15 @@ function useTotalCartValue(cart: CartItem[] = []) {
 
 }
 
-export function useCart() {
-    const [cart, setCart] = useState<CartItem[]>(() => getCart());
+export function useCart(restaurantSlug: string) {
+    const [cart, setCart] = useState<CartItem[]>(() => getCart(restaurantSlug));
     const count = useCountCartItems(cart);
     const total = useTotalCartValue(cart);
     const cartRef = useRef(cart);
 
 
     useEffect(() => {
-        saveCartToLocalStorage(cart);
+        saveCartToLocalStorage(cart, restaurantSlug);
     }, [cart]);
 
 
@@ -64,7 +64,7 @@ export function useCart() {
     // Function to add an item to the cart
     const addItem = (newItem: CartItem) => {
         setCart(() => {
-            const prevCart = getCart();
+            const prevCart = getCart(restaurantSlug);
 
             // Check if the item already exists in the cart by its id
             const existingItemIndex = prevCart.findIndex(item => item.id === newItem.id);

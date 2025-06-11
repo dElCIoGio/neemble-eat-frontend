@@ -23,6 +23,7 @@ import {AdditionalNoteSchema} from "@/lib/schemas/additional-note";
 import {CartPopoverContent} from "@/components/pages/restaurant-menu/cart-popover-content";
 import {ProductAdditionalInfo} from "@/components/pages/restaurant-menu-cart/product-additional-note";
 import {ShoppingCart} from "lucide-react";
+import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
 
 
 interface props {
@@ -33,8 +34,11 @@ interface props {
 
 export function Product({children, item}: props) {
 
+    const {
+        restaurant
+    } = useRestaurantMenuContext()
 
-    const {cart, addItem} = useCart()
+    const {cart, addItem} = useCart(restaurant._id)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [numberOfItems, setNumberOfItems] = useState(0);
     const [total, setTotal] = useState<number>(0);
