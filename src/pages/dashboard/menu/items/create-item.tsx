@@ -189,15 +189,8 @@ export default function CreateItemPage() {
             return
         }
 
-        // Create the item with restaurant ID
-        const itemToCreate: ItemCreate = {
-            ...formData,
-            restaurantId: "rest-1", // This would come from context/props in a real app
-        }
 
-        console.log("Creating item:", itemToCreate)
-        // TODO: Implement actual item creation logic
-        alert("Item created successfully!")
+
     }
 
     if (typeof categories == "undefined") {
