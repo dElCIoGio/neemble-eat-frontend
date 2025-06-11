@@ -10,9 +10,9 @@ import FloatingCartButton from "@/components/pages/restaurant-menu/floating-butt
 import {Categories} from "@/components/pages/restaurant-menu/categories";
 import {useState} from "react";
 import {Item} from "@/types/item";
-import {isRestaurantOpen} from "@/utils/restaurant/is-restaurant-open";
 import {useGetMenuCategories} from "@/api/endpoints/menu/hooks";
 import {Loader} from "@/components/ui/loader";
+import {isRestaurantOpen} from "@/utils/restaurant/is-restaurant-open";
 
 function RestaurantMenu() {
 
