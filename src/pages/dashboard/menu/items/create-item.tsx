@@ -14,17 +14,10 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {CustomizationOption, CustomizationRule, ItemCreate, LimitType} from "@/types/item";
-import {Link} from "react-router";
+import {Link, useParams} from "react-router";
+import {useGetMenuCategoriesBySlug} from "@/api/endpoints/categories/hooks";
+import {Loader} from "@/components/ui/loader";
 
-
-// Mock categories for the dropdown
-const mockCategories = [
-    { id: "cat-1", name: "Candy" },
-    { id: "cat-2", name: "Fried Food" },
-    { id: "cat-3", name: "Milkshakes" },
-    { id: "cat-4", name: "Appetizers" },
-    { id: "cat-5", name: "Main Course" },
-]
 
 const limitTypeOptions: { value: LimitType; label: string; description: string }[] = [
     { value: "UP_TO", label: "Até", description: "O cliente pode selecionar até X opções" },
@@ -52,6 +45,15 @@ export default function CreateItemPage() {
         if (errors[field]) {
             setErrors((prev) => ({ ...prev, [field]: "" }))
         }
+    }
+
+    const { menuId } = useParams() as unknown as { menuId: string }
+
+    const { data: categories } = useGetMenuCategoriesBySlug(menuId)
+
+
+    const handleChangeSelectedCategory = (categoryId: string) => {
+        setFormData({...formData, categoryId})
     }
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,6 +200,12 @@ export default function CreateItemPage() {
         alert("Item created successfully!")
     }
 
+    if (typeof categories == "undefined") {
+        return (<div className="flex justify-center items-center">
+            <Loader/>
+        </div>)
+    }
+
     return (
         <div className="">
             <div className="mx-auto">
@@ -256,13 +264,13 @@ export default function CreateItemPage() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="category">Category *</Label>
-                                <Select value={formData.categoryId} onValueChange={(value) => handleInputChange("categoryId", value)}>
+                                <Select value={formData.categoryId} onValueChange={(value) => handleChangeSelectedCategory(value)}>
                                     <SelectTrigger className={errors.categoryId ? "border-red-500" : ""}>
                                         <SelectValue placeholder="Select a category" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {mockCategories.map((category) => (
-                                            <SelectItem key={category.id} value={category.id}>
+                                        {categories.map((category) => (
+                                            <SelectItem key={category._id} value={category._id}>
                                                 {category.name}
                                             </SelectItem>
                                         ))}
