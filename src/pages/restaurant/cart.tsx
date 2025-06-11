@@ -69,6 +69,7 @@ export function Cart() {
                     restaurantId: restaurant._id,
                     unitPrice: item.price,
                     total: item.price * item.quantity,
+                    tableNumber: tableNumber
                 }, session._id).catch(() => {
                     setOrderStatus("Error")
                     setAlertMessage("Houve um erro com o seu pedido, um garçon irá confirmar o seu pedido em breve.")

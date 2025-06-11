@@ -18,10 +18,11 @@ export type OrderCreate = {
     restaurantId: string;
     customizations: OrderCustomizationSelection[];
     additionalNote?: string | null;
+    tableNumber: number
 }
 
 export type Order = {
-    id: string;
+    _id: string;
     createdAt: string;
     updatedAt: string;
     prepStatus: OrderPrepStatus;
