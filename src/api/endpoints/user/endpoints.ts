@@ -1,6 +1,7 @@
 import { apiClient } from "@/api/axios";
 import {UserRestaurants} from "@/api/endpoints/user/types";
 import {Restaurant} from "@/types/restaurant";
+import {Role} from "@/types/role";
 
 
 const baseRoute = "/users"
@@ -25,6 +26,16 @@ export const userApi = {
 
     changeCurrentRestaurant: async (restaurantId: string) => {
         const result = await apiClient.put<boolean>(`${baseRoute}/restaurant/${restaurantId}`)
+        return result.data
+    },
+
+    getCurrentRole: async () => {
+        const result = await apiClient.get<Role>(`${baseRoute}/role`)
+        return result.data
+    },
+
+    setCurrentRestaurantById: async (restaurantId: string) => {
+        const result = await apiClient.put(`${baseRoute}/restaurant/${restaurantId}`)
         return result.data
     }
 

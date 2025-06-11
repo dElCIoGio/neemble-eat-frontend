@@ -23,8 +23,6 @@ export default function QrTables() {
     const {restaurant} = useDashboardContext();
     const {data: tables, removeTable, addTable, isLoading} = useListRestaurantTables(restaurant._id);
 
-    console.log(tables)
-
     function handleRemoveTable(tableID: string) {
         setIsAdding(false);
         setIsReducing(true);
@@ -85,7 +83,7 @@ export default function QrTables() {
             </div>
             <div className="flex items-center laptop:flex-row gap-2 mb-4">
                 <Button 
-                    disabled={isReducing || tables.length == 0 || isAdding} 
+                    disabled={isReducing || tables.length == 0 || isAdding || isLoading}
                     variant="secondary" 
                     className="hover:bg-zinc-200 w-fit border border-zinc-200"
                     onClick={() => {
@@ -104,7 +102,7 @@ export default function QrTables() {
                     Remover uma mesa
                 </Button>
                 <Button 
-                    disabled={isAdding || isReducing || tables.length == MAXIMUM_TABLES} 
+                    disabled={isAdding || isReducing || tables.length == MAXIMUM_TABLES || isLoading}
                     variant="secondary" 
                     className="hover:bg-zinc-200 w-fit border border-zinc-200"
                     onClick={handleAddTable}

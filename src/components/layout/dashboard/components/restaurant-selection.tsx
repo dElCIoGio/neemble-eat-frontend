@@ -1,49 +1,73 @@
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {useGetUserRestaurants} from "@/api/endpoints/user/hooks";
-import {Button} from "@/components/ui/button";
-import {
-    Plus
-} from "@phosphor-icons/react"
-import {Link} from "react-router";
-import {useDashboardContext} from "@/context/dashboard-context";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {useGetUserRestaurants, useSetCurrentRestaurant} from "@/api/endpoints/user/hooks";
+import { Button } from "@/components/ui/button";
+import { Plus } from "@phosphor-icons/react";
+import { Link } from "react-router";
+import { useDashboardContext } from "@/context/dashboard-context";
+import {Loader} from "@/components/ui/loader";
 
 function RestaurantSelection() {
+    const { data: restaurants, isLoading } = useGetUserRestaurants();
 
-    const {
-        data: restaurants,
-    } = useGetUserRestaurants()
-
-    const { page, restaurant } = useDashboardContext()
+    const { page, restaurant } = useDashboardContext(); // Make sure your context exposes this!
+    const { mutate: setCurrentRestaurant, isPending } = useSetCurrentRestaurant();
 
 
     if (restaurants == undefined) {
-        return <div></div>
+        return <div></div>;
     }
 
+    if (isPending || isLoading) {
+        return <div className="flex justify-center items-center flex-1">
+            <Loader/>
+        </div>
+    }
+
+    if (restaurants.length === 0) {
+        return (
+            <div className="flex items-center space-x-3">
+                <span>Nenhum restaurante encontrado.</span>
+                <Button variant="outline" size="sm" asChild>
+                    <Link to="/dashboard/create-restaurant" className="text-sm flex items-center">
+                        <Plus className="h-3 w-3" /> Novo Restaurante
+                    </Link>
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className="flex items-center space-x-3">
-            <Select>
-                <SelectTrigger className={`${restaurants.length == 0 && "hidden"} bg-white rounded-full`}>
-                    <SelectValue placeholder={`${restaurant == null? "Selecione o restaurante": restaurant.name}`} />
+            <Select
+                defaultValue={restaurant?._id}
+                onValueChange={id => setCurrentRestaurant(id)}
+            >
+                <SelectTrigger className="bg-white rounded-full">
+                    <SelectValue placeholder="Selecione o restaurante" />
                 </SelectTrigger>
-                <SelectContent className="">
-                    {
-                        restaurants.map(({name, id}) => (
-                            <SelectItem key={id} className="rounded-lg" value={id}>
-                                {name}
-                            </SelectItem>
-                        ))
-                    }
+                <SelectContent className="rounded-xl">
+                    {restaurants.map(({ name, _id }) => (
+                        <SelectItem
+                            key={_id}
+                            className="rounded-lg"
+                            value={_id}
+                        >
+                            {name}
+                        </SelectItem>
+                    ))}
                 </SelectContent>
             </Select>
-            <Button variant="outline" className={`${page == "create-restaurant" && "hidden"}`} size="sm" asChild>
+            <Button
+                variant="outline"
+                className={page === "create-restaurant" ? "hidden" : ""}
+                size="sm"
+                asChild
+            >
                 <Link to="/dashboard/create-restaurant" className="text-sm flex items-center">
-                    <Plus className="h-3 w-3"/> Novo Restaurante
+                    <Plus className="h-3 w-3" /> Novo Restaurante
                 </Link>
             </Button>
         </div>
-
     );
 }
 

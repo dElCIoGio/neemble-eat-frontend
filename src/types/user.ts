@@ -15,6 +15,7 @@ export type User = {
     _id: string
     createdAt: Date
     updatedAt: Date
+    lastLogged?: Date
 
     firstName: string
     lastName: string

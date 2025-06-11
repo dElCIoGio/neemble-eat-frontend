@@ -1,6 +1,6 @@
 
 
 export type UserRestaurants = {
-    id: string,
+    _id: string,
     name: string,
 }
