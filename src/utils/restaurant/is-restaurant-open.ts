@@ -1,3 +1,5 @@
+import {OpeningHours, Restaurant} from "@/types/restaurant";
+
 function getDayString(date: Date): keyof OpeningHours {
     const days: Array<keyof OpeningHours> = [
         "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"
