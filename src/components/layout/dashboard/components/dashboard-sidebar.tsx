@@ -8,7 +8,7 @@ import {
     Lifebuoy,
     QrCode,
     UsersThree,
-    Package,
+    Package, CallBell,
 } from "@phosphor-icons/react";
 import {useLocation, useNavigate} from "react-router";
 import {
@@ -54,6 +54,11 @@ const navigation: {
         label: "Equipe",
         icon: UsersThree,
         href: "staff",
+    },
+    {
+        label: "Pedidos",
+        icon: CallBell,
+        href: "orders-tracking"
     },
     {
         label: "Stock",
@@ -104,7 +109,7 @@ export default function DashboardSidebar() {
                 <div className="flex items-center justify-between gap-2 py-1">
                     <div className={`text-lg font-semibold flex items-center justify-center ${open ? "gap-1":"gap-3"} `}>
                         <div className={` rounded-md p-1 transition-all duration-300 ease-in-out`}></div>
-                        <span className={` transition-opacity duration-300 ease-in-out py-1`}>
+                        <span className={`${open? "opacity-100": "opacity-0"} transition-opacity duration-300 ease-in-out py-1`}>
                             Neemble Eat
                         </span>
                     </div>
@@ -138,10 +143,10 @@ export default function DashboardSidebar() {
             <SidebarFooter className={`${ !isMobile && open? "opacity-100" : "opacity-0"} transition-opacity duration-300 ease-in-out bg-white`}>
                 <div className="bg-primary mx-auto w-full rounded-md h-28 p-3 flex flex-col justify-between">
                     <p className="text-zinc-200 text-xs">
-                        Looking for more detailed analytics to help you? Upgrade to Pro
+                        Deseja mais dados analíticos do seu restaurante? Subscreva ao plano Pro
                     </p>
                     <Button variant="outline" size="sm">
-                        Upgrade Now
+                        Adira ja
                     </Button>
                 </div>
             </SidebarFooter>

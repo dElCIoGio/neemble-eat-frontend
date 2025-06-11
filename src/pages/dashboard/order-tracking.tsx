@@ -104,7 +104,7 @@ export function OrdersTracking() {
             {
                 orders != undefined &&
                 <div>
-                    <Background className="bg-zinc-100"/>
+                    <Background className=""/>
                     {
                         orders &&
                         <OrdersTrackingContext.Provider value={{
@@ -120,7 +120,7 @@ export function OrdersTracking() {
                             sorting,
                             handleSortingChange
                         }}>
-                            <div className="p-4 laptop:h-screen laptop:flex laptop:flex-col">
+                            <div className="lg:flex lg:flex-col">
                                 <div className="mt-4 mb-8 flex space-x-1.5 items-center">
                                     <div
                                         className="w-8 h-8 rounded-full bg-zinc-50 border border-zinc-300 flex justify-center items-center">

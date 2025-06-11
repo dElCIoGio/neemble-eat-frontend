@@ -34,6 +34,7 @@ import RestaurantMenu from "@/pages/restaurant/restaurant-menu";
 import {RestaurantMenuProvider} from "@/context/restaurant-menu-context";
 import Cart from "@/pages/restaurant/cart";
 import {Orders} from "@/pages/restaurant/orders";
+import {OrdersTracking} from "@/pages/dashboard/order-tracking";
 
 
 
@@ -59,7 +60,7 @@ function App() {
 
             </Route>
 
-            {/* Dashboard */}
+            {/* Dashboard (Protected) */}
             <Route element={<ProtectedRoute/>}>
                 <Route path="dashboard" element={<DashboardLayout/>}>
                     <Route index element={<DashboardHome/>}/>
@@ -94,6 +95,7 @@ function App() {
                     <Route path="bookings" element={<Bookings/>}/>
                     <Route path="stock" element={<StockManagement/>}/>
                     <Route path="notifications" element={<NotificationsPage/>}/>
+                    <Route path="orders-tracking" element={<OrdersTracking/>}/>
                 </Route>
             </Route>
 

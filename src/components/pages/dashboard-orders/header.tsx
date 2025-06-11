@@ -57,7 +57,7 @@ export function Header() {
                         </SheetContent>
                     </Sheet>
                 </div>
-                <div className="laptop:flex items-center gap-2 hidden">
+                <div className="lg:flex items-center gap-2 hidden">
 
                     {
                         FILTERS.map((filter) =>
@@ -72,7 +72,7 @@ export function Header() {
                     }
                 </div>
             </div>
-            <div className="flex flex-col space-y-2 laptop:items-center laptop:justify-between laptop:flex-row laptop:space-x-4">
+            <div className="flex sm:flex-col space-y-2 md:items-center md:justify-between md:flex-row md:space-x-4">
                 <Select onValueChange={handleTableFilterChange} defaultValue={"All" as Tag}>
                     <SelectTrigger className="w-[180px] focus:ring-0 focus:outline-none ">
                         <SelectValue placeholder={"Selecione uma mesa"}/>
