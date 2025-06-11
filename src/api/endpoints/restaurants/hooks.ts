@@ -37,3 +37,28 @@ export function useGetAllMembers(props: GetRestaurantMembersProps) {
     }
 
 }
+
+
+export function useGetRestaurantBySlug(slug: string) {
+
+    const queryKey = ["restaurant", "slug", slug]
+
+    return useQuery({
+        queryKey,
+        queryFn: () => restaurantApi.getRestaurantBySlug(slug),
+    })
+
+}
+
+
+export function useGetCurrentMenu(restaurantId: string | undefined){
+
+    const queryKey = ["current", "menu", restaurantId]
+
+    return useQuery({
+        queryKey,
+        queryFn: () => typeof restaurantId == "undefined"? undefined: restaurantApi.getCurrentMenu(restaurantId),
+        enabled: typeof restaurantId == "string"
+    })
+
+}

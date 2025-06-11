@@ -81,3 +81,15 @@ export function useGetCategoryBySlug(categorySlug: string){
     })
 
 }
+
+
+export function useGetCategoryItems(categoryId: string){
+
+    const queryKey = ["category slug", categoryId]
+
+    return useQuery({
+        queryKey,
+        queryFn: () => categoryApi.getCategoryItems(categoryId),
+    })
+
+}

@@ -1,5 +1,6 @@
 import {apiClient} from "@/api/axios";
 import {Category, CategoryCreate} from "@/types/category";
+import {Item} from "@/types/item";
 
 
 const baseRoute = "/categories"
@@ -39,6 +40,11 @@ export const categoryApi = {
 
     switchCategoryAvailability: async (categoryId: string, isActive: boolean) => {
         const response = await apiClient.put<boolean>(`${baseRoute}/availability/${categoryId}`, {isActive})
+        return response.data
+    },
+
+    getCategoryItems: async (categoryId: string) => {
+        const response = await apiClient.get<Item[]>(`${baseRoute}/${categoryId}`)
         return response.data
     }
 }

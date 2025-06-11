@@ -1,6 +1,7 @@
 import {apiClient} from "@/api/axios";
 import {Menu, MenuCreate} from "@/types/menu";
 import {Item} from "@/types/item";
+import {Category} from "@/types/category";
 
 
 const baseRoute = "/menus"
@@ -35,6 +36,11 @@ export const menuApi = {
 
     copyMenu: async (menuSlug: string, restaurantId: string) => {
         const response = await apiClient.post<Menu>(`${baseRoute}/copy/${menuSlug}/${restaurantId}`)
+        return response.data
+    },
+
+    getMenuCategories: async (menuId: string) => {
+        const response = await apiClient.get<Category[]>(`${baseRoute}/${menuId}/categories`)
         return response.data
     }
 

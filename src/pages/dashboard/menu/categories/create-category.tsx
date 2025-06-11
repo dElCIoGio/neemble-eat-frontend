@@ -88,7 +88,7 @@ export default function CreateCategoryPage() {
         }
 
         if (!formData.menuId) {
-            newErrors.menuId = "Menu is required"
+            newErrors.menuId = "RestaurantMenu is required"
         }
 
         if (!formData.description.trim()) {

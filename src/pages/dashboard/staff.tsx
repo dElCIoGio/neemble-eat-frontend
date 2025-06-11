@@ -41,7 +41,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 
 
 const defaultSectionPermissions: SectionPermission[] = [
-    // 🍽️ Menu & Ordering
+    // 🍽️ RestaurantMenu & Ordering
     { section: "menus", permissions: ["view", "create", "update", "delete"] },
     { section: "categories", permissions: ["view", "create", "update", "delete"] },
     { section: "items", permissions: ["view", "create", "update", "delete"] },

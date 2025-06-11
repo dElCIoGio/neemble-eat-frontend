@@ -11,11 +11,11 @@ export const validateMenu = (menu: Partial<Menu>): ValidationResult => {
     const errors: Record<string, string> = {};
 
     if (!menu.name?.trim()) {
-        errors.name = 'Menu name is required';
+        errors.name = 'RestaurantMenu name is required';
     }
 
     if (menu.name && menu.name.length > 100) {
-        errors.name = 'Menu name must be less than 100 characters';
+        errors.name = 'RestaurantMenu name must be less than 100 characters';
     }
 
     if (menu.description && menu.description.length > 500) {

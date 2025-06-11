@@ -58,7 +58,7 @@ export default function CreateMenuPage() {
                 menuApi.createMenu(formData),
                 {
                     loading: "Creating menu...",
-                    success: "Menu created successfully!",
+                    success: "RestaurantMenu created successfully!",
                     error: "Failed to create menu. Please try again."
                 }
             )
@@ -84,7 +84,7 @@ export default function CreateMenuPage() {
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-semibold text-gray-900">Create New Menu</h1>
+                        <h1 className="text-2xl font-semibold text-gray-900">Create New RestaurantMenu</h1>
                         <p className="text-sm text-gray-600 mt-1">Set up your menu with preferences and details</p>
                     </div>
                 </div>
@@ -98,10 +98,10 @@ export default function CreateMenuPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Menu Name</Label>
+                                <Label htmlFor="name">RestaurantMenu Name</Label>
                                 <Input
                                     id="name"
-                                    placeholder="e.g., Dinner Menu, Lunch Specials"
+                                    placeholder="e.g., Dinner RestaurantMenu, Lunch Specials"
                                     value={formData.name}
                                     onChange={(e) => handleInputChange("name", e.target.value)}
                                     className="h-11"
@@ -133,7 +133,7 @@ export default function CreateMenuPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Menu Preferences */}
+                    {/* RestaurantMenu Preferences */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-lg">Display Preferences</CardTitle>
@@ -201,7 +201,7 @@ export default function CreateMenuPage() {
                     <div className="flex justify-end gap-3 pt-4">
                         <Button type="submit" disabled={!isFormValid || isSubmitting} className="gap-2 w-fit">
                             <Save className="h-4 w-4" />
-                            {isSubmitting ? "Creating Menu..." : "Create Menu"}
+                            {isSubmitting ? "Creating RestaurantMenu..." : "Create RestaurantMenu"}
                         </Button>
                         <Link to="..">
                             <Button variant="outline" className="h-11 px-6">

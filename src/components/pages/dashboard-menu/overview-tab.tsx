@@ -57,7 +57,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                     <CardTitle>Basic Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {/* Menu Name */}
+                    {/* RestaurantMenu Name */}
                     <div className="space-y-2">
                         <Label htmlFor="menu-name">Menu Name</Label>
                         {isEditingName ? (
@@ -93,7 +93,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                         )}
                     </div>
 
-                    {/* Menu Description */}
+                    {/* RestaurantMenu Description */}
                     <div className="space-y-2">
                         <Label htmlFor="menu-description">Description</Label>
                         {isEditingDescription ? (
@@ -135,7 +135,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                 </CardContent>
             </Card>
 
-            {/* Menu Preferences */}
+            {/* RestaurantMenu Preferences */}
             <Card>
                 <CardHeader>
                     <CardTitle>Display Preferences</CardTitle>
@@ -176,7 +176,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                 </CardContent>
             </Card>
 
-            {/* Menu Statistics */}
+            {/* RestaurantMenu Statistics */}
             <Card className="bg-white shadow-sm rounded-xl border border-gray-200">
                 <CardHeader className="border-b border-gray-100">
                     <CardTitle className="text-lg font-semibold text-gray-800">Menu Statistics</CardTitle>

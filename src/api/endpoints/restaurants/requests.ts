@@ -1,6 +1,8 @@
 import {apiClient} from "@/api/axios";
 import {GetRestaurantMembersProps} from "@/api/endpoints/restaurants/types";
 import {User} from "@/types/user";
+import {Restaurant} from "@/types/restaurant";
+import {Menu} from "@/types/menu";
 
 const baseRoute = "/restaurants";
 
@@ -18,6 +20,17 @@ export const restaurantApi = {
 
     removeMember: async (restaurantId: string, userId: string) => {
         const response = await apiClient.delete(`${baseRoute}/${restaurantId}/members/${userId}`)
+        return response.data
+    },
+
+    getRestaurantBySlug: async (slug: string) => {
+        const response = await apiClient.get<Restaurant>(`${baseRoute}/slug/${slug}`)
+        return response.data
+    },
+
+
+    getCurrentMenu: async (restaurantId: string) => {
+        const response = await apiClient.get<Menu>(`${baseRoute}/${restaurantId}/menu`)
         return response.data
     }
 }

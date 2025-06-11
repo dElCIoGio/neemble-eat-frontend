@@ -80,3 +80,16 @@ export function useGetMenuItemsBySlug(menuSlug: string){
         removeItem,
     }
 }
+
+
+export function useGetMenuCategories(menuId: string | undefined) {
+
+    const queryKey = ["menu", "categories", menuId]
+
+    return useQuery({
+        queryKey,
+        queryFn: () => typeof menuId == "undefined"? undefined: menuApi.getMenuCategories(menuId),
+        enabled: typeof menuId == "string"
+    })
+
+}

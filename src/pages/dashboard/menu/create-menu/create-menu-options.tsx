@@ -32,9 +32,9 @@ export default function AddMenuPage() {
                     </p>
                 </div>
 
-                {/* Menu Creation Options */}
+                {/* RestaurantMenu Creation Options */}
                 <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                    {/* Import Menu Card */}
+                    {/* Import RestaurantMenu Card */}
                     <Card className="hover:shadow-lg transition-shadow group">
                         <CardHeader className="text-center pb-4">
                             <div className="relative">
@@ -64,7 +64,7 @@ export default function AddMenuPage() {
                         </CardContent>
                     </Card>
 
-                    {/* Create Menu Card */}
+                    {/* Create RestaurantMenu Card */}
                     <Card className="hover:shadow-lg transition-shadow group">
                         <CardHeader className="text-center pb-4">
                             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">

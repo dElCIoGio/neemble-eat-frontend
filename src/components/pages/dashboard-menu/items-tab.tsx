@@ -63,7 +63,7 @@ export function ItemsTab() {
             }),
             {
                 loading: "Deleting menu...",
-                success: "Menu deleted successfully!",
+                success: "RestaurantMenu deleted successfully!",
                 error: "Failed to delete menu. Please try again."
             }
         );

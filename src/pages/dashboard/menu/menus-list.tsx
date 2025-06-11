@@ -45,7 +45,7 @@ export default function MenuManager() {
                 }),
                 {
                     loading: "Deleting menu...",
-                    success: "Menu deleted successfully!",
+                    success: "RestaurantMenu deleted successfully!",
                     error: "Failed to delete menu. Please try again."
                 }
             );
@@ -96,7 +96,7 @@ export default function MenuManager() {
                     />
                 </div>
 
-                {/* Menu List */}
+                {/* RestaurantMenu List */}
                 <div className="space-y-2 flex flex-col">
                     {filteredMenus.length === 0 ? (
                         <div className="text-center py-12">
@@ -120,7 +120,7 @@ export default function MenuManager() {
                                 <Card className="hover:shadow-sm transition-shadow py-4">
                                     <CardContent className="px-4">
                                         <div className="flex items-center gap-4">
-                                            {/* Menu Details */}
+                                            {/* RestaurantMenu Details */}
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="text-lg font-semibold text-gray-900 ">{menu.name}</h3>
                                                 <p className="text-gray-500 text-sm">{menu.description}</p>
