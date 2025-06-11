@@ -1,6 +1,6 @@
 
 import { useState } from "react"
-import { Search, MoreHorizontal, Edit, Trash2, DollarSign } from "lucide-react"
+import { Search, MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -8,12 +8,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {Link, useParams} from "react-router";
-import {useGetMenuItemsBySlug} from "@/api/endpoints/menu/hooks";
-import {useGetMenuCategoriesBySlug} from "@/api/endpoints/categories/hooks";
-import {showPromiseToast} from "@/utils/notifications/toast";
-import {itemsApi} from "@/api/endpoints/item/requests";
-import {Loader} from "@/components/ui/loader";
+import { Link, useParams } from "react-router";
+import { useGetMenuItemsBySlug } from "@/api/endpoints/menu/hooks";
+import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks";
+import { showPromiseToast } from "@/utils/notifications/toast";
+import { itemsApi } from "@/api/endpoints/item/requests";
+import { Loader } from "@/components/ui/loader";
 
 
 export function ItemsTab() {
@@ -175,7 +175,6 @@ export function ItemsTab() {
                                                 />
                                                 <div>
                                                     <div className="font-medium">{item.name}</div>
-                                                    <div className="text-sm text-gray-500 line-clamp-1">{item.description}</div>
                                                     <div className="text-sm text-gray-500 sm:hidden">
                                                         ${item.price.toFixed(2)} • {getCategoryName(item.categoryId)}
                                                     </div>
@@ -189,14 +188,14 @@ export function ItemsTab() {
 
                                         <TableCell className="hidden md:table-cell">
                                             <div className="flex items-center gap-1">
-                                                <DollarSign className="h-3 w-3" />
+                                                Kz
                                                 <span>{item.price.toFixed(2)}</span>
                                             </div>
                                         </TableCell>
 
                                         <TableCell className="hidden lg:table-cell">
                                           <span className="text-sm text-gray-600">
-                                            {item.customizations.length} option{item.customizations.length !== 1 ? "s" : ""}
+                                            {item.customizations.length} Customização {item.customizations.length !== 1 ? "s" : ""}
                                           </span>
                                         </TableCell>
 

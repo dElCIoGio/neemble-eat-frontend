@@ -13,13 +13,13 @@ import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import {CustomizationOption, CustomizationRule, ItemCreate, LimitType} from "@/types/item";
-import {Link, useNavigate, useParams} from "react-router";
-import {itemsApi} from "@/api/endpoints/item/requests";
-import {useDashboardContext} from "@/context/dashboard-context";
-import {showPromiseToast, showWarningToast} from "@/utils/notifications/toast";
-import {useGetMenuCategoriesBySlug} from "@/api/endpoints/categories/hooks";
-import {Loader} from "@/components/ui/loader";
+import { CustomizationOption, CustomizationRule, ItemCreate, LimitType} from "@/types/item";
+import { Link, useNavigate, useParams} from "react-router";
+import { itemsApi} from "@/api/endpoints/item/requests";
+import { useDashboardContext} from "@/context/dashboard-context";
+import { showPromiseToast, showWarningToast} from "@/utils/notifications/toast";
+import { useGetMenuCategoriesBySlug} from "@/api/endpoints/categories/hooks";
+import { Loader} from "@/components/ui/loader";
 
 
 const limitTypeOptions: { value: LimitType; label: string; description: string }[] = [
@@ -56,6 +56,8 @@ export default function CreateItemPage() {
 
     const { restaurant } = useDashboardContext()
     const navigate = useNavigate()
+
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
 
     const handleChangeSelectedCategory = (categoryId: string) => {
@@ -191,6 +193,8 @@ export default function CreateItemPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
 
+        setIsLoading(true)
+
         if (!validateForm()) {
             showWarningToast("Please fill out all required fields")
             return
@@ -206,7 +210,10 @@ export default function CreateItemPage() {
         if (formData.imageFile) data.append("imageFile", formData.imageFile)
 
         showPromiseToast(
-            itemsApi.createItem(data).then(() => navigate("..")),
+            itemsApi.createItem(data).then(() => {
+                navigate("..")
+
+            }).finally(() => setIsLoading(false)),
             {
                 loading: `Creating item ${formData.name}...`,
                 success: "Item created successfully!",
@@ -570,7 +577,7 @@ export default function CreateItemPage() {
                                 Cancel
                             </Button>
                         </Link>
-                        <Button type="submit">Create Item</Button>
+                        <Button type="submit" disabled={isLoading}>Create Item</Button>
                     </div>
                 </form>
             </div>

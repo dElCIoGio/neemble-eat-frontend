@@ -1,5 +1,5 @@
 import {apiClient} from "@/api/axios";
-import {CustomizationOption, CustomizationRule, Item, ItemCreate, PartialItem} from "@/types/item";
+import {CustomizationOption, CustomizationRule, Item, PartialItem} from "@/types/item";
 
 
 const baseRoute = "/items"
