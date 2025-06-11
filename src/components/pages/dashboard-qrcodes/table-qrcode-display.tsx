@@ -39,7 +39,7 @@ function TableQRCodeDisplay({table, index}: TableQrCodeCardProps) {
 
     //TODO: FIGURE A STRUCTURE FOR THE TABLE URL
     function getQrCodeLink(tableNumber: number): string {
-        return `${window.location.origin}/menu/${restaurant.slug}?t=${tableNumber}`
+        return `${window.location.origin}/r/${restaurant.slug}/${tableNumber}`
     }
 
     return (

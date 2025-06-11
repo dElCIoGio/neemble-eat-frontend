@@ -30,6 +30,7 @@ import ItemDetailsPage from "@/pages/dashboard/menu/items/item";
 import CreateItemPage from "@/pages/dashboard/menu/items/create-item";
 import MenuManagementPage from "@/pages/dashboard/menu/menu";
 import CreateMenuPage from "@/pages/dashboard/menu/create-menu/create-menu";
+import RestaurantMenu from "@/pages/restaurant/restaurant-menu";
 
 
 
@@ -99,6 +100,11 @@ function App() {
                 <Route path="login" element={<LoginPage/>}/>
                 <Route path="register" element={<RegisterPage/>}/>
                 <Route path="reset-password" element={<ResetPasswordPage/>}/>
+            </Route>
+
+            <Route path="r/:restaurantSlug/:tableNumber">
+                <Route index element={<RestaurantMenu/>}/>
+
             </Route>
 
             <Route path="*" element={<NotFound />} />

@@ -37,7 +37,7 @@ export default function ImportMenuPage() {
         try {
             // The menu data will be fetched automatically by the useGetMenuBySlug hook
             if (!foundMenu) {
-                setError("Menu code not found. Please check the code and try again.")
+                setError("RestaurantMenu code not found. Please check the code and try again.")
             }
         } catch (error) {
             console.error("Error creating menu:", error)
@@ -55,7 +55,7 @@ export default function ImportMenuPage() {
                 menuApi.copyMenu(foundMenu.slug, restaurant._id),
                 {
                     loading: "Importing menu...",
-                    success: "Menu imported successfully!",
+                    success: "RestaurantMenu imported successfully!",
                     error: "Failed to import menu. Please try again."
                 }
             )
@@ -140,7 +140,7 @@ export default function ImportMenuPage() {
                     </CardContent>
                 </Card>
 
-                {/* Found Menu Preview */}
+                {/* Found RestaurantMenu Preview */}
                 {foundMenu && (
                     <Card className="mb-6">
                         <CardHeader>

@@ -57,7 +57,7 @@ export function CategoriesTab() {
                 }),
                 {
                     loading: "Apagando menu...",
-                    success: "Menu apagado com sucesso!",
+                    success: "RestaurantMenu apagado com sucesso!",
                     error: "Falha ao apagar o menu. Tente novamente."
                 }
             );
@@ -110,15 +110,6 @@ export function CategoriesTab() {
                         </SelectContent>
                     </Select>
 
-                    <Select defaultValue="otter-late-night">
-                        <SelectTrigger className="w-[280px]">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="otter-late-night">Otter Late Night Snacks - Michigan Ave</SelectItem>
-                            <SelectItem value="other-location">Other Location</SelectItem>
-                        </SelectContent>
-                    </Select>
                 </div>
 
                 <div className="relative w-full sm:w-auto">
@@ -145,9 +136,7 @@ export function CategoriesTab() {
                                     />
                                 </TableHead>
                                 <TableHead>Category name</TableHead>
-                                <TableHead className="hidden sm:table-cell">Appears in</TableHead>
                                 <TableHead className="hidden md:table-cell">Contains</TableHead>
-                                <TableHead className="hidden lg:table-cell">Locations</TableHead>
                                 <TableHead className="hidden sm:table-cell">Status</TableHead>
                                 <TableHead className="w-12"></TableHead>
                             </TableRow>
@@ -157,7 +146,7 @@ export function CategoriesTab() {
                                 <TableRow
                                     key={category._id}
                                     onClick={() => navigate(`categories/${category.slug}`)}
-                                    className="contents"
+                                    className=""
                                 >
                                     {/* Prevent checkbox from triggering navigation */}
                                     <TableCell onClick={(e) => e.stopPropagation()}>
@@ -180,19 +169,12 @@ export function CategoriesTab() {
                                         </div>
                                     </TableCell>
 
-                                    <TableCell className="hidden sm:table-cell">
-                                        <span className="text-sm text-gray-600">2 menus</span>
-                                    </TableCell>
-
                                     <TableCell className="hidden md:table-cell">
-                                  <span className="text-sm text-gray-600">
-                                    {category.itemIds.length} items
-                                  </span>
+                                      <span className="text-sm text-gray-600">
+                                        {category.itemIds.length} items
+                                      </span>
                                     </TableCell>
 
-                                    <TableCell className="hidden lg:table-cell">
-                                        <span className="text-sm text-gray-600">1 location</span>
-                                    </TableCell>
 
                                     <TableCell className="hidden sm:table-cell">
                                         <Badge variant={category.isActive ? "default" : "secondary"}>
