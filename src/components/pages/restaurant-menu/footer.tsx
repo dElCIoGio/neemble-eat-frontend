@@ -13,12 +13,10 @@ export function Footer() {
                 <h1 className={`text-2xl font-poppins-semibold`}>
                     {restaurant.name}
                 </h1>
-
                 <div className='flex items-center'>
-                    <Phone className='mt-0.5'/>
-                    <p className='ml-1 text-sm text-gray-600 font-semibold'>
+                    <Phone className='mt-0.5 size-4 text-zinc-600'/>
+                    <p className='ml-1 mt-0.5 text-sm text-zinc-600 font-semibold'>
                         <a href={`tel:${restaurant.phoneNumber}`}>{restaurant.phoneNumber}</a>
-
                     </p>
                 </div>
             </div>
@@ -28,7 +26,6 @@ export function Footer() {
                         <a href="#" className='flex items-center'>
                             <p className='mr-1.5'>Política de Privacidade</p>
                             <ArrowSquareOut/>
-
                         </a>
                     </div>
                     <div>

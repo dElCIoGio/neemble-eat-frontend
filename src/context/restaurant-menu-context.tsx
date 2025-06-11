@@ -4,11 +4,14 @@ import {createContext, useContext} from "react";
 import {Outlet, useParams} from "react-router";
 import {useGetCurrentMenu, useGetRestaurantBySlug} from "@/api/endpoints/restaurants/hooks";
 import {Loader} from "@/components/ui/loader";
+import {useGetActiveSessionByTableNumber} from "@/api/endpoints/sessions/hooks";
+import {TableSession} from "@/types/table-session";
 
 interface RestaurantMenuContextProps {
 
     menu: Menu
     restaurant: Restaurant
+    session: TableSession
 
 }
 
@@ -31,7 +34,8 @@ export function RestaurantMenuProvider(){
 
 
     const {
-        restaurantSlug
+        restaurantSlug,
+        tableNumber
     } = useParams() as unknown as { restaurantSlug: string , tableNumber: number };
 
     const {
@@ -42,14 +46,22 @@ export function RestaurantMenuProvider(){
         data: menu,
     } = useGetCurrentMenu(restaurant?._id)
 
-    if (!menu || !restaurant) return <div>
+    const {
+        data: session
+    } = useGetActiveSessionByTableNumber({
+        restaurantId: restaurant?._id,
+        tableNumber: tableNumber
+    })
+
+    if (!menu || !restaurant || !session) return <div>
         <Loader/>
     </div>
 
     return(
         <RestaurantMenuContext value={{
             menu,
-            restaurant
+            restaurant,
+            session
         }}>
             <Outlet/>
         </RestaurantMenuContext>

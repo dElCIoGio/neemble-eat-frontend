@@ -42,7 +42,10 @@ export function Cart() {
     const {
         data: session,
         isFetching: iSFetchingSession
-    } = useGetActiveSessionByTableNumber(tableNumber, restaurant._id)
+    } = useGetActiveSessionByTableNumber({
+        tableNumber,
+        restaurantId: restaurant._id
+    })
 
     function invalidateOrdersKey() {
         const key = ["active", tableNumber, restaurant._id]

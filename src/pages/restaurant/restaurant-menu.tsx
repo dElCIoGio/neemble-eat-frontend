@@ -40,11 +40,6 @@ function RestaurantMenu() {
         data: categories = []
     } = useGetMenuCategories(menu?._id)
 
-
-    console.log("Menu:", menu)
-    console.log("Restaurant:", restaurant)
-    console.log("Categories:", categories)
-
     function selectItem(item: Item) {
         setSelectedItem(item)
         if (item._id) {

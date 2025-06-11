@@ -33,6 +33,7 @@ import CreateMenuPage from "@/pages/dashboard/menu/create-menu/create-menu";
 import RestaurantMenu from "@/pages/restaurant/restaurant-menu";
 import {RestaurantMenuProvider} from "@/context/restaurant-menu-context";
 import Cart from "@/pages/restaurant/cart";
+import {Orders} from "@/pages/restaurant/orders";
 
 
 
@@ -108,6 +109,7 @@ function App() {
                 <Route element={<RestaurantMenuProvider/>}>
                     <Route index element={<RestaurantMenu/>}/>
                     <Route path="cart" element={<Cart/>}/>
+                    <Route path="orders" element={<Orders/>} />
                 </Route>
             </Route>
 

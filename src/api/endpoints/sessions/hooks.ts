@@ -1,7 +1,11 @@
-import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {sessionApi} from "@/api/endpoints/sessions/requests";
-import {TableSession} from "@/types/table-session";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { sessionApi } from "@/api/endpoints/sessions/requests";
+import { TableSession } from "@/types/table-session";
 
+interface Props {
+    restaurantId?: string
+    tableNumber: number
+}
 
 export function useGetActiveSession(tableId: string) {
 
@@ -48,13 +52,22 @@ export function useListSessions(tableId: string) {
 }
 
 
-export function useGetActiveSessionByTableNumber(tableNumber: number, restaurantId: string){
+export function useGetActiveSessionByTableNumber({restaurantId, tableNumber}: Props){
 
     const queryKey = ["active", tableNumber, restaurantId];
 
-    return useQuery({
+    const {
+        ...query
+    } = useQuery({
         queryKey,
-        queryFn: () => sessionApi.getActiveSessionByTableNumber(tableNumber, restaurantId)
+        queryFn: () => restaurantId? sessionApi.getActiveSessionByTableNumber(tableNumber, restaurantId): undefined,
+        enabled: typeof restaurantId != "undefined",
     })
+
+
+    return {
+        ...query,
+    }
+
 
 }
