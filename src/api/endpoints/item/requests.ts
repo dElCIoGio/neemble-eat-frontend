@@ -1,5 +1,5 @@
 import {apiClient} from "@/api/axios";
-import {CustomizationOption, CustomizationRule, Item, PartialItem} from "@/types/item";
+import {CustomizationOption, CustomizationRule, Item, ItemCreate, PartialItem} from "@/types/item";
 
 
 const baseRoute = "/items"
@@ -7,6 +7,11 @@ const baseRoute = "/items"
 
 
 export const itemsApi = {
+
+    createItem: async (formData: FormData) => {
+        const response = await apiClient.post<Item>(`${baseRoute}/`, formData)
+        return response.data
+    },
 
     deleteItem: async (itemId: string) => {
         const response = await apiClient.delete(`${baseRoute}/${itemId}`)

@@ -14,7 +14,10 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {CustomizationOption, CustomizationRule, ItemCreate, LimitType} from "@/types/item";
-import {Link, useParams} from "react-router";
+import {Link, useNavigate, useParams} from "react-router";
+import {itemsApi} from "@/api/endpoints/item/requests";
+import {useDashboardContext} from "@/context/dashboard-context";
+import {showPromiseToast, showWarningToast} from "@/utils/notifications/toast";
 import {useGetMenuCategoriesBySlug} from "@/api/endpoints/categories/hooks";
 import {Loader} from "@/components/ui/loader";
 
@@ -50,6 +53,9 @@ export default function CreateItemPage() {
     const { menuId } = useParams() as unknown as { menuId: string }
 
     const { data: categories } = useGetMenuCategoriesBySlug(menuId)
+
+    const { restaurant } = useDashboardContext()
+    const navigate = useNavigate()
 
 
     const handleChangeSelectedCategory = (categoryId: string) => {
@@ -186,11 +192,27 @@ export default function CreateItemPage() {
         e.preventDefault()
 
         if (!validateForm()) {
+            showWarningToast("Please fill out all required fields")
             return
         }
 
+        const data = new FormData()
+        data.append("name", formData.name)
+        data.append("price", formData.price.toString())
+        data.append("categoryId", formData.categoryId)
+        data.append("restaurantId", restaurant._id)
+        data.append("customizations", JSON.stringify(formData.customizations))
+        if (formData.description) data.append("description", formData.description)
+        if (formData.imageFile) data.append("imageFile", formData.imageFile)
 
-
+        showPromiseToast(
+            itemsApi.createItem(data).then(() => navigate("..")),
+            {
+                loading: `Creating item ${formData.name}...`,
+                success: "Item created successfully!",
+                error: "Failed to create item. Please try again.",
+            }
+        )
     }
 
     if (typeof categories == "undefined") {
