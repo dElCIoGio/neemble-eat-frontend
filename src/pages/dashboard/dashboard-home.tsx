@@ -190,6 +190,8 @@ export default function RestaurantDashboard(): JSX.Element {
         toDate: getDateRangeFromFilter(itemsTimeRange).to
     })
 
+    console.log("TOP:", topItemsSummary)
+
 
     const { data: sessionDurationSummary } = useGetSessionDurationSummary({
         restaurantId: restaurant._id
@@ -384,8 +386,12 @@ export default function RestaurantDashboard(): JSX.Element {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                    <CardTitle>Itens Mais Populares</CardTitle>
-                    <CardDescription>Pratos mais vendidos</CardDescription>
+                    <CardTitle>
+                        Itens Mais Populares
+                    </CardTitle>
+                    <CardDescription>
+                        Pratos mais vendidos
+                    </CardDescription>
                 </div>
                 <Select value={itemsTimeRange} onValueChange={(value: ItemsTimeRange) => setItemsTimeRange(value)}>
                     <SelectTrigger className="w-32">
@@ -411,7 +417,7 @@ export default function RestaurantDashboard(): JSX.Element {
                                 </div>
                                 <Progress 
                                     value={(item.quantity / topItemsSummary[0].quantity) * 100}
-                                    className="h-1" 
+                                    className="h-1"
                                 />
                             </div>
                         </div>
@@ -446,11 +452,11 @@ export default function RestaurantDashboard(): JSX.Element {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                         <Users className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">Sessões Ativas</span>
+                        <span className="text-sm">Mesas ocupadas</span>
                     </div>
                     <div className="text-right">
                         <div className="font-medium">{activeSessionsSummary?.activeSessions ?? 0}</div>
-                        <div className="flex items-center text-xs text-green-500">
+                        <div className="hidden items-center text-xs text-green-500">
                             <TrendingUp className="h-3 w-3 mr-1" />
                             {/* TODO: Need growth data */}
                             0%
