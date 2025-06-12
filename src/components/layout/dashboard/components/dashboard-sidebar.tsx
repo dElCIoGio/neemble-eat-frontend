@@ -82,6 +82,7 @@ const navigation: {
     }
 ]
 
+const hiddenRoutes = ["bookings", "stock", "staff"]
 
 export default function DashboardSidebar() {
 
@@ -126,6 +127,7 @@ export default function DashboardSidebar() {
                     <SidebarGroupLabel className="text-primary">Menu</SidebarGroupLabel>
                     <SidebarMenu>
                         {navigation.map((item) => (
+                            !hiddenRoutes.includes(item.href) &&
                             <SidebarMenuItem className={`${item.href == route? "bg-purple-50 flex rounded-full " : "rounded-full text-zinc-400 hover"} transition-all duration-150 ease-in-out`} key={item.label}>
                                 <SidebarMenuButton disabled={restaurant._id == "notfound"} className={`rounded-full flex mx-auto ${item.href == route? "hover:bg-purple-100":""} transition-all duration-150 ease-in-out`} asChild>
                                     <button onClick={() => handlePageChange(item.href)} className={`flex ${!open && !isMobile && "justify-center"} gap-2`}>
