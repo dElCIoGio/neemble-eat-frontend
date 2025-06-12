@@ -23,7 +23,7 @@ export function Categories() {
 
 
     return (
-        <div className={"laptop:bg-zinc-50 laptop:pb-8"}>
+        <div className={"lg:bg-zinc-50 lg:pb-8"}>
             <div className={`sticky top-0 z-50 shadow-md`}>
                 <CategoriesBar selectedCategory={selectedCategory}
                                scrollContainerRef={scrollContainerRef}

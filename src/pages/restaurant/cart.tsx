@@ -21,8 +21,10 @@ export function Cart() {
     } = useRestaurantMenuContext()
 
     const {tableNumber} = useParams() as unknown as {
-        tableNumber: number
+        tableNumber: string
     };
+
+
 
     const [orderConfirmed, setOrderConfirmed] = useState<boolean>(false)
     const [orderStatus, setOrderStatus] = useState<"Success" | "Error" | "Idle">("Idle");
@@ -43,7 +45,7 @@ export function Cart() {
         data: session,
         isFetching: iSFetchingSession
     } = useGetActiveSessionByTableNumber({
-        tableNumber,
+        tableNumber: Number(tableNumber),
         restaurantId: restaurant._id
     })
 
@@ -69,7 +71,7 @@ export function Cart() {
                     restaurantId: restaurant._id,
                     unitPrice: item.price,
                     total: item.price * item.quantity,
-                    tableNumber: tableNumber
+                    tableNumber: Number(tableNumber)
                 }, session._id).catch(() => {
                     setOrderStatus("Error")
                     setAlertMessage("Houve um erro com o seu pedido, um garçon irá confirmar o seu pedido em breve.")

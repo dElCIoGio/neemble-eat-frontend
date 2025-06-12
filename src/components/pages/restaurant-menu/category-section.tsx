@@ -23,14 +23,14 @@ export function CategorySection({category, selectItem}: props) {
 
     return (
         <div className={`mt-8 px-4`}>
-            <h1 className={`text-2xl font-poppins-semibold laptop:px-4`}>
+            <h1 className={`text-2xl font-poppins-semibold lg:px-4`}>
                 {category.name}
             </h1>
-            <div className={`columns-2 gap-0`}>
+            <div className={`lg:columns-2 gap-0`}>
                 {items.map((item, index) =>
                     item.isAvailable &&
                     <div key={index}
-                         className={`break-inside-avoid laptop:p-3 divide-y divide-gray-200`}
+                         className={`break-inside-avoid lg:p-3 divide-y divide-gray-200`}
                          onClick={() => selectItem(item)}>
                         <Product item={item}>
                             <ProductCard item={item}/>

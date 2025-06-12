@@ -16,8 +16,8 @@ export const ProductCard: FC<props> = ({item}) => {
     return (
 
         <div
-            className='text-start flex cursor-pointer bg-white border-b laptop:border laptop:rounded-2xl laptop:overflow-hidden laptop:shadow-sm laptop:hover:shadow-md transition-shadow duration-150'>
-            <div className='product-info laptop:ml-5 my-3 laptop:w-3/4 tablet:w-3/4 w-3/5 mr-3'>
+            className='text-start flex cursor-pointer bg-white lg:border-b lg:border rounded-2xl lg:overflow-hidden lg:shadow-sm lg:hover:shadow-md transition-shadow duration-150'>
+            <div className='product-info lg:ml-5 my-3 lg:w-3/4 md:w-3/4 w-3/5 mr-3'>
                 <h1 className='font-poppins-semibold'>{item.name}</h1>
                 <p className='line-clamp-2 mt-0.5 text-sm text-zinc-500'>
                     {item.description}
@@ -25,7 +25,7 @@ export const ProductCard: FC<props> = ({item}) => {
                 <p className='text-sm font-poppins-medium text-gray-600 pb-5'>Kz {item.price}</p>
             </div>
             <div
-                className='product-image justify-center max-h-40 items-center px-2 py-5 tablet:px-1 tablet:py-3 tablet:mr-2 laptop:mr-0 laptop:py-0 laptop:px-0 grow laptop:grow-0 flex w-2/5 tablet:w-1/4 laptop:w-1/4 '>
+                className='product-image justify-center max-h-40 items-center px-2 py-5 md:px-1 md:py-3 md:mr-2 lg:mr-0 lg:py-0 lg:px-0 grow lg:grow-0 flex w-2/5 md:w-1/4 lg:w-1/4 '>
                 <img src={item.imageUrl ? item.imageUrl : ""} alt={item.name}
                      className='object-cover w-full h-full'/>
             </div>
