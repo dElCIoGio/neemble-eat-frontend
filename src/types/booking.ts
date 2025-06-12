@@ -14,7 +14,7 @@ export type BookingCreate = {
 }
 
 
-export interface Booking {
+export interface Booking extends BookingCreate {
     _id: string;
 
     createdAt: string;

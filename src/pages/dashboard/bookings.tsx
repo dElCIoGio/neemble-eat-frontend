@@ -13,7 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import type { Booking, NewBooking } from "@/types/booking"
 import { NewBookingSheet } from "@/components/pages/dashboard-booking/new-booking-sheet"
 import {useDashboardContext} from "@/context/dashboard-context";
-import {useGetRestaurantUpcomingBookings} from "@/api/endpoints/booking/hooks";
+import {useCreateBooking, useGetRestaurantUpcomingBookings} from "@/api/endpoints/booking/hooks";
 
 
 
@@ -22,11 +22,12 @@ export default function ReservationsPage() {
     const { restaurant } = useDashboardContext()
 
     const {
-        data: bookings
+        data: reservations = [],
+        addBooking,
     } = useGetRestaurantUpcomingBookings({ restaurantId: restaurant._id })
 
+    const { mutate: createBooking } = useCreateBooking()
 
-    const [reservations, setReservations] = useState<Booking[]>(bookings? bookings : [])
     const [selectedReservation, setSelectedReservation] = useState<Booking | null>(null)
     const [searchTerm, setSearchTerm] = useState("")
     const [filterByGuests, setFilterByGuests] = useState<string>("all")
@@ -56,16 +57,12 @@ export default function ReservationsPage() {
     }
 
     const handleNewBooking = (newBooking: NewBooking) => {
-        const booking: Booking = {
-            ...newBooking,
-            id: `booking-${Date.now()}`,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            status: "upcoming"
-        }
-
-        setReservations((prev) => [booking, ...prev])
-        setIsNewBookingOpen(false)
+        createBooking(newBooking, {
+            onSuccess: (booking) => {
+                addBooking(booking)
+                setIsNewBookingOpen(false)
+            }
+        })
     }
 
     return (
@@ -136,7 +133,7 @@ export default function ReservationsPage() {
                             <TableBody>
                                 {filteredReservations.map((reservation) => (
                                     <TableRow
-                                        key={reservation.id}
+                                        key={reservation._id}
                                         className="cursor-pointer hover:bg-muted/50 transition-colors"
                                         onClick={() => handleReservationClick(reservation)}
                                     >
