@@ -35,6 +35,16 @@ import {RestaurantMenuProvider} from "@/context/restaurant-menu-context";
 import Cart from "@/pages/restaurant/cart";
 import {Orders} from "@/pages/restaurant/orders";
 import {OrdersTracking} from "@/pages/dashboard/order-tracking";
+import PrivacyPolicy from "@/pages/root/PrivacyPolicy";
+import ContactPage from "@/pages/root/Contact";
+import AboutUs from "@/pages/root/AboutUs";
+import Demo from "@/pages/root/Demo";
+import Pricing from "@/pages/root/Pricing";
+import CookiesPolicy from "@/pages/root/CookiesPolicy";
+import DigitalMenu from "@/pages/root/DigitalMenu";
+import OrderManagement from "@/pages/root/OrdersManagement";
+import DataAnalysis from "@/pages/root/DataAnalysis";
+import {ForgotPassword} from "@/pages/root/ForgotPassword";
 
 
 
@@ -56,6 +66,20 @@ function App() {
                 <Route element={<ProtectedRoute/>}>
                     <Route path="onboarding" element={<OnboardingPage/>}/>
                 </Route>
+
+
+                <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
+                <Route path="cookie-policy" element={<CookiesPolicy/>}/>
+                <Route path="solutions">
+                    <Route path="digital-menu" element={<DigitalMenu/>}/>
+                    <Route path="orders-management" element={<OrderManagement/>}/>
+                    <Route path="analytics" element={<DataAnalysis/>}/>
+                </Route>
+                <Route path="forgot-password" element={<ForgotPassword/>}/>
+                <Route path="demo" element={<Demo/>}/>
+                <Route path="contact" element={<ContactPage/>}/>
+                <Route path="about-us" element={<AboutUs/>}/>
+                <Route path="price" element={<Pricing/>}/>AboutUs.tsx
 
 
             </Route>
