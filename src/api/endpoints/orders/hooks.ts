@@ -7,11 +7,25 @@ export function useGetSessionOrders(sessionId: string | undefined){
 
     const queryKey = ["sesion orders", sessionId]
 
-    return useQuery({
+    const queryClient = useQueryClient();
+
+
+    const cleanList = () => {
+        queryClient.setQueryData<Order[]>(queryKey, () => {
+            return [] as Order[];
+        });
+    };
+
+     const query = useQuery({
         queryKey,
         queryFn: () => sessionId? ordersApi.listSessionOrders(sessionId): undefined,
         enabled: typeof sessionId === "string",
     })
+
+    return {
+         ...query,
+        cleanList,
+    }
 
 }
 

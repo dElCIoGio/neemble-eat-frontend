@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Search, MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -95,10 +94,10 @@ export function ItemsTab() {
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                     <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                         <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="All categories" />
+                            <SelectValue placeholder="Todas as categorias" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All categories</SelectItem>
+                            <SelectItem value="all">Todas as categorias</SelectItem>
                             {categories.map((category) => (
                                 <SelectItem key={category._id} value={category._id}>
                                     {category.name}
@@ -112,9 +111,9 @@ export function ItemsTab() {
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All items</SelectItem>
-                            <SelectItem value="available">Available</SelectItem>
-                            <SelectItem value="unavailable">Unavailable</SelectItem>
+                            <SelectItem value="all">Todos os itens</SelectItem>
+                            <SelectItem value="available">Disponíveis</SelectItem>
+                            <SelectItem value="unavailable">Indisponíveis</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -122,7 +121,7 @@ export function ItemsTab() {
                 <div className="relative w-full sm:w-auto">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
-                        placeholder="Search items"
+                        placeholder="Buscar itens"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10 w-full sm:w-[300px]"
@@ -142,10 +141,10 @@ export function ItemsTab() {
                                         onCheckedChange={handleSelectAll}
                                     />
                                 </TableHead>
-                                <TableHead>Item name</TableHead>
-                                <TableHead className="hidden sm:table-cell">Category</TableHead>
-                                <TableHead className="hidden md:table-cell">Price</TableHead>
-                                <TableHead className="hidden lg:table-cell">Customizations</TableHead>
+                                <TableHead>Nome do Item</TableHead>
+                                <TableHead className="hidden sm:table-cell">Categoria</TableHead>
+                                <TableHead className="hidden md:table-cell">Preço</TableHead>
+                                <TableHead className="hidden lg:table-cell">Personalizações</TableHead>
                                 <TableHead className="hidden sm:table-cell">Status</TableHead>
                                 <TableHead className="w-12"></TableHead>
                             </TableRow>
@@ -176,7 +175,7 @@ export function ItemsTab() {
                                                 <div>
                                                     <div className="font-medium">{item.name}</div>
                                                     <div className="text-sm text-gray-500 sm:hidden">
-                                                        ${item.price.toFixed(2)} • {getCategoryName(item.categoryId)}
+                                                        Kz {item.price.toFixed(2)} • {getCategoryName(item.categoryId)}
                                                     </div>
                                                 </div>
                                             </div>
@@ -195,13 +194,13 @@ export function ItemsTab() {
 
                                         <TableCell className="hidden lg:table-cell">
                                           <span className="text-sm text-gray-600">
-                                            {item.customizations.length} Customização {item.customizations.length !== 1 ? "s" : ""}
+                                            {item.customizations.length} Personalização{item.customizations.length !== 1 ? "s" : ""}
                                           </span>
                                         </TableCell>
 
                                         <TableCell className="hidden sm:table-cell">
                                             <Badge variant={item.isAvailable ? "default" : "secondary"}>
-                                                {item.isAvailable ? "Available" : "Unavailable"}
+                                                {item.isAvailable ? "Disponível" : "Indisponível"}
                                             </Badge>
                                         </TableCell>
 
@@ -216,17 +215,17 @@ export function ItemsTab() {
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuItem>
                                                         <Edit className="h-4 w-4 mr-2" />
-                                                        Edit
+                                                        Editar
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem onClick={() => handleToggleAvailability(item._id)}>
-                                                        {item.isAvailable ? "Mark unavailable" : "Mark available"}
+                                                        {item.isAvailable ? "Marcar como indisponível" : "Marcar como disponível"}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
                                                         onClick={() => handleDeleteItem(item._id)}
                                                         className="text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4 mr-2" />
-                                                        Delete
+                                                        Excluir
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
@@ -243,8 +242,8 @@ export function ItemsTab() {
                 <div className="text-center py-8">
                     <p className="text-gray-500">
                         {searchTerm || categoryFilter !== "all"
-                            ? "No items found matching your filters."
-                            : "No items in this menu yet."}
+                            ? "Nenhum item encontrado com seus filtros."
+                            : "Ainda não há itens neste cardápio."}
                     </p>
                 </div>
             )}

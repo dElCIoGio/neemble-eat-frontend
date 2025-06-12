@@ -20,7 +20,7 @@ export function PaymentMethods({children}: Props) {
 }
 
 PaymentMethods.Confirm = function Confirm() {
-    const {refreshOrders} = useOrdersContext()
+    const {refreshOrders, cleanList} = useOrdersContext()
     const { session } = useRestaurantMenuContext()
 
     const handleCloseSession = async () =>{
@@ -28,7 +28,8 @@ PaymentMethods.Confirm = function Confirm() {
         showPromiseToast(
             sessionApi.closeSession(session._id)
                 .then(() => {
-
+                    cleanList()
+                    refreshOrders()
                 }),
             {
                 loading: "Pedindo a conta...",
@@ -44,7 +45,6 @@ PaymentMethods.Confirm = function Confirm() {
                                      async () => {
                                          try {
                                              await handleCloseSession()
-                                             await refreshOrders()
                                          } catch (error) {
                                              console.error(error)
                                          }

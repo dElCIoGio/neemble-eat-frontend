@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -51,15 +50,15 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
 
     return (
         <div className="space-y-6">
-            {/* Basic Information */}
+            {/* Informações Básicas */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Basic Information</CardTitle>
+                    <CardTitle>Informações Básicas</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    {/* RestaurantMenu Name */}
+                    {/* Nome do Menu */}
                     <div className="space-y-2">
-                        <Label htmlFor="menu-name">Menu Name</Label>
+                        <Label htmlFor="menu-name">Nome do Cardápio</Label>
                         {isEditingName ? (
                             <div className="flex items-center gap-2">
                                 <Input
@@ -93,9 +92,9 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                         )}
                     </div>
 
-                    {/* RestaurantMenu Description */}
+                    {/* Descrição do Menu */}
                     <div className="space-y-2">
-                        <Label htmlFor="menu-description">Description</Label>
+                        <Label htmlFor="menu-description">Descrição</Label>
                         {isEditingDescription ? (
                             <div className="space-y-2">
                                 <Textarea
@@ -108,11 +107,11 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                                 <div className="flex items-center gap-2">
                                     <Button size="sm" onClick={handleDescriptionSave}>
                                         <Check className="h-4 w-4 mr-2" />
-                                        Save
+                                        Salvar
                                     </Button>
                                     <Button size="sm" variant="outline" onClick={handleDescriptionCancel}>
                                         <X className="h-4 w-4 mr-2" />
-                                        Cancel
+                                        Cancelar
                                     </Button>
                                 </div>
                             </div>
@@ -135,16 +134,16 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                 </CardContent>
             </Card>
 
-            {/* RestaurantMenu Preferences */}
+            {/* Preferências de Exibição */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Display Preferences</CardTitle>
+                    <CardTitle>Preferências de Exibição</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                            <Label>Highlight Featured Items</Label>
-                            <p className="text-sm text-gray-500">Show featured items prominently in the menu</p>
+                            <Label>Destaque os Itens em Destaque</Label>
+                            <p className="text-sm text-gray-500">Mostrar itens em destaque de forma proeminente no cardápio</p>
                         </div>
                         <Switch
                             checked={menu.preferences.highlightFeaturedItems}
@@ -154,8 +153,8 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
 
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                            <Label>Show Prices</Label>
-                            <p className="text-sm text-gray-500">Display item prices to customers</p>
+                            <Label>Mostrar Preços</Label>
+                            <p className="text-sm text-gray-500">Exibir os preços dos itens para os clientes</p>
                         </div>
                         <Switch
                             checked={menu.preferences.showPrices}
@@ -165,8 +164,8 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
 
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                            <Label>Show Item Images</Label>
-                            <p className="text-sm text-gray-500">Display images for menu items</p>
+                            <Label>Mostrar Imagens dos Itens</Label>
+                            <p className="text-sm text-gray-500">Exibir imagens para os itens do cardápio</p>
                         </div>
                         <Switch
                             checked={menu.preferences.showItemImages}
@@ -176,20 +175,20 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                 </CardContent>
             </Card>
 
-            {/* RestaurantMenu Statistics */}
+            {/* Estatísticas do Cardápio */}
             <Card className="bg-white shadow-sm rounded-xl border border-gray-200">
                 <CardHeader className="border-b border-gray-100">
-                    <CardTitle className="text-lg font-semibold text-gray-800">Menu Statistics</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-gray-800">Estatísticas do Cardápio</CardTitle>
                 </CardHeader>
                 <CardContent className="px-6 ">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         <div className="text-center space-y-1">
                             <div className="text-3xl font-medium text-gray-900">{menu.categoryIds.length}</div>
-                            <div className="text-sm text-gray-400">Categories</div>
+                            <div className="text-sm text-gray-400">Categorias</div>
                         </div>
                         <div className="text-center space-y-1">
                             <div className="text-3xl font-medium text-gray-900">13</div>
-                            <div className="text-sm text-gray-400">Items</div>
+                            <div className="text-sm text-gray-400">Itens</div>
                         </div>
                         <div className="text-center space-y-1">
                             <div
@@ -197,7 +196,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                                     menu.isActive ? "text-gray-900" : "text-gray-400"
                                 }`}
                             >
-                                {menu.isActive ? "Active" : "Inactive"}
+                                {menu.isActive ? "Ativo" : "Inativo"}
                             </div>
                             <div className="text-sm text-gray-400">Status</div>
                         </div>
@@ -205,7 +204,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                             <div className="text-3xl font-medium text-gray-900">
                                 {new Date(menu.updatedAt).toLocaleDateString()}
                             </div>
-                            <div className="text-sm text-gray-400">Last Updated</div>
+                            <div className="text-sm text-gray-400">Última atualização</div>
                         </div>
                     </div>
                 </CardContent>

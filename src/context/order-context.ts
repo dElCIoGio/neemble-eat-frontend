@@ -7,6 +7,7 @@ interface ContextProps {
     refreshOrders: (options?: RefetchOptions) => Promise<QueryObserverResult<Order[] | undefined, Error>>;
     isFetchingOrders: boolean;
     customerName: string
+    cleanList: () => void
 }
 
 export const OrdersContext = createContext<ContextProps | undefined>(undefined)

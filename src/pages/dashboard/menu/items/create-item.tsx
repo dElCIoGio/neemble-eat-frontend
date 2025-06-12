@@ -1,4 +1,3 @@
-
 import type React from "react"
 
 import { useState } from "react"
@@ -236,15 +235,15 @@ export default function CreateItemPage() {
                     <Link to="..">
                         <Button variant="ghost" size="sm">
                             <ArrowLeft className="h-4 w-4 mr-2" />
-                            Back to Menu
+                            Voltar para o Cardápio
                         </Button>
                     </Link>
                 </div>
 
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Item</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Criar Novo Item</h1>
                     <p className="text-gray-600">
-                        Add a new item to your menu with all the necessary details and customizations.
+                        Adicione um novo item ao seu cardápio com todos os detalhes e personalizações necessárias.
                     </p>
                 </div>
 
@@ -252,12 +251,12 @@ export default function CreateItemPage() {
                     {/* Basic Information */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Basic Information</CardTitle>
+                            <CardTitle>Informações Básicas</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="name">Item Name *</Label>
+                                    <Label htmlFor="name">Nome do Item</Label>
                                     <Input
                                         id="name"
                                         value={formData.name}
@@ -269,7 +268,7 @@ export default function CreateItemPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="price">Price *</Label>
+                                    <Label htmlFor="price">Preço</Label>
                                     <Input
                                         id="price"
                                         type="number"
@@ -285,13 +284,13 @@ export default function CreateItemPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="category">Category *</Label>
-                                <Select value={formData.categoryId} onValueChange={(value) => handleChangeSelectedCategory(value)}>
-                                    <SelectTrigger className={errors.categoryId ? "border-red-500" : ""}>
-                                        <SelectValue placeholder="Select a category" />
+                                <Label htmlFor="category">Categoria</Label>
+                                <Select value={formData.categoryId} onValueChange={handleChangeSelectedCategory}>
+                                    <SelectTrigger id="category" className={errors.categoryId ? "border-red-500" : ""}>
+                                        <SelectValue placeholder="Selecione uma categoria" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {categories.map((category) => (
+                                        {categories?.map((category) => (
                                             <SelectItem key={category._id} value={category._id}>
                                                 {category.name}
                                             </SelectItem>
@@ -302,7 +301,7 @@ export default function CreateItemPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Description</Label>
+                                <Label htmlFor="description">Descrição</Label>
                                 <Textarea
                                     id="description"
                                     value={formData.description}
@@ -317,7 +316,7 @@ export default function CreateItemPage() {
                     {/* Image Upload */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Item Image</CardTitle>
+                            <CardTitle>Imagem do Item</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
@@ -361,210 +360,224 @@ export default function CreateItemPage() {
                     <Card>
                         <CardHeader>
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle>Customizations</CardTitle>
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        Add optional customizations that customers can select for this item
-                                    </p>
-                                </div>
-                                <Button type="button" variant="outline" onClick={addCustomization}>
+                                <CardTitle>Personalizações</CardTitle>
+                                <Button type="button" onClick={addCustomization} size="sm">
                                     <Plus className="h-4 w-4 mr-2" />
-                                    Add Customization
+                                    Adicionar Personalização
                                 </Button>
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            {formData.customizations.length === 0 ? (
-                                <div className="text-center py-8 text-gray-500">
-                                    <p>No customizations added yet. Click "Add Customization" to get started.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-6">
-                                    {formData.customizations.map((customization, customIndex) => (
-                                        <div key={customIndex} className="border rounded-lg p-6 space-y-4">
-                                            <div className="flex items-center justify-between">
-                                                <Badge variant="outline">Customization {customIndex + 1}</Badge>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => removeCustomization(customIndex)}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
+                        <CardContent className="space-y-6">
+                            {formData.customizations.map((customization, customIndex) => (
+                                <div key={customIndex} className="space-y-4 p-4 border rounded-lg">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-medium">Personalização {customIndex + 1}</h3>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => removeCustomization(customIndex)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
 
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div className="space-y-2">
-                                                    <Label>Customization Name *</Label>
-                                                    <Input
-                                                        value={customization.name}
-                                                        onChange={(e) => updateCustomization(customIndex, "name", e.target.value)}
-                                                        placeholder="e.g., Size, Toppings"
-                                                        className={errors[`customization-${customIndex}-name`] ? "border-red-500" : ""}
-                                                    />
-                                                    {errors[`customization-${customIndex}-name`] && (
-                                                        <p className="text-sm text-red-500">{errors[`customization-${customIndex}-name`]}</p>
-                                                    )}
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label>Description</Label>
-                                                    <Input
-                                                        value={customization.description || ""}
-                                                        onChange={(e) => updateCustomization(customIndex, "description", e.target.value)}
-                                                        placeholder="Optional description"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                <div className="flex items-center space-x-2">
-                                                    <Switch
-                                                        checked={customization.isRequired}
-                                                        onCheckedChange={(checked) => updateCustomization(customIndex, "isRequired", checked)}
-                                                    />
-                                                    <Label>Required</Label>
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label>Limit Type</Label>
-                                                    <Select
-                                                        value={customization.limitType}
-                                                        onValueChange={(value) => updateCustomization(customIndex, "limitType", value as LimitType)}
-                                                    >
-                                                        <SelectTrigger>
-                                                            <SelectValue />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {limitTypeOptions.map((option) => (
-                                                                <SelectItem key={option.value} value={option.value}>
-                                                                    <div className="flex flex-col justify-start">
-                                                                        <div className="font-medium">{option.label}</div>
-                                                                        <div className="text-xs text-gray-500">{option.description}</div>
-                                                                    </div>
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-
-                                                <div className="space-y-2">
-                                                    <Label>Limit *</Label>
-                                                    <Input
-                                                        type="number"
-                                                        min="1"
-                                                        value={customization.limit}
-                                                        onChange={(e) =>
-                                                            updateCustomization(customIndex, "limit", Number.parseInt(e.target.value) || 1)
-                                                        }
-                                                        className={errors[`customization-${customIndex}-limit`] ? "border-red-500" : ""}
-                                                    />
-                                                    {errors[`customization-${customIndex}-limit`] && (
-                                                        <p className="text-sm text-red-500">{errors[`customization-${customIndex}-limit`]}</p>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <Separator />
-
-                                            {/* Options */}
-                                            <div className="space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <Label className="text-base font-medium">Options</Label>
-                                                    <Button type="button" variant="outline" size="sm" onClick={() => addOption(customIndex)}>
-                                                        <Plus className="h-4 w-4 mr-2" />
-                                                        Add Option
-                                                    </Button>
-                                                </div>
-
-                                                {customization.options.length === 0 ? (
-                                                    <Alert>
-                                                        <AlertDescription>Add at least one option for customers to choose from.</AlertDescription>
-                                                    </Alert>
-                                                ) : (
-                                                    <div className="space-y-3">
-                                                        {customization.options.map((option, optionIndex) => (
-                                                            <div key={optionIndex} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                                                <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
-                                                                    <div className="space-y-1">
-                                                                        <Label className="text-xs">Option Name *</Label>
-                                                                        <Input
-                                                                            value={option.name}
-                                                                            onChange={(e) => updateOption(customIndex, optionIndex, "name", e.target.value)}
-                                                                            placeholder="e.g., Small, Large"
-                                                                            className={
-                                                                                errors[`option-${customIndex}-${optionIndex}-name`] ? "border-red-500" : ""
-                                                                            }
-                                                                        />
-                                                                        {errors[`option-${customIndex}-${optionIndex}-name`] && (
-                                                                            <p className="text-xs text-red-500">
-                                                                                {errors[`option-${customIndex}-${optionIndex}-name`]}
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-
-                                                                    <div className="space-y-1">
-                                                                        <Label className="text-xs">Price Modifier</Label>
-                                                                        <Input
-                                                                            type="number"
-                                                                            step="0.01"
-                                                                            value={option.priceModifier}
-                                                                            onChange={(e) =>
-                                                                                updateOption(
-                                                                                    customIndex,
-                                                                                    optionIndex,
-                                                                                    "priceModifier",
-                                                                                    Number.parseFloat(e.target.value) || 0,
-                                                                                )
-                                                                            }
-                                                                            placeholder="0.00"
-                                                                        />
-                                                                    </div>
-
-                                                                    <div className="space-y-1">
-                                                                        <Label className="text-xs">Max Quantity *</Label>
-                                                                        <Input
-                                                                            type="number"
-                                                                            min="1"
-                                                                            value={option.maxQuantity}
-                                                                            onChange={(e) =>
-                                                                                updateOption(
-                                                                                    customIndex,
-                                                                                    optionIndex,
-                                                                                    "maxQuantity",
-                                                                                    Number.parseInt(e.target.value) || 1,
-                                                                                )
-                                                                            }
-                                                                            className={
-                                                                                errors[`option-${customIndex}-${optionIndex}-maxQuantity`]
-                                                                                    ? "border-red-500"
-                                                                                    : ""
-                                                                            }
-                                                                        />
-                                                                        {errors[`option-${customIndex}-${optionIndex}-maxQuantity`] && (
-                                                                            <p className="text-xs text-red-500">
-                                                                                {errors[`option-${customIndex}-${optionIndex}-maxQuantity`]}
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-
-                                                                <Button
-                                                                    type="button"
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    onClick={() => removeOption(customIndex, optionIndex)}
-                                                                >
-                                                                    <X className="h-4 w-4" />
-                                                                </Button>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label>Nome da Personalização</Label>
+                                            <Input
+                                                value={customization.name}
+                                                onChange={(e) =>
+                                                    updateCustomization(customIndex, "name", e.target.value)
+                                                }
+                                                placeholder="e.g., Size, Toppings"
+                                                className={
+                                                    errors[`customization-${customIndex}-name`]
+                                                        ? "border-red-500"
+                                                        : ""
+                                                }
+                                            />
+                                            {errors[`customization-${customIndex}-name`] && (
+                                                <p className="text-sm text-red-500">
+                                                    {errors[`customization-${customIndex}-name`]}
+                                                </p>
+                                            )}
                                         </div>
-                                    ))}
+
+                                        <div className="space-y-2">
+                                            <Label>Descrição</Label>
+                                            <Input
+                                                value={customization.description || ""}
+                                                onChange={(e) => updateCustomization(customIndex, "description", e.target.value)}
+                                                placeholder="Optional description"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="flex items-center space-x-2">
+                                            <Switch
+                                                checked={customization.isRequired}
+                                                onCheckedChange={(checked) => updateCustomization(customIndex, "isRequired", checked)}
+                                            />
+                                            <Label>Obrigatório</Label>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Tipo de Limite</Label>
+                                            <Select
+                                                value={customization.limitType}
+                                                onValueChange={(value) => updateCustomization(customIndex, "limitType", value as LimitType)}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {limitTypeOptions.map((option) => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            <div className="flex flex-col justify-start">
+                                                                <div className="font-medium">{option.label}</div>
+                                                                <div className="text-xs text-gray-500">{option.description}</div>
+                                                            </div>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Limite</Label>
+                                            <Input
+                                                type="number"
+                                                min="1"
+                                                value={customization.limit}
+                                                onChange={(e) =>
+                                                    updateCustomization(
+                                                        customIndex,
+                                                        "limit",
+                                                        Number.parseInt(e.target.value) || 1,
+                                                    )
+                                                }
+                                                className={
+                                                    errors[`customization-${customIndex}-limit`]
+                                                        ? "border-red-500"
+                                                        : ""
+                                                }
+                                            />
+                                            {errors[`customization-${customIndex}-limit`] && (
+                                                <p className="text-sm text-red-500">
+                                                    {errors[`customization-${customIndex}-limit`]}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <Separator />
+
+                                    {/* Options */}
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <Label className="text-base font-medium">Opções</Label>
+                                            <Button type="button" variant="outline" size="sm" onClick={() => addOption(customIndex)}>
+                                                <Plus className="h-4 w-4 mr-2" />
+                                                Adicionar Opção
+                                            </Button>
+                                        </div>
+
+                                        {customization.options.length === 0 ? (
+                                            <Alert>
+                                                <AlertDescription>Add at least one option for customers to choose from.</AlertDescription>
+                                            </Alert>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                {customization.options.map((option, optionIndex) => (
+                                                    <div key={optionIndex} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                                        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                            <div className="space-y-1">
+                                                                <Label className="text-xs">Option Name *</Label>
+                                                                <Input
+                                                                    value={option.name}
+                                                                    onChange={(e) => updateOption(customIndex, optionIndex, "name", e.target.value)}
+                                                                    placeholder="e.g., Small, Large"
+                                                                    className={
+                                                                        errors[`option-${customIndex}-${optionIndex}-name`] ? "border-red-500" : ""
+                                                                    }
+                                                                />
+                                                                {errors[`option-${customIndex}-${optionIndex}-name`] && (
+                                                                    <p className="text-xs text-red-500">
+                                                                        {errors[`option-${customIndex}-${optionIndex}-name`]}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+
+                                                            <div className="space-y-1">
+                                                                <Label className="text-xs">Price Modifier</Label>
+                                                                <Input
+                                                                    type="number"
+                                                                    step="0.01"
+                                                                    value={option.priceModifier}
+                                                                    onChange={(e) =>
+                                                                        updateOption(
+                                                                            customIndex,
+                                                                            optionIndex,
+                                                                            "priceModifier",
+                                                                            Number.parseFloat(e.target.value) || 0,
+                                                                        )
+                                                                    }
+                                                                    placeholder="0.00"
+                                                                />
+                                                            </div>
+
+                                                            <div className="space-y-1">
+                                                                <Label className="text-xs">Max Quantity *</Label>
+                                                                <Input
+                                                                    type="number"
+                                                                    min="1"
+                                                                    value={option.maxQuantity}
+                                                                    onChange={(e) =>
+                                                                        updateOption(
+                                                                            customIndex,
+                                                                            optionIndex,
+                                                                            "maxQuantity",
+                                                                            Number.parseInt(e.target.value) || 1,
+                                                                        )
+                                                                    }
+                                                                    className={
+                                                                        errors[`option-${customIndex}-${optionIndex}-maxQuantity`]
+                                                                            ? "border-red-500"
+                                                                            : ""
+                                                                    }
+                                                                />
+                                                                {errors[`option-${customIndex}-${optionIndex}-maxQuantity`] && (
+                                                                    <p className="text-xs text-red-500">
+                                                                        {errors[`option-${customIndex}-${optionIndex}-maxQuantity`]}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => removeOption(customIndex, optionIndex)}
+                                                        >
+                                                            <X className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+
+                            {formData.customizations.length === 0 && (
+                                <div className="text-center py-8">
+                                    <p className="text-gray-500">
+                                        Nenhuma personalização adicionada ainda. Adicione personalizações para permitir que os clientes
+                                        personalizem este item.
+                                    </p>
                                 </div>
                             )}
                         </CardContent>
@@ -577,7 +590,7 @@ export default function CreateItemPage() {
                                 Cancel
                             </Button>
                         </Link>
-                        <Button type="submit" disabled={isLoading}>Create Item</Button>
+                        <Button type="submit" disabled={isLoading}>{isLoading ? "Criando..." : "Criar Item"}</Button>
                     </div>
                 </form>
             </div>

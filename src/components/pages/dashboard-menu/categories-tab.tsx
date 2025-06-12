@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Search, MoreHorizontal, Edit, Trash2, Eye } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -105,8 +104,8 @@ export function CategoriesTab() {
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all-menus">All menus</SelectItem>
-                            <SelectItem value="current-menu">Current menu</SelectItem>
+                            <SelectItem value="all-menus">Todos os cardápios</SelectItem>
+                            <SelectItem value="current-menu">Cardápio atual</SelectItem>
                         </SelectContent>
                     </Select>
 
@@ -115,7 +114,7 @@ export function CategoriesTab() {
                 <div className="relative w-full sm:w-auto">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
-                        placeholder="Search categories"
+                        placeholder="Buscar categorias"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10 w-full sm:w-[300px]"
@@ -135,8 +134,8 @@ export function CategoriesTab() {
                                         onCheckedChange={handleSelectAll}
                                     />
                                 </TableHead>
-                                <TableHead>Category name</TableHead>
-                                <TableHead className="hidden md:table-cell">Contains</TableHead>
+                                <TableHead>Nome da Categoria</TableHead>
+                                <TableHead className="hidden md:table-cell">Contém</TableHead>
                                 <TableHead className="hidden sm:table-cell">Status</TableHead>
                                 <TableHead className="w-12"></TableHead>
                             </TableRow>
@@ -163,7 +162,7 @@ export function CategoriesTab() {
                                             <div>
                                                 <div className="font-medium">{category.name}</div>
                                                 <div className="text-sm text-gray-500 sm:hidden">
-                                                    {category.itemIds.length} items
+                                                    {category.itemIds.length} itens
                                                 </div>
                                             </div>
                                         </div>
@@ -171,14 +170,13 @@ export function CategoriesTab() {
 
                                     <TableCell className="hidden md:table-cell">
                                       <span className="text-sm text-gray-600">
-                                        {category.itemIds.length} items
+                                        {category.itemIds.length} itens
                                       </span>
                                     </TableCell>
 
-
                                     <TableCell className="hidden sm:table-cell">
                                         <Badge variant={category.isActive ? "default" : "secondary"}>
-                                            {category.isActive ? "Active" : "Inactive"}
+                                            {category.isActive ? "Ativo" : "Inativo"}
                                         </Badge>
                                     </TableCell>
 
@@ -193,23 +191,23 @@ export function CategoriesTab() {
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem>
                                                     <Eye className="h-4 w-4 mr-2" />
-                                                    View items
+                                                    Ver itens
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem>
                                                     <Edit className="h-4 w-4 mr-2" />
-                                                    Edit
+                                                    Editar
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     onClick={() => handleToggleStatus(category)}
                                                 >
-                                                    {category.isActive ? "Deactivate" : "Activate"}
+                                                    {category.isActive ? "Desativar" : "Ativar"}
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     onClick={() => handleDeleteCategory(category._id)}
                                                     className="text-red-600"
                                                 >
                                                     <Trash2 className="h-4 w-4 mr-2" />
-                                                    Delete
+                                                    Excluir
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
@@ -223,7 +221,7 @@ export function CategoriesTab() {
 
             {filteredCategories.length === 0 && (
                 <div className="text-center py-8">
-                    <p className="text-gray-500">No categories found matching your search.</p>
+                    <p className="text-gray-500">Nenhuma categoria encontrada com sua busca.</p>
                 </div>
             )}
         </div>

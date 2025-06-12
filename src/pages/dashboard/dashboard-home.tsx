@@ -136,9 +136,9 @@ export default function RestaurantDashboard(): JSX.Element {
                 from.setHours(0, 0, 0, 0)
                 break
             case "yesterday":
-                from.setDate(today.getDate() - 1)
+                from.setDate(today.getDate() - 2)
                 from.setHours(0, 0, 0, 0)
-                today.setDate(today.getDate() - 1)
+                today.setDate(today.getDate() - 2)
                 today.setHours(23, 59, 59, 999)
                 break
             case "7days":
@@ -156,6 +156,10 @@ export default function RestaurantDashboard(): JSX.Element {
             to: today.toISOString()
         }
     }, [])
+
+
+    console.log(getDateRangeFromFilter(dateFilter).from)
+    console.log(getDateRangeFromFilter(dateFilter).to)
 
     // Analytics hooks
     const { data: salesSummary } = useGetSalesSummary({

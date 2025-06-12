@@ -47,7 +47,8 @@ export function Orders() {
         data: orders,
         error: ordersError,
         isFetching: isFetchingOrders,
-        refetch: refreshOrders
+        refetch: refreshOrders,
+        cleanList
     } = useGetSessionOrders(session?._id)
 
 
@@ -77,7 +78,8 @@ export function Orders() {
             refreshOrders: refreshOrders,
             orders: orders,
             isFetchingOrders: isFetchingOrders,
-            customerName
+            customerName,
+            cleanList
         }}>
             <div className="p-4">
                 <Background className={`bg-gray-100`}/>

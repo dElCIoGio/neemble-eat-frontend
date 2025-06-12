@@ -75,12 +75,12 @@ export default function MenuManager() {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-3xl font-bold text-gray-900">Menus</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">Cardápios</h1>
                     </div>
                     <Button asChild size="sm" className="">
                         <Link to="create">
                             <Plus className="h-4 w-4 mr-2" />
-                            Add menu
+                            Adicionar cardápio
                         </Link>
                     </Button>
                 </div>
@@ -89,7 +89,7 @@ export default function MenuManager() {
                 <div className="relative mb-8">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
-                        placeholder="Search brands and menus"
+                        placeholder="Buscar marcas e cardápios"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10 max-w-md"
@@ -101,15 +101,15 @@ export default function MenuManager() {
                     {filteredMenus.length === 0 ? (
                         <div className="text-center py-12">
                             <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">No menus found</h3>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum cardápio encontrado</h3>
                             <p className="text-gray-500 mb-4">
-                                {searchTerm ? "Try adjusting your search terms" : "Get started by adding your first menu"}
+                                {searchTerm ? "Tente ajustar seus termos de busca" : "Comece adicionando seu primeiro cardápio"}
                             </p>
                             {!searchTerm && (
                                 <Button asChild size="sm" className="">
                                     <Link to="create">
                                         <Plus className="h-4 w-4 mr-2" />
-                                        Add menu
+                                        Adicionar cardápio
                                     </Link>
                                 </Button>
                             )}
@@ -128,7 +128,7 @@ export default function MenuManager() {
 
                                             {/* Status Badge */}
                                             <Badge variant={menu.isActive ? "default" : "secondary"} className="text-xs">
-                                                {menu.isActive ? "Active" : "Inactive"}
+                                                {menu.isActive ? "Ativo" : "Inativo"}
                                             </Badge>
 
                                             {/* Actions */}
@@ -145,11 +145,11 @@ export default function MenuManager() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuItem onClick={(e) => handleToggleStatus(menu._id, e)}>
-                                                        {menu.isActive ? "Deactivate" : "Activate"}
+                                                        {menu.isActive ? "Desativar" : "Ativar"}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem onClick={(e) => handleDeleteMenu(menu._id, e)} className="text-red-600">
                                                         <Trash2 className="h-4 w-4 mr-2" />
-                                                        Delete
+                                                        Excluir
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>

@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { ArrowLeft, Eye, Settings, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -57,16 +56,16 @@ export default function MenuManagementPage() {
                                 </div>
 
                                 <Badge variant="secondary" className="bg-green-100 text-green-800">
-                                Published
+                                Publicado
                                 </Badge>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Button variant="outline" size="sm">
                                 <Eye className="h-4 w-4 mr-2" />
-                                Preview menu
+                                Visualizar cardápio
                             </Button>
-                            <Button size="sm">Publish</Button>
+                            <Button size="sm">Publicar</Button>
                             <Button variant="ghost" size="sm">
                                 <Settings className="h-4 w-4" />
                             </Button>
@@ -77,7 +76,7 @@ export default function MenuManagementPage() {
                             <Button asChild variant="outline" size="sm">
                                 <Link to="categories/create">
                                     <Plus className="h-4 w-4 mr-2" />
-                                    Add category
+                                    Adicionar categoria
                                 </Link>
 
                             </Button>
@@ -86,7 +85,7 @@ export default function MenuManagementPage() {
                             <Button asChild variant="outline" size="sm">
                                 <Link to="items/create">
                                     <Plus className="h-4 w-4 mr-2" />
-                                    Add item
+                                    Adicionar item
                                 </Link>
                             </Button>
                         )}
@@ -100,19 +99,19 @@ export default function MenuManagementPage() {
                                     value="overview"
                                     className=""
                                 >
-                                    Overview
+                                    Visão Geral
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="categories"
                                     className=""
                                 >
-                                    Categories
+                                    Categorias
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="items"
                                     className=""
                                 >
-                                    Items
+                                    Itens
                                 </TabsTrigger>
                             </TabsList>
                         </div>

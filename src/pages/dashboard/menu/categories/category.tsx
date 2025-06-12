@@ -212,13 +212,13 @@ export default function CategoryDetailsPage() {
                         <Link to={`../../`}>
                             <Button variant="ghost" size="sm">
                                 <ArrowLeft className="h-4 w-4 mr-2"/>
-                                Back to Categories
+                                Voltar para Categorias
                             </Button>
                         </Link>
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">{category.name}</h1>
                             <p className="text-gray-500 text-sm">
-                                Created at {new Date(category.createdAt).toLocaleDateString()} • Last updated at{" "}
+                                Criado em {new Date(category.createdAt).toLocaleDateString()} • Última atualização em{" "}
                                 {new Date(category.updatedAt).toLocaleDateString()}
                             </p>
                         </div>
@@ -227,18 +227,18 @@ export default function CategoryDetailsPage() {
                         {hasUnsavedChanges && (
                             <Button onClick={handleSaveAll} className="bg-green-600 hover:bg-green-700">
                                 <Save className="h-4 w-4 mr-2" />
-                                Save Changes
+                                Salvar Alterações
                             </Button>
                         )}
                         <Badge variant={category.isActive ? "default" : "secondary"}>
-                            {category.isActive ? "Active" : "Inactive"}
+                            {category.isActive ? "Ativo" : "Inativo"}
                         </Badge>
                     </div>
                 </div>
 
                 {hasUnsavedChanges && (
                     <Alert className="mb-6">
-                        <AlertDescription>You have unsaved changes. Don't forget to save your work!</AlertDescription>
+                        <AlertDescription>Você tem alterações não salvas. Não se esqueça de salvar seu trabalho!</AlertDescription>
                     </Alert>
                 )}
 
@@ -248,12 +248,12 @@ export default function CategoryDetailsPage() {
                         {/* Basic Information */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Basic Information</CardTitle>
+                                <CardTitle>Informações Básicas</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 {/* Category Name */}
                                 <div className="space-y-2">
-                                    <Label>Category Name</Label>
+                                    <Label>Nome da Categoria</Label>
                                     {isEditing.name ? (
                                         <div className="flex items-center gap-2">
                                             <Input
@@ -288,7 +288,7 @@ export default function CategoryDetailsPage() {
 
                                 {/* Description */}
                                 <div className="space-y-2">
-                                    <Label>Description</Label>
+                                    <Label>Descrição</Label>
                                     {isEditing.description ? (
                                         <div className="space-y-2">
                                             <Textarea
@@ -301,11 +301,11 @@ export default function CategoryDetailsPage() {
                                             <div className="flex items-center gap-2">
                                                 <Button size="sm" onClick={() => saveField("description")}>
                                                     <Save className="h-4 w-4 mr-2" />
-                                                    Save
+                                                    Salvar
                                                 </Button>
                                                 <Button size="sm" variant="outline" onClick={() => cancelEditing("description")}>
                                                     <X className="h-4 w-4 mr-2" />
-                                                    Cancel
+                                                    Cancelar
                                                 </Button>
                                             </div>
                                         </div>
@@ -329,7 +329,7 @@ export default function CategoryDetailsPage() {
 
                                 {/* Position */}
                                 <div className="space-y-2">
-                                    <Label>Display Position</Label>
+                                    <Label>Posição de Exibição</Label>
                                     {isEditing.position ? (
                                         <div className="flex items-center gap-2">
                                             <Input
@@ -350,7 +350,7 @@ export default function CategoryDetailsPage() {
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-between group">
-                                            <span className="text-gray-700">Position {category.position}</span>
+                                            <span className="text-gray-700">Posição {category.position}</span>
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
@@ -367,11 +367,11 @@ export default function CategoryDetailsPage() {
                                 {/* Active Status */}
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <Label>Category Status</Label>
+                                        <Label>Status da Categoria</Label>
                                         <p className="text-sm text-gray-500">
                                             {category.isActive
-                                                ? "This category is visible to customers"
-                                                : "This category is hidden from customers"}
+                                                ? "Esta categoria está visível para os clientes"
+                                                : "Esta categoria está oculta dos clientes"}
                                         </p>
                                     </div>
                                     <Switch checked={category.isActive} onCheckedChange={toggleActive} />
@@ -380,16 +380,16 @@ export default function CategoryDetailsPage() {
                         </Card>
 
                         {/* Items in Category */}
-                        <Card>
+                        <Card className="hidden">
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <CardTitle>Items in Category</CardTitle>
-                                        <CardDescription>{category.itemIds.length} items in this category</CardDescription>
+                                        <CardTitle>Itens na Categoria</CardTitle>
+                                        <CardDescription>{category.itemIds.length} itens nesta categoria</CardDescription>
                                     </div>
                                     <Button size="sm">
                                         <Plus className="h-4 w-4 mr-2" />
-                                        Add Item
+                                        Adicionar Item
                                     </Button>
                                 </div>
                             </CardHeader>
@@ -399,7 +399,7 @@ export default function CategoryDetailsPage() {
                                         <TableHeader>
                                             <TableRow>
                                                 <TableHead>Item</TableHead>
-                                                <TableHead className="hidden sm:table-cell">Price</TableHead>
+                                                <TableHead className="hidden sm:table-cell">Preço</TableHead>
                                                 <TableHead className="hidden md:table-cell">Status</TableHead>
                                                 <TableHead className="w-12"></TableHead>
                                             </TableRow>
@@ -411,13 +411,13 @@ export default function CategoryDetailsPage() {
                                                         <div className="flex items-center gap-3">
                                                             <div>
                                                                 <div className="font-medium">Item {itemId}</div>
-                                                                <div className="text-sm text-gray-500">Loading item details...</div>
+                                                                <div className="text-sm text-gray-500">Carregando detalhes do item...</div>
                                                             </div>
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell className="hidden sm:table-cell">Loading...</TableCell>
+                                                    <TableCell className="hidden sm:table-cell">Carregando...</TableCell>
                                                     <TableCell className="hidden md:table-cell">
-                                                        <Badge variant="secondary">Loading...</Badge>
+                                                        <Badge variant="secondary">Carregando...</Badge>
                                                     </TableCell>
                                                     <TableCell>
                                                         <DropdownMenu>
@@ -429,15 +429,15 @@ export default function CategoryDetailsPage() {
                                                             <DropdownMenuContent align="end">
                                                                 <DropdownMenuItem>
                                                                     <Edit2 className="h-4 w-4 mr-2" />
-                                                                    Edit
+                                                                    Editar
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem>
                                                                     <EyeOff className="h-4 w-4 mr-2" />
-                                                                    Mark unavailable
+                                                                    Marcar como indisponível
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem className="text-red-600">
                                                                     <Trash2 className="h-4 w-4 mr-2" />
-                                                                    Remove from category
+                                                                    Remover da categoria
                                                                 </DropdownMenuItem>
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
@@ -463,7 +463,7 @@ export default function CategoryDetailsPage() {
                                     <div className="relative flex-1">
                                         <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                                         <Input
-                                            placeholder="Add a tag"
+                                            placeholder="Adicionar Tag"
                                             value={newTag}
                                             onChange={(e) => setNewTag(e.target.value)}
                                             onKeyDown={handleTagKeyPress}
@@ -491,7 +491,7 @@ export default function CategoryDetailsPage() {
                                         ))}
                                     </div>
                                 ) : (
-                                    <p className="text-sm text-gray-500">No tags added yet.</p>
+                                    <p className="text-sm text-gray-500">Nenhuma tag adicionada ainda.</p>
                                 )}
                             </CardContent>
                         </Card>
@@ -499,30 +499,30 @@ export default function CategoryDetailsPage() {
                         {/* Category Stats */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Category Statistics</CardTitle>
+                                <CardTitle>Estatísticas da Categoria</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="text-center">
                                         <div className="text-2xl font-bold text-blue-600">{category.itemIds.length}</div>
-                                        <div className="text-sm text-gray-500">Total Items</div>
+                                        <div className="text-sm text-gray-500">Total de Itens</div>
                                     </div>
                                     <div className="text-center">
                                         <div className="text-2xl font-bold text-green-600">
                                             {category.itemIds.length}
                                         </div>
-                                        <div className="text-sm text-gray-500">Available</div>
+                                        <div className="text-sm text-gray-500">Disponíveis</div>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="space-y-2 text-sm">
                                     <div className="flex justify-between">
-                                        <span className="text-gray-500">Category ID:</span>
+                                        <span className="text-gray-500">ID da Categoria:</span>
                                         <span className="font-mono">{category._id}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-500">Slug:</span>
-                                        <span className="font-mono">{category.slug || "Not set"}</span>
+                                        <span className="font-mono">{category.slug || "Não definido"}</span>
                                     </div>
                                 </div>
                             </CardContent>

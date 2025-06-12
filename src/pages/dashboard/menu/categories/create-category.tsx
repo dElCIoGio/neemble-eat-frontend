@@ -1,4 +1,3 @@
-
 import type React from "react"
 
 import { useState } from "react"
@@ -143,41 +142,41 @@ export default function CreateCategoryPage() {
                     <Link to="..">
                         <Button variant="ghost" size="sm">
                             <ArrowLeft className="h-4 w-4 mr-2" />
-                            Back to Categories
+                            Voltar para Categorias
                         </Button>
                     </Link>
                 </div>
 
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Category</h1>
-                    <p className="text-gray-600">Add a new category to organize your menu items.</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Criar Nova Categoria</h1>
+                    <p className="text-gray-600">Adicione uma nova categoria para organizar os itens do seu cardápio.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Basic Information */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Basic Information</CardTitle>
-                            <CardDescription>Enter the essential details for your new category.</CardDescription>
+                            <CardTitle>Informações Básicas</CardTitle>
+                            <CardDescription>Insira os detalhes essenciais para sua nova categoria.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Category Name *</Label>
+                                <Label htmlFor="name">Nome da Categoria *</Label>
                                 <Input
                                     id="name"
                                     value={formData.name}
                                     onChange={(e) => handleInputChange("name", e.target.value)}
-                                    placeholder="e.g., Appetizers, Desserts, Beverages"
+                                    placeholder="ex: Entradas, Sobremesas, Bebidas"
                                     className={errors.name ? "border-red-500" : ""}
                                 />
                                 {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="menu">Menu *</Label>
+                                <Label htmlFor="menu">Cardápio *</Label>
                                 <Select value={formData.menuId} onValueChange={(value) => handleInputChange("menuId", value)}>
                                     <SelectTrigger className={errors.menuId ? "border-red-500" : ""}>
-                                        <SelectValue placeholder={ menus.find((menu) => menu._id == restaurant.currentMenuId)?.name ?? "Select a menu" } />
+                                        <SelectValue placeholder={ menus.find((menu) => menu._id == restaurant.currentMenuId)?.name ?? "Selecione um cardápio" } />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {menus.map((menu) => (
@@ -191,12 +190,12 @@ export default function CreateCategoryPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Description *</Label>
+                                <Label htmlFor="description">Descrição *</Label>
                                 <Textarea
                                     id="description"
                                     value={formData.description}
                                     onChange={(e) => handleInputChange("description", e.target.value)}
-                                    placeholder="Describe this category and the items it contains"
+                                    placeholder="Descreva esta categoria e os itens que ela contém"
                                     rows={3}
                                     className={errors.description ? "border-red-500" : ""}
                                 />
@@ -205,11 +204,11 @@ export default function CreateCategoryPage() {
 
                             <div className="flex items-center space-x-2">
                                 <Switch checked={isActive} onCheckedChange={setIsActive} />
-                                <Label>Active Category</Label>
+                                <Label>Categoria Ativa</Label>
                                 <p className="text-sm text-gray-500 ml-2">
                                     {isActive
-                                        ? "This category will be visible to customers"
-                                        : "This category will be hidden from customers"}
+                                        ? "Esta categoria estará visível para os clientes"
+                                        : "Esta categoria estará oculta dos clientes"}
                                 </p>
                             </div>
                         </CardContent>
@@ -219,14 +218,14 @@ export default function CreateCategoryPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Tags</CardTitle>
-                            <CardDescription>Add tags to help organize and filter your categories (optional).</CardDescription>
+                            <CardDescription>Adicione tags para ajudar a organizar e filtrar suas categorias (opcional).</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center gap-2">
                                 <div className="relative flex-1">
                                     <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                                     <Input
-                                        placeholder="Add a tag and press Enter"
+                                        placeholder="Adicione uma tag e pressione Enter"
                                         value={currentTag}
                                         onChange={(e) => setCurrentTag(e.target.value)}
                                         onKeyDown={handleTagKeyDown}
@@ -235,7 +234,7 @@ export default function CreateCategoryPage() {
                                 </div>
                                 <Button type="button" variant="outline" onClick={addTag} disabled={!currentTag.trim()}>
                                     <Plus className="h-4 w-4 mr-2" />
-                                    Add
+                                    Adicionar
                                 </Button>
                             </div>
 
@@ -265,13 +264,8 @@ export default function CreateCategoryPage() {
                     </Card>
 
                     {/* Submit Button */}
-                    <div className="flex justify-end gap-4">
-                        <Link to="/menu/1?tab=categories">
-                            <Button type="button" variant="outline">
-                                Cancel
-                            </Button>
-                        </Link>
-                        <Button type="submit">Create Category</Button>
+                    <div className="flex justify-end">
+                        <Button type="submit">Criar Categoria</Button>
                     </div>
                 </form>
             </div>

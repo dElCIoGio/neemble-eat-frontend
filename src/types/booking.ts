@@ -1,6 +1,5 @@
 
-export interface Booking {
-    id: string;
+export type BookingCreate = {
     restaurantId: string;
     tableId: string;
     startTime: string;
@@ -12,6 +11,12 @@ export interface Booking {
     email: string;
     occasion: string;
     notes: string;
+}
+
+
+export interface Booking {
+    _id: string;
+
     createdAt: string;
     updatedAt: string;
     status: "upcoming" | "seated" | "completed" | "delayed";
