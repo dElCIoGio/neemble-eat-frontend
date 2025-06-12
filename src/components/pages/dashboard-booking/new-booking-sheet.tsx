@@ -75,6 +75,7 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit, restaurantId }: 
 
     const [startDate, setStartDate] = useState<Date>()
     const [startTime, setStartTime] = useState("")
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false)
     const [duration, setDuration] = useState(60) // Default duration in minutes
     const [errors, setErrors] = useState<Partial<Record<keyof NewBooking, string>>>({})
 
@@ -262,7 +263,7 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit, restaurantId }: 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Data de Início *</Label>
-                                <Popover>
+                                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant="outline"
@@ -289,13 +290,7 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit, restaurantId }: 
                                                 onSelect={(date) => {
                                                     if (date) {
                                                         setStartDate(date)
-                                                        // Close the popover after a short delay
-                                                        setTimeout(() => {
-                                                            const popover = document.querySelector('[data-state="open"]')
-                                                            if (popover) {
-                                                                (popover as HTMLElement).click()
-                                                            }
-                                                        }, 100)
+                                                        setIsCalendarOpen(false)
                                                     }
                                                 }}
                                                 locale={pt}
