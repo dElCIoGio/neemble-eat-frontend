@@ -276,8 +276,33 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit, restaurantId }: 
                                             {startDate ? format(startDate, "dd/MM/yyyy", { locale: pt }) : "Selecionar data"}
                                         </Button>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0">
-                                        <Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus locale={pt} />
+                                    <PopoverContent 
+                                        className="w-auto p-0 z-50" 
+                                        align="start"
+                                        side="bottom"
+                                        sideOffset={4}
+                                    >
+                                        <div className="p-3 bg-background">
+                                            <Calendar
+                                                mode="single"
+                                                selected={startDate}
+                                                onSelect={(date) => {
+                                                    if (date) {
+                                                        setStartDate(date)
+                                                        // Close the popover after a short delay
+                                                        setTimeout(() => {
+                                                            const popover = document.querySelector('[data-state="open"]')
+                                                            if (popover) {
+                                                                (popover as HTMLElement).click()
+                                                            }
+                                                        }, 100)
+                                                    }
+                                                }}
+                                                locale={pt}
+                                                disabled={(date) => date < new Date()}
+                                                className="rounded-md border"
+                                            />
+                                        </div>
                                     </PopoverContent>
                                 </Popover>
                             </div>
