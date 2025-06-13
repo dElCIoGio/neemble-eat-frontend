@@ -82,7 +82,7 @@ const navigation: {
     }
 ]
 
-const hiddenRoutes = [""]
+const hiddenRoutes = ["none"]
 
 export default function DashboardSidebar() {
 
