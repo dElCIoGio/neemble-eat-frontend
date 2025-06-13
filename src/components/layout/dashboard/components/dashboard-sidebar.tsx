@@ -82,7 +82,7 @@ const navigation: {
     }
 ]
 
-const hiddenRoutes = ["bookings", "stock", "staff"]
+const hiddenRoutes = [""]
 
 export default function DashboardSidebar() {
 
