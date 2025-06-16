@@ -35,7 +35,12 @@ import {
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { toast } from "sonner"
+import {
+    showErrorToast,
+    showSuccessToast,
+    showInfoToast,
+    showPromiseToast,
+} from "@/utils/notifications/toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -52,6 +57,16 @@ import type {
     Sale,
 } from "@/types/stock"
 import {useDashboardContext} from "@/context/dashboard-context";
+import {
+    useGetStockItems,
+    useCreateStockItem,
+    useUpdateStockItem,
+    useDeleteStockItem,
+    useAddStock,
+} from "@/api/endpoints/stock/hooks";
+import {useGetRecipes, useCreateRecipe} from "@/api/endpoints/recipes/hooks";
+import {useRegisterSale} from "@/api/endpoints/sales/hooks";
+import {useGetMovements} from "@/api/endpoints/movements/hooks";
 
 export default function StockManagement() {
 
@@ -64,206 +79,30 @@ export default function StockManagement() {
 
     const { restaurant } = useDashboardContext()
 
-    // Stock data
-    const [stockItems, setStockItems] = useState<StockItem[]>([
-        {
-            _id: "1",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            name: "Batata",
-            unit: "Kg",
-            currentQuantity: 15,
-            minQuantity: 5,
-            maxQuantity: 50,
-            lastEntry: new Date("2025-06-10"),
-            supplier: "Fornecedor A",
-            status: "OK",
-            category: "Vegetais",
-            notes: "Batatas para fritar e cozer",
-            cost: 1.2,
-            expiryDate: "20/06/2025",
-            barcode: "1234567890123",
-            location: "Armazém A",
-            autoReorder: true,
-            reorderPoint: 8,
-            reorderQuantity: 30,
-            restaurantId: restaurant._id
-        },
-        {
-            _id: "2",
-            name: "Cebola",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            unit: "Kg",
-            currentQuantity: 3,
-            minQuantity: 5,
-            maxQuantity: 25,
-            lastEntry: new Date("2025-06-10"),
-            supplier: "Fornecedor A",
-            status: "Baixo",
-            category: "Vegetais",
-            notes: "Cebolas brancas",
-            cost: 0.8,
-            expiryDate: "25/06/2025",
-            location: "Armazém A",
-            autoReorder: true,
-            reorderPoint: 7,
-            reorderQuantity: 20,
-            restaurantId: restaurant._id
-        },
-        {
-            _id: "3",
-            name: "Carne de Vaca",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            unit: "Kg",
-            currentQuantity: 8,
-            minQuantity: 3,
-            maxQuantity: 20,
-            lastEntry: new Date("2025-06-12"),
-            supplier: "Talho Central",
-            status: "OK",
-            category: "Carnes",
-            notes: "Carne para bifes",
-            cost: 12.5,
-            expiryDate: "15/06/2025",
-            location: "Frigorífico",
-            autoReorder: false,
-            restaurantId: restaurant._id
-        },
-        {
-            _id: "4",
-            name: "Ovos",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            unit: "Unid",
-            currentQuantity: 24,
-            minQuantity: 12,
-            maxQuantity: 60,
-            lastEntry: new Date("2025-06-11"),
-            supplier: "Quinta dos Ovos",
-            status: "OK",
-            category: "Laticínios",
-            notes: "Ovos frescos tamanho L",
-            cost: 0.25,
-            expiryDate: "18/06/2025",
-            location: "Frigorífico",
-            autoReorder: true,
-            reorderPoint: 15,
-            reorderQuantity: 36,
-            restaurantId: restaurant._id
-        },
-        {
-            _id: "5",
-            name: "Azeite",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            unit: "L",
-            currentQuantity: 2,
-            minQuantity: 3,
-            maxQuantity: 15,
-            lastEntry: new Date("2025-06-08"),
-            supplier: "Azeites do Sul",
-            status: "Baixo",
-            category: "Condimentos",
-            notes: "Azeite extra virgem",
-            cost: 8.5,
-            expiryDate: "08/12/2025",
-            location: "Despensa",
-            autoReorder: true,
-            reorderPoint: 4,
-            reorderQuantity: 10,
-            restaurantId: restaurant._id
-        },
-    ])
+    const {
+        data: stockItems = [],
+        isLoading: isStockLoading,
+        addItem: addStockItem,
+        removeItem: removeStockItem,
+        updateItem: updateStockItemLocal,
+    } = useGetStockItems(restaurant._id)
+    const createStockItemMutation = useCreateStockItem(restaurant._id)
+    const updateStockItemMutation = useUpdateStockItem(restaurant._id)
+    const deleteStockItemMutation = useDeleteStockItem(restaurant._id)
+    const addStockMutation = useAddStock(restaurant._id)
 
     // Movements data
-    const [movements, setMovements] = useState<Movement[]>([
-        {
-            _id: "1",
-            productId: "1",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            productName: "Batata",
-            type: "entrada",
-            quantity: 20,
-            unit: "Kg",
-            date: new Date(),
-            reason: "Compra - Fornecedor A",
-            user: "Delcio",
-            cost: 24.0,
-        },
-        {
-            _id: "2",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            productId: "2",
-            productName: "Cebola",
-            type: "saida",
-            quantity: 2,
-            unit: "Kg",
-            date: new Date(),
-            reason: "Consumo - Bitoque de Vaca",
-            user: "Sistema",
-        },
-        {
-            _id: "3",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            productId: "3",
-            productName: "Carne de Vaca",
-            type: "entrada",
-            quantity: 10,
-            unit: "Kg",
-            date: new Date(),
-            reason: "Compra - Talho Central",
-            user: "Delcio",
-            cost: 125.0,
-        },
-    ])
+    const { addMovement } = useGetMovements(restaurant._id)
 
     // Recipes data
-    const [recipes, setRecipes] = useState<Recipe[]>([
-        {
-            _id: "1",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            dishName: "Bitoque de Vaca",
-            ingredients: [
-                { productId: "3", productName: "Carne de Vaca", quantity: 0.2, unit: "Kg" },
-                { productId: "1", productName: "Batata", quantity: 0.15, unit: "Kg" },
-                { productId: "2", productName: "Cebola", quantity: 0.03, unit: "Kg" },
-                { productId: "4", productName: "Ovos", quantity: 1, unit: "Unid" },
-            ],
-            servings: 1,
-            cost: 3.85,
-            restaurantId: restaurant._id
-        },
-        {
-            _id: "2",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            dishName: "Batatas Fritas",
-            ingredients: [
-                { productId: "1", productName: "Batata", quantity: 0.25, unit: "Kg" },
-                { productId: "5", productName: "Azeite", quantity: 0.05, unit: "L" },
-            ],
-            servings: 1,
-            cost: 0.73,
-            restaurantId: restaurant._id
-        },
-    ])
+    const {
+        data: recipes = [],
+        addRecipe: addRecipeLocal,
+    } = useGetRecipes(restaurant._id)
+    const createRecipeMutation = useCreateRecipe(restaurant._id)
 
-    // Sales data (simulation)
-    const [sales, setSales] = useState<Sale[]>([
-        { _id: "1",         createdAt: new Date(),
-            updatedAt: new Date(),dishName: "Bitoque de Vaca", quantity: 5, date: new Date("13/06/2025"), total: 75.0 , restaurantId: restaurant._id},
-        { _id: "2",         createdAt: new Date(),
-            updatedAt: new Date(),dishName: "Batatas Fritas", quantity: 8, date: new Date("13/06/2025"), total: 32.0,
-            restaurantId: restaurant._id},
-        { _id: "3",         createdAt: new Date(),
-            updatedAt: new Date(),dishName: "Bitoque de Vaca", quantity: 3, date: new Date("12/06/2025"), total: 45.0, restaurantId: restaurant._id },
-    ])
+    // Sales data
+    const registerSaleMutation = useRegisterSale(restaurant._id)
 
     // Modal states
     const [isAddProductOpen, setIsAddProductOpen] = useState(false)
@@ -316,20 +155,13 @@ export default function StockManagement() {
         quantity: "1",
     })
 
-    // Loading states
-    const [isLoading, setIsLoading] = useState(true)
+    // Loading state
+    const isLoading = isStockLoading
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1)
     const itemsPerPage = 10
 
-    // Load data on mount
-    useEffect(() => {
-        // Simulate loading data
-        setTimeout(() => {
-            setIsLoading(false)
-        }, 1000)
-    }, [])
 
     // Pagination helpers
     const paginatedItems = stockItems.filter((item) => {
@@ -363,13 +195,7 @@ export default function StockManagement() {
         return new Date()
     }
 
-    const addMovement = (movement: Omit<Movement, "_id">) => {
-        const newMovement = {
-            ...movement,
-            _id: (Math.max(...movements.map((m) => Number(m._id)), 0) + 1).toString(),
-        }
-        setMovements([newMovement, ...movements])
-    }
+
 
     // Check for expiring products
     const getExpiringProducts = () => {
@@ -420,9 +246,7 @@ export default function StockManagement() {
     const simulateSale = () => {
         const recipe = recipes.find((r) => r._id === saleForm.dishId)
         if (!recipe) {
-            toast.error("Erro", {
-                description: "Prato não encontrado."
-            })
+            showErrorToast("Erro", "Prato não encontrado.")
             return
         }
 
@@ -440,67 +264,27 @@ export default function StockManagement() {
         })
 
         if (!canMakeDish) {
-            toast.error("Stock Insuficiente", {
-                description: `Não há stock suficiente para: ${insufficientIngredients.join(", ")}`,
-            })
+            showErrorToast("Stock Insuficiente", `Não há stock suficiente para: ${insufficientIngredients.join(", ")}`)
             return
         }
 
-        // Reduce stock
-        const updatedItems = stockItems.map((item) => {
-            const ingredient = recipe.ingredients.find((ing) => ing.productId === item._id)
-            if (ingredient) {
-                const newQuantity = item.currentQuantity - ingredient.quantity * quantity
-                const updatedItem = { ...item, currentQuantity: newQuantity }
-
-                // Add movement
-                addMovement({
-                    productId: item._id,
-                    productName: item.name,
-                    type: "saida",
-                    quantity: ingredient.quantity * quantity,
-                    unit: item.unit,
-                    date: getCurrentDate(),
-                    reason: `Venda - ${recipe.dishName} (${quantity}x)`,
-                    user: "Sistema",
-                    updatedAt: new Date(),
-                    createdAt: new Date()
-                })
-
-                return updateItemStatus(updatedItem)
+        showPromiseToast(
+            registerSaleMutation.mutateAsync({ recipeId: recipe._id, quantity }).then(() => {
+                setSaleForm({ dishId: "", quantity: "1" })
+                setIsSaleSimulatorOpen(false)
+            }),
+            {
+                loading: "Processando venda...",
+                success: "Venda registada com sucesso",
+                error: "Erro ao processar venda",
             }
-            return item
-        })
-
-        setStockItems(updatedItems)
-
-        // Add sale record
-        const newSale: Sale = {
-            _id: (Math.max(...sales.map((s) => Number(s._id)), 0) + 1).toString(),
-            dishName: recipe.dishName,
-            quantity,
-            date: getCurrentDate(),
-            total: recipe.cost * quantity,
-            updatedAt: new Date(),
-            createdAt: new Date(),
-            restaurantId: restaurant._id
-        }
-        setSales([newSale, ...sales])
-
-        setSaleForm({ dishId: "", quantity: "1" })
-        setIsSaleSimulatorOpen(false)
-
-        toast.info("Venda Registada", {
-            description: `${quantity}x ${recipe.dishName} vendido(s). Stock atualizado automaticamente.`,
-        })
+        )
     }
 
     // Add new recipe
     const handleAddRecipe = () => {
         if (!newRecipe.dishName || newRecipe.ingredients.some((ing) => !ing.productId || !ing.quantity)) {
-            toast.error("Erro", {
-                description: "Por favor, preencha todos os campos da receita.",
-            })
+            showErrorToast("Erro", "Por favor, preencha todos os campos da receita.")
             return
         }
 
@@ -521,9 +305,7 @@ export default function StockManagement() {
         })
 
         if (insufficientStock.length > 0) {
-            toast.error("Stock Insuficiente", {
-                description: `Não há stock suficiente para: ${insufficientStock.join(", ")}`,
-            })
+            showErrorToast("Stock Insuficiente", `Não há stock suficiente para: ${insufficientStock.join(", ")}`)
             return
         }
 
@@ -542,28 +324,29 @@ export default function StockManagement() {
             return total + ing.quantity * (product?.cost || 0)
         }, 0)
 
-        const recipe: Recipe = {
-            _id: (Math.max(...recipes.map((r) => Number(r._id)), 0) + 1).toString(),
+        const recipeData = {
             dishName: newRecipe.dishName,
             ingredients,
             servings: Number.parseInt(newRecipe.servings),
             cost,
-            updatedAt: new Date(),
-            createdAt: new Date(),
-            restaurantId: restaurant._id
+            restaurantId: restaurant._id,
         }
 
-        setRecipes([...recipes, recipe])
-        setNewRecipe({
-            dishName: "",
-            servings: "1",
-            ingredients: [{ productId: "", quantity: "", unit: "" }],
-        })
-        setIsRecipeOpen(false)
-
-        toast.success("Sucesso", {
-            description: `Receita "${recipe.dishName}" criada com sucesso. Custo estimado: €${cost.toFixed(2)}`,
-        })
+        showPromiseToast(
+            createRecipeMutation.mutateAsync(recipeData).then(() => {
+                setNewRecipe({
+                    dishName: "",
+                    servings: "1",
+                    ingredients: [{ productId: "", quantity: "", unit: "" }],
+                })
+                setIsRecipeOpen(false)
+            }),
+            {
+                loading: `Criando receita ${newRecipe.dishName}...`,
+                success: "Receita criada com sucesso",
+                error: "Falha ao criar receita",
+            }
+        )
     }
 
     // Add ingredient to recipe
@@ -632,18 +415,13 @@ export default function StockManagement() {
             !newProduct.quantity ||
             !newProduct.minQuantity
         ) {
-            toast.error("Erro", {
-                description: "Por favor, preencha todos os campos obrigatórios.",
-            })
+            showErrorToast("Erro", "Por favor, preencha todos os campos obrigatórios.")
             return
         }
 
-        const newItem: StockItem = {
-            _id: (Math.max(...stockItems.map((item) => Number(item._id)), 0) + 1).toString(),
+        const data = {
             name: newProduct.name,
             unit: newProduct.unit,
-            updatedAt: new Date(),
-            createdAt: new Date(),
             category: newProduct.category,
             currentQuantity: Number.parseFloat(newProduct.quantity),
             minQuantity: Number.parseFloat(newProduct.minQuantity),
@@ -657,27 +435,36 @@ export default function StockManagement() {
             autoReorder: newProduct.autoReorder,
             reorderPoint: newProduct.reorderPoint ? Number.parseFloat(newProduct.reorderPoint) : undefined,
             reorderQuantity: newProduct.reorderQuantity ? Number.parseFloat(newProduct.reorderQuantity) : undefined,
-            status: "OK",
-            restaurantId: restaurant._id
+            status: "OK" as const,
+            restaurantId: restaurant._id,
         }
 
-        const updatedItem = updateItemStatus(newItem)
-        setStockItems([...stockItems, updatedItem])
-
-        // Add movement
-        addMovement({
-            productId: updatedItem._id,
-            productName: updatedItem.name,
-            type: "entrada",
-            quantity: updatedItem.currentQuantity,
-            unit: updatedItem.unit,
-            date: getCurrentDate(),
-            reason: "Produto inicial",
-            user: "Delcio",
-            cost: updatedItem.currentQuantity * (updatedItem.cost || 0),
-            updatedAt: new Date(),
-            createdAt: new Date()
-        })
+        showPromiseToast(
+            createStockItemMutation.mutateAsync(data).then(() => {
+                setNewProduct({
+                    name: "",
+                    unit: "",
+                    category: "",
+                    quantity: "",
+                    minQuantity: "",
+                    maxQuantity: "",
+                    supplier: "",
+                    notes: "",
+                    cost: "",
+                    expiryDate: "",
+                    location: "",
+                    autoReorder: false,
+                    reorderPoint: "",
+                    reorderQuantity: "",
+                })
+                setIsAddProductOpen(false)
+            }),
+            {
+                loading: `Adicionando ${newProduct.name}...`,
+                success: "Produto adicionado com sucesso",
+                error: "Erro ao adicionar produto",
+            }
+        )
 
         // Reset form
         setNewProduct({
@@ -697,10 +484,7 @@ export default function StockManagement() {
             reorderQuantity: "",
         })
 
-        setIsAddProductOpen(false)
-        toast.success("Sucesso", {
-            description: `Produto "${newItem.name}" adicionado com sucesso.`,
-        })
+        // handled in toast
     }
 
     const handleAddStock = () => {
@@ -708,46 +492,22 @@ export default function StockManagement() {
 
         const quantity = Number.parseFloat(addStockQuantity)
         if (quantity <= 0) {
-            toast.error("Erro", {
-                description: "A quantidade deve ser maior que zero.",
-            })
+            showErrorToast("Erro", "A quantidade deve ser maior que zero.")
             return
         }
 
-        const updatedItems = stockItems.map((item) =>
-            item._id === selectedItem._id
-                ? updateItemStatus({
-                    ...item,
-                    currentQuantity: item.currentQuantity + quantity,
-                    lastEntry: getCurrentDate(),
-                })
-                : item,
+        showPromiseToast(
+            addStockMutation.mutateAsync({ id: selectedItem._id, data: { quantity, reason: "Reposição manual" } }).then(() => {
+                setIsAddStockOpen(false)
+                setAddStockQuantity("")
+                setSelectedItem(null)
+            }),
+            {
+                loading: "Adicionando stock...",
+                success: "Stock adicionado",
+                error: "Erro ao adicionar stock",
+            }
         )
-
-        setStockItems(updatedItems)
-
-        // Add movement
-        addMovement({
-            productId: selectedItem._id,
-            productName: selectedItem.name,
-            type: "entrada",
-            quantity,
-            unit: selectedItem.unit,
-            date: getCurrentDate(),
-            reason: "Reposição manual",
-            user: "Delcio",
-            cost: quantity * (selectedItem.cost || 0),
-            updatedAt: new Date(),
-            createdAt: new Date()
-        })
-
-        setIsAddStockOpen(false)
-        setAddStockQuantity("")
-        setSelectedItem(null)
-
-        toast("Sucesso", {
-            description: `Adicionado ${quantity} ${selectedItem.unit} ao stock de "${selectedItem.name}".`,
-        })
     }
 
     // Export data
@@ -789,9 +549,7 @@ export default function StockManagement() {
         link.click()
         document.body.removeChild(link)
 
-        toast.success("Sucesso", {
-            description: "Dados exportados com sucesso.",
-        })
+        showSuccessToast("Dados exportados com sucesso")
     }
 
     // View details
@@ -821,15 +579,17 @@ export default function StockManagement() {
     const handleEditProduct = () => {
         if (!editProduct) return
 
-        const updatedItems = stockItems.map((item) => (item._id === editProduct._id ? { ...editProduct } : item))
-
-        setStockItems(updatedItems)
-        setIsEditProductOpen(false)
-        setEditProduct(null)
-
-        toast.success("Sucesso", {
-            description: `Produto "${editProduct.name}" atualizado com sucesso.`,
-        })
+        showPromiseToast(
+            updateStockItemMutation.mutateAsync({ id: editProduct._id, data: editProduct }).then(() => {
+                setIsEditProductOpen(false)
+                setEditProduct(null)
+            }),
+            {
+                loading: "Atualizando produto...",
+                success: "Produto atualizado com sucesso",
+                error: "Erro ao atualizar produto",
+            }
+        )
     }
 
     const confirmReplenishStock = () => {
@@ -837,59 +597,38 @@ export default function StockManagement() {
 
         const quantity = Number.parseFloat(replenishQuantity)
         if (quantity <= 0) {
-            toast.error("Erro", {
-                description: "A quantidade deve ser maior que zero.",
-            })
+            showErrorToast("Erro", "A quantidade deve ser maior que zero.")
             return
         }
 
-        const updatedItems = stockItems.map((item) =>
-            item._id === selectedItem._id
-                ? updateItemStatus({
-                    ...item,
-                    currentQuantity: item.currentQuantity + quantity,
-                    lastEntry: getCurrentDate(),
-                })
-                : item,
+        showPromiseToast(
+            addStockMutation.mutateAsync({ id: selectedItem._id, data: { quantity, reason: "Reposição manual" } }).then(() => {
+                setIsReplenishOpen(false)
+                setReplenishQuantity("")
+                setSelectedItem(null)
+            }),
+            {
+                loading: "Repondo stock...",
+                success: "Stock reposto",
+                error: "Erro ao repor stock",
+            }
         )
-
-        setStockItems(updatedItems)
-
-        // Add movement
-        addMovement({
-            productId: selectedItem._id,
-            productName: selectedItem.name,
-            type: "entrada",
-            quantity,
-            unit: selectedItem.unit,
-            date: getCurrentDate(),
-            reason: "Reposição manual",
-            user: "Delcio",
-            cost: quantity * (selectedItem.cost || 0),
-            updatedAt: new Date(),
-            createdAt: new Date()
-        })
-
-        setIsReplenishOpen(false)
-        setReplenishQuantity("")
-        setSelectedItem(null)
-
-        toast.success("Sucesso", {
-            description: `Reposto ${quantity} ${selectedItem.unit} de "${selectedItem.name}".`,
-        })
     }
 
     const handleDeleteProduct = () => {
         if (!itemToDelete) return
 
-        const updatedItems = stockItems.filter((item) => item._id !== itemToDelete._id)
-        setStockItems(updatedItems)
-        setDeleteDialogOpen(false)
-        setItemToDelete(null)
-
-        toast.success("Sucesso", {
-            description: "Produto eliminado com sucesso.",
-        })
+        showPromiseToast(
+            deleteStockItemMutation.mutateAsync(itemToDelete._id).then(() => {
+                setDeleteDialogOpen(false)
+                setItemToDelete(null)
+            }),
+            {
+                loading: "Eliminando produto...",
+                success: "Produto eliminado",
+                error: "Erro ao eliminar produto",
+            }
+        )
     }
 
     // const handleReplenishStock = (item: StockItem) => {
@@ -1235,9 +974,7 @@ export default function StockManagement() {
                                                         if (newCategoryName.trim()) {
                                                             setNewProduct({ ...newProduct, category: newCategoryName.trim() })
                                                             setNewCategoryName("")
-                                                            toast.success("Categoria Criada", {
-                                                                description: `Categoria "${newCategoryName.trim()}" criada e selecionada.`,
-                                                            })
+                                                            showSuccessToast(`Categoria "${newCategoryName.trim()}" criada e selecionada.`)
                                                         }
                                                     }}
                                                     className="flex-1"
@@ -2001,9 +1738,7 @@ export default function StockManagement() {
                                     document.body.removeChild(link)
 
                                     setIsNewOrderOpen(false)
-                                    toast.info("Encomenda Gerada", {
-                                        description: `Ficheiro de encomenda para ${selectedSupplier.name} foi descarregado.`,
-                                    })
+                                    showInfoToast(`Ficheiro de encomenda para ${selectedSupplier.name} foi descarregado.`)
                                 }
                             }}
                             className="flex-1"
