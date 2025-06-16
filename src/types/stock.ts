@@ -5,7 +5,7 @@ export type StockItemCreate = {
     unit: string;
     restaurantId: string
     currentQuantity: number;
-    lastEntry: Date;
+    lastEntry: string;
     supplier: string; // id
     category: string;
     status: "OK" | "Baixo" | "Critico";

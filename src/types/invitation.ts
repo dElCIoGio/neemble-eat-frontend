@@ -2,7 +2,7 @@
 
 export type InvitationCreate = {
     name: string
-    role: string
+    roleId: string
     managerId: string
     restaurantId: string
 }

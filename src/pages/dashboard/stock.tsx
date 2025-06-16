@@ -67,6 +67,7 @@ import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
 import {menuApi} from "@/api/endpoints/menu/requests";
 import type {Item} from "@/types/item";
 import {useRegisterSale} from "@/api/endpoints/sales/hooks";
+import {formatIsosDate} from "@/lib/helpers/format-isos-date";
 
 export default function StockManagement() {
 
@@ -435,7 +436,7 @@ export default function StockManagement() {
             minQuantity: Number.parseFloat(newProduct.minQuantity),
             maxQuantity: newProduct.maxQuantity ? Number.parseFloat(newProduct.maxQuantity) : undefined,
             supplier: newProduct.supplier,
-            lastEntry: getCurrentDate(),
+            lastEntry: getCurrentDate().toISOString(),
             notes: newProduct.notes,
             cost: Number.parseFloat(newProduct.cost) || 0,
             expiryDate: newProduct.expiryDate,
@@ -551,7 +552,7 @@ export default function StockManagement() {
         const link = document.createElement("a")
         const url = URL.createObjectURL(blob)
         link.setAttribute("href", url)
-        link.setAttribute("download", `stock_${getCurrentDate().toISOString()}.csv`)
+        link.setAttribute("download", `stock_${getCurrentDate()}.csv`)
         link.style.visibility = "hidden"
         document.body.appendChild(link)
         link.click()
@@ -908,7 +909,7 @@ export default function StockManagement() {
                                                             {item.status}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell>{item.lastEntry}</TableCell>
+                                                    <TableCell>{formatIsosDate(new Date(item.lastEntry))}</TableCell>
                                                     <TableCell className="text-right">
                                                         <div className="flex justify-end gap-2">
                                                             <Button
@@ -2021,7 +2022,7 @@ export default function StockManagement() {
                                     link.setAttribute("href", url)
                                     link.setAttribute(
                                         "download",
-                                        `encomenda_${selectedSupplier.name.replace(/\s+/g, "_")}_${getCurrentDate().toISOString()}.csv`,
+                                        `encomenda_${selectedSupplier.name.replace(/\s+/g, "_")}_${getCurrentDate()}.csv`,
                                     )
                                     link.style.visibility = "hidden"
                                     document.body.appendChild(link)

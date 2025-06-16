@@ -177,12 +177,13 @@ function StaffContent() {
 
     const paginatedMembers = sortedMembers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
-    const handleRoleChange = (roleName: string) => {
-        const role = roles?.find((r) => r.name === roleName)
+    const handleRoleChange = (roleId: string) => {
+        console.log(roleId)
+        const role = roles?.find((r) => r._id === roleId)
         if (role) {
             setInviteForm({
                 ...inviteForm,
-                role: roleName
+                roleId: roleId
             })
         }
     }
@@ -206,7 +207,7 @@ function StaffContent() {
     const handleInviteMember = () => {
         const invitationData: InvitationCreate = {
             name: inviteForm.name,
-            role: inviteForm.role,
+            roleId: inviteForm.roleId,
             managerId: user._id,
             restaurantId: restaurant._id
         }
@@ -459,13 +460,13 @@ function StaffContent() {
                                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                                                 <div className="flex flex-col space-y-2">
                                                     <Label htmlFor="role">Função</Label>
-                                                    <Select value={inviteForm.role} onValueChange={handleRoleChange}>
+                                                    <Select value={inviteForm.roleId} onValueChange={handleRoleChange}>
                                                         <SelectTrigger>
                                                             <SelectValue placeholder="Selecione uma função" />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             {roles.map((role) => (
-                                                                <SelectItem key={role._id} value={role.name}>
+                                                                <SelectItem key={role._id} value={role._id}>
                                                                     {role.name}
                                                                 </SelectItem>
                                                             ))}

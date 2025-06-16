@@ -15,8 +15,8 @@ export const invitationApi = {
         return response.data
     },
 
-    createInvitation: async (invitation: InvitationCreate) => {
-        const response = await apiClient.post<Invitation>(`${baseRoute}/`, invitation)
+    createInvitation: async (data: InvitationCreate) => {
+        const response = await apiClient.post<Invitation>(`${baseRoute}/`, data)
         return response.data
     },
 

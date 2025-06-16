@@ -20,6 +20,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {useGetRole} from "@/api/endpoints/role/hook";
 
 export function InvitationsTable({ invitations }: { invitations: Invitation[] }) {
     return (
@@ -64,10 +65,12 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
         showSuccessToast("Link copiado!")
     }
 
+    const {data: role} = useGetRole(invitation.roleId)
+
     return (
         <TableRow>
             <TableCell>{invitation.name}</TableCell>
-            <TableCell>{invitation.role}</TableCell>
+            <TableCell>{role?.name ?? "Carregando..."}</TableCell>
             <TableCell>{format(new Date(invitation.createdAt), "dd/MM/yyyy", { locale: ptBR })}</TableCell>
             <TableCell className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={handleCopy}>
