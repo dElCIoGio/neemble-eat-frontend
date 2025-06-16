@@ -88,7 +88,6 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
 
     const [inviteForm, setInviteForm] = useState<InvitationCreate>({
         name: "",
-        email: "",
         role: "",
         managerId: user._id,
         restaurantId: restaurant._id

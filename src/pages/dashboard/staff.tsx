@@ -199,7 +199,6 @@ function StaffContent() {
     const handleInviteMember = () => {
         const invitationData: InvitationCreate = {
             name: "", // Required by InvitationCreate type
-            email: inviteForm.email,
             role: inviteForm.role,
             managerId: user._id,
             restaurantId: restaurant._id
@@ -428,7 +427,7 @@ function StaffContent() {
                                         </DialogHeader>
 
                                         <div className="space-y-4">
-                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 gap-4">
                                                 <div className="flex flex-col space-y-2">
                                                     <Label htmlFor="name">Nome Completo</Label>
                                                     <Input
@@ -436,16 +435,6 @@ function StaffContent() {
                                                         value={inviteForm.name}
                                                         onChange={(e) => setInviteForm({ ...inviteForm, name: e.target.value })}
                                                         placeholder="Digite o nome completo"
-                                                    />
-                                                </div>
-                                                <div className="flex flex-col space-y-2">
-                                                    <Label htmlFor="email">Email</Label>
-                                                    <Input
-                                                        id="email"
-                                                        type="email"
-                                                        value={inviteForm.email}
-                                                        onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
-                                                        placeholder="email@exemplo.com"
                                                     />
                                                 </div>
                                             </div>
