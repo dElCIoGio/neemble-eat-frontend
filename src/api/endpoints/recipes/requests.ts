@@ -5,7 +5,7 @@ const baseRoute = "/recipes";
 
 export const recipesApi = {
     listRecipes: async (restaurantId: string) => {
-        const response = await apiClient.get<Recipe[]>(`${baseRoute}/${restaurantId}`);
+        const response = await apiClient.get<Recipe[]>(`${baseRoute}/restaurant/${restaurantId}`);
         return response.data;
     },
 

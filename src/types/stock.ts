@@ -5,11 +5,22 @@ export type StockItemCreate = {
     unit: string;
     restaurantId: string
     currentQuantity: number;
-    minQuantity: number;
     lastEntry: Date;
     supplier: string; // id
     category: string;
     status: "OK" | "Baixo" | "Critico";
+    minQuantity: number;
+    maxQuantity?: number;
+    expiryDate?: string;
+    location?: string;
+
+    reorderPoint?: number;
+    reorderQuantity?: number;
+
+    autoReorder?: boolean;
+    cost?: number;
+    notes?: string;
+
 
 }
 
@@ -17,16 +28,8 @@ export type StockItem = {
     _id: string;
     createdAt: Date
     updatedAt: Date
-    minQuantity: number;
-    maxQuantity?: number;
-    notes?: string;
-    cost?: number;
-    expiryDate?: string;
+
     barcode?: string;
-    location?: string;
-    autoReorder?: boolean;
-    reorderPoint?: number;
-    reorderQuantity?: number;
 } & StockItemCreate
 
 

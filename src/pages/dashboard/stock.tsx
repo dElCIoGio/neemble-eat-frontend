@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
     Plus,
     Trash2,
@@ -51,10 +51,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 // Types
 import type {
     StockItem,
-    Movement,
-    Recipe,
     Supplier,
-    Sale,
 } from "@/types/stock"
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
@@ -66,7 +63,6 @@ import {
 } from "@/api/endpoints/stock/hooks";
 import {useGetRecipes, useCreateRecipe} from "@/api/endpoints/recipes/hooks";
 import {useRegisterSale} from "@/api/endpoints/sales/hooks";
-import {useGetMovements} from "@/api/endpoints/movements/hooks";
 
 export default function StockManagement() {
 
@@ -82,22 +78,15 @@ export default function StockManagement() {
     const {
         data: stockItems = [],
         isLoading: isStockLoading,
-        addItem: addStockItem,
-        removeItem: removeStockItem,
-        updateItem: updateStockItemLocal,
     } = useGetStockItems(restaurant._id)
     const createStockItemMutation = useCreateStockItem(restaurant._id)
     const updateStockItemMutation = useUpdateStockItem(restaurant._id)
     const deleteStockItemMutation = useDeleteStockItem(restaurant._id)
     const addStockMutation = useAddStock(restaurant._id)
 
-    // Movements data
-    const { addMovement } = useGetMovements(restaurant._id)
-
     // Recipes data
     const {
         data: recipes = [],
-        addRecipe: addRecipeLocal,
     } = useGetRecipes(restaurant._id)
     const createRecipeMutation = useCreateRecipe(restaurant._id)
 
@@ -824,7 +813,7 @@ export default function StockManagement() {
                                                             {item.status}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell>{item.lastEntry.getDay()}/{item.lastEntry.getMonth()}/{item.lastEntry.getFullYear()}</TableCell>
+                                                    <TableCell>{item.lastEntry}</TableCell>
                                                     <TableCell className="text-right">
                                                         <div className="flex justify-end gap-2">
                                                             <Button
@@ -1751,3 +1740,5 @@ export default function StockManagement() {
         </div>
     )
 }
+
+
