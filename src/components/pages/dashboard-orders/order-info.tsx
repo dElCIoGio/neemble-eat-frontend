@@ -106,7 +106,7 @@ export function OrderInfo({order}: OrderInfoProps) {
                 </div>
             }
             <Separator className="my-4"/>
-            <div className="mb-12 laptop:mb-0">
+            <div className="mb-12 lg:mb-0">
                 <h1 className="font-poppins-semibold text-zinc-500 my-2">
                     Ações
                 </h1>

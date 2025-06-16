@@ -62,7 +62,7 @@ export function Header() {
                     {
                         FILTERS.map((filter) =>
                             filter.tag === filterMode.tag ?
-                                <Button key={filter.tag} className="text-sm bg-amethyst text-white hover:bg-amethyst-400" variant="secondary">
+                                <Button key={filter.tag} className="text-sm bg-amethyst border-[1.5px] border-zinc-300 bg-zinc-200 text-[#70469f] hover:bg-amethyst-400" variant="secondary">
                                     {filter.name}
                                 </Button>:
                                 <Button onClick={() => handleFilterModeChange(filter)} key={filter.tag} className="text-sm bg-white" variant="secondary">

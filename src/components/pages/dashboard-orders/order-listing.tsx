@@ -26,9 +26,9 @@ export function OrderListing({order}: OrderCardProps) {
             <div className="flex justify-between w-full">
                 <div className={"w-full"}>
                     <div className="flex items-end space-x-1.5 font-semibold tracking-tight ">
-                        <h1 className=" w-fit text-base laptop:text-lg">{order.orderedItemName}</h1> <span className="hidden text-zinc-600 text-base laptop:block">x{order.quantity}</span>
+                        <h1 className=" w-fit text-base lg:text-lg">{order.orderedItemName}</h1> <span className="hidden text-zinc-600 text-base lg:block">x{order.quantity}</span>
                     </div>
-                    <div className="flex laptop:hidden space-x-1.5 items-center text-zinc-600 font-poppins-regular w-full">
+                    <div className="flex lg:hidden space-x-1.5 items-center text-zinc-600 font-poppins-regular w-full">
                         <h3>Quantidade: </h3>
                         <span className="text-zinc-800 font-poppins-medium">
                             {order.quantity}
@@ -44,9 +44,9 @@ export function OrderListing({order}: OrderCardProps) {
                                 <Ready/>}
                 </div>
             </div>
-            <Separator className="block laptop:hidden my-3"/>
+            <Separator className="block lg:hidden my-3"/>
             <div>
-                <div className='hidden laptop:flex items-center space-x-2'>
+                <div className='hidden lg:flex items-center space-x-2'>
                     <OrderBadge icon={QrCode}>
                         Mesa {order.tableNumber}
                     </OrderBadge>
@@ -57,17 +57,17 @@ export function OrderListing({order}: OrderCardProps) {
                         Kz {price}
                     </OrderBadge>
                 </div>
-                <div className={"laptop:hidden"}>
+                <div className={"lg:hidden"}>
                     <div className="flex space-x-1.5 items-center text-zinc-600 font-poppins-regular">
-                        <QrCode/>
+                        <QrCode color={"#70469f"}/>
                         <h3>Mesa: <span className="text-zinc-800 font-poppins-medium">{order.tableNumber}</span></h3>
                     </div>
                     <div className="flex space-x-1.5 items-center text-zinc-600 font-poppins-regular">
-                        <Clock/>
+                        <Clock color={"#70469f"}/>
                         <h3>Tempo: <span className="text-zinc-800 font-poppins-medium">{time} atrás</span></h3>
                     </div>
                     <div className="flex space-x-1.5 items-center text-zinc-600 font-poppins-regular">
-                        <Tag/>
+                        <Tag color={"#70469f"}/>
                         <h3>Preço: <span className="text-zinc-800 font-poppins-medium">Kz {price}</span></h3>
                     </div>
 

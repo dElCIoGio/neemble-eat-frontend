@@ -18,6 +18,8 @@ import {OrderInfo} from "@/components/pages/dashboard-orders/order-info";
 import {MobileOrderInfo} from "@/components/pages/dashboard-orders/mobile-order-info";
 
 
+
+
 export type Tag = "All" | "New" | "In Progress" | "Done" | "Cancelled"
 
 export interface Filter {
@@ -40,7 +42,7 @@ export function OrdersTracking() {
 
     const {restaurantID} = useParams() as unknown as { restaurantID: string };
 
-    const isDesktop = useIsMobile()
+    const isDesktop = !useIsMobile()
 
     const {api} = config
 
@@ -54,7 +56,7 @@ export function OrdersTracking() {
     const {state: filterMode, handleState: setFilterMode} = useSelectedState<Filter>(FILTERS[0])
     const {state: tableFilter, handleState: handleTableFilterChange} = useSelectedState<string | null>(null)
     const {state: orderSelected, handleState} = useSelectedState<Order | null>(null)
-    const {state: sorting, handleState: handleSortingChange} = useSelectedState<"asc" | "desc">("asc")
+    const {state: sorting, handleState: handleSortingChange} = useSelectedState<"asc" | "desc">("desc")
 
     const { data: orders, addOrder, removeOrders, updateOrderStatus, isLoading } = useGetRecentOrders(restaurant._id)
 
@@ -100,10 +102,10 @@ export function OrdersTracking() {
 
 
     return (
-        <div>
+        <div className="flex-1 flex-col flex max-h-dvh">
             {
                 orders != undefined &&
-                <div>
+                <div className="flex-1 flex-col flex">
                     <Background className=""/>
                     {
                         orders &&
@@ -120,7 +122,7 @@ export function OrdersTracking() {
                             sorting,
                             handleSortingChange
                         }}>
-                            <div className="lg:flex lg:flex-col">
+                            <div className="lg:flex lg:flex-col flex-1">
                                 <div className="mt-4 mb-8 flex space-x-1.5 items-center">
                                     <div
                                         className="w-8 h-8 rounded-full bg-zinc-50 border border-zinc-300 flex justify-center items-center">
@@ -130,14 +132,14 @@ export function OrdersTracking() {
                                         Pedidos
                                     </h2>
                                 </div>
-                                <div className="space-y-4 h-max laptop:flex laptop:flex-grow laptop:flex-col">
+                                <div className="space-y-4 h-max lg:flex lg:flex-1 lg:flex-col">
                                     <Header/>
                                     <div
-                                        className={`flex flex-grow rounded-2xl w-full laptop:bg-zinc-50 laptop:border laptop:border-zinc-200`}>
+                                        className={`flex flex-1 rounded-2xl w-full `}>
                                         {
                                             orders.length == 0 ?
                                                 <div
-                                                    className="laptop:flex laptop:flex-col justify-center items-center overflow-y-hidden laptop:flex-grow w-full">
+                                                    className="lg:flex lg:flex-col justify-center items-center overflow-y-hidden lg:flex-grow w-full">
                                                     <h1 className="text-lg font-poppins-semibold ">
                                                         Nenhum pedido encontrado.
                                                     </h1>
@@ -148,9 +150,9 @@ export function OrdersTracking() {
                                                 </div> :
                                                 <>
                                                     <div
-                                                        className={`transition-all laptop:flex overflow-y-hidden laptop:flex-grow duration-150 ease-in-out w-full ${orderSelected === null ? 'w-full' : 'laptop:w-3/5'}`}>
-                                                        <ScrollArea className="w-full rounded-l-2xl">
-                                                            <div className="laptop:max-h-[20rem]">
+                                                        className={`transition-all lg:flex lg:flex-col lg:flex-1 overflow-y-hidden lg:flex-grow duration-150 ease-in-out w-full ${orderSelected === null ? 'w-full' : 'lg:w-3/5'}`}>
+                                                        <ScrollArea className="w-full max-h-100 rounded-l-2xl lg:flex-1 lg:flex lg:flex-col">
+                                                            <div className=" ">
                                                                 <OrdersDisplay/>
                                                             </div>
                                                         </ScrollArea>
@@ -158,7 +160,7 @@ export function OrdersTracking() {
                                                     {
                                                         isDesktop ?
                                                             <div
-                                                                className={`w-2/5 transition-all duration-150 ease-in-out ${orderSelected === null ? 'laptop:hidden' : 'laptop:block'}`}>
+                                                                className={` transition-all duration-150 ease-in-out ${orderSelected === null ? 'lg:hidden' : 'lg:block'}`}>
                                                                 {orderSelected && <OrderInfo order={orderSelected}/>}
                                                             </div> :
                                                             <MobileOrderInfo order={orderSelected}
@@ -174,9 +176,6 @@ export function OrdersTracking() {
                     }
                 </div>
             }
-
         </div>
-
     );
 }
-

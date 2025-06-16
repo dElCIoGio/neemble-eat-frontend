@@ -1,8 +1,10 @@
+
+
 function timeAgo(dateString: string): string {
     // Parse the input date
     const date = new Date(dateString);
 
-    const utcOffset = 0
+    const utcOffset = -1
 
     // Get the current time in GMT+1
     const now = new Date(new Date().getTime() + utcOffset * 60 * 60 * 1000);
