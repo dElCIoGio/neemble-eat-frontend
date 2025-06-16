@@ -51,6 +51,7 @@ import type {
     Supplier,
     Sale,
 } from "@/types/stock"
+import {useDashboardContext} from "@/context/dashboard-context";
 
 export default function StockManagement() {
 
@@ -60,6 +61,8 @@ export default function StockManagement() {
     const [categoryFilter, setCategoryFilter] = useState("Todas")
     const [statusFilter, setStatusFilter] = useState("Todos")
     const [newCategoryName, setNewCategoryName] = useState("")
+
+    const { restaurant } = useDashboardContext()
 
     // Stock data
     const [stockItems, setStockItems] = useState<StockItem[]>([
@@ -72,7 +75,7 @@ export default function StockManagement() {
             currentQuantity: 15,
             minQuantity: 5,
             maxQuantity: 50,
-            lastEntry: "10/06/2025",
+            lastEntry: new Date("2025-06-10"),
             supplier: "Fornecedor A",
             status: "OK",
             category: "Vegetais",
@@ -84,6 +87,7 @@ export default function StockManagement() {
             autoReorder: true,
             reorderPoint: 8,
             reorderQuantity: 30,
+            restaurantId: restaurant._id
         },
         {
             _id: "2",
@@ -94,7 +98,7 @@ export default function StockManagement() {
             currentQuantity: 3,
             minQuantity: 5,
             maxQuantity: 25,
-            lastEntry: "10/06/2025",
+            lastEntry: new Date("2025-06-10"),
             supplier: "Fornecedor A",
             status: "Baixo",
             category: "Vegetais",
@@ -105,6 +109,7 @@ export default function StockManagement() {
             autoReorder: true,
             reorderPoint: 7,
             reorderQuantity: 20,
+            restaurantId: restaurant._id
         },
         {
             _id: "3",
@@ -115,7 +120,7 @@ export default function StockManagement() {
             currentQuantity: 8,
             minQuantity: 3,
             maxQuantity: 20,
-            lastEntry: "12/06/2025",
+            lastEntry: new Date("2025-06-12"),
             supplier: "Talho Central",
             status: "OK",
             category: "Carnes",
@@ -124,6 +129,7 @@ export default function StockManagement() {
             expiryDate: "15/06/2025",
             location: "Frigorífico",
             autoReorder: false,
+            restaurantId: restaurant._id
         },
         {
             _id: "4",
@@ -134,7 +140,7 @@ export default function StockManagement() {
             currentQuantity: 24,
             minQuantity: 12,
             maxQuantity: 60,
-            lastEntry: "11/06/2025",
+            lastEntry: new Date("2025-06-11"),
             supplier: "Quinta dos Ovos",
             status: "OK",
             category: "Laticínios",
@@ -145,6 +151,7 @@ export default function StockManagement() {
             autoReorder: true,
             reorderPoint: 15,
             reorderQuantity: 36,
+            restaurantId: restaurant._id
         },
         {
             _id: "5",
@@ -155,7 +162,7 @@ export default function StockManagement() {
             currentQuantity: 2,
             minQuantity: 3,
             maxQuantity: 15,
-            lastEntry: "08/06/2025",
+            lastEntry: new Date("2025-06-08"),
             supplier: "Azeites do Sul",
             status: "Baixo",
             category: "Condimentos",
@@ -166,6 +173,7 @@ export default function StockManagement() {
             autoReorder: true,
             reorderPoint: 4,
             reorderQuantity: 10,
+            restaurantId: restaurant._id
         },
     ])
 
@@ -180,7 +188,7 @@ export default function StockManagement() {
             type: "entrada",
             quantity: 20,
             unit: "Kg",
-            date: "10/06/2025",
+            date: new Date(),
             reason: "Compra - Fornecedor A",
             user: "Delcio",
             cost: 24.0,
@@ -191,10 +199,10 @@ export default function StockManagement() {
             updatedAt: new Date(),
             productId: "2",
             productName: "Cebola",
-            type: "saída",
+            type: "saida",
             quantity: 2,
             unit: "Kg",
-            date: "11/06/2025",
+            date: new Date(),
             reason: "Consumo - Bitoque de Vaca",
             user: "Sistema",
         },
@@ -207,7 +215,7 @@ export default function StockManagement() {
             type: "entrada",
             quantity: 10,
             unit: "Kg",
-            date: "12/06/2025",
+            date: new Date(),
             reason: "Compra - Talho Central",
             user: "Delcio",
             cost: 125.0,
@@ -229,6 +237,7 @@ export default function StockManagement() {
             ],
             servings: 1,
             cost: 3.85,
+            restaurantId: restaurant._id
         },
         {
             _id: "2",
@@ -241,17 +250,19 @@ export default function StockManagement() {
             ],
             servings: 1,
             cost: 0.73,
+            restaurantId: restaurant._id
         },
     ])
 
     // Sales data (simulation)
     const [sales, setSales] = useState<Sale[]>([
         { _id: "1",         createdAt: new Date(),
-            updatedAt: new Date(),dishName: "Bitoque de Vaca", quantity: 5, date: "13/06/2025", total: 75.0 },
+            updatedAt: new Date(),dishName: "Bitoque de Vaca", quantity: 5, date: new Date("13/06/2025"), total: 75.0 , restaurantId: restaurant._id},
         { _id: "2",         createdAt: new Date(),
-            updatedAt: new Date(),dishName: "Batatas Fritas", quantity: 8, date: "13/06/2025", total: 32.0 },
+            updatedAt: new Date(),dishName: "Batatas Fritas", quantity: 8, date: new Date("13/06/2025"), total: 32.0,
+            restaurantId: restaurant._id},
         { _id: "3",         createdAt: new Date(),
-            updatedAt: new Date(),dishName: "Bitoque de Vaca", quantity: 3, date: "12/06/2025", total: 45.0 },
+            updatedAt: new Date(),dishName: "Bitoque de Vaca", quantity: 3, date: new Date("12/06/2025"), total: 45.0, restaurantId: restaurant._id },
     ])
 
     // Modal states
@@ -339,9 +350,9 @@ export default function StockManagement() {
 
     // Helper functions
     const updateItemStatus = (item: StockItem): StockItem => {
-        let status: "OK" | "Baixo" | "Crítico" = "OK"
+        let status: "OK" | "Baixo" | "Critico" = "OK"
         if (item.currentQuantity <= item.minQuantity * 0.5) {
-            status = "Crítico"
+            status = "Critico"
         } else if (item.currentQuantity <= item.minQuantity) {
             status = "Baixo"
         }
@@ -349,7 +360,7 @@ export default function StockManagement() {
     }
 
     const getCurrentDate = () => {
-        return new Date().toLocaleDateString("pt-PT")
+        return new Date()
     }
 
     const addMovement = (movement: Omit<Movement, "_id">) => {
@@ -395,7 +406,7 @@ export default function StockManagement() {
     })
 
     const lowStockItems = stockItems.filter((item) => item.currentQuantity <= item.minQuantity)
-    const criticalStockItems = stockItems.filter((item) => item.status === "Crítico")
+    const criticalStockItems = stockItems.filter((item) => item.status === "Critico")
     const expiringProducts = getExpiringProducts()
 
     console.log(expiringProducts)
@@ -446,7 +457,7 @@ export default function StockManagement() {
                 addMovement({
                     productId: item._id,
                     productName: item.name,
-                    type: "saída",
+                    type: "saida",
                     quantity: ingredient.quantity * quantity,
                     unit: item.unit,
                     date: getCurrentDate(),
@@ -471,7 +482,8 @@ export default function StockManagement() {
             date: getCurrentDate(),
             total: recipe.cost * quantity,
             updatedAt: new Date(),
-            createdAt: new Date()
+            createdAt: new Date(),
+            restaurantId: restaurant._id
         }
         setSales([newSale, ...sales])
 
@@ -537,7 +549,8 @@ export default function StockManagement() {
             servings: Number.parseInt(newRecipe.servings),
             cost,
             updatedAt: new Date(),
-            createdAt: new Date()
+            createdAt: new Date(),
+            restaurantId: restaurant._id
         }
 
         setRecipes([...recipes, recipe])
@@ -645,6 +658,7 @@ export default function StockManagement() {
             reorderPoint: newProduct.reorderPoint ? Number.parseFloat(newProduct.reorderPoint) : undefined,
             reorderQuantity: newProduct.reorderQuantity ? Number.parseFloat(newProduct.reorderQuantity) : undefined,
             status: "OK",
+            restaurantId: restaurant._id
         }
 
         const updatedItem = updateItemStatus(newItem)
@@ -769,7 +783,7 @@ export default function StockManagement() {
         const link = document.createElement("a")
         const url = URL.createObjectURL(blob)
         link.setAttribute("href", url)
-        link.setAttribute("download", `stock_${getCurrentDate().replace(/\//g, "-")}.csv`)
+        link.setAttribute("download", `stock_${getCurrentDate().toISOString()}.csv`)
         link.style.visibility = "hidden"
         document.body.appendChild(link)
         link.click()
@@ -1071,7 +1085,7 @@ export default function StockManagement() {
                                                             {item.status}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell>{item.lastEntry}</TableCell>
+                                                    <TableCell>{item.lastEntry.getDay()}/{item.lastEntry.getMonth()}/{item.lastEntry.getFullYear()}</TableCell>
                                                     <TableCell className="text-right">
                                                         <div className="flex justify-end gap-2">
                                                             <Button
@@ -1979,7 +1993,7 @@ export default function StockManagement() {
                                     link.setAttribute("href", url)
                                     link.setAttribute(
                                         "download",
-                                        `encomenda_${selectedSupplier.name.replace(/\s+/g, "_")}_${getCurrentDate().replace(/\//g, "-")}.csv`,
+                                        `encomenda_${selectedSupplier.name.replace(/\s+/g, "_")}_${getCurrentDate().toISOString()}.csv`,
                                     )
                                     link.style.visibility = "hidden"
                                     document.body.appendChild(link)
