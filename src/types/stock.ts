@@ -25,7 +25,7 @@ export interface Movement {
     _id: string;
     createdAt: Date
     updatedAt: Date
-    productId: number;
+    productId: string;
     productName: string;
     type: "entrada" | "saída" | "ajuste";
     quantity: number;
@@ -42,7 +42,7 @@ export interface Recipe {
     updatedAt: Date
     dishName: string;
     ingredients: Array<{
-        productId: number;
+        productId: string;
         productName: string;
         quantity: number;
         unit: string;
@@ -60,7 +60,7 @@ export interface Supplier {
     email: string;
     phone: string;
     address: string;
-    products: number[];
+    products: string[];
     rating: number;
     lastOrder?: string;
 }

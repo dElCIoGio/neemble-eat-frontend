@@ -65,6 +65,8 @@ export default function StockManagement() {
     const [stockItems, setStockItems] = useState<StockItem[]>([
         {
             _id: "1",
+            createdAt: new Date(),
+            updatedAt: new Date(),
             name: "Batata",
             unit: "Kg",
             currentQuantity: 15,
@@ -86,6 +88,8 @@ export default function StockManagement() {
         {
             _id: "2",
             name: "Cebola",
+            createdAt: new Date(),
+            updatedAt: new Date(),
             unit: "Kg",
             currentQuantity: 3,
             minQuantity: 5,
@@ -105,6 +109,8 @@ export default function StockManagement() {
         {
             _id: "3",
             name: "Carne de Vaca",
+            createdAt: new Date(),
+            updatedAt: new Date(),
             unit: "Kg",
             currentQuantity: 8,
             minQuantity: 3,
@@ -122,6 +128,8 @@ export default function StockManagement() {
         {
             _id: "4",
             name: "Ovos",
+            createdAt: new Date(),
+            updatedAt: new Date(),
             unit: "Unid",
             currentQuantity: 24,
             minQuantity: 12,
@@ -141,6 +149,8 @@ export default function StockManagement() {
         {
             _id: "5",
             name: "Azeite",
+            createdAt: new Date(),
+            updatedAt: new Date(),
             unit: "L",
             currentQuantity: 2,
             minQuantity: 3,
@@ -163,7 +173,9 @@ export default function StockManagement() {
     const [movements, setMovements] = useState<Movement[]>([
         {
             _id: "1",
-            productId: 1,
+            productId: "1",
+            createdAt: new Date(),
+            updatedAt: new Date(),
             productName: "Batata",
             type: "entrada",
             quantity: 20,
@@ -175,7 +187,9 @@ export default function StockManagement() {
         },
         {
             _id: "2",
-            productId: 2,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            productId: "2",
             productName: "Cebola",
             type: "saída",
             quantity: 2,
@@ -186,7 +200,9 @@ export default function StockManagement() {
         },
         {
             _id: "3",
-            productId: 3,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            productId: "3",
             productName: "Carne de Vaca",
             type: "entrada",
             quantity: 10,
@@ -202,72 +218,40 @@ export default function StockManagement() {
     const [recipes, setRecipes] = useState<Recipe[]>([
         {
             _id: "1",
+            createdAt: new Date(),
+            updatedAt: new Date(),
             dishName: "Bitoque de Vaca",
             ingredients: [
-                { productId: 3, productName: "Carne de Vaca", quantity: 0.2, unit: "Kg" },
-                { productId: 1, productName: "Batata", quantity: 0.15, unit: "Kg" },
-                { productId: 2, productName: "Cebola", quantity: 0.03, unit: "Kg" },
-                { productId: 4, productName: "Ovos", quantity: 1, unit: "Unid" },
+                { productId: "3", productName: "Carne de Vaca", quantity: 0.2, unit: "Kg" },
+                { productId: "1", productName: "Batata", quantity: 0.15, unit: "Kg" },
+                { productId: "2", productName: "Cebola", quantity: 0.03, unit: "Kg" },
+                { productId: "4", productName: "Ovos", quantity: 1, unit: "Unid" },
             ],
             servings: 1,
             cost: 3.85,
         },
         {
             _id: "2",
+            createdAt: new Date(),
+            updatedAt: new Date(),
             dishName: "Batatas Fritas",
             ingredients: [
-                { productId: 1, productName: "Batata", quantity: 0.25, unit: "Kg" },
-                { productId: 5, productName: "Azeite", quantity: 0.05, unit: "L" },
+                { productId: "1", productName: "Batata", quantity: 0.25, unit: "Kg" },
+                { productId: "5", productName: "Azeite", quantity: 0.05, unit: "L" },
             ],
             servings: 1,
             cost: 0.73,
         },
     ])
 
-    // Suppliers data
-    const [suppliers, ] = useState<Supplier[]>([
-        {
-            _id: "1",
-            name: "Fornecedor A",
-            contact: "João Silva",
-            email: "joao@fornecedora.pt",
-            phone: "912345678",
-            address: "Rua das Flores, 123, Lisboa",
-            products: [1, 2],
-            rating: 4.5,
-            lastOrder: "10/06/2025",
-        },
-        {
-            _id: "2",
-            name: "Talho Central",
-            contact: "Maria Santos",
-            email: "maria@talhocentral.pt",
-            phone: "923456789",
-            address: "Av. da República, 456, Porto",
-            products: [3],
-            rating: 4.8,
-            lastOrder: "12/06/2025",
-        },
-        {
-            _id: "3",
-            name: "Quinta dos Ovos",
-            contact: "António Costa",
-            email: "antonio@quintaovos.pt",
-            phone: "934567890",
-            address: "Quinta da Esperança, Braga",
-            products: [4],
-            rating: 4.2,
-            lastOrder: "11/06/2025",
-        },
-    ])
-
-    console.log(suppliers)
-
     // Sales data (simulation)
     const [sales, setSales] = useState<Sale[]>([
-        { _id: "1", dishName: "Bitoque de Vaca", quantity: 5, date: "13/06/2025", total: 75.0 },
-        { _id: "2", dishName: "Batatas Fritas", quantity: 8, date: "13/06/2025", total: 32.0 },
-        { _id: "3", dishName: "Bitoque de Vaca", quantity: 3, date: "12/06/2025", total: 45.0 },
+        { _id: "1",         createdAt: new Date(),
+            updatedAt: new Date(),dishName: "Bitoque de Vaca", quantity: 5, date: "13/06/2025", total: 75.0 },
+        { _id: "2",         createdAt: new Date(),
+            updatedAt: new Date(),dishName: "Batatas Fritas", quantity: 8, date: "13/06/2025", total: 32.0 },
+        { _id: "3",         createdAt: new Date(),
+            updatedAt: new Date(),dishName: "Bitoque de Vaca", quantity: 3, date: "12/06/2025", total: 45.0 },
     ])
 
     // Modal states
@@ -453,7 +437,7 @@ export default function StockManagement() {
 
         // Reduce stock
         const updatedItems = stockItems.map((item) => {
-            const ingredient = recipe.ingredients.find((ing) => ing.productId === Number(item._id))
+            const ingredient = recipe.ingredients.find((ing) => ing.productId === item._id)
             if (ingredient) {
                 const newQuantity = item.currentQuantity - ingredient.quantity * quantity
                 const updatedItem = { ...item, currentQuantity: newQuantity }
@@ -468,6 +452,8 @@ export default function StockManagement() {
                     date: getCurrentDate(),
                     reason: `Venda - ${recipe.dishName} (${quantity}x)`,
                     user: "Sistema",
+                    updatedAt: new Date(),
+                    createdAt: new Date()
                 })
 
                 return updateItemStatus(updatedItem)
@@ -484,6 +470,8 @@ export default function StockManagement() {
             quantity,
             date: getCurrentDate(),
             total: recipe.cost * quantity,
+            updatedAt: new Date(),
+            createdAt: new Date()
         }
         setSales([newSale, ...sales])
 
@@ -530,7 +518,7 @@ export default function StockManagement() {
         const ingredients = newRecipe.ingredients.map((ing) => {
             const product = stockItems.find((item) => item._id === ing.productId)
             return {
-                productId: Number(ing.productId),
+                productId: ing.productId,
                 productName: product?.name || "",
                 quantity: Number.parseFloat(ing.quantity),
                 unit: product?.unit || "",
@@ -548,6 +536,8 @@ export default function StockManagement() {
             ingredients,
             servings: Number.parseInt(newRecipe.servings),
             cost,
+            updatedAt: new Date(),
+            createdAt: new Date()
         }
 
         setRecipes([...recipes, recipe])
@@ -639,6 +629,8 @@ export default function StockManagement() {
             _id: (Math.max(...stockItems.map((item) => Number(item._id)), 0) + 1).toString(),
             name: newProduct.name,
             unit: newProduct.unit,
+            updatedAt: new Date(),
+            createdAt: new Date(),
             category: newProduct.category,
             currentQuantity: Number.parseFloat(newProduct.quantity),
             minQuantity: Number.parseFloat(newProduct.minQuantity),
@@ -669,6 +661,8 @@ export default function StockManagement() {
             reason: "Produto inicial",
             user: "Delcio",
             cost: updatedItem.currentQuantity * (updatedItem.cost || 0),
+            updatedAt: new Date(),
+            createdAt: new Date()
         })
 
         // Reset form
@@ -729,6 +723,8 @@ export default function StockManagement() {
             reason: "Reposição manual",
             user: "Delcio",
             cost: quantity * (selectedItem.cost || 0),
+            updatedAt: new Date(),
+            createdAt: new Date()
         })
 
         setIsAddStockOpen(false)
@@ -856,6 +852,8 @@ export default function StockManagement() {
             reason: "Reposição manual",
             user: "Delcio",
             cost: quantity * (selectedItem.cost || 0),
+            updatedAt: new Date(),
+            createdAt: new Date()
         })
 
         setIsReplenishOpen(false)
