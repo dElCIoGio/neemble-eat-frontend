@@ -14,7 +14,4 @@ window.ENV = {
 };
 EOF
 
-cat /usr/share/nginx/html/env.js  # Log result
-
-
 exec "$@"

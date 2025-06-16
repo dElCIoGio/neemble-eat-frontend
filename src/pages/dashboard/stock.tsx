@@ -199,17 +199,6 @@ export default function StockManagement() {
         return matchesSearch && matchesCategory && matchesStatus
     }).length / itemsPerPage)
 
-    // Helper functions
-    const updateItemStatus = (item: StockItem): StockItem => {
-        let status: "OK" | "Baixo" | "Critico" = "OK"
-        if (item.currentQuantity <= item.minQuantity * 0.5) {
-            status = "Critico"
-        } else if (item.currentQuantity <= item.minQuantity) {
-            status = "Baixo"
-        }
-        return { ...item, status }
-    }
-
     const getCurrentDate = () => {
         return new Date()
     }
@@ -217,16 +206,16 @@ export default function StockManagement() {
 
 
     // Check for expiring products
-    const getExpiringProducts = () => {
-        const today = new Date()
-        const threeDaysFromNow = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000)
-
-        return stockItems.filter((item) => {
-            if (!item.expiryDate) return false
-            const expiryDate = new Date(item.expiryDate.split("/").reverse().join("-"))
-            return expiryDate <= threeDaysFromNow
-        })
-    }
+    // const getExpiringProducts = () => {
+    //     const today = new Date()
+    //     const threeDaysFromNow = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000)
+    //
+    //     return stockItems.filter((item) => {
+    //         if (!item.expiryDate) return false
+    //         const expiryDate = new Date(item.expiryDate.split("/").reverse().join("-"))
+    //         return expiryDate <= threeDaysFromNow
+    //     })
+    // }
 
     // Auto-reorder suggestions
     // const getAutoReorderSuggestions = () => {
@@ -252,9 +241,6 @@ export default function StockManagement() {
 
     const lowStockItems = stockItems.filter((item) => item.currentQuantity <= item.minQuantity)
     const criticalStockItems = stockItems.filter((item) => item.status === "Critico")
-    const expiringProducts = getExpiringProducts()
-
-    console.log(expiringProducts)
 
     // const autoReorderSuggestions = getAutoReorderSuggestions()
     const totalProducts = stockItems.length
@@ -724,6 +710,7 @@ export default function StockManagement() {
             ingredients,
             servings: Number.parseInt(editRecipe.servings),
             cost,
+            restaurantId: restaurant._id
         }
 
         showPromiseToast(
@@ -739,17 +726,6 @@ export default function StockManagement() {
         )
     }
 
-    // const handleReplenishStock = (item: StockItem) => {
-    //     const suggestedQuantity = Math.max(item.minQuantity * 2 - item.currentQuantity, item.minQuantity)
-    //     setReplenishQuantity(suggestedQuantity.toString())
-    //     setSelectedItem(item)
-    //     setIsReplenishOpen(true)
-    // }
-    //
-    // const handleNewOrder = (supplier: Supplier) => {
-    //     setSelectedSupplier(supplier)
-    //     setIsNewOrderOpen(true)
-    // }
 
     return (
         <div className="mx-auto w-full space-y-6">
@@ -1315,9 +1291,10 @@ export default function StockManagement() {
                         <div className="space-y-4 max-h-96 overflow-y-auto">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label>Item do Menu *</Label>
+                                    <Label>Prato *</Label>
                                     <Select
                                         value={editRecipe.menuItemId}
+                                        defaultValue={editRecipe.menuItemId}
                                         onValueChange={(value) => {
                                             const item = menuItems.find(i => i._id === value)
                                             setEditRecipe({ ...editRecipe, menuItemId: value, dishName: item?.name || "" })
@@ -1453,7 +1430,7 @@ export default function StockManagement() {
                     <div className="space-y-4 max-h-96 overflow-y-auto">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <Label>Item do Menu *</Label>
+                                <Label>Prato *</Label>
                                 <Select
                                     value={newRecipe.menuItemId}
                                     onValueChange={(value) => {
