@@ -61,7 +61,7 @@ import {
     useDeleteStockItem,
     useAddStock,
 } from "@/api/endpoints/stock/hooks";
-import {useGetRecipes, useCreateRecipe, useUpdateRecipe, useDeleteRecipe} from "@/api/endpoints/recipes/hooks";
+import {useGetRecipes, useCreateRecipe, useDeleteRecipe} from "@/api/endpoints/recipes/hooks";
 import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
 import {menuApi} from "@/api/endpoints/menu/requests";
 import type {Item} from "@/types/item";
@@ -92,7 +92,6 @@ export default function StockManagement() {
         data: recipes = [],
     } = useGetRecipes(restaurant._id)
     const createRecipeMutation = useCreateRecipe(restaurant._id)
-    const updateRecipeMutation = useUpdateRecipe(restaurant._id)
     const deleteRecipeMutation = useDeleteRecipe(restaurant._id)
 
     const {data: menus = []} = useGetRestaurantMenus(restaurant._id)
@@ -748,8 +747,8 @@ export default function StockManagement() {
                 <TabsList className="w-full">
                     <TabsTrigger value="stock">Stock</TabsTrigger>
                     <TabsTrigger value="recipes">Receitas</TabsTrigger>
-                    <TabsTrigger value="sales">Vendas</TabsTrigger>
-                    <TabsTrigger value="suppliers">Fornecedores</TabsTrigger>
+                    {/*<TabsTrigger value="log">Registros</TabsTrigger>*/}
+                    <TabsTrigger className="hidden" value="suppliers">Fornecedores</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="stock" className="space-y-4">

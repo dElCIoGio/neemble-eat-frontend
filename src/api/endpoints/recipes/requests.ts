@@ -10,7 +10,7 @@ export const recipesApi = {
     },
 
     createRecipe: async (restaurantId: string, data: RecipeCreate) => {
-        const response = await apiClient.post<Recipe>(`${baseRoute}/${restaurantId}`, data);
+        const response = await apiClient.post<Recipe>(`${baseRoute}/restaurant/${restaurantId}`, data);
         return response.data;
     },
 
