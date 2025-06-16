@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
     Plus,
     Trash2,
@@ -61,7 +61,10 @@ import {
     useDeleteStockItem,
     useAddStock,
 } from "@/api/endpoints/stock/hooks";
-import {useGetRecipes, useCreateRecipe} from "@/api/endpoints/recipes/hooks";
+import {useGetRecipes, useCreateRecipe, useUpdateRecipe, useDeleteRecipe} from "@/api/endpoints/recipes/hooks";
+import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
+import {menuApi} from "@/api/endpoints/menu/requests";
+import type {Item} from "@/types/item";
 import {useRegisterSale} from "@/api/endpoints/sales/hooks";
 
 export default function StockManagement() {
@@ -89,6 +92,11 @@ export default function StockManagement() {
         data: recipes = [],
     } = useGetRecipes(restaurant._id)
     const createRecipeMutation = useCreateRecipe(restaurant._id)
+    const updateRecipeMutation = useUpdateRecipe(restaurant._id)
+    const deleteRecipeMutation = useDeleteRecipe(restaurant._id)
+
+    const {data: menus = []} = useGetRestaurantMenus(restaurant._id)
+    const [menuItems, setMenuItems] = useState<Item[]>([])
 
     // Sales data
     const registerSaleMutation = useRegisterSale(restaurant._id)
@@ -133,10 +141,31 @@ export default function StockManagement() {
 
     // Recipe form
     const [newRecipe, setNewRecipe] = useState({
+        menuItemId: "",
         dishName: "",
         servings: "1",
         ingredients: [{ productId: "", quantity: "", unit: "" }],
     })
+
+    const [editRecipe, setEditRecipe] = useState<typeof newRecipe & { _id?: string } | null>(null)
+    const [isEditRecipeOpen, setIsEditRecipeOpen] = useState(false)
+
+    useEffect(() => {
+        async function loadItems() {
+            if (menus.length === 0) return;
+            const all: Item[] = [];
+            for (const menu of menus) {
+                try {
+                    const items = await menuApi.getMenuItemsBySlug(menu.slug);
+                    all.push(...items);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            setMenuItems(all);
+        }
+        loadItems();
+    }, [menus]);
 
     // Sale simulator
     const [saleForm, setSaleForm] = useState({
@@ -272,7 +301,7 @@ export default function StockManagement() {
 
     // Add new recipe
     const handleAddRecipe = () => {
-        if (!newRecipe.dishName || newRecipe.ingredients.some((ing) => !ing.productId || !ing.quantity)) {
+        if (!newRecipe.menuItemId || newRecipe.ingredients.some((ing) => !ing.productId || !ing.quantity)) {
             showErrorToast("Erro", "Por favor, preencha todos os campos da receita.")
             return
         }
@@ -313,8 +342,10 @@ export default function StockManagement() {
             return total + ing.quantity * (product?.cost || 0)
         }, 0)
 
+        const selectedItem = menuItems.find(i => i._id === newRecipe.menuItemId)
         const recipeData = {
-            dishName: newRecipe.dishName,
+            dishName: selectedItem?.name || newRecipe.dishName,
+            menuItemId: newRecipe.menuItemId,
             ingredients,
             servings: Number.parseInt(newRecipe.servings),
             cost,
@@ -324,6 +355,7 @@ export default function StockManagement() {
         showPromiseToast(
             createRecipeMutation.mutateAsync(recipeData).then(() => {
                 setNewRecipe({
+                    menuItemId: "",
                     dishName: "",
                     servings: "1",
                     ingredients: [{ productId: "", quantity: "", unit: "" }],
@@ -331,7 +363,7 @@ export default function StockManagement() {
                 setIsRecipeOpen(false)
             }),
             {
-                loading: `Criando receita ${newRecipe.dishName}...`,
+                loading: `Criando receita ${selectedItem?.name || newRecipe.dishName}...`,
                 success: "Receita criada com sucesso",
                 error: "Falha ao criar receita",
             }
@@ -620,6 +652,17 @@ export default function StockManagement() {
         )
     }
 
+    const handleDeleteRecipe = (recipeId: string) => {
+        showPromiseToast(
+            deleteRecipeMutation.mutateAsync(recipeId),
+            {
+                loading: 'Eliminando receita...',
+                success: 'Receita eliminada',
+                error: 'Erro ao eliminar receita'
+            }
+        )
+    }
+
     // const handleReplenishStock = (item: StockItem) => {
     //     const suggestedQuantity = Math.max(item.minQuantity * 2 - item.currentQuantity, item.minQuantity)
     //     setReplenishQuantity(suggestedQuantity.toString())
@@ -881,6 +924,54 @@ export default function StockManagement() {
                     </Card>
                 </TabsContent>
 
+                <TabsContent value="recipes" className="space-y-4">
+                    <div className="flex justify-end">
+                        <Button onClick={() => setIsRecipeOpen(true)}>
+                            <Plus className="w-4 h-4 mr-2" /> Nova Receita
+                        </Button>
+                    </div>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Receitas</CardTitle>
+                            <CardDescription>Listagem de receitas cadastradas</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ScrollArea>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Prato</TableHead>
+                                            <TableHead>Porções</TableHead>
+                                            <TableHead>Custo</TableHead>
+                                            <TableHead className="text-right">Ações</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {recipes.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={4} className="text-center py-6">Nenhuma receita cadastrada</TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            recipes.map((recipe) => (
+                                                <TableRow key={recipe._id}>
+                                                    <TableCell>{menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName}</TableCell>
+                                                    <TableCell>{recipe.servings}</TableCell>
+                                                    <TableCell>€{recipe.cost.toFixed(2)}</TableCell>
+                                                    <TableCell className="text-right">
+                                                        <Button variant="ghost" size="sm" onClick={() => handleDeleteRecipe(recipe._id)}>
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </ScrollArea>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
                 {/* Other tabs content would go here */}
             </Tabs>
 
@@ -1138,13 +1229,23 @@ export default function StockManagement() {
                     <div className="space-y-4 max-h-96 overflow-y-auto">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <Label htmlFor="dishName">Nome do Prato *</Label>
-                                <Input
-                                    id="dishName"
-                                    placeholder="Ex: Bitoque de Vaca"
-                                    value={newRecipe.dishName}
-                                    onChange={(e) => setNewRecipe({ ...newRecipe, dishName: e.target.value })}
-                                />
+                                <Label>Item do Menu *</Label>
+                                <Select
+                                    value={newRecipe.menuItemId}
+                                    onValueChange={(value) => {
+                                        const item = menuItems.find(i => i._id === value)
+                                        setNewRecipe({ ...newRecipe, menuItemId: value, dishName: item?.name || "" })
+                                    }}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecionar item" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {menuItems.map(item => (
+                                            <SelectItem key={item._id} value={item._id}>{item.name}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div>
                                 <Label htmlFor="servings">Porções *</Label>
