@@ -239,7 +239,7 @@ export default function StockManagement() {
         return matchesSearch && matchesCategory && matchesStatus
     })
 
-    const lowStockItems = stockItems.filter((item) => item.currentQuantity <= item.minQuantity)
+    const lowStockItems = stockItems.filter((item) => item.status == "Baixo")
     const criticalStockItems = stockItems.filter((item) => item.status === "Critico")
 
     // const autoReorderSuggestions = getAutoReorderSuggestions()
