@@ -1,5 +1,7 @@
 export interface StockItem {
     id: number;
+    createdAt: Date
+    updatedAt: Date
     name: string;
     unit: string;
     currentQuantity: number;
@@ -21,6 +23,8 @@ export interface StockItem {
 
 export interface Movement {
     id: number;
+    createdAt: Date
+    updatedAt: Date
     productId: number;
     productName: string;
     type: "entrada" | "saída" | "ajuste";
@@ -34,6 +38,8 @@ export interface Movement {
 
 export interface Recipe {
     id: number;
+    createdAt: Date
+    updatedAt: Date
     dishName: string;
     ingredients: Array<{
         productId: number;
@@ -47,6 +53,8 @@ export interface Recipe {
 
 export interface Supplier {
     id: number;
+    createdAt: Date
+    updatedAt: Date
     name: string;
     contact: string;
     email: string;
@@ -59,6 +67,8 @@ export interface Supplier {
 
 export interface Sale {
     id: number;
+    createdAt: Date
+    updatedAt: Date
     dishName: string;
     quantity: number;
     date: string;
