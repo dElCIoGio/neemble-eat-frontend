@@ -1,5 +1,5 @@
 export interface StockItem {
-    id: number;
+    _id: string;
     createdAt: Date
     updatedAt: Date
     name: string;
@@ -22,7 +22,7 @@ export interface StockItem {
 }
 
 export interface Movement {
-    id: number;
+    _id: string;
     createdAt: Date
     updatedAt: Date
     productId: number;
@@ -37,7 +37,7 @@ export interface Movement {
 }
 
 export interface Recipe {
-    id: number;
+    _id: string;
     createdAt: Date
     updatedAt: Date
     dishName: string;
@@ -52,7 +52,7 @@ export interface Recipe {
 }
 
 export interface Supplier {
-    id: number;
+    _id: string;
     createdAt: Date
     updatedAt: Date
     name: string;
@@ -66,7 +66,7 @@ export interface Supplier {
 }
 
 export interface Sale {
-    id: number;
+    _id: string;
     createdAt: Date
     updatedAt: Date
     dishName: string;

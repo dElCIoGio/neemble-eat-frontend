@@ -64,7 +64,7 @@ export default function StockManagement() {
     // Stock data
     const [stockItems, setStockItems] = useState<StockItem[]>([
         {
-            id: 1,
+            _id: "1",
             name: "Batata",
             unit: "Kg",
             currentQuantity: 15,
@@ -84,7 +84,7 @@ export default function StockManagement() {
             reorderQuantity: 30,
         },
         {
-            id: 2,
+            _id: "2",
             name: "Cebola",
             unit: "Kg",
             currentQuantity: 3,
@@ -103,7 +103,7 @@ export default function StockManagement() {
             reorderQuantity: 20,
         },
         {
-            id: 3,
+            _id: "3",
             name: "Carne de Vaca",
             unit: "Kg",
             currentQuantity: 8,
@@ -120,7 +120,7 @@ export default function StockManagement() {
             autoReorder: false,
         },
         {
-            id: 4,
+            _id: "4",
             name: "Ovos",
             unit: "Unid",
             currentQuantity: 24,
@@ -139,7 +139,7 @@ export default function StockManagement() {
             reorderQuantity: 36,
         },
         {
-            id: 5,
+            _id: "5",
             name: "Azeite",
             unit: "L",
             currentQuantity: 2,
@@ -162,7 +162,7 @@ export default function StockManagement() {
     // Movements data
     const [movements, setMovements] = useState<Movement[]>([
         {
-            id: 1,
+            _id: "1",
             productId: 1,
             productName: "Batata",
             type: "entrada",
@@ -174,7 +174,7 @@ export default function StockManagement() {
             cost: 24.0,
         },
         {
-            id: 2,
+            _id: "2",
             productId: 2,
             productName: "Cebola",
             type: "saída",
@@ -185,7 +185,7 @@ export default function StockManagement() {
             user: "Sistema",
         },
         {
-            id: 3,
+            _id: "3",
             productId: 3,
             productName: "Carne de Vaca",
             type: "entrada",
@@ -201,7 +201,7 @@ export default function StockManagement() {
     // Recipes data
     const [recipes, setRecipes] = useState<Recipe[]>([
         {
-            id: 1,
+            _id: "1",
             dishName: "Bitoque de Vaca",
             ingredients: [
                 { productId: 3, productName: "Carne de Vaca", quantity: 0.2, unit: "Kg" },
@@ -213,7 +213,7 @@ export default function StockManagement() {
             cost: 3.85,
         },
         {
-            id: 2,
+            _id: "2",
             dishName: "Batatas Fritas",
             ingredients: [
                 { productId: 1, productName: "Batata", quantity: 0.25, unit: "Kg" },
@@ -227,7 +227,7 @@ export default function StockManagement() {
     // Suppliers data
     const [suppliers, ] = useState<Supplier[]>([
         {
-            id: 1,
+            _id: "1",
             name: "Fornecedor A",
             contact: "João Silva",
             email: "joao@fornecedora.pt",
@@ -238,7 +238,7 @@ export default function StockManagement() {
             lastOrder: "10/06/2025",
         },
         {
-            id: 2,
+            _id: "2",
             name: "Talho Central",
             contact: "Maria Santos",
             email: "maria@talhocentral.pt",
@@ -249,7 +249,7 @@ export default function StockManagement() {
             lastOrder: "12/06/2025",
         },
         {
-            id: 3,
+            _id: "3",
             name: "Quinta dos Ovos",
             contact: "António Costa",
             email: "antonio@quintaovos.pt",
@@ -265,9 +265,9 @@ export default function StockManagement() {
 
     // Sales data (simulation)
     const [sales, setSales] = useState<Sale[]>([
-        { id: 1, dishName: "Bitoque de Vaca", quantity: 5, date: "13/06/2025", total: 75.0 },
-        { id: 2, dishName: "Batatas Fritas", quantity: 8, date: "13/06/2025", total: 32.0 },
-        { id: 3, dishName: "Bitoque de Vaca", quantity: 3, date: "12/06/2025", total: 45.0 },
+        { _id: "1", dishName: "Bitoque de Vaca", quantity: 5, date: "13/06/2025", total: 75.0 },
+        { _id: "2", dishName: "Batatas Fritas", quantity: 8, date: "13/06/2025", total: 32.0 },
+        { _id: "3", dishName: "Bitoque de Vaca", quantity: 3, date: "12/06/2025", total: 45.0 },
     ])
 
     // Modal states
@@ -368,10 +368,10 @@ export default function StockManagement() {
         return new Date().toLocaleDateString("pt-PT")
     }
 
-    const addMovement = (movement: Omit<Movement, "id">) => {
+    const addMovement = (movement: Omit<Movement, "_id">) => {
         const newMovement = {
             ...movement,
-            id: Math.max(...movements.map((m) => m.id), 0) + 1,
+            _id: (Math.max(...movements.map((m) => Number(m._id)), 0) + 1).toString(),
         }
         setMovements([newMovement, ...movements])
     }
@@ -423,7 +423,7 @@ export default function StockManagement() {
 
     // Simulate sale and reduce stock
     const simulateSale = () => {
-        const recipe = recipes.find((r) => r.id === Number.parseInt(saleForm.dishId))
+        const recipe = recipes.find((r) => r._id === saleForm.dishId)
         if (!recipe) {
             toast.error("Erro", {
                 description: "Prato não encontrado."
@@ -437,7 +437,7 @@ export default function StockManagement() {
 
         // Check if we have enough ingredients
         recipe.ingredients.forEach((ingredient) => {
-            const stockItem = stockItems.find((item) => item.id === ingredient.productId)
+            const stockItem = stockItems.find((item) => item._id === ingredient.productId.toString())
             if (!stockItem || stockItem.currentQuantity < ingredient.quantity * quantity) {
                 canMakeDish = false
                 insufficientIngredients.push(ingredient.productName)
@@ -453,14 +453,14 @@ export default function StockManagement() {
 
         // Reduce stock
         const updatedItems = stockItems.map((item) => {
-            const ingredient = recipe.ingredients.find((ing) => ing.productId === item.id)
+            const ingredient = recipe.ingredients.find((ing) => ing.productId === Number(item._id))
             if (ingredient) {
                 const newQuantity = item.currentQuantity - ingredient.quantity * quantity
                 const updatedItem = { ...item, currentQuantity: newQuantity }
 
                 // Add movement
                 addMovement({
-                    productId: item.id,
+                    productId: item._id,
                     productName: item.name,
                     type: "saída",
                     quantity: ingredient.quantity * quantity,
@@ -479,7 +479,7 @@ export default function StockManagement() {
 
         // Add sale record
         const newSale: Sale = {
-            id: Math.max(...sales.map((s) => s.id), 0) + 1,
+            _id: (Math.max(...sales.map((s) => Number(s._id)), 0) + 1).toString(),
             dishName: recipe.dishName,
             quantity,
             date: getCurrentDate(),
@@ -508,7 +508,7 @@ export default function StockManagement() {
         const insufficientStock: string[] = []
 
         newRecipe.ingredients.forEach((ing) => {
-            const product = stockItems.find((item) => item.id === Number.parseInt(ing.productId))
+            const product = stockItems.find((item) => item._id === ing.productId)
             const requiredQuantity = Number.parseFloat(ing.quantity)
 
             if (!product) {
@@ -528,9 +528,9 @@ export default function StockManagement() {
         }
 
         const ingredients = newRecipe.ingredients.map((ing) => {
-            const product = stockItems.find((item) => item.id === Number.parseInt(ing.productId))
+            const product = stockItems.find((item) => item._id === ing.productId)
             return {
-                productId: Number.parseInt(ing.productId),
+                productId: Number(ing.productId),
                 productName: product?.name || "",
                 quantity: Number.parseFloat(ing.quantity),
                 unit: product?.unit || "",
@@ -538,12 +538,12 @@ export default function StockManagement() {
         })
 
         const cost = ingredients.reduce((total, ing) => {
-            const product = stockItems.find((item) => item.id === ing.productId)
+            const product = stockItems.find((item) => item._id === ing.productId.toString())
             return total + ing.quantity * (product?.cost || 0)
         }, 0)
 
         const recipe: Recipe = {
-            id: Math.max(...recipes.map((r) => r.id), 0) + 1,
+            _id: (Math.max(...recipes.map((r) => Number(r._id)), 0) + 1).toString(),
             dishName: newRecipe.dishName,
             ingredients,
             servings: Number.parseInt(newRecipe.servings),
@@ -636,7 +636,7 @@ export default function StockManagement() {
         }
 
         const newItem: StockItem = {
-            id: Math.max(...stockItems.map((item) => item.id)) + 1,
+            _id: (Math.max(...stockItems.map((item) => Number(item._id)), 0) + 1).toString(),
             name: newProduct.name,
             unit: newProduct.unit,
             category: newProduct.category,
@@ -660,7 +660,7 @@ export default function StockManagement() {
 
         // Add movement
         addMovement({
-            productId: updatedItem.id,
+            productId: updatedItem._id,
             productName: updatedItem.name,
             type: "entrada",
             quantity: updatedItem.currentQuantity,
@@ -707,7 +707,7 @@ export default function StockManagement() {
         }
 
         const updatedItems = stockItems.map((item) =>
-            item.id === selectedItem.id
+            item._id === selectedItem._id
                 ? updateItemStatus({
                     ...item,
                     currentQuantity: item.currentQuantity + quantity,
@@ -720,7 +720,7 @@ export default function StockManagement() {
 
         // Add movement
         addMovement({
-            productId: selectedItem.id,
+            productId: selectedItem._id,
             productName: selectedItem.name,
             type: "entrada",
             quantity,
@@ -811,7 +811,7 @@ export default function StockManagement() {
     const handleEditProduct = () => {
         if (!editProduct) return
 
-        const updatedItems = stockItems.map((item) => (item.id === editProduct.id ? { ...editProduct } : item))
+        const updatedItems = stockItems.map((item) => (item._id === editProduct._id ? { ...editProduct } : item))
 
         setStockItems(updatedItems)
         setIsEditProductOpen(false)
@@ -834,7 +834,7 @@ export default function StockManagement() {
         }
 
         const updatedItems = stockItems.map((item) =>
-            item.id === selectedItem.id
+            item._id === selectedItem._id
                 ? updateItemStatus({
                     ...item,
                     currentQuantity: item.currentQuantity + quantity,
@@ -847,7 +847,7 @@ export default function StockManagement() {
 
         // Add movement
         addMovement({
-            productId: selectedItem.id,
+            productId: selectedItem._id,
             productName: selectedItem.name,
             type: "entrada",
             quantity,
@@ -870,7 +870,7 @@ export default function StockManagement() {
     const handleDeleteProduct = () => {
         if (!itemToDelete) return
 
-        const updatedItems = stockItems.filter((item) => item.id !== itemToDelete.id)
+        const updatedItems = stockItems.filter((item) => item._id !== itemToDelete._id)
         setStockItems(updatedItems)
         setDeleteDialogOpen(false)
         setItemToDelete(null)
@@ -1054,7 +1054,7 @@ export default function StockManagement() {
                                             </TableRow>
                                         ) : (
                                             paginatedItems.map((item) => (
-                                                <TableRow key={item.id}>
+                                                <TableRow key={item._id}>
                                                     <TableCell className="font-medium">{item.name}</TableCell>
                                                     <TableCell>{item.category}</TableCell>
                                                     <TableCell>
@@ -1430,7 +1430,7 @@ export default function StockManagement() {
                                                 value={ingredient.productId}
                                                 onValueChange={(value) => {
                                                     const updatedIngredients = [...newRecipe.ingredients]
-                                                    const product = stockItems.find((item) => item.id === Number.parseInt(value))
+                                                    const product = stockItems.find((item) => item._id === value)
                                                     updatedIngredients[index] = {
                                                         ...ingredient,
                                                         productId: value,
@@ -1446,7 +1446,7 @@ export default function StockManagement() {
                                                     {stockItems
                                                         .filter((item) => item.currentQuantity > 0) // Apenas produtos com stock disponível
                                                         .map((item) => (
-                                                            <SelectItem key={item.id} value={item.id.toString()}>
+                                                            <SelectItem key={item._id} value={item._id}>
                                                                 {item.name} ({item.unit}) - Stock: {item.currentQuantity}
                                                             </SelectItem>
                                                         ))}
@@ -1465,13 +1465,13 @@ export default function StockManagement() {
                                                     setNewRecipe({ ...newRecipe, ingredients: updatedIngredients })
                                                 }}
                                                 className={(() => {
-                                                    const product = stockItems.find((item) => item.id === Number.parseInt(ingredient.productId))
+                                                    const product = stockItems.find((item) => item._id === ingredient.productId)
                                                     const quantity = Number.parseFloat(ingredient.quantity)
                                                     return product && quantity > product.currentQuantity ? "border-red-500 bg-red-50" : ""
                                                 })()}
                                             />
                                             {(() => {
-                                                const product = stockItems.find((item) => item.id === Number.parseInt(ingredient.productId))
+                                                const product = stockItems.find((item) => item._id === ingredient.productId)
                                                 const quantity = Number.parseFloat(ingredient.quantity)
                                                 if (product && quantity > product.currentQuantity) {
                                                     return (
@@ -1539,7 +1539,7 @@ export default function StockManagement() {
                                 </SelectTrigger>
                                 {recipes.filter((recipe) => {
                                     return recipe.ingredients.every((ingredient) => {
-                                        const stockItem = stockItems.find((item) => item.id === ingredient.productId)
+                                        const stockItem = stockItems.find((item) => item._id === ingredient.productId.toString())
                                         return stockItem && stockItem.currentQuantity >= ingredient.quantity
                                     })
                                 }).length === 0 && (
@@ -1555,12 +1555,12 @@ export default function StockManagement() {
                                         .filter((recipe) => {
                                             // Verificar se todos os ingredientes têm stock suficiente
                                             return recipe.ingredients.every((ingredient) => {
-                                                const stockItem = stockItems.find((item) => item.id === ingredient.productId)
+                                                const stockItem = stockItems.find((item) => item._id === ingredient.productId.toString())
                                                 return stockItem && stockItem.currentQuantity >= ingredient.quantity
                                             })
                                         })
                                         .map((recipe) => (
-                                            <SelectItem key={recipe.id} value={recipe.id.toString()}>
+                                            <SelectItem key={recipe._id} value={recipe._id}>
                                                 {recipe.dishName} - €{recipe.cost.toFixed(2)}
                                                 <span className="text-xs text-green-600 ml-2">✓ Stock disponível</span>
                                             </SelectItem>
@@ -1582,7 +1582,7 @@ export default function StockManagement() {
                             <div className="p-3 bg-gray-50 rounded-lg">
                                 <Label className="text-sm font-medium">Ingredientes necessários:</Label>
                                 {recipes
-                                    .find((r) => r.id === Number.parseInt(saleForm.dishId))
+                                    .find((r) => r._id === saleForm.dishId)
                                     ?.ingredients.map((ing, index) => (
                                         <div key={index} className="flex justify-between text-sm mt-1">
                                             <span>{ing.productName}</span>
@@ -1903,12 +1903,12 @@ export default function StockManagement() {
                                 stockItems
                                     .filter(
                                         (item) =>
-                                            selectedSupplier.products.includes(item.id) &&
+                                            selectedSupplier.products.includes(item._id) &&
                                             (item.currentQuantity <= item.minQuantity ||
                                                 (item.autoReorder && item.reorderPoint && item.currentQuantity <= item.reorderPoint)),
                                     )
                                     .map((item) => (
-                                        <div key={item.id} className="flex justify-between items-center py-2 border-b last:border-b-0">
+                                        <div key={item._id} className="flex justify-between items-center py-2 border-b last:border-b-0">
                                             <div>
                                                 <span className="font-medium">{item.name}</span>
                                                 <span className="text-sm text-gray-500 ml-2">
@@ -1947,7 +1947,7 @@ export default function StockManagement() {
                                     const orderItems = stockItems
                                         .filter(
                                             (item) =>
-                                                selectedSupplier.products.includes(item.id) &&
+                                                selectedSupplier.products.includes(item._id) &&
                                                 (item.currentQuantity <= item.minQuantity ||
                                                     (item.autoReorder && item.reorderPoint && item.currentQuantity <= item.reorderPoint)),
                                         )
