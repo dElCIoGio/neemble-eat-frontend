@@ -8,7 +8,7 @@ export function InvitationsTable({ invitations }: { invitations: Invitation[] })
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Email</TableHead>
+                    <TableHead>Nome</TableHead>
                     <TableHead>Função</TableHead>
                     <TableHead>Enviado em</TableHead>
                 </TableRow>
@@ -16,7 +16,7 @@ export function InvitationsTable({ invitations }: { invitations: Invitation[] })
             <TableBody>
                 {invitations.map((invitation) => (
                     <TableRow key={invitation._id}>
-                        <TableCell>{invitation.email}</TableCell>
+                        <TableCell>{invitation.name}</TableCell>
                         <TableCell>{invitation.role}</TableCell>
                         <TableCell>{format(new Date(invitation.createdAt), "dd/MM/yyyy", { locale: ptBR })}</TableCell>
                     </TableRow>
