@@ -14,6 +14,8 @@ import { roleApi } from "@/api/endpoints/role/requests"
 import { useMutation } from "@tanstack/react-query"
 import { showSuccessToast, showErrorToast, showPromiseToast } from "@/utils/notifications/toast"
 import { invitationApi } from "@/api/endpoints/invitation/requests"
+import { useGetRestaurantInvitations } from "@/hooks/use-get-restaurant-invitations"
+import { InvitationsTable } from "@/components/pages/dashboard-staff/invitations-table"
 import { DashboardStaffProvider, useDashboardStaff } from "@/context/dashboard-staff-context"
 import { Stats } from "@/components/pages/dashboard-staff/stats"
 import { Filters } from "@/components/pages/dashboard-staff/filters"
@@ -139,6 +141,8 @@ function StaffContent() {
     const { data: users = [] } = useGetAllMembers({
         restaurantId: restaurant._id
     })
+
+    const { data: invitations = [] } = useGetRestaurantInvitations(restaurant._id)
 
     const createRoleMutation = useCreateRole()
 
@@ -507,6 +511,20 @@ function StaffContent() {
                             </div>
 
                             <Pagination />
+                        </CardContent>
+                    </Card>
+
+                    <Card className="mt-6">
+                        <CardHeader>
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <CardTitle className="text-lg">Convites Pendentes</CardTitle>
+                                    <CardDescription>{invitations.length} convite(s) pendente(s)</CardDescription>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <InvitationsTable invitations={invitations} />
                         </CardContent>
                     </Card>
                 </div>

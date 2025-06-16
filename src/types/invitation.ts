@@ -9,4 +9,7 @@ export type InvitationCreate = {
 }
 
 
-export type Invitation = {} & InvitationCreate
+export interface Invitation extends InvitationCreate {
+    _id: string
+    createdAt: string
+}
