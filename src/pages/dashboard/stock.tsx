@@ -8,6 +8,7 @@ import {
     Package,
     ChefHat,
     BarChart3,
+    History,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -67,6 +68,8 @@ import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
 import {menuApi} from "@/api/endpoints/menu/requests";
 import type {Item} from "@/types/item";
 import {useRegisterSale} from "@/api/endpoints/sales/hooks";
+import {useGetMovements, useCreateMovement} from "@/api/endpoints/movements/hooks";
+import type {MovementCreate} from "@/types/stock";
 import {formatIsosDate} from "@/lib/helpers/format-isos-date";
 
 export default function StockManagement() {
@@ -78,7 +81,7 @@ export default function StockManagement() {
     const [statusFilter, setStatusFilter] = useState("Todos")
     const [newCategoryName, setNewCategoryName] = useState("")
 
-    const { restaurant } = useDashboardContext()
+    const { restaurant, user } = useDashboardContext()
 
     const {
         data: stockItems = [],
@@ -102,6 +105,8 @@ export default function StockManagement() {
 
     // Sales data
     const registerSaleMutation = useRegisterSale(restaurant._id)
+    const { data: movements = [], isLoading: isMovementsLoading } = useGetMovements(restaurant._id)
+    const createMovementMutation = useCreateMovement(restaurant._id)
 
     // Modal states
     const [isAddProductOpen, setIsAddProductOpen] = useState(false)
@@ -111,6 +116,7 @@ export default function StockManagement() {
     const [isReplenishOpen, setIsReplenishOpen] = useState(false)
     const [isRecipeOpen, setIsRecipeOpen] = useState(false)
     const [isSaleSimulatorOpen, setIsSaleSimulatorOpen] = useState(false)
+    const [isAddMovementOpen, setIsAddMovementOpen] = useState(false)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [isNewOrderOpen, setIsNewOrderOpen] = useState(false)
     const [selectedSupplier, ] = useState<Supplier | null>(null)
@@ -173,6 +179,13 @@ export default function StockManagement() {
     const [saleForm, setSaleForm] = useState({
         dishId: "",
         quantity: "1",
+    })
+
+    const [movementForm, setMovementForm] = useState({
+        productId: "",
+        type: "entrada" as MovementCreate["type"],
+        quantity: "",
+        reason: "",
     })
 
     // Loading state
@@ -624,6 +637,39 @@ export default function StockManagement() {
         )
     }
 
+    const handleAddMovement = () => {
+        const product = stockItems.find(i => i._id === movementForm.productId)
+        if (!product || !movementForm.quantity) {
+            showErrorToast("Erro", "Preencha todos os campos")
+            return
+        }
+
+        const quantity = Number.parseFloat(movementForm.quantity)
+        const data: MovementCreate = {
+            productId: product._id,
+            productName: product.name,
+            type: movementForm.type,
+            quantity,
+            unit: product.unit,
+            date: new Date(),
+            reason: movementForm.reason,
+            user: `${user.firstName} ${user.lastName}`,
+            cost: product.cost,
+        }
+
+        showPromiseToast(
+            createMovementMutation.mutateAsync(data).then(() => {
+                setIsAddMovementOpen(false)
+                setMovementForm({ productId: "", type: "entrada", quantity: "", reason: "" })
+            }),
+            {
+                loading: "Adicionando registro...",
+                success: "Registro adicionado",
+                error: "Erro ao adicionar registro",
+            }
+        )
+    }
+
     const handleDeleteProduct = () => {
         if (!itemToDelete) return
 
@@ -801,7 +847,7 @@ export default function StockManagement() {
                 <TabsList className="w-full">
                     <TabsTrigger value="stock">Stock</TabsTrigger>
                     <TabsTrigger value="recipes">Receitas</TabsTrigger>
-                    {/*<TabsTrigger value="log">Registros</TabsTrigger>*/}
+                    <TabsTrigger value="movements">Registros</TabsTrigger>
                     <TabsTrigger className="hidden" value="suppliers">Fornecedores</TabsTrigger>
                 </TabsList>
 
@@ -1024,6 +1070,65 @@ export default function StockManagement() {
                                                             </Button>
                                                         </div>
                                                     </TableCell>
+                                                </TableRow>
+                                            ))
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </ScrollArea>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                <TabsContent value="movements" className="space-y-4">
+                    <div className="flex justify-end">
+                        <Button onClick={() => setIsAddMovementOpen(true)}>
+                            <Plus className="w-4 h-4 mr-2" /> Novo Registro
+                        </Button>
+                    </div>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Registros</CardTitle>
+                            <CardDescription>Lista de movimentos de stock</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ScrollArea>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Produto</TableHead>
+                                            <TableHead>Tipo</TableHead>
+                                            <TableHead>Quantidade</TableHead>
+                                            <TableHead>Data</TableHead>
+                                            <TableHead>Utilizador</TableHead>
+                                            <TableHead>Razão</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {isMovementsLoading ? (
+                                            Array.from({ length: 5 }).map((_, i) => (
+                                                <TableRow key={i}>
+                                                    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+                                                    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
+                                                    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
+                                                    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                                                    <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
+                                                    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+                                                </TableRow>
+                                            ))
+                                        ) : movements.length === 0 ? (
+                                            <TableRow>
+                                                <TableCell colSpan={6} className="text-center py-6">Nenhum registro encontrado</TableCell>
+                                            </TableRow>
+                                        ) : (
+                                            movements.map((mv) => (
+                                                <TableRow key={mv._id}>
+                                                    <TableCell>{mv.productName}</TableCell>
+                                                    <TableCell className="capitalize">{mv.type}</TableCell>
+                                                    <TableCell>{mv.quantity} {mv.unit}</TableCell>
+                                                    <TableCell>{formatIsosDate(new Date(mv.date))}</TableCell>
+                                                    <TableCell>{mv.user}</TableCell>
+                                                    <TableCell>{mv.reason}</TableCell>
                                                 </TableRow>
                                             ))
                                         )}
@@ -1277,6 +1382,58 @@ export default function StockManagement() {
                         <Button onClick={handleAddProduct} className="flex-1">
                             Adicionar Produto
                         </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Add Movement Modal */}
+            <Dialog open={isAddMovementOpen} onOpenChange={setIsAddMovementOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Novo Registro</DialogTitle>
+                        <DialogDescription>Crie manualmente um movimento de stock.</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div>
+                            <Label>Produto</Label>
+                            <Select value={movementForm.productId} onValueChange={(value) => setMovementForm({ ...movementForm, productId: value })}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecionar produto" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {stockItems.map(item => (
+                                        <SelectItem key={item._id} value={item._id}>{item.name}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <Label>Tipo</Label>
+                                <Select value={movementForm.type} onValueChange={(value) => setMovementForm({ ...movementForm, type: value as MovementCreate["type"] })}>
+                                    <SelectTrigger>
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="entrada">Entrada</SelectItem>
+                                        <SelectItem value="saida">Saída</SelectItem>
+                                        <SelectItem value="ajuste">Ajuste</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label>Quantidade</Label>
+                                <Input type="number" value={movementForm.quantity} onChange={(e) => setMovementForm({ ...movementForm, quantity: e.target.value })} />
+                            </div>
+                        </div>
+                        <div>
+                            <Label>Razão</Label>
+                            <Input value={movementForm.reason} onChange={(e) => setMovementForm({ ...movementForm, reason: e.target.value })} />
+                        </div>
+                    </div>
+                    <div className="flex gap-2 pt-4">
+                        <Button onClick={() => setIsAddMovementOpen(false)} variant="outline" className="flex-1">Cancelar</Button>
+                        <Button onClick={handleAddMovement} className="flex-1">Adicionar</Button>
                     </div>
                 </DialogContent>
             </Dialog>
