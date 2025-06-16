@@ -44,72 +44,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton"
 
 // Types
-interface StockItem {
-    id: number
-    name: string
-    unit: string
-    currentQuantity: number
-    minQuantity: number
-    maxQuantity?: number
-    lastEntry: string
-    supplier: string
-    status: "OK" | "Baixo" | "Crítico"
-    category: string
-    notes?: string
-    cost?: number
-    expiryDate?: string
-    barcode?: string
-    location?: string
-    autoReorder?: boolean
-    reorderPoint?: number
-    reorderQuantity?: number
-}
-
-interface Movement {
-    id: number
-    productId: number
-    productName: string
-    type: "entrada" | "saída" | "ajuste"
-    quantity: number
-    unit: string
-    date: string
-    reason: string
-    user: string
-    cost?: number
-}
-
-interface Recipe {
-    id: number
-    dishName: string
-    ingredients: Array<{
-        productId: number
-        productName: string
-        quantity: number
-        unit: string
-    }>
-    servings: number
-    cost: number
-}
-
-interface Supplier {
-    id: number
-    name: string
-    contact: string
-    email: string
-    phone: string
-    address: string
-    products: number[]
-    rating: number
-    lastOrder?: string
-}
-
-interface Sale {
-    id: number
-    dishName: string
-    quantity: number
-    date: string
-    total: number
-}
+import type {
+    StockItem,
+    Movement,
+    Recipe,
+    Supplier,
+    Sale,
+} from "@/types/stock"
 
 export default function StockManagement() {
 
