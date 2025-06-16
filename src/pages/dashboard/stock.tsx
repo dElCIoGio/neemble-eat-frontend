@@ -52,6 +52,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type {
     StockItem,
     Supplier,
+    Recipe,
 } from "@/types/stock"
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
@@ -61,7 +62,7 @@ import {
     useDeleteStockItem,
     useAddStock,
 } from "@/api/endpoints/stock/hooks";
-import {useGetRecipes, useCreateRecipe, useDeleteRecipe} from "@/api/endpoints/recipes/hooks";
+import {useGetRecipes, useCreateRecipe, useDeleteRecipe, useUpdateRecipe} from "@/api/endpoints/recipes/hooks";
 import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
 import {menuApi} from "@/api/endpoints/menu/requests";
 import type {Item} from "@/types/item";
@@ -92,6 +93,7 @@ export default function StockManagement() {
         data: recipes = [],
     } = useGetRecipes(restaurant._id)
     const createRecipeMutation = useCreateRecipe(restaurant._id)
+    const updateRecipeMutation = useUpdateRecipe(restaurant._id)
     const deleteRecipeMutation = useDeleteRecipe(restaurant._id)
 
     const {data: menus = []} = useGetRestaurantMenus(restaurant._id)
@@ -662,6 +664,81 @@ export default function StockManagement() {
         )
     }
 
+    const handleOpenEditRecipe = (recipe: Recipe) => {
+        setEditRecipe({
+            _id: recipe._id,
+            menuItemId: recipe.menuItemId,
+            dishName: recipe.dishName,
+            servings: recipe.servings.toString(),
+            ingredients: recipe.ingredients.map(ing => ({
+                productId: ing.productId,
+                quantity: ing.quantity.toString(),
+                unit: ing.unit,
+            }))
+        })
+        setIsEditRecipeOpen(true)
+    }
+
+    const addIngredientToEditRecipe = () => {
+        if (!editRecipe) return
+        setEditRecipe({
+            ...editRecipe,
+            ingredients: [...editRecipe.ingredients, { productId: "", quantity: "", unit: "" }]
+        })
+    }
+
+    const removeIngredientFromEditRecipe = (index: number) => {
+        if (!editRecipe) return
+        const updated = editRecipe.ingredients.filter((_, i) => i !== index)
+        setEditRecipe({ ...editRecipe, ingredients: updated })
+    }
+
+    const handleUpdateRecipe = () => {
+        if (!editRecipe) return
+
+        if (!editRecipe.menuItemId || editRecipe.ingredients.some(ing => !ing.productId || !ing.quantity)) {
+            showErrorToast("Erro", "Por favor, preencha todos os campos da receita.")
+            return
+        }
+
+        const ingredients = editRecipe.ingredients.map(ing => {
+            const product = stockItems.find(item => item._id === ing.productId)
+            return {
+                productId: ing.productId,
+                productName: product?.name || "",
+                quantity: Number.parseFloat(ing.quantity),
+                unit: product?.unit || ing.unit,
+            }
+        })
+
+        const cost = ingredients.reduce((total, ing) => {
+            const product = stockItems.find(item => item._id === ing.productId)
+            return total + ing.quantity * (product?.cost || 0)
+        }, 0)
+
+        const selectedItem = menuItems.find(i => i._id === editRecipe.menuItemId)
+
+        const recipeData = {
+            dishName: selectedItem?.name || editRecipe.dishName,
+            menuItemId: editRecipe.menuItemId,
+            ingredients,
+            servings: Number.parseInt(editRecipe.servings),
+            cost,
+        }
+
+        showPromiseToast(
+            updateRecipeMutation.mutateAsync({ id: editRecipe._id!, data: recipeData }).then(() => {
+                setIsEditRecipeOpen(false)
+                setEditRecipe(null)
+            }),
+            {
+                loading: 'Atualizando receita...',
+                success: 'Receita atualizada',
+                error: 'Falha ao atualizar receita'
+            }
+        )
+    }
+
     // const handleReplenishStock = (item: StockItem) => {
     //     const suggestedQuantity = Math.max(item.minQuantity * 2 - item.currentQuantity, item.minQuantity)
     //     setReplenishQuantity(suggestedQuantity.toString())
@@ -957,9 +1034,18 @@ export default function StockManagement() {
                                                     <TableCell>{recipe.servings}</TableCell>
                                                     <TableCell>€{recipe.cost.toFixed(2)}</TableCell>
                                                     <TableCell className="text-right">
-                                                        <Button variant="ghost" size="sm" onClick={() => handleDeleteRecipe(recipe._id)}>
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
+                                                        <div className="flex justify-end gap-2">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleOpenEditRecipe(recipe)}
+                                                            >
+                                                                Editar
+                                                            </Button>
+                                                            <Button variant="ghost" size="sm" onClick={() => handleDeleteRecipe(recipe._id)}>
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </Button>
+                                                        </div>
                                                     </TableCell>
                                                 </TableRow>
                                             ))
@@ -1213,6 +1299,145 @@ export default function StockManagement() {
                         </Button>
                         <Button onClick={handleAddProduct} className="flex-1">
                             Adicionar Produto
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Edit Recipe Modal */}
+            <Dialog open={isEditRecipeOpen} onOpenChange={setIsEditRecipeOpen}>
+                <DialogContent className="sm:max-w-2xl">
+                    <DialogHeader>
+                        <DialogTitle>Editar Receita</DialogTitle>
+                        <DialogDescription>Altere os detalhes da receita.</DialogDescription>
+                    </DialogHeader>
+                    {editRecipe && (
+                        <div className="space-y-4 max-h-96 overflow-y-auto">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <Label>Item do Menu *</Label>
+                                    <Select
+                                        value={editRecipe.menuItemId}
+                                        onValueChange={(value) => {
+                                            const item = menuItems.find(i => i._id === value)
+                                            setEditRecipe({ ...editRecipe, menuItemId: value, dishName: item?.name || "" })
+                                        }}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Selecionar item" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {menuItems.map(item => (
+                                                <SelectItem key={item._id} value={item._id}>{item.name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div>
+                                    <Label htmlFor="editServings">Porções *</Label>
+                                    <Input
+                                        id="editServings"
+                                        type="number"
+                                        placeholder="1"
+                                        value={editRecipe.servings}
+                                        onChange={(e) => setEditRecipe({ ...editRecipe, servings: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <Label className="text-sm font-medium">Ingredientes*</Label>
+                                <div className="space-y-2">
+                                    {editRecipe.ingredients.map((ingredient, index) => (
+                                        <div key={index} className="grid grid-cols-3 gap-2 items-end">
+                                            <div>
+                                                <Select
+                                                    value={ingredient.productId}
+                                                    onValueChange={(value) => {
+                                                        const updated = [...editRecipe.ingredients]
+                                                        const product = stockItems.find((item) => item._id === value)
+                                                        updated[index] = { ...ingredient, productId: value, unit: product?.unit || "" }
+                                                        setEditRecipe({ ...editRecipe, ingredients: updated })
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Selecionar produto" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {stockItems.filter(item => item.currentQuantity > 0).map(item => (
+                                                            <SelectItem key={item._id} value={item._id}>
+                                                                {item.name} ({item.unit}) - Stock: {item.currentQuantity}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div>
+                                                <Input
+                                                    type="number"
+                                                    step="0.01"
+                                                    placeholder="Quantidade"
+                                                    value={ingredient.quantity}
+                                                    onChange={(e) => {
+                                                        const updated = [...editRecipe.ingredients]
+                                                        updated[index] = { ...ingredient, quantity: e.target.value }
+                                                        setEditRecipe({ ...editRecipe, ingredients: updated })
+                                                    }}
+                                                    className={(() => {
+                                                        const product = stockItems.find((item) => item._id === ingredient.productId)
+                                                        const quantity = Number.parseFloat(ingredient.quantity)
+                                                        return product && quantity > product.currentQuantity ? "border-red-500 bg-red-50" : ""
+                                                    })()}
+                                                />
+                                                {(() => {
+                                                    const product = stockItems.find((item) => item._id === ingredient.productId)
+                                                    const quantity = Number.parseFloat(ingredient.quantity)
+                                                    if (product && quantity > product.currentQuantity) {
+                                                        return (
+                                                            <p className="text-xs text-red-600 mt-1">
+                                                                Stock insuficiente! Disponível: {product.currentQuantity} {product.unit}
+                                                            </p>
+                                                        )
+                                                    }
+                                                    if (product && ingredient.quantity) {
+                                                        return (
+                                                            <p className="text-xs text-green-600 mt-1">
+                                                                Disponível: {product.currentQuantity} {product.unit}
+                                                            </p>
+                                                        )
+                                                    }
+                                                    return null
+                                                })()}
+                                            </div>
+                                            <div className="flex gap-1">
+                                                <Input value={ingredient.unit} placeholder="Unidade" disabled className="bg-gray-100" />
+                                                {editRecipe.ingredients.length > 1 && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => removeIngredientFromEditRecipe(index)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <Button type="button" variant="outline" size="sm" onClick={addIngredientToEditRecipe} className="mt-2">
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Adicionar Ingrediente
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                    <div className="flex gap-2 pt-4">
+                        <Button onClick={() => setIsEditRecipeOpen(false)} variant="outline" className="flex-1">
+                            Cancelar
+                        </Button>
+                        <Button onClick={handleUpdateRecipe} className="flex-1">
+                            Atualizar Receita
                         </Button>
                     </div>
                 </DialogContent>
