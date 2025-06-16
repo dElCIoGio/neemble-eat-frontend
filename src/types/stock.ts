@@ -63,6 +63,8 @@ export type RecipeIngredient = {
 
 export type RecipeCreate = {
     dishName: string;
+    /** Associated menu item ID */
+    menuItemId: string;
     ingredients: Array<RecipeIngredient>;
     servings: number;
     cost: number;
