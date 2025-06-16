@@ -1,17 +1,20 @@
+import { useState } from "react"
 import { User } from "@/types/user"
 import { RoleCreate, SectionPermission } from "@/types/role"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { InvitationCreate } from "@/types/invitation"
+import { Invitation, InvitationCreate } from "@/types/invitation"
 
 import {
     Edit,
     Plus,
-    Settings, Trash2,
+    Settings,
+    Trash2,
+    Copy,
 } from "lucide-react"
 import { roleApi } from "@/api/endpoints/role/requests"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { showSuccessToast, showErrorToast, showPromiseToast } from "@/utils/notifications/toast"
 import { invitationApi } from "@/api/endpoints/invitation/requests"
 import { useGetRestaurantInvitations } from "@/hooks/use-get-restaurant-invitations"
@@ -26,6 +29,7 @@ import { Pagination } from "@/components/pages/dashboard-staff/pagination"
 import { useGetAllMembers } from "@/hooks/use-get-all-members"
 import { useListRestaurantRoles } from "@/hooks/use-list-restaurant-roles"
 import { useDashboardContext } from "@/context/dashboard-context"
+import { copyToClipboard } from "@/lib/helpers/copy-to-clipboard"
 import {
     Dialog,
     DialogContent,
@@ -144,6 +148,9 @@ function StaffContent() {
 
     const { data: invitations = [] } = useGetRestaurantInvitations(restaurant._id)
 
+    const queryClient = useQueryClient()
+    const [newInvitation, setNewInvitation] = useState<Invitation | null>(null)
+
     const createRoleMutation = useCreateRole()
 
     const filteredMembers = users.filter((member) => {
@@ -198,14 +205,18 @@ function StaffContent() {
 
     const handleInviteMember = () => {
         const invitationData: InvitationCreate = {
-            name: "", // Required by InvitationCreate type
+            name: inviteForm.name,
             role: inviteForm.role,
             managerId: user._id,
             restaurantId: restaurant._id
         }
 
         showPromiseToast(
-            invitationApi.createInvitation(invitationData),
+            invitationApi.createInvitation(invitationData).then((invitation) => {
+                setNewInvitation(invitation)
+                queryClient.invalidateQueries({ queryKey: ["invitations", restaurant._id] })
+                return invitation
+            }),
             {
                 loading: `Criando convite...`,
                 success: `Convite enviado com sucesso!`,
@@ -411,7 +422,13 @@ function StaffContent() {
                                         </Tabs>
                                     </DialogContent>
                                 </Dialog>
-                                <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
+                                <Dialog
+                                    open={isInviteDialogOpen}
+                                    onOpenChange={(open) => {
+                                        setIsInviteDialogOpen(open)
+                                        if (!open) setNewInvitation(null)
+                                    }}
+                                >
                                     <DialogTrigger asChild>
                                         <Button className="bg-black hover:bg-gray-800 w-full sm:w-auto">
                                             <Plus className="w-4 h-4 mr-2" />
@@ -456,6 +473,26 @@ function StaffContent() {
                                                     </Select>
                                                 </div>
                                             </div>
+
+                                            {newInvitation && (
+                                                <div className="flex items-center gap-2 p-4 bg-green-50 rounded-md">
+                                                    <Input
+                                                        readOnly
+                                                        value={`www.neemble-eat.com/invite/${newInvitation._id}`}
+                                                        className="cursor-text"
+                                                    />
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            copyToClipboard(`www.neemble-eat.com/invite/${newInvitation._id}`)
+                                                            showSuccessToast('Link copiado!')
+                                                        }}
+                                                    >
+                                                        <Copy className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <DialogFooter>
