@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
 import {signInWithEmailAndPassword} from "firebase/auth";
 import { auth } from "@/firebase/config";
+import { useGoogleAuth } from "@/hooks/use-google-auth";
 import {authApi} from "@/api/endpoints/auth/endpoints";
 import {userApi} from "@/api/endpoints/user/endpoints";
 import {toast} from "sonner";
@@ -40,6 +41,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     }
 
     const navigate = useNavigate()
+    const { signInWithGoogle } = useGoogleAuth()
 
     async function onSubmit(data: LoginFormValues): Promise<void> {
         setIsLoading(true)
@@ -66,6 +68,32 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 toast.error("Usuário não encontrado. Tente novamente.")
             else
                 toast.error("Erro ao fazer login. Verifique suas credenciais.")
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    async function onSubmitWithGoogle(): Promise<void> {
+        setIsLoading(true)
+        try {
+            const { token } = await signInWithGoogle()
+            await authApi.login({ idToken: token })
+            toast.success("Login realizado com sucesso")
+
+            const exists = await userApi.userExists()
+            if (!exists) {
+                toast.error("Deve completar o onboarding para poder continuar")
+                navigate("/onboarding")
+            } else {
+                navigate("/dashboard")
+            }
+        } catch (e: unknown) {
+            const error = e as Error
+            if (error.message === "Firebase: Error (auth/popup-closed-by-user).") {
+                toast.error("Autenticação cancelada pelo usuário.")
+            } else {
+                toast.error("Erro ao fazer login. Tente novamente.")
+            }
         } finally {
             setIsLoading(false)
         }
@@ -141,7 +169,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                         className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                         <span className="relative z-10 bg-background px-2 text-muted-foreground">Ou continue com</span>
                     </div>
-                    <Button variant="outline" className="w-full" type="button">
+                    <Button variant="outline" className="w-full" type="button" onClick={onSubmitWithGoogle} disabled={isLoading}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
                             <path
                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

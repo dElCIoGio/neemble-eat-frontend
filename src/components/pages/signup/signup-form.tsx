@@ -13,8 +13,9 @@ import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import {SignupFormValues, signupSchema} from "@/lib/schemas/auth";
 import {useNavigate} from "react-router";
-import {createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
+import {createUserWithEmailAndPassword} from "firebase/auth";
 import {auth} from "@/firebase/config";
+import {useGoogleAuth} from "@/hooks/use-google-auth";
 
 interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string
@@ -37,12 +38,16 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
         },
     })
 
-    function onSubmitWithGoogle() {
+    const { signInWithGoogle } = useGoogleAuth()
+
+    async function onSubmitWithGoogle() {
         setIsLoading(true)
-        const provider = new GoogleAuthProvider()
-        signInWithPopup(auth, provider).then(() => {
+        try {
+            await signInWithGoogle()
             navigate("/onboarding")
-        });
+        } finally {
+            setIsLoading(false)
+        }
     }
     
     function togglePasswordVisibility() {
