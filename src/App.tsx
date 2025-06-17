@@ -45,6 +45,7 @@ import DigitalMenu from "@/pages/root/DigitalMenu";
 import OrderManagement from "@/pages/root/OrdersManagement";
 import DataAnalysis from "@/pages/root/DataAnalysis";
 import {ForgotPassword} from "@/pages/root/ForgotPassword";
+import RestaurantInvitation from "@/pages/dashboard/invitation";
 
 
 
@@ -131,6 +132,7 @@ function App() {
                 <Route path="reset-password" element={<ResetPasswordPage/>}/>
             </Route>
 
+            {/* Restaurant Menu */}
             <Route path="r/:restaurantSlug/:tableNumber/">
                 <Route element={<RestaurantMenuProvider/>}>
                     <Route index element={<RestaurantMenu/>}/>
@@ -138,6 +140,12 @@ function App() {
                     <Route path="orders" element={<Orders/>} />
                 </Route>
             </Route>
+
+            {/* Invitation */}
+            <Route path="invitation">
+                <Route path=":invitationId" element={<RestaurantInvitation/>}/>
+            </Route>
+
             <Route path="*" element={<NotFound/>}/>
         </Routes>
     );
