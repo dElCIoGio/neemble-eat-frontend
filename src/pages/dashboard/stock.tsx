@@ -821,7 +821,7 @@ export default function StockManagement() {
                         <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">€{totalStockValue.toFixed(2)}</div>
+                        <div className="text-2xl font-bold">Kz {totalStockValue.toFixed(2)}</div>
                         <p className="text-xs text-muted-foreground">
                             Valor total do inventário
                         </p>
@@ -1054,7 +1054,7 @@ export default function StockManagement() {
                                                 <TableRow key={recipe._id}>
                                                     <TableCell>{menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName}</TableCell>
                                                     <TableCell>{recipe.servings}</TableCell>
-                                                    <TableCell>€{recipe.cost.toFixed(2)}</TableCell>
+                                                    <TableCell>Kz {recipe.cost.toFixed(2)}</TableCell>
                                                     <TableCell className="text-right">
                                                         <div className="flex justify-end gap-2">
                                                             <Button
@@ -1263,7 +1263,7 @@ export default function StockManagement() {
                                 />
                             </div>
                             <div>
-                                <Label htmlFor="cost">Custo por Unidade (€)</Label>
+                                <Label htmlFor="cost">Custo por Unidade (Kz)</Label>
                                 <Input
                                     id="cost"
                                     type="number"
@@ -1758,7 +1758,7 @@ export default function StockManagement() {
                                         })
                                         .map((recipe) => (
                                             <SelectItem key={recipe._id} value={recipe._id}>
-                                                {recipe.dishName} - €{recipe.cost.toFixed(2)}
+                                                {recipe.dishName} - Kz {recipe.cost.toFixed(2)}
                                                 <span className="text-xs text-green-600 ml-2">✓ Stock disponível</span>
                                             </SelectItem>
                                         ))}
@@ -1883,7 +1883,7 @@ export default function StockManagement() {
                                 </div>
                                 <div>
                                     <Label className="text-sm font-medium text-gray-500">Custo por Unidade</Label>
-                                    <p className="text-sm">€{selectedItem.cost?.toFixed(2) || "0.00"}</p>
+                                    <p className="text-sm">Kz {selectedItem.cost?.toFixed(2) || "0.00"}</p>
                                 </div>
                             </div>
                             {selectedItem.autoReorder && (
@@ -1998,7 +1998,7 @@ export default function StockManagement() {
                                     />
                                 </div>
                                 <div>
-                                    <Label htmlFor="editCost">Custo por Unidade (€)</Label>
+                                    <Label htmlFor="editCost">Custo por Unidade (Kz )</Label>
                                     <Input
                                         id="editCost"
                                         type="number"
@@ -2117,7 +2117,7 @@ export default function StockManagement() {
                                                     Sugestão: {item.reorderQuantity || item.minQuantity * 2} {item.unit}
                                                 </div>
                                                 <div className="text-xs text-gray-500">
-                                                    €{((item.reorderQuantity || item.minQuantity * 2) * (item.cost || 0)).toFixed(2)}
+                                                    Kz {((item.reorderQuantity || item.minQuantity * 2) * (item.cost || 0)).toFixed(2)}
                                                 </div>
                                             </div>
                                         </div>
@@ -2166,7 +2166,7 @@ export default function StockManagement() {
                                             item.product,
                                             item.currentStock.toString(),
                                             item.suggestedQuantity.toString(),
-                                            `€${item.estimatedCost.toFixed(2)}`,
+                                            `Kz ${item.estimatedCost.toFixed(2)}`,
                                         ]),
                                     ]
                                         .map((row) => row.join(","))

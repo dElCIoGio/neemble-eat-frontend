@@ -289,7 +289,7 @@ export default function Settings() {
                                             <p className="text-sm text-muted-foreground">Valor mínimo para aceitar um pedido</p>
                                         </div>
                                         <div className="flex items-center">
-                                            <span className="mr-2">€</span>
+                                            <span className="mr-2">Kz </span>
                                             <Input id="min-order" type="number" defaultValue="10" className="w-24" />
                                         </div>
                                     </div>
@@ -312,7 +312,7 @@ export default function Settings() {
                                             <p className="text-sm text-muted-foreground">Taxa cobrada por entregas</p>
                                         </div>
                                         <div className="flex items-center">
-                                            <span className="mr-2">€</span>
+                                            <span className="mr-2">Kz </span>
                                             <Input id="delivery-fee" type="number" defaultValue="2.50" className="w-24" />
                                         </div>
                                     </div>
