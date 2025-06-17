@@ -293,6 +293,15 @@ export default function Settings() {
                                             <Input id="min-order" type="number" defaultValue="10" className="w-24" />
                                         </div>
                                     </div>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <Label htmlFor="auto-reduce-stock" className="text-base">
+                                                Reduzir Estoque Automaticamente
+                                            </Label>
+                                            <p className="text-sm text-muted-foreground">Descontar itens de estoque ao vender um produto</p>
+                                        </div>
+                                        <Switch id="auto-reduce-stock" />
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
