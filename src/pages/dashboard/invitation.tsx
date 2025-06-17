@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,12 @@ import { useGetInvitation } from "@/api/endpoints/invitation/hooks";
 import { useGetRestaurant } from "@/api/endpoints/restaurants/hooks";
 import { useGetRole } from "@/api/endpoints/role/hook";
 import { useGetUser } from "@/api/endpoints/user/hooks";
+import { showPromiseToast } from "@/utils/notifications/toast";
+import { useGoogleAuth } from "@/hooks/use-google-auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/config";
+import { authApi } from "@/api/endpoints/auth/endpoints";
+import { useMutation } from "@tanstack/react-query";
 
 interface SignupFormData {
   firstName: string;
@@ -46,6 +52,10 @@ export default function RestaurantInvitation() {
 
   const invitedEmail = (invitation as unknown as { email?: string })?.email ?? "";
 
+  const navigate = useNavigate();
+  const { signInWithGoogle } = useGoogleAuth();
+  const registerMutation = useMutation(authApi.register);
+
   const [currentView, setCurrentView] = useState<"invitation" | "signup">("invitation");
   const [signupData, setSignupData] = useState<SignupFormData>({
     firstName: "",
@@ -69,9 +79,56 @@ export default function RestaurantInvitation() {
 
   const handleAcceptInvitation = () => setCurrentView("signup");
   const handleDeclineInvitation = () => {};
-  const handleGoogleSignup = () => {};
+
+  const handleGoogleSignup = () => {
+    const promise = signInWithGoogle()
+      .then(async ({ token, credential }) => {
+        return registerMutation.mutateAsync({
+          idToken: token,
+          userData: {
+            firstName: signupData.firstName,
+            lastName: signupData.lastName,
+            email: credential.user.email ?? "",
+            phoneNumber: signupData.phoneNumber,
+          },
+        });
+      })
+      .then(() => navigate("/dashboard"));
+
+    showPromiseToast(promise, {
+      loading: "Criando conta...",
+      success: "Conta criada com sucesso!",
+      error: "Erro ao criar conta.",
+    });
+  };
+
   const handleEmailSignup = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const promise = createUserWithEmailAndPassword(
+      auth,
+      signupData.email,
+      signupData.password
+    )
+      .then(async (cred) => {
+        const token = await cred.user.getIdToken();
+        return registerMutation.mutateAsync({
+          idToken: token,
+          userData: {
+            firstName: signupData.firstName,
+            lastName: signupData.lastName,
+            email: cred.user.email ?? signupData.email,
+            phoneNumber: signupData.phoneNumber,
+          },
+        });
+      })
+      .then(() => navigate("/dashboard"));
+
+    showPromiseToast(promise, {
+      loading: "Criando conta...",
+      success: "Conta criada com sucesso!",
+      error: "Erro ao criar conta.",
+    });
   };
   const handleInputChange = (field: keyof SignupFormData, value: string) => {
     setSignupData((prev) => ({ ...prev, [field]: value }));
