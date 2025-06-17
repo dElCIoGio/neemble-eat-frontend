@@ -2,6 +2,7 @@ import { apiClient } from "@/api/axios";
 import {UserRestaurants} from "@/api/endpoints/user/types";
 import {Restaurant} from "@/types/restaurant";
 import {Role} from "@/types/role";
+import {User} from "@/types/user";
 
 
 const baseRoute = "/users"
@@ -31,6 +32,11 @@ export const userApi = {
 
     getCurrentRole: async () => {
         const result = await apiClient.get<Role>(`${baseRoute}/role`)
+        return result.data
+    },
+
+    getUser: async (userId: string) => {
+        const result = await apiClient.get<User>(`${baseRoute}/${userId}`)
         return result.data
     },
 

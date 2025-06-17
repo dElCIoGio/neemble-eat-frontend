@@ -10,3 +10,12 @@ export function useGetEmailInvitations(email: string) {
             .then(res => res.data)
     })
 }
+
+export function useGetInvitation(invitationId: string | undefined){
+    const queryKey = ["invitation", invitationId]
+    return useQuery({
+        queryKey,
+        queryFn: () => typeof invitationId === "undefined" ? undefined : invitationApi.getInvitation(invitationId),
+        enabled: typeof invitationId === "string",
+    })
+}

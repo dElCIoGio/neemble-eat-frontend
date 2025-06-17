@@ -50,6 +50,15 @@ export function useGetRestaurantBySlug(slug: string) {
 
 }
 
+export function useGetRestaurant(restaurantId: string | undefined){
+    const queryKey = ["restaurant", restaurantId]
+    return useQuery({
+        queryKey,
+        queryFn: () => typeof restaurantId === "undefined" ? undefined : restaurantApi.getRestaurant(restaurantId),
+        enabled: typeof restaurantId === "string",
+    })
+}
+
 
 export function useGetCurrentMenu(restaurantId: string | undefined){
 

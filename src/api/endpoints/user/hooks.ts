@@ -41,6 +41,15 @@ export function useGetCurrentRole() {
 
 }
 
+export function useGetUser(userId: string | undefined) {
+    const queryKey = ["user", userId]
+    return useQuery({
+        queryKey,
+        queryFn: () => typeof userId === "undefined" ? undefined : userApi.getUser(userId),
+        enabled: typeof userId === "string",
+    })
+}
+
 
 export function useSetCurrentRestaurant() {
     const queryClient = useQueryClient();
