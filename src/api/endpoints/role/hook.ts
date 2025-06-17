@@ -4,13 +4,13 @@ import {User} from "@/types/user";
 import {Role} from "@/types/role";
 
 
-export function useGetRole(roleId: string) {
+export function useGetRole(roleId: string | undefined) {
 
     const queryKey = ["role", roleId]
 
     return useQuery({
         queryKey,
-        queryFn: () => roleApi.getRole(roleId),
+        queryFn: () => roleId? roleApi.getRole(roleId): undefined,
         enabled: typeof roleId !== "undefined",
     })
 

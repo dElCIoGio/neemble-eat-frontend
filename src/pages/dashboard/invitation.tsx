@@ -40,7 +40,7 @@ export default function RestaurantInvitation() {
   const { invitationId } = useParams() as { invitationId: string };
 
   const { data: invitation } = useGetInvitation(invitationId);
-  const { data: role } = useGetRole(invitation?.roleId ?? "");
+  const { data: role } = useGetRole(invitation?.roleId);
   const { data: restaurant } = useGetRestaurant(invitation?.restaurantId);
   const { data: manager } = useGetUser(invitation?.managerId);
 
@@ -161,12 +161,12 @@ export default function RestaurantInvitation() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+    <div className="bg-zinc-100 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
-        <Card className="shadow-xl border-0">
+        <Card className="border-0">
           <CardHeader className="text-center space-y-4 pb-6">
-            <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
-              <Users className="h-8 w-8 text-orange-600" />
+            <div className="mx-auto w-16 h-16 transition-all ease-in-out duration-150 hover:border border-purple-400 hover:outline-2 outline-purple-200 bg-zinc-200 rounded-full flex items-center justify-center">
+              <Users className="h-8 w-8 text-zinc-600" />
             </div>
             <div>
               <CardTitle className="text-3xl font-bold text-gray-900">Você Foi Convidado!</CardTitle>
@@ -179,7 +179,7 @@ export default function RestaurantInvitation() {
                 <div className="flex items-center space-x-4 lg:flex-shrink-0">
                   <Avatar className="h-20 w-20">
                     <AvatarImage src={restaurant.logoUrl || "/placeholder.svg"} alt={restaurant.name} />
-                    <AvatarFallback className="bg-orange-100 text-orange-600 text-2xl font-bold">
+                    <AvatarFallback className="bg-zinc-200 text-2xl font-bold">
                       {restaurant.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
@@ -270,16 +270,16 @@ export default function RestaurantInvitation() {
                       {role.name}
                     </Badge>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-gray-700">Permissões:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {role.permissions.map((perm, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {perm.section}: {perm.permissions.join(", ")}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
+                  {/*<div className="space-y-2">*/}
+                  {/*  <p className="text-xs font-medium text-gray-700">Permissões:</p>*/}
+                  {/*  <div className="flex flex-wrap gap-1">*/}
+                  {/*    {role.permissions.map((perm, index) => (*/}
+                  {/*      <Badge key={index} variant="outline" className="text-xs">*/}
+                  {/*        {perm.section}: {perm.permissions.join(", ")}*/}
+                  {/*      </Badge>*/}
+                  {/*    ))}*/}
+                  {/*  </div>*/}
+                  {/*</div>*/}
                 </div>
               </div>
             </div>
@@ -299,10 +299,10 @@ export default function RestaurantInvitation() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button onClick={handleAcceptInvitation} className="flex-1 h-12 text-base font-medium bg-orange-600 hover:bg-orange-700">
+              <Button onClick={handleAcceptInvitation} className="flex-1 text-base font-medium">
                 Aceitar Convite
               </Button>
-              <Button variant="outline" onClick={handleDeclineInvitation} className="flex-1 h-12 text-base font-medium border-gray-300 hover:bg-gray-50">
+              <Button variant="outline" onClick={handleDeclineInvitation} className="flex-1 text-base font-medium">
                 Recusar
               </Button>
             </div>

@@ -36,7 +36,7 @@ export const userApi = {
     },
 
     getUser: async (userId: string) => {
-        const result = await apiClient.get<User>(`${baseRoute}/${userId}`)
+        const result = await apiClient.get<User>(`${baseRoute}/user/${userId}`)
         return result.data
     },
 

@@ -45,7 +45,7 @@ export function InvitationsTable({ invitations }: { invitations: Invitation[] })
 function InvitationRow({ invitation }: { invitation: Invitation }) {
     const [open, setOpen] = useState(false)
     const queryClient = useQueryClient()
-    const link = `www.neemble-eat.com/invite/${invitation._id}`
+    const link = `www.neemble-eat.com/invitation/${invitation._id}`
 
     const handleDelete = () => {
         showPromiseToast(

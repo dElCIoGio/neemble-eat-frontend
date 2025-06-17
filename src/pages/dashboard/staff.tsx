@@ -479,14 +479,14 @@ function StaffContent() {
                                                 <div className="flex items-center gap-2 p-4 bg-green-50 rounded-md">
                                                     <Input
                                                         readOnly
-                                                        value={`www.neemble-eat.com/invite/${newInvitation._id}`}
+                                                        value={`www.neemble-eat.com/invitation/${newInvitation._id}`}
                                                         className="cursor-text"
                                                     />
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
                                                         onClick={() => {
-                                                            copyToClipboard(`www.neemble-eat.com/invite/${newInvitation._id}`)
+                                                            copyToClipboard(`www.neemble-eat.com/invitation/${newInvitation._id}`)
                                                             showSuccessToast('Link copiado!')
                                                         }}
                                                     >
