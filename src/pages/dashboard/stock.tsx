@@ -79,6 +79,7 @@ export default function StockManagement() {
     const [categoryFilter, setCategoryFilter] = useState("Todas")
     const [statusFilter, setStatusFilter] = useState("Todos")
     const [newCategoryName, setNewCategoryName] = useState("")
+    const [tempCategories, setTempCategories] = useState<string[]>([])
 
     const { restaurant, user } = useDashboardContext()
 
@@ -1142,7 +1143,16 @@ export default function StockManagement() {
             </Tabs>
 
             {/* Add Product Modal */}
-            <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
+            <Dialog
+                open={isAddProductOpen}
+                onOpenChange={(open) => {
+                    setIsAddProductOpen(open)
+                    if (!open) {
+                        setNewCategoryName("")
+                        setTempCategories([])
+                    }
+                }}
+            >
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>Adicionar Novo Produto</DialogTitle>
@@ -1170,15 +1180,10 @@ export default function StockManagement() {
                                             <SelectValue placeholder="Selecionar categoria" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {Array.from(
-                                                new Set([
-                                                    "Vegetais",
-                                                    "Carnes",
-                                                    "Laticínios",
-                                                    "Condimentos",
-                                                    ...stockItems.map((item) => item.category),
-                                                ]),
-                                            )
+                                            {Array.from(new Set([
+                                                ...stockItems.map((item) => item.category),
+                                                ...tempCategories,
+                                            ]))
                                                 .sort()
                                                 .map((category) => (
                                                     <SelectItem key={category} value={category}>
@@ -1217,10 +1222,12 @@ export default function StockManagement() {
                                                 </DialogClose>
                                                 <Button
                                                     onClick={() => {
-                                                        if (newCategoryName.trim()) {
-                                                            setNewProduct({ ...newProduct, category: newCategoryName.trim() })
+                                                        const name = newCategoryName.trim()
+                                                        if (name) {
+                                                            setTempCategories(prev => [...prev, name])
+                                                            setNewProduct({ ...newProduct, category: name })
                                                             setNewCategoryName("")
-                                                            showSuccessToast(`Categoria "${newCategoryName.trim()}" criada e selecionada.`)
+                                                            showSuccessToast(`Categoria "${name}" criada e selecionada.`)
                                                         }
                                                     }}
                                                     className="flex-1"
