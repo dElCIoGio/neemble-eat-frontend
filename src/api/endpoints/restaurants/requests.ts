@@ -28,6 +28,11 @@ export const restaurantApi = {
         return response.data
     },
 
+    getRestaurant: async (restaurantId: string) => {
+        const response = await apiClient.get<Restaurant>(`${baseRoute}/${restaurantId}`)
+        return response.data
+    },
+
 
     getCurrentMenu: async (restaurantId: string) => {
         const response = await apiClient.get<Menu>(`${baseRoute}/${restaurantId}/menu`)
