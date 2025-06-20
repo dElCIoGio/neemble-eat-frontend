@@ -53,6 +53,16 @@ const useWebSocket = (
         debug = false
     } = options;
 
+    const onOpenRef = useRef<typeof onOpen | null>(null);
+    const onMessageRef = useRef<typeof onMessage | null>(null);
+    const onErrorRef = useRef<typeof onError | null>(null);
+    const onCloseRef = useRef<typeof onClose | null>(null);
+
+    useEffect(() => { onOpenRef.current = onOpen || null; }, [onOpen]);
+    useEffect(() => { onMessageRef.current = onMessage || null; }, [onMessage]);
+    useEffect(() => { onErrorRef.current = onError || null; }, [onError]);
+    useEffect(() => { onCloseRef.current = onClose || null; }, [onClose]);
+
     const wsRef = useRef<WebSocket | null>(null);
     const reconnectTimeoutRef = useRef<number | null>(null);
     const heartbeatTimeoutRef = useRef<number | null>(null);
@@ -133,17 +143,17 @@ const useWebSocket = (
             currentReconnectIntervalRef.current = reconnectInterval;
 
             startHeartbeat();
-            onOpen?.(ws);
+            onOpenRef.current?.(ws);
         };
 
         ws.onmessage = (event) => {
             log('Message received:', event.data);
-            onMessage?.(event);
+            onMessageRef.current?.(event);
         };
 
         ws.onerror = (event) => {
             log('WebSocket error:', event);
-            onError?.(event);
+            onErrorRef.current?.(event);
         };
 
         ws.onclose = (event) => {
@@ -171,15 +181,11 @@ const useWebSocket = (
                 }
             }
 
-            onClose?.(event, connectWebSocket);
+            onCloseRef.current?.(event, connectWebSocket);
         };
     }, [
         url,
         protocols,
-        onOpen,
-        onMessage,
-        onError,
-        onClose,
         shouldReconnect,
         maxReconnectAttempts,
         reconnectInterval,
