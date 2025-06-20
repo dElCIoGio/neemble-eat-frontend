@@ -18,7 +18,7 @@ import { useGoogleAuth } from "@/hooks/use-google-auth";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { authApi } from "@/api/endpoints/auth/endpoints";
-import { useMutation } from "@tanstack/react-query";
+
 
 interface SignupFormData {
   firstName: string;
@@ -54,7 +54,7 @@ export default function RestaurantInvitation() {
 
   const navigate = useNavigate();
   const { signInWithGoogle } = useGoogleAuth();
-  const registerMutation = useMutation(authApi.register);
+
 
   const [currentView, setCurrentView] = useState<"invitation" | "signup">("invitation");
   const [signupData, setSignupData] = useState<SignupFormData>({
@@ -83,15 +83,21 @@ export default function RestaurantInvitation() {
   const handleGoogleSignup = () => {
     const promise = signInWithGoogle()
       .then(async ({ token, credential }) => {
-        return registerMutation.mutateAsync({
-          idToken: token,
-          userData: {
-            firstName: signupData.firstName,
-            lastName: signupData.lastName,
-            email: credential.user.email ?? "",
-            phoneNumber: signupData.phoneNumber,
-          },
-        });
+
+          const firebaseId = await auth.currentUser?.getIdToken()
+
+          if (firebaseId){
+            return authApi.register({
+              idToken: token,
+              userData: {
+                firstName: signupData.firstName,
+                lastName: signupData.lastName,
+                email: credential.user.email ?? "",
+                phoneNumber: signupData.phoneNumber,
+              },
+            });
+          }
+
       })
       .then(() => navigate("/dashboard"));
 
@@ -112,15 +118,20 @@ export default function RestaurantInvitation() {
     )
       .then(async (cred) => {
         const token = await cred.user.getIdToken();
-        return registerMutation.mutateAsync({
-          idToken: token,
-          userData: {
-            firstName: signupData.firstName,
-            lastName: signupData.lastName,
-            email: cred.user.email ?? signupData.email,
-            phoneNumber: signupData.phoneNumber,
-          },
-        });
+        const email = cred.user.email
+
+        if (email){
+          return authApi.register({
+            idToken: token,
+            userData: {
+              firstName: signupData.firstName,
+              lastName: signupData.lastName,
+              email: email,
+              phoneNumber: signupData.phoneNumber,
+            },
+          });
+        }
+
       })
       .then(() => navigate("/dashboard"));
 

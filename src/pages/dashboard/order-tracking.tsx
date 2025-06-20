@@ -1,5 +1,4 @@
 import {useCallback} from "react";
-import {useParams} from "react-router";
 import Background from "@/components/ui/background";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {BowlFood} from "@phosphor-icons/react";
@@ -36,11 +35,8 @@ export const FILTERS: Filter[] = [
 ]
 
 
-const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 
 export function OrdersTracking() {
-
-    const {restaurantID} = useParams() as unknown as { restaurantID: string };
 
     const isDesktop = !useIsMobile()
 
@@ -50,8 +46,8 @@ export function OrdersTracking() {
 
     const { restaurant } = useDashboardContext()
 
-    const newOrdersWsUrl = `${protocol}//${api.apiUrl}/ws/${restaurantID}/order`;
-    const billedOrdersWsUrl = `${protocol}//${api.apiUrl}/ws/${restaurantID}/billed`;
+    const newOrdersWsUrl = `${api.apiUrl.replace("http", "ws")}/ws/${restaurant._id}/order`;
+    const billedOrdersWsUrl = `${api.apiUrl.replace("http", "ws")}/ws/${restaurant._id}/billed`;
 
     const {state: filterMode, handleState: setFilterMode} = useSelectedState<Filter>(FILTERS[0])
     const {state: tableFilter, handleState: handleTableFilterChange} = useSelectedState<string | null>(null)
@@ -85,6 +81,7 @@ export function OrdersTracking() {
             reconnectInterval: 2000,
         }
     )
+
 
     useWebSocket(
         billedOrdersWsUrl, {
@@ -151,7 +148,7 @@ export function OrdersTracking() {
                                                 <>
                                                     <div
                                                         className={`transition-all lg:flex lg:flex-col lg:flex-1 overflow-y-hidden lg:flex-grow duration-150 ease-in-out w-full ${orderSelected === null ? 'w-full' : 'lg:w-3/5'}`}>
-                                                        <ScrollArea className="w-full max-h-100 rounded-l-2xl lg:flex-1 lg:flex lg:flex-col">
+                                                        <ScrollArea className="w-full rounded-l-2xl lg:flex-1 lg:flex lg:flex-col">
                                                             <div className=" ">
                                                                 <OrdersDisplay/>
                                                             </div>
