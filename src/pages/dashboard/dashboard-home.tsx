@@ -311,39 +311,53 @@ export default function RestaurantDashboard(): JSX.Element {
         )
     }
 
-    const SalesChart = (): JSX.Element => (
-        <Card className="col-span-full lg:col-span-2">
-            <CardHeader>
-                <CardTitle>Evolução das Vendas</CardTitle>
-                <CardDescription>Vendas diárias dos últimos 7 dias</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="h-[200px] flex items-end justify-between space-x-2">
-                    {lastSevenDaysOrdersCount && lastSevenDaysOrdersCount.map((data) => (
-                        <TooltipProvider key={data.day}>
-                            <Tooltip>
-                                <TooltipTrigger className="w-full">
-                                    <div key={data.date} className="flex flex-col items-center space-y-2 flex-1">
-                                        <div
-                                            className="bg-primary rounded-t transition-all duration-500 hover:bg-primary/80 w-full"
-                                            style={{height: `${(data.sales / Math.max(...dailySales.map((d) => d.sales))) * 160}px`}}
-                                        />
-                                        <span className="text-xs text-muted-foreground">{data.day}</span>
-                                    </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <span>
-                                        {data.sales} pedidos
-                                    </span>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+    const SalesChart = (): JSX.Element => {
+        const dayMap: Record<string, string> = {
+            monday: "Seg",
+            tuesday: "Ter",
+            wednesday: "Qua",
+            thursday: "Qui",
+            friday: "Sex",
+            saturday: "Sáb",
+            sunday: "Dom",
+        }
 
-                    ))}
-                </div>
-            </CardContent>
-        </Card>
-    )
+        const salesData = lastSevenDaysOrdersCount ?? []
+        const maxSales = salesData.length > 0 ? Math.max(...salesData.map(d => d.sales)) : 1
+
+        return (
+            <Card className="col-span-full lg:col-span-2">
+                <CardHeader>
+                    <CardTitle>Evolução das Vendas</CardTitle>
+                    <CardDescription>Vendas diárias dos últimos 7 dias</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="h-[200px] flex items-end justify-between space-x-2">
+                        {salesData.map(data => (
+                            <TooltipProvider key={data.date}>
+                                <Tooltip>
+                                    <TooltipTrigger className="w-full">
+                                        <div className="flex flex-col items-center space-y-2 flex-1">
+                                            <div
+                                                className="bg-primary rounded-t transition-all duration-500 hover:bg-primary/80 w-full"
+                                                style={{ height: `${(data.sales / maxSales) * 160}px` }}
+                                            />
+                                            <span className="text-xs text-muted-foreground">{dayMap[data.day] ?? data.day}</span>
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <span>
+                                            {data.sales} pedidos
+                                        </span>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
 
     const OrdersChart = (): JSX.Element => {
         const totalOrders = ordersSummary?.orderCount ?? 0
