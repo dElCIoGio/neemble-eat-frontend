@@ -209,6 +209,8 @@ export default function RestaurantDashboard(): JSX.Element {
         restaurantId: restaurant._id,
     })
 
+    console.log("LAST:", lastSevenDaysOrdersCount)
+
     const formatValue = useCallback((val: number, format: MetricFormat): string => {
         switch (format) {
             case "currency":
@@ -333,7 +335,7 @@ export default function RestaurantDashboard(): JSX.Element {
                 </CardHeader>
                 <CardContent>
                     <div className="h-[200px] flex items-end justify-between space-x-2">
-                        {salesData.map(data => (
+                        {salesData.map((data) => (
                             <TooltipProvider key={data.date}>
                                 <Tooltip>
                                     <TooltipTrigger className="w-full">
@@ -342,7 +344,13 @@ export default function RestaurantDashboard(): JSX.Element {
                                                 className="bg-primary rounded-t transition-all duration-500 hover:bg-primary/80 w-full"
                                                 style={{ height: `${(data.sales / maxSales) * 160}px` }}
                                             />
-                                            <span className="text-xs text-muted-foreground">{dayMap[data.day] ?? data.day}</span>
+                                            <div className="flex flex-col items-center space-y-1">
+                                                <span
+                                                    className="text-xs text-muted-foreground">{dayMap[data.day] ?? data.day}</span>
+                                                <span
+                                                    className="text-xs text-muted-foreground">{`${data.date.slice(8, 10)}/${data.date.slice(5, 7)}/${data.date.slice(0, 4)}`}</span>
+                                            </div>
+
                                         </div>
                                     </TooltipTrigger>
                                     <TooltipContent>

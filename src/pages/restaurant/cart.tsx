@@ -60,6 +60,8 @@ export function Cart() {
         const items = cart.map((item) => item)
 
         if (session && session?._id) {
+
+            // TODO: post the orders as a list
             for (const item of items) {
                 ordersApi.addOrder({
                     sessionId: session?._id,

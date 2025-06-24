@@ -12,6 +12,7 @@ export const restaurantApi = {
     createRestaurant: async (formData: FormData): Promise<void> => {
         return await apiClient.post(`${baseRoute}/`, formData)
     },
+
     getAllMembers: async (props: GetRestaurantMembersProps) => {
         const response = await apiClient.get<User[]>(`${baseRoute}/members/${props.restaurantId}`)
         console.log(response.data)

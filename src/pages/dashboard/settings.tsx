@@ -9,14 +9,18 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {useDashboardContext} from "@/context/dashboard-context";
 
 export default function Settings() {
     const [saved, setSaved] = useState(false)
+
+    const { restaurant } = useDashboardContext()
 
     const handleSave = () => {
         setSaved(true)
         setTimeout(() => setSaved(false), 2000)
     }
+
 
     return (
         <div className="flex-1 overflow-auto">
@@ -79,22 +83,7 @@ export default function Settings() {
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="restaurant-name">Nome do Restaurante</Label>
-                                        <Input id="restaurant-name" defaultValue="Neemble Restaurant" />
-                                    </div>
-                                    <div className="space-y-2 hidden">
-                                        <Label htmlFor="restaurant-type">Tipo de Cozinha</Label>
-                                        <Select defaultValue="portuguesa">
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Selecione o tipo de cozinha" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="portuguesa">Portuguesa</SelectItem>
-                                                <SelectItem value="italiana">Italiana</SelectItem>
-                                                <SelectItem value="japonesa">Japonesa</SelectItem>
-                                                <SelectItem value="mexicana">Mexicana</SelectItem>
-                                                <SelectItem value="indiana">Indiana</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <Input id="restaurant-name" defaultValue={restaurant.name} />
                                     </div>
                                 </div>
 
@@ -104,18 +93,18 @@ export default function Settings() {
                                         id="restaurant-description"
                                         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                         rows={3}
-                                        defaultValue="Restaurante especializado em comida portuguesa tradicional com um toque moderno."
+                                        defaultValue={restaurant.description}
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="restaurant-phone">Telefone</Label>
-                                        <Input id="restaurant-phone" type="tel" />
+                                        <Input id="restaurant-phone" type="tel" defaultValue={restaurant.phoneNumber} />
                                     </div>
-                                    <div className="space-y-2">
+                                    <div className="space-y-2 hidden">
                                         <Label htmlFor="restaurant-email">Email</Label>
-                                        <Input id="restaurant-email" type="email" defaultValue="contato@neemble.com" />
+                                        <Input id="restaurant-email" type="email"/>
                                     </div>
                                 </div>
                             </CardContent>
@@ -129,10 +118,11 @@ export default function Settings() {
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="address-line1">Endereço</Label>
-                                    <Input id="address-line1" placeholder="Rua das Flores, 123" />
+                                    <Input id="address-line1" placeholder={restaurant.address} />
                                 </div>
 
-                                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                {/* In the future i will include more details on the address*/}
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-3 hidden">
                                     <div className="space-y-2">
                                         <Label htmlFor="address-city">Cidade</Label>
                                         <Input id="address-city" placeholder="Luanda" />
@@ -150,99 +140,114 @@ export default function Settings() {
                         </Card>
                     </TabsContent>
 
-                    <TabsContent value="restaurante" className="space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Horário de Funcionamento</CardTitle>
-                                <CardDescription>Configure os horários de funcionamento do seu restaurante.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    {[
-                                        "Segunda-feira",
-                                        "Terça-feira",
-                                        "Quarta-feira",
-                                        "Quinta-feira",
-                                        "Sexta-feira",
-                                        "Sábado",
-                                        "Domingo",
-                                    ].map((day) => (
-                                        <div key={day} className="flex items-center justify-between border-b pb-2">
-                                            <div className="flex items-center gap-4">
-                                                <Switch id={`day-${day}`} defaultChecked={day !== "Domingo"} />
-                                                <Label htmlFor={`day-${day}`}>{day}</Label>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <Select defaultValue="10:00">
-                                                    <SelectTrigger className="w-24">
-                                                        <SelectValue placeholder="Abertura" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {Array.from({ length: 14 }, (_, i) => i + 8).map((hour) => (
-                                                            <SelectItem key={hour} value={`${hour}:00`}>
-                                                                {`${hour}:00`}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                                <span>até</span>
-                                                <Select defaultValue="22:00">
-                                                    <SelectTrigger className="w-24">
-                                                        <SelectValue placeholder="Fecho" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {Array.from({ length: 10 }, (_, i) => i + 16).map((hour) => (
-                                                            <SelectItem key={hour} value={`${hour}:00`}>
-                                                                {`${hour}:00`}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </CardContent>
-                        </Card>
+                    {
+                        !!restaurant.settings.openingHours &&
+                            <TabsContent value="restaurante" className="space-y-6">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Horário de Funcionamento</CardTitle>
+                                        <CardDescription>Configure os horários de funcionamento do seu restaurante.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-4">
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Opções de Serviço</CardTitle>
-                                <CardDescription>Configure as opções de serviço disponíveis.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="service-dine-in" className="text-base">
-                                                Consumo no Local
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Permitir pedidos para consumo no restaurante</p>
+
+                                            {
+                                                [
+                                                    "sunday",
+                                                    "monday",
+                                                    "tuesday",
+                                                    "wednesday",
+                                                    "thursday",
+                                                    "friday",
+                                                    "saturday",
+                                                ].map((day) => (
+                                                    <div key={day} className="flex items-center justify-between border-b pb-2">
+                                                        <div className="flex items-center gap-4">
+                                                            <Switch id={`day-sunday`}
+                                                                    defaultChecked={restaurant.settings.openingHours? !!restaurant.settings.openingHours[day as ("monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday")]: false}/>
+                                                            <Label htmlFor={`day-sunday`}>{day}</Label>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <Select defaultValue="10:00">
+                                                                <SelectTrigger className="w-24">
+                                                                    <SelectValue placeholder="Abertura"/>
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Array.from({length: 14}, (_, i) => i + 8).map((hour) => (
+                                                                        <SelectItem key={hour} value={`${hour}:00`}>
+                                                                            {`${hour}:00`}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                            <span>até</span>
+                                                            <Select defaultValue="22:00">
+                                                                <SelectTrigger className="w-24">
+                                                                    <SelectValue placeholder="Fecho"/>
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Array.from({length: 10}, (_, i) => i + 16).map((hour) => (
+                                                                        <SelectItem key={hour} value={`${hour}:00`}>
+                                                                            {`${hour}:00`}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                    </div>
+                                                ))
+
+                                            }
+
+
                                         </div>
-                                        <Switch id="service-dine-in" defaultChecked />
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="service-takeaway" className="text-base">
-                                                Takeaway
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Permitir pedidos para levar</p>
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="hidden">
+                                    <CardHeader>
+                                        <CardTitle>Opções de Serviço</CardTitle>
+                                        <CardDescription>Configure as opções de serviço disponíveis.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <Label htmlFor="service-dine-in" className="text-base">
+                                                        Consumo no Local
+                                                    </Label>
+                                                    <p className="text-sm text-muted-foreground">Permitir pedidos para
+                                                        consumo no restaurante</p>
+                                                </div>
+                                                <Switch id="service-dine-in" defaultChecked/>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <Label htmlFor="service-takeaway" className="text-base">
+                                                        Takeaway
+                                                    </Label>
+                                                    <p className="text-sm text-muted-foreground">Permitir pedidos para
+                                                        levar</p>
+                                                </div>
+                                                <Switch id="service-takeaway" defaultChecked/>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <Label htmlFor="service-delivery" className="text-base">
+                                                        Entrega
+                                                    </Label>
+                                                    <p className="text-sm text-muted-foreground">Permitir pedidos para
+                                                        entrega</p>
+                                                </div>
+                                                <Switch id="service-delivery" defaultChecked />
+                                            </div>
                                         </div>
-                                        <Switch id="service-takeaway" defaultChecked />
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="service-delivery" className="text-base">
-                                                Entrega
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Permitir pedidos para entrega</p>
-                                        </div>
-                                        <Switch id="service-delivery" defaultChecked />
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
+                    }
+
 
                     <TabsContent value="pedidos" className="space-y-6">
                         <Card>

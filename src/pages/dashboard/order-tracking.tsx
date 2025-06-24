@@ -82,7 +82,6 @@ export function OrdersTracking() {
         }
     )
 
-
     useWebSocket(
         billedOrdersWsUrl, {
             onMessage: handleMessageBilledOrder,

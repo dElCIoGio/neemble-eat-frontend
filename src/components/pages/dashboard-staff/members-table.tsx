@@ -68,7 +68,7 @@ export function MembersTable() {
             </TableHeader>
             <TableBody>
                 {paginatedMembers.map((member) => (
-                    <MemberRow user={member}/>
+                    <MemberRow key={member._id} user={member}/>
                 ))}
             </TableBody>
         </Table>

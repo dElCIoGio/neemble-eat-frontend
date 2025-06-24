@@ -1,4 +1,7 @@
+
 export type OpeningHours = {
+
+
     monday?: string; // eg (always 24h format): 09:00-22:00
     tuesday?: string; // eg (always 24h format): 09:00-22:00
     wednesday?: string; // eg (always 24h format): 09:00-22:00

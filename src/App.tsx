@@ -46,6 +46,7 @@ import OrderManagement from "@/pages/root/OrdersManagement";
 import DataAnalysis from "@/pages/root/DataAnalysis";
 import {ForgotPassword} from "@/pages/root/ForgotPassword";
 import RestaurantInvitation from "@/pages/dashboard/invitation";
+import OrderCustomizationPage from "@/pages/dashboard/custom-order";
 
 
 
@@ -145,6 +146,8 @@ function App() {
             <Route path="invitation">
                 <Route path=":invitationId" element={<RestaurantInvitation/>}/>
             </Route>
+
+            <Route path="custom-order/:restaurantId" element={<OrderCustomizationPage/>}/>
 
             <Route path="*" element={<NotFound/>}/>
         </Routes>
