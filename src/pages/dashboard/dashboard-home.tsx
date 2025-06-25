@@ -1,6 +1,6 @@
 import React, {JSX} from "react"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 import {
     DollarSign,
     Receipt,
@@ -146,43 +146,45 @@ export default function RestaurantDashboard(): JSX.Element {
     }, [])
 
 
-    console.log(getDateRangeFromFilter(dateFilter).from)
-    console.log(getDateRangeFromFilter(dateFilter).to)
+    // Memoized date ranges to avoid unnecessary recalculations
 
     // Analytics hooks
+    const dateRange = useMemo(() => getDateRangeFromFilter(dateFilter), [dateFilter])
+
+    const itemsDateRange = useMemo(() => getDateRangeFromFilter(itemsTimeRange), [itemsTimeRange])
+
     const { data: salesSummary, isLoading: isSalesSummaryLoading } = useGetSalesSummary({
         restaurantId: restaurant._id,
-        fromDate: getDateRangeFromFilter(dateFilter).from,
-        toDate: getDateRangeFromFilter(dateFilter).to
+        fromDate: dateRange.from,
+        toDate: dateRange.to
     })
 
     const { data: invoiceSummary, isLoading: isInvoiceSummaryLoading } = useGetInvoiceSummary({
         restaurantId: restaurant._id,
         status: "completed",
-        fromDate: getDateRangeFromFilter(dateFilter).from,
-        toDate: getDateRangeFromFilter(dateFilter).to
+        fromDate: dateRange.from,
+        toDate: dateRange.to
     })
 
     const { data: ordersSummary, isLoading: isOrdersSummaryLoading } = useGetOrdersSummary({
         restaurantId: restaurant._id,
-        fromDate: getDateRangeFromFilter(dateFilter).from,
-        toDate: getDateRangeFromFilter(dateFilter).to
+        fromDate: dateRange.from,
+        toDate: dateRange.to
     })
 
     const { data: cancelledOrdersSummary, isLoading: isCancelledOrdersSummaryLoading } = useGetCancelledOrdersSummary({
         restaurantId: restaurant._id,
-        fromDate: getDateRangeFromFilter(dateFilter).from,
-        toDate: getDateRangeFromFilter(dateFilter).to
+        fromDate: dateRange.from,
+        toDate: dateRange.to
     })
 
     const { data: topItemsSummary, isLoading: isTopItemsSummaryLoading } = useGetTopItemsSummary({
         restaurantId: restaurant._id,
         topN: 8,
-        fromDate: getDateRangeFromFilter(itemsTimeRange).from,
-        toDate: getDateRangeFromFilter(itemsTimeRange).to
+        fromDate: itemsDateRange.from,
+        toDate: itemsDateRange.to
     })
 
-    console.log("TOP:", topItemsSummary)
 
 
     const { data: sessionDurationSummary, isLoading: isSessionDurationSummaryLoading } = useGetSessionDurationSummary({
@@ -197,7 +199,6 @@ export default function RestaurantDashboard(): JSX.Element {
         restaurantId: restaurant._id,
     })
 
-    console.log("LAST:", lastSevenDaysOrdersCount)
 
 
     const getDateFilterLabel = useCallback((filter: DateFilter): string => {
