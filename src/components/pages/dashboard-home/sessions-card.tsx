@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Clock, TrendingUp, Users } from "lucide-react"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
+
+
 
 export default function SessionsCard() {
     const { sessionDurationSummary, activeSessionsSummary } = useDashboardHomeContext()
@@ -45,7 +46,7 @@ export default function SessionsCard() {
                     <div className="text-xs text-muted-foreground mb-2">Distribuição de Duração</div>
                     <div className="flex space-x-1 h-16 items-end">
                         {/* TODO: Need session duration distribution data */}
-                        {[20, 35, 45, 60, 40, 25, 15].map((height, index) => (
+                        {[20, 35, 45, 10, 40, 25, 15].map((height, index) => (
                             <div
                                 key={`duration-${index}`}
                                 className="bg-primary/20 rounded-t flex-1 transition-all duration-300 hover:bg-primary/40"

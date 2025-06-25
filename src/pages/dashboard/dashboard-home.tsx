@@ -1,4 +1,4 @@
-import React, {JSX} from "react"
+import {JSX} from "react"
 
 import { useState, useCallback } from "react"
 import {
@@ -46,7 +46,6 @@ import InsightsCard from "@/components/pages/dashboard-home/insights-card";
 import ExportButtons from "@/components/pages/dashboard-home/export-buttons";
 
 
-// Dados mockados com tipos
 const salesData: SalesData = {
     totalSales: 15420.5,
     invoiceCount: 127,
@@ -182,8 +181,6 @@ export default function RestaurantDashboard(): JSX.Element {
         toDate: getDateRangeFromFilter(itemsTimeRange).to
     })
 
-    console.log("TOP:", topItemsSummary)
-
 
     const { data: sessionDurationSummary } = useGetSessionDurationSummary({
         restaurantId: restaurant._id
@@ -196,9 +193,6 @@ export default function RestaurantDashboard(): JSX.Element {
     const { data: lastSevenDaysOrdersCount } = useGetLastSevenDaysCount({
         restaurantId: restaurant._id,
     })
-
-    console.log("LAST:", lastSevenDaysOrdersCount)
-
 
     const getDateFilterLabel = useCallback((filter: DateFilter): string => {
         const labels: Record<DateFilter, string> = {
