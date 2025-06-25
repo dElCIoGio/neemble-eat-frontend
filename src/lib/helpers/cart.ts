@@ -1,4 +1,9 @@
+import {SelectedCustomization} from "@/types/order";
 
+export type CartItemCustomisation = {
+    ruleName: string;
+    selectedOptions: SelectedCustomization[];
+}
 
 export interface CartItem {
     id: string,
@@ -6,7 +11,8 @@ export interface CartItem {
     price: number,
     quantity: number;
     image: string;
-    additionalNote?: string;
+    additionalNotes?: string;
+    customisations: CartItemCustomisation[]
 }
 
 

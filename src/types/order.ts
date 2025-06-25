@@ -1,11 +1,15 @@
 export type OrderPrepStatus = "queued" | "in_progress" | "ready" | "served" | "cancelled";
 
+export interface SelectedCustomization {
+    optionName: string
+    quantity: number
+    priceModifier: number
+}
+
+
 export type OrderCustomizationSelection = {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
     ruleName: string;
-    selectedOptions: string[];
+    selectedOptions: SelectedCustomization[];
 };
 
 export type OrderCreate = {
@@ -16,7 +20,7 @@ export type OrderCreate = {
     total: number;
     orderedItemName?: string | null;
     restaurantId: string;
-    customizations: OrderCustomizationSelection[];
+    customisations: OrderCustomizationSelection[];
     additionalNote?: string | null;
     tableNumber: number
 }

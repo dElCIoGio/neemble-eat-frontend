@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {CustomizationRule, Item} from "@/types/item";
 import {OrderCreate, OrderCustomizationSelection} from "@/types/order";
+import {CartItem, CartItemCustomisation} from "@/lib/helpers/cart";
 
 
 // Mock data for demonstration
@@ -198,24 +199,8 @@ const mockTables = [
     },
 ]
 
-interface SelectedCustomization {
-    ruleId: string
-    ruleName: string
-    selectedOptions: Array<{
-        optionName: string
-        quantity: number
-        priceModifier: number
-    }>
-}
 
-interface CartItem {
-    id: string
-    item: Item
-    quantity: number
-    customizations: SelectedCustomization[]
-    additionalNotes: string
-    totalPrice: number
-}
+
 
 export default function OrderCustomizationPage() {
 
@@ -227,7 +212,7 @@ export default function OrderCustomizationPage() {
 
     // Current item customization state
     const [quantity, setQuantity] = useState(1)
-    const [selectedCustomizations, setSelectedCustomizations] = useState<SelectedCustomization[]>([])
+    const [selectedCustomizations, setSelectedCustomizations] = useState<CartItemCustomisation[]>([])
     const [additionalNotes, setAdditionalNotes] = useState("")
     const [totalPrice, setTotalPrice] = useState(0)
 
@@ -262,16 +247,15 @@ export default function OrderCustomizationPage() {
         if (editingCartItemId) {
             const cartItem = cart.find((item) => item.id === editingCartItemId)
             if (cartItem) {
-                setCurrentItemIndex(mockItems.findIndex((item) => item._id === cartItem.item._id))
+                setCurrentItemIndex(mockItems.findIndex((item) => item.name === cartItem.name))
                 setQuantity(cartItem.quantity)
-                setSelectedCustomizations(cartItem.customizations)
-                setAdditionalNotes(cartItem.additionalNotes)
+                setSelectedCustomizations(cartItem.customisations)
+                setAdditionalNotes(cartItem.additionalNotes ?? "")
             }
         }
     }, [editingCartItemId, cart])
 
     const handleCustomizationChange = (
-        ruleId: string,
         ruleName: string,
         optionName: string,
         priceModifier: number,
@@ -281,12 +265,12 @@ export default function OrderCustomizationPage() {
         console.log(ruleName)
         setSelectedCustomizations((prev) => {
             const updated = [...prev]
-            const customizationIndex = updated.findIndex((c) => c.ruleId === ruleId)
+            const customizationIndex = updated.findIndex((c) => c.ruleName === ruleName)
 
             if (customizationIndex === -1) return prev
 
             const customization = updated[customizationIndex]
-            const rule = currentItem.customizations.find((r) => r.name === ruleId)
+            const rule = currentItem.customizations.find((r) => r.name === ruleName)
 
             if (!rule) return prev
 
@@ -316,19 +300,19 @@ export default function OrderCustomizationPage() {
         })
     }
 
-    const isOptionSelected = (ruleId: string, optionName: string) => {
-        const customization = selectedCustomizations.find((c) => c.ruleId === ruleId)
+    const isOptionSelected = (ruleName: string, optionName: string) => {
+        const customization = selectedCustomizations.find((c) => c.ruleName === ruleName)
         return customization?.selectedOptions.some((o) => o.optionName === optionName) || false
     }
 
-    const getOptionQuantity = (ruleId: string, optionName: string) => {
-        const customization = selectedCustomizations.find((c) => c.ruleId === ruleId)
+    const getOptionQuantity = (ruleName: string, optionName: string) => {
+        const customization = selectedCustomizations.find((c) => c.ruleName === ruleName)
         const option = customization?.selectedOptions.find((o) => o.optionName === optionName)
         return option?.quantity || 0
     }
 
     const canSelectMore = (rule: CustomizationRule) => {
-        const customization = selectedCustomizations.find((c) => c.ruleId === rule.name)
+        const customization = selectedCustomizations.find((c) => c.ruleName === rule.name)
         if (!customization) return true
 
         const currentCount = customization.selectedOptions.reduce((sum, opt) => sum + opt.quantity, 0)
@@ -350,7 +334,7 @@ export default function OrderCustomizationPage() {
     const isRequiredRuleSatisfied = (rule: CustomizationRule) => {
         if (!rule.isRequired) return true
 
-        const customization = selectedCustomizations.find((c) => c.ruleId === rule.name)
+        const customization = selectedCustomizations.find((c) => c.ruleName === rule.name)
         if (!customization) return false
 
         const currentCount = customization.selectedOptions.reduce((sum, opt) => sum + opt.quantity, 0)
@@ -380,12 +364,13 @@ export default function OrderCustomizationPage() {
         }
 
         const cartItem: CartItem = {
-            id: editingCartItemId || `cart_${Date.now()}`,
-            item: currentItem,
+            id: currentItem._id,
+            name: currentItem.name,
+            price: (currentItem.price),
+            image: currentItem.imageUrl,
             quantity,
-            customizations: selectedCustomizations.filter((c) => c.selectedOptions.length > 0),
+            customisations: selectedCustomizations.filter((c) => c.selectedOptions.length > 0),
             additionalNotes,
-            totalPrice,
         }
 
         if (editingCartItemId) {

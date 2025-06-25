@@ -38,5 +38,10 @@ export const restaurantApi = {
     getCurrentMenu: async (restaurantId: string) => {
         const response = await apiClient.get<Menu>(`${baseRoute}/${restaurantId}/menu`)
         return response.data
+    },
+
+    changeCurrentMenu: async (restaurantId: string, menuId: string) => {
+        const response = await apiClient.put<boolean>(`${baseRoute}/${restaurantId}/current-menu/${menuId}`)
+        return response.data
     }
 }
