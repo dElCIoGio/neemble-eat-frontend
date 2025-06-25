@@ -13,200 +13,34 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {CustomizationRule, Item} from "@/types/item";
-import {OrderCreate, OrderCustomizationSelection} from "@/types/order";
 import {CartItem, CartItemCustomisation} from "@/lib/helpers/cart";
-
-
-// Mock data for demonstration
-const mockItems: Item[] = [
-    {
-        _id: "item_1",
-        createdAt: "2024-01-01T00:00:00Z",
-        updatedAt: "2024-01-01T00:00:00Z",
-        name: "Gourmet Burger",
-        price: 18.99,
-        restaurantId: "rest_1",
-        categoryId: "cat_1",
-        description:
-            "A delicious gourmet burger with premium ingredients, fresh lettuce, tomatoes, and our signature sauce",
-        imageUrl: "/placeholder.svg?height=300&width=400",
-        isAvailable: true,
-        customizations: [
-            {
-                name: "Protein Choice",
-                description: "Choose your preferred protein",
-                isRequired: true,
-                limitType: "EXACTLY",
-                limit: 1,
-                options: [
-                    { name: "Beef Patty", priceModifier: 0, maxQuantity: 1 },
-                    { name: "Chicken Breast", priceModifier: -1, maxQuantity: 1 },
-                    { name: "Plant-Based Patty", priceModifier: 2, maxQuantity: 1 },
-                    { name: "Fish Fillet", priceModifier: 3, maxQuantity: 1 },
-                ],
-            },
-            {
-                name: "Toppings",
-                description: "Add your favorite toppings",
-                isRequired: false,
-                limitType: "UP_TO",
-                limit: 5,
-                options: [
-                    { name: "Extra Cheese", priceModifier: 1.5, maxQuantity: 2 },
-                    { name: "Bacon", priceModifier: 2.5, maxQuantity: 3 },
-                    { name: "Avocado", priceModifier: 2, maxQuantity: 1 },
-                    { name: "Mushrooms", priceModifier: 1, maxQuantity: 2 },
-                    { name: "Caramelized Onions", priceModifier: 1, maxQuantity: 1 },
-                    { name: "Pickles", priceModifier: 0.5, maxQuantity: 2 },
-                ],
-            },
-            {
-                name: "Side Options",
-                description: "Choose your side",
-                isRequired: true,
-                limitType: "EXACTLY",
-                limit: 1,
-                options: [
-                    { name: "French Fries", priceModifier: 0, maxQuantity: 1 },
-                    { name: "Sweet Potato Fries", priceModifier: 2, maxQuantity: 1 },
-                    { name: "Onion Rings", priceModifier: 1.5, maxQuantity: 1 },
-                    { name: "Side Salad", priceModifier: 1, maxQuantity: 1 },
-                ],
-            },
-        ],
-    },
-    {
-        _id: "item_2",
-        createdAt: "2024-01-01T00:00:00Z",
-        updatedAt: "2024-01-01T00:00:00Z",
-        name: "Caesar Salad",
-        price: 12.99,
-        restaurantId: "rest_1",
-        categoryId: "cat_2",
-        description: "Fresh romaine lettuce with parmesan cheese, croutons, and our signature Caesar dressing",
-        imageUrl: "/placeholder.svg?height=300&width=400",
-        isAvailable: true,
-        customizations: [
-            {
-                name: "Protein Add-on",
-                description: "Add protein to your salad",
-                isRequired: false,
-                limitType: "UP_TO",
-                limit: 2,
-                options: [
-                    { name: "Grilled Chicken", priceModifier: 4, maxQuantity: 1 },
-                    { name: "Grilled Shrimp", priceModifier: 6, maxQuantity: 1 },
-                    { name: "Salmon", priceModifier: 8, maxQuantity: 1 },
-                ],
-            },
-            {
-                name: "Dressing",
-                description: "Choose your dressing",
-                isRequired: true,
-                limitType: "EXACTLY",
-                limit: 1,
-                options: [
-                    { name: "Caesar Dressing", priceModifier: 0, maxQuantity: 1 },
-                    { name: "Ranch Dressing", priceModifier: 0, maxQuantity: 1 },
-                    { name: "Balsamic Vinaigrette", priceModifier: 0, maxQuantity: 1 },
-                ],
-            },
-        ],
-    },
-]
-
-// Mock table data for demonstration
-const mockTables = [
-    {
-        _id: "table_1",
-        number: 1,
-        isActive: true,
-        currentSessionId: null,
-        restaurantId: "rest_1",
-        createdAt: "",
-        updatedAt: "",
-        url: null,
-    },
-    {
-        _id: "table_2",
-        number: 2,
-        isActive: true,
-        currentSessionId: "session_2",
-        restaurantId: "rest_1",
-        createdAt: "",
-        updatedAt: "",
-        url: null,
-    },
-    {
-        _id: "table_3",
-        number: 3,
-        isActive: true,
-        currentSessionId: null,
-        restaurantId: "rest_1",
-        createdAt: "",
-        updatedAt: "",
-        url: null,
-    },
-    {
-        _id: "table_4",
-        number: 4,
-        isActive: false,
-        currentSessionId: null,
-        restaurantId: "rest_1",
-        createdAt: "",
-        updatedAt: "",
-        url: null,
-    },
-    {
-        _id: "table_5",
-        number: 5,
-        isActive: true,
-        currentSessionId: null,
-        restaurantId: "rest_1",
-        createdAt: "",
-        updatedAt: "",
-        url: null,
-    },
-    {
-        _id: "table_6",
-        number: 6,
-        isActive: true,
-        currentSessionId: null,
-        restaurantId: "rest_1",
-        createdAt: "",
-        updatedAt: "",
-        url: null,
-    },
-    {
-        _id: "table_7",
-        number: 7,
-        isActive: true,
-        currentSessionId: null,
-        restaurantId: "rest_1",
-        createdAt: "",
-        updatedAt: "",
-        url: null,
-    },
-    {
-        _id: "table_8",
-        number: 8,
-        isActive: true,
-        currentSessionId: "session_8",
-        restaurantId: "rest_1",
-        createdAt: "",
-        updatedAt: "",
-        url: null,
-    },
-]
-
-
+import {useParams} from "react-router";
+import {useGetRestaurantBySlug, useGetCurrentMenu} from "@/api/endpoints/restaurants/hooks";
+import {useGetMenuItemsBySlug} from "@/api/endpoints/menu/hooks";
+import {useListRestaurantTables} from "@/api/endpoints/tables/hooks";
+import {useCart} from "@/hooks/use-cart";
+import {showErrorToast, showPromiseToast, showWarningToast} from "@/utils/notifications/toast";
 
 
 export default function OrderCustomizationPage() {
 
+    const {restaurantSlug} = useParams() as {restaurantSlug: string}
+
+    const {data: restaurant} = useGetRestaurantBySlug(restaurantSlug)
+    const {data: menu} = useGetCurrentMenu(restaurant?._id)
+    const {data: items = []} = useGetMenuItemsBySlug(menu?.slug ?? "")
+    const {data: tables = []} = useListRestaurantTables(restaurant?._id ?? "")
+
+    const {
+        cart,
+        addItem,
+        deleteProduct,
+        findCartItemIndexByID,
+        setCartEmpty,
+    } = useCart(restaurantSlug)
+
     const [selectedTable, setSelectedTable] = useState<number | null>(null)
     const [currentItemIndex, setCurrentItemIndex] = useState(0)
-    const [cart, setCart] = useState<CartItem[]>([])
     const [isCartOpen, setIsCartOpen] = useState(false)
     const [editingCartItemId, setEditingCartItemId] = useState<string | null>(null)
 
@@ -216,10 +50,11 @@ export default function OrderCustomizationPage() {
     const [additionalNotes, setAdditionalNotes] = useState("")
     const [totalPrice, setTotalPrice] = useState(0)
 
-    const currentItem = mockItems[currentItemIndex]
+    const currentItem = items[currentItemIndex]
 
     // Initialize customizations when item changes
     useEffect(() => {
+        if (!currentItem) return
         const initialCustomizations = currentItem.customizations.map((rule) => ({
             ruleId: rule.name,
             ruleName: rule.name,
@@ -233,6 +68,10 @@ export default function OrderCustomizationPage() {
 
     // Calculate total price
     useEffect(() => {
+        if (!currentItem) {
+            setTotalPrice(0)
+            return
+        }
         let customizationTotal = 0
         selectedCustomizations.forEach((customization) => {
             customization.selectedOptions.forEach((option) => {
@@ -240,20 +79,21 @@ export default function OrderCustomizationPage() {
             })
         })
         setTotalPrice((currentItem.price + customizationTotal) * quantity)
-    }, [selectedCustomizations, quantity, currentItem.price])
+    }, [selectedCustomizations, quantity, currentItem])
 
     // Load cart item for editing
     useEffect(() => {
         if (editingCartItemId) {
-            const cartItem = cart.find((item) => item.id === editingCartItemId)
-            if (cartItem) {
-                setCurrentItemIndex(mockItems.findIndex((item) => item.name === cartItem.name))
+            const index = findCartItemIndexByID(editingCartItemId)
+            if (index >= 0) {
+                const cartItem = cart[index]
+                setCurrentItemIndex(items.findIndex((item) => item._id === cartItem.id))
                 setQuantity(cartItem.quantity)
                 setSelectedCustomizations(cartItem.customisations)
                 setAdditionalNotes(cartItem.additionalNotes ?? "")
             }
         }
-    }, [editingCartItemId, cart])
+    }, [editingCartItemId, cart, items, findCartItemIndexByID])
 
     const handleCustomizationChange = (
         ruleName: string,
@@ -262,7 +102,7 @@ export default function OrderCustomizationPage() {
         isSelected: boolean,
         optionQuantity = 1,
     ) => {
-        console.log(ruleName)
+        if (!currentItem) return
         setSelectedCustomizations((prev) => {
             const updated = [...prev]
             const customizationIndex = updated.findIndex((c) => c.ruleName === ruleName)
@@ -354,19 +194,29 @@ export default function OrderCustomizationPage() {
     }
 
     const allRequiredRulesSatisfied = () => {
-        return currentItem.customizations.every((rule) => isRequiredRuleSatisfied(rule))
+        return !!currentItem && currentItem.customizations.every((rule) => isRequiredRuleSatisfied(rule))
     }
 
     const handleAddToCart = () => {
+        if (!currentItem) return
         if (!allRequiredRulesSatisfied()) {
-            alert("Please complete all required selections")
+            showWarningToast("Please complete all required selections")
             return
         }
+
+        let customizationTotal = 0
+        selectedCustomizations.forEach((c) => {
+            c.selectedOptions.forEach((o) => {
+                customizationTotal += o.priceModifier * o.quantity
+            })
+        })
+
+        const unitPrice = currentItem.price + customizationTotal
 
         const cartItem: CartItem = {
             id: currentItem._id,
             name: currentItem.name,
-            price: (currentItem.price),
+            price: unitPrice,
             image: currentItem.imageUrl,
             quantity,
             customisations: selectedCustomizations.filter((c) => c.selectedOptions.length > 0),
@@ -374,12 +224,12 @@ export default function OrderCustomizationPage() {
         }
 
         if (editingCartItemId) {
-            // Update existing cart item
-            setCart((prev) => prev.map((item) => (item.id === editingCartItemId ? cartItem : item)))
+            const index = findCartItemIndexByID(editingCartItemId)
+            if (index >= 0) deleteProduct(index)
+            addItem(cartItem)
             setEditingCartItemId(null)
         } else {
-            // Add new cart item
-            setCart((prev) => [...prev, cartItem])
+            addItem(cartItem)
         }
 
         // Reset form
@@ -395,9 +245,12 @@ export default function OrderCustomizationPage() {
     }
 
     const handleRemoveFromCart = (cartItemId: string) => {
-        setCart((prev) => prev.filter((item) => item.id !== cartItemId))
-        if (editingCartItemId === cartItemId) {
-            setEditingCartItemId(null)
+        const index = findCartItemIndexByID(cartItemId)
+        if (index >= 0) {
+            deleteProduct(index)
+            if (editingCartItemId === cartItemId) {
+                setEditingCartItemId(null)
+            }
         }
     }
 
@@ -420,7 +273,7 @@ export default function OrderCustomizationPage() {
     }
 
     const getTotalCartValue = () => {
-        return cart.reduce((total, item) => total + item.totalPrice, 0)
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0)
     }
 
     const getTotalCartItems = () => {
@@ -429,41 +282,31 @@ export default function OrderCustomizationPage() {
 
     const handleSubmitOrder = () => {
         if (!selectedTable) {
-            alert("Please select a table first")
+            showErrorToast("Please select a table first")
             return
         }
 
         if (cart.length === 0) {
-            alert("Please add items to your cart first")
+            showWarningToast("Please add items to your cart first")
             return
         }
 
-        const orders: OrderCreate[] = cart.map((cartItem) => {
-            const orderCustomizations: OrderCustomizationSelection[] = cartItem.customizations.map((c) => ({
-                id: `${c.ruleId}_${Date.now()}`,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                ruleName: c.ruleName,
-                selectedOptions: c.selectedOptions.map((o) => `${o.optionName} (${o.quantity})`),
-            }))
+        const promise = new Promise<void>((resolve) => setTimeout(resolve, 1000))
 
-            return {
-                sessionId: "session_1",
-                itemId: cartItem.item._id,
-                quantity: cartItem.quantity,
-                unitPrice: cartItem.item.price,
-                total: cartItem.totalPrice,
-                orderedItemName: cartItem.item.name,
-                restaurantId: cartItem.item.restaurantId,
-                customizations: orderCustomizations,
-                additionalNote: cartItem.additionalNotes || null,
-                tableNumber: selectedTable,
-            }
+        showPromiseToast(promise, {
+            loading: "Submitting order...",
+            success: "Order submitted!",
+            error: "Failed to submit order",
         })
 
-        console.log("Orders submitted:", orders)
-        // Here you would typically send the orders to your API
-        alert(`Order submitted for table ${selectedTable}! Total: $${getTotalCartValue().toFixed(2)}`)
+        promise.then(() => {
+            setCartEmpty()
+            setSelectedTable(null)
+        })
+    }
+
+    if (!currentItem) {
+        return <div className="p-4">Loading...</div>
     }
 
     return (
@@ -503,7 +346,7 @@ export default function OrderCustomizationPage() {
                                             <Card key={cartItem.id}>
                                                 <CardContent className="p-4">
                                                     <div className="flex justify-between items-start mb-2">
-                                                        <h3 className="font-semibold">{cartItem.item.name}</h3>
+                                                        <h3 className="font-semibold">{cartItem.name}</h3>
                                                         <div className="flex gap-2">
                                                             <Button
                                                                 variant="ghost"
@@ -525,7 +368,7 @@ export default function OrderCustomizationPage() {
                                                     </div>
                                                     <div className="text-sm text-gray-600 space-y-1">
                                                         <p>Quantity: {cartItem.quantity}</p>
-                                                        {cartItem.customizations.map((customization) => (
+                                                        {cartItem.customisations.map((customization) => (
                                                             <div key={customization.ruleId}>
                                                                 <span className="font-medium">{customization.ruleName}: </span>
                                                                 {customization.selectedOptions
@@ -541,7 +384,7 @@ export default function OrderCustomizationPage() {
                                                         )}
                                                     </div>
                                                     <div className="text-right mt-2">
-                                                        <span className="font-bold text-green-600">${cartItem.totalPrice.toFixed(2)}</span>
+                                                        <span className="font-bold text-green-600">${(cartItem.price * cartItem.quantity).toFixed(2)}</span>
                                                     </div>
                                                 </CardContent>
                                             </Card>
@@ -557,6 +400,9 @@ export default function OrderCustomizationPage() {
                                     </div>
                                     <Button className="w-full" onClick={handleSubmitOrder} disabled={!selectedTable}>
                                         Submit Order
+                                    </Button>
+                                    <Button variant="destructive" className="w-full mt-2" onClick={setCartEmpty}>
+                                        Clear Cart
                                     </Button>
                                     {!selectedTable && (
                                         <p className="text-sm text-red-500 text-center mt-2">Please select a table first</p>
@@ -587,7 +433,7 @@ export default function OrderCustomizationPage() {
                                 <SelectValue placeholder="Select your table" />
                             </SelectTrigger>
                             <SelectContent>
-                                {mockTables
+                                {tables
                                     .filter((table) => table.isActive && !table.currentSessionId)
                                     .map((table) => (
                                         <SelectItem key={table._id} value={table.number.toString()}>
@@ -602,7 +448,7 @@ export default function OrderCustomizationPage() {
                                             </div>
                                         </SelectItem>
                                     ))}
-                                {mockTables
+                                {tables
                                     .filter((table) => !table.isActive || table.currentSessionId)
                                     .map((table) => (
                                         <SelectItem key={table._id} value={table.number.toString()} disabled>
@@ -640,9 +486,9 @@ export default function OrderCustomizationPage() {
                     </CardHeader>
                     <CardContent>
                         <Select
-                            value={currentItem._id}
+                            value={currentItem?._id}
                             onValueChange={(value) => {
-                                const index = mockItems.findIndex((item) => item._id === value)
+                                const index = items.findIndex((item) => item._id === value)
                                 if (index !== -1) {
                                     setCurrentItemIndex(index)
                                 }
@@ -652,7 +498,7 @@ export default function OrderCustomizationPage() {
                                 <SelectValue placeholder="Choose an item to customize" />
                             </SelectTrigger>
                             <SelectContent>
-                                {mockItems.map((item) => (
+                                {items.map((item) => (
                                     <SelectItem key={item._id} value={item._id}>
                                         <div className="flex items-center justify-between w-full">
                                             <div className="flex-1">

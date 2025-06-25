@@ -147,7 +147,7 @@ function App() {
                 <Route path=":invitationId" element={<RestaurantInvitation/>}/>
             </Route>
 
-            <Route path="custom-order/:restaurantId" element={<OrderCustomizationPage/>}/>
+            <Route path="custom-order/:restaurantSlug" element={<OrderCustomizationPage/>}/>
 
             <Route path="*" element={<NotFound/>}/>
         </Routes>
