@@ -12,6 +12,11 @@ export const ordersApi = {
         return result.data;
     },
 
+    addOrdersGroup: async (ordersData: OrderCreate[], sessionId: string) => {
+        const result = await apiClient.post(`${baseRoute}/bulk`, {ordersData, sessionId});
+        return result.data;
+    },
+
     listSessionOrders: async (sessionId: string) => {
         const result = await apiClient.get<Order[]>(`${baseRoute}/sessions/${sessionId}`)
         return result.data
