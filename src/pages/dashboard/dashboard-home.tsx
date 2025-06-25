@@ -1,4 +1,4 @@
-import React, {JSX} from "react"
+import {JSX} from "react"
 
 import { useState, useCallback } from "react"
 import {
@@ -143,11 +143,8 @@ export default function RestaurantDashboard(): JSX.Element {
             from: from.toISOString(),
             to: today.toISOString()
         }
-    }, [])
+    }, [dateFilter])
 
-
-    console.log(getDateRangeFromFilter(dateFilter).from)
-    console.log(getDateRangeFromFilter(dateFilter).to)
 
     // Analytics hooks
     const { data: salesSummary, isLoading: isSalesSummaryLoading } = useGetSalesSummary({
@@ -182,8 +179,6 @@ export default function RestaurantDashboard(): JSX.Element {
         toDate: getDateRangeFromFilter(itemsTimeRange).to
     })
 
-    console.log("TOP:", topItemsSummary)
-
 
     const { data: sessionDurationSummary, isLoading: isSessionDurationSummaryLoading } = useGetSessionDurationSummary({
         restaurantId: restaurant._id
@@ -196,9 +191,6 @@ export default function RestaurantDashboard(): JSX.Element {
     const { data: lastSevenDaysOrdersCount, isLoading: isLastSevenDaysOrdersCountLoading } = useGetLastSevenDaysCount({
         restaurantId: restaurant._id,
     })
-
-    console.log("LAST:", lastSevenDaysOrdersCount)
-
 
     const getDateFilterLabel = useCallback((filter: DateFilter): string => {
         const labels: Record<DateFilter, string> = {

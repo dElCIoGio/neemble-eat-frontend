@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Clock, TrendingUp, Users } from "lucide-react"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 

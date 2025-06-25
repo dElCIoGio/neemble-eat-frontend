@@ -23,9 +23,6 @@ const baseRoute = "/analytics";
 export const analyticsApi = {
 
     getSalesSummary: async (params: SalesSummaryProps) => {
-
-        console.log(params)
-
         const response = await apiClient.get<SalesSummary>(`${baseRoute}/sales-summary`, {params});
         return response.data
     },
