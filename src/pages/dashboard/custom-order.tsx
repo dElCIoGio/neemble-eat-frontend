@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {CustomizationRule, Item} from "@/types/item";
+import {CustomizationRule} from "@/types/item";
 import {CartItem, CartItemCustomisation} from "@/lib/helpers/cart";
 import {useParams} from "react-router";
 import {useGetRestaurantBySlug, useGetCurrentMenu} from "@/api/endpoints/restaurants/hooks";
@@ -100,7 +100,7 @@ export default function OrderCustomizationPage() {
         optionName: string,
         priceModifier: number,
         isSelected: boolean,
-        optionQuantity = 1,
+        optionQuantity: number = 1,
     ) => {
         if (!currentItem) return
         setSelectedCustomizations((prev) => {
@@ -319,7 +319,7 @@ export default function OrderCustomizationPage() {
                     </Button>
                     <h1 className="text-lg font-semibold truncate">{editingCartItemId ? "Edit Item" : "Customize Order"}</h1>
                     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
-                        <SheetTrigger asChild>
+                        <SheetTrigger asChild className="p-4">
                             <Button variant="outline" size="sm" className="relative">
                                 <ShoppingCart className="h-4 w-4 mr-2" />
                                 Cart
@@ -334,7 +334,7 @@ export default function OrderCustomizationPage() {
                             <SheetHeader>
                                 <SheetTitle>Your Order</SheetTitle>
                             </SheetHeader>
-                            <ScrollArea className="h-[calc(100vh-200px)] mt-4">
+                            <ScrollArea className="h-[calc(100vh-200px)] mt-4 p-4">
                                 {cart.length === 0 ? (
                                     <div className="text-center py-8 text-gray-500">
                                         <ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -344,7 +344,7 @@ export default function OrderCustomizationPage() {
                                     <div className="space-y-4">
                                         {cart.map((cartItem) => (
                                             <Card key={cartItem.id}>
-                                                <CardContent className="p-4">
+                                                <CardContent className="">
                                                     <div className="flex justify-between items-start mb-2">
                                                         <h3 className="font-semibold">{cartItem.name}</h3>
                                                         <div className="flex gap-2">
@@ -369,7 +369,7 @@ export default function OrderCustomizationPage() {
                                                     <div className="text-sm text-gray-600 space-y-1">
                                                         <p>Quantity: {cartItem.quantity}</p>
                                                         {cartItem.customisations.map((customization) => (
-                                                            <div key={customization.ruleId}>
+                                                            <div key={customization.ruleName}>
                                                                 <span className="font-medium">{customization.ruleName}: </span>
                                                                 {customization.selectedOptions
                                                                     .map((option) => `${option.optionName} (${option.quantity})`)
@@ -384,7 +384,7 @@ export default function OrderCustomizationPage() {
                                                         )}
                                                     </div>
                                                     <div className="text-right mt-2">
-                                                        <span className="font-bold text-green-600">${(cartItem.price * cartItem.quantity).toFixed(2)}</span>
+                                                        <span className="font-bold text-green-600">Kz {(cartItem.price * cartItem.quantity).toFixed(2)}</span>
                                                     </div>
                                                 </CardContent>
                                             </Card>
@@ -393,10 +393,10 @@ export default function OrderCustomizationPage() {
                                 )}
                             </ScrollArea>
                             {cart.length > 0 && (
-                                <div className="border-t pt-4 mt-4">
+                                <div className="border-t pt-4 mt-4 p-4">
                                     <div className="flex justify-between items-center mb-4">
                                         <span className="text-lg font-bold">Total</span>
-                                        <span className="text-xl font-bold text-green-600">${getTotalCartValue().toFixed(2)}</span>
+                                        <span className="text-xl font-bold text-green-600">Kz {getTotalCartValue().toFixed(2)}</span>
                                     </div>
                                     <Button className="w-full" onClick={handleSubmitOrder} disabled={!selectedTable}>
                                         Submit Order
@@ -417,7 +417,7 @@ export default function OrderCustomizationPage() {
             <div className="max-w-4xl mx-auto p-4 pb-32">
                 {/* Table Selection */}
                 <Card className="mb-6">
-                    <CardHeader className="pb-3">
+                    <CardHeader className="">
                         <CardTitle className="flex items-center gap-2">
                             <MapPin className="h-5 w-5" />
                             Table Selection
@@ -429,40 +429,46 @@ export default function OrderCustomizationPage() {
                             value={selectedTable?.toString() || ""}
                             onValueChange={(value) => setSelectedTable(Number.parseInt(value))}
                         >
-                            <SelectTrigger className="w-full h-12">
+                            <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select your table" />
                             </SelectTrigger>
                             <SelectContent>
                                 {tables
-                                    .filter((table) => table.isActive && !table.currentSessionId)
-                                    .map((table) => (
-                                        <SelectItem key={table._id} value={table.number.toString()}>
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                                    <Users className="h-4 w-4 text-green-600" />
+                                    .map((table) => {
+
+                                        if (!table.isActive || !table.currentSessionId){
+                                            return (
+                                                <SelectItem key={table._id} value={table.number.toString()} disabled>
+                                                    <div className="flex items-center gap-3 opacity-50">
+                                                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                                            <Users className="h-4 w-4 text-gray-400" />
+                                                        </div>
+                                                        <div>
+                                                            <span className="font-medium">Table {table.number}</span>
+                                                            <span className="text-sm text-gray-500 ml-2">{!table.isActive ? "Closed" : "Occupied"}</span>
+                                                        </div>
+                                                    </div>
+                                                </SelectItem>
+
+                                            )
+                                        }
+
+
+                                        return (
+                                            <SelectItem key={table._id} value={table.number.toString()}>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                                        <Users className="h-4 w-4 text-green-600" />
+                                                    </div>
+                                                    <div>
+                                                        <span className="font-medium">Table {table.number}</span>
+                                                        <span className="text-sm text-green-600 ml-2">Available</span>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <span className="font-medium">Table {table.number}</span>
-                                                    <span className="text-sm text-green-600 ml-2">Available</span>
-                                                </div>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
-                                {tables
-                                    .filter((table) => !table.isActive || table.currentSessionId)
-                                    .map((table) => (
-                                        <SelectItem key={table._id} value={table.number.toString()} disabled>
-                                            <div className="flex items-center gap-3 opacity-50">
-                                                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                                                    <Users className="h-4 w-4 text-gray-400" />
-                                                </div>
-                                                <div>
-                                                    <span className="font-medium">Table {table.number}</span>
-                                                    <span className="text-sm text-gray-500 ml-2">{!table.isActive ? "Closed" : "Occupied"}</span>
-                                                </div>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
+                                            </SelectItem>
+                                        )
+
+                                    })}
                             </SelectContent>
                         </Select>
 
@@ -530,7 +536,7 @@ export default function OrderCustomizationPage() {
                             <div className="flex justify-between items-start mb-2">
                                 <h2 className="text-xl md:text-2xl font-bold">{currentItem.name}</h2>
                                 <Badge variant="secondary" className="text-lg font-semibold">
-                                    ${currentItem.price.toFixed(2)}
+                                    Kz {currentItem.price.toFixed(2)}
                                 </Badge>
                             </div>
                             <p className="text-gray-600 text-sm md:text-base">{currentItem.description}</p>
@@ -572,12 +578,12 @@ export default function OrderCustomizationPage() {
                                 {rule.limitType === "EXACTLY" && rule.limit === 1 ? (
                                     <RadioGroup
                                         value={
-                                            selectedCustomizations.find((c) => c.ruleId === rule.name)?.selectedOptions[0]?.optionName || ""
+                                            selectedCustomizations.find((c) => c.ruleName === rule.name)?.selectedOptions[0]?.optionName || ""
                                         }
                                         onValueChange={(value) => {
                                             const option = rule.options.find((o) => o.name === value)
                                             if (option) {
-                                                handleCustomizationChange(rule.name, rule.name, option.name, option.priceModifier, true, 1)
+                                                handleCustomizationChange(rule.name, option.name, option.priceModifier, true, 1)
                                             }
                                         }}
                                     >
@@ -620,7 +626,6 @@ export default function OrderCustomizationPage() {
                                                             onCheckedChange={(checked) => {
                                                                 handleCustomizationChange(
                                                                     rule.name,
-                                                                    rule.name,
                                                                     option.name,
                                                                     option.priceModifier,
                                                                     checked as boolean,
@@ -651,7 +656,6 @@ export default function OrderCustomizationPage() {
                                                                     if (currentQuantity > 1) {
                                                                         handleCustomizationChange(
                                                                             rule.name,
-                                                                            rule.name,
                                                                             option.name,
                                                                             option.priceModifier,
                                                                             true,
@@ -659,7 +663,6 @@ export default function OrderCustomizationPage() {
                                                                         )
                                                                     } else {
                                                                         handleCustomizationChange(
-                                                                            rule.name,
                                                                             rule.name,
                                                                             option.name,
                                                                             option.priceModifier,
@@ -679,7 +682,6 @@ export default function OrderCustomizationPage() {
                                                                 onClick={() => {
                                                                     if (currentQuantity < option.maxQuantity && canSelectMore(rule)) {
                                                                         handleCustomizationChange(
-                                                                            rule.name,
                                                                             rule.name,
                                                                             option.name,
                                                                             option.priceModifier,
@@ -721,8 +723,8 @@ export default function OrderCustomizationPage() {
 
                 {/* Quantity and Total */}
                 <Card className="mt-6">
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-4">
+                    <CardContent className="">
+                        <div className="flex items-center justify-between">
                             <Label className="text-lg font-medium">Quantity</Label>
                             <div className="flex items-center space-x-3">
                                 <Button
@@ -743,8 +745,8 @@ export default function OrderCustomizationPage() {
                         <Separator className="my-4" />
 
                         <div className="flex items-center justify-between">
-                            <span className="text-xl font-bold">Item Total</span>
-                            <span className="text-2xl font-bold text-green-600">${totalPrice.toFixed(2)}</span>
+                            <span className="text-lg font-bold">Item Total</span>
+                            <span className="text-base font-bold text-green-600">Kz {totalPrice.toFixed(2)}</span>
                         </div>
                     </CardContent>
                 </Card>
@@ -759,7 +761,7 @@ export default function OrderCustomizationPage() {
                         disabled={!allRequiredRulesSatisfied()}
                     >
                         <ShoppingCart className="mr-2 h-5 w-5" />
-                        {editingCartItemId ? "Update Item" : "Add to Cart"} • ${totalPrice.toFixed(2)}
+                        {editingCartItemId ? "Update Item" : "Add to Cart"} • Kz {totalPrice.toFixed(2)}
                     </Button>
 
                     {!allRequiredRulesSatisfied() && (

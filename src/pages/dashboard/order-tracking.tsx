@@ -15,6 +15,8 @@ import {Header} from "@/components/pages/dashboard-orders/header";
 import {OrdersDisplay} from "@/components/pages/dashboard-orders/orders-display";
 import {OrderInfo} from "@/components/pages/dashboard-orders/order-info";
 import {MobileOrderInfo} from "@/components/pages/dashboard-orders/mobile-order-info";
+import {Link} from "react-router";
+import {Button} from "@/components/ui/button";
 
 
 
@@ -119,15 +121,23 @@ export function OrdersTracking() {
                             handleSortingChange
                         }}>
                             <div className="lg:flex lg:flex-col flex-1">
-                                <div className="mt-4 mb-8 flex space-x-1.5 items-center">
-                                    <div
-                                        className="w-8 h-8 rounded-full bg-zinc-50 border border-zinc-300 flex justify-center items-center">
-                                        <BowlFood className="w-6 h-6 text-zinc-800"/>
+                                <div className="flex justify-between">
+                                    <div className="mt-4 mb-8 flex space-x-1.5 items-center">
+                                        <div
+                                            className="w-8 h-8 rounded-full bg-zinc-50 border border-zinc-300 flex justify-center items-center">
+                                            <BowlFood className="w-6 h-6 text-zinc-800"/>
+                                        </div>
+                                        <h2 className="scroll-m-20 text-2xl font-poppins-semibold tracking-tight first:mt-0">
+                                            Pedidos
+                                        </h2>
                                     </div>
-                                    <h2 className="scroll-m-20 text-2xl font-poppins-semibold tracking-tight first:mt-0">
-                                        Pedidos
-                                    </h2>
+                                    <Button variant="link" asChild>
+                                        <Link to={`/custom-order/${restaurant.slug}`}>
+                                            Registar Pedido
+                                        </Link>
+                                    </Button>
                                 </div>
+
                                 <div className="space-y-4 h-max lg:flex lg:flex-1 lg:flex-col">
                                     <Header/>
                                     <div
@@ -136,7 +146,7 @@ export function OrdersTracking() {
                                             orders.length == 0 ?
                                                 <div
                                                     className="lg:flex lg:flex-col justify-center items-center overflow-y-hidden lg:flex-grow w-full">
-                                                    <h1 className="text-lg font-poppins-semibold ">
+                                                <h1 className="text-lg font-poppins-semibold ">
                                                         Nenhum pedido encontrado.
                                                     </h1>
                                                     <h2 className="text-sm font-poppins-regular text-zinc-500">
