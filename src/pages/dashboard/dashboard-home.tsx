@@ -49,6 +49,7 @@ import {
     useGetActiveSessionsSummary, useGetLastSevenDaysCount
 } from "@/api/endpoints/analytics/hooks";
 import WelcomePage from "@/components/layout/dashboard/components/welcome";
+import {DashboardHomeContext} from "@/context/dashboard-home-context";
 
 
 // Dados mockados com tipos
@@ -560,120 +561,126 @@ export default function RestaurantDashboard(): JSX.Element {
     }
 
     return (
-        <div className="">
-            <div className="mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
-                    <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-                        <Select value={dateFilter} onValueChange={(value: DateFilter) => setDateFilter(value)}>
-                            <SelectTrigger className="w-full sm:w-48">
-                                <Calendar className="h-4 w-4 mr-2" />
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="today">Hoje</SelectItem>
-                                <SelectItem value="yesterday">Ontem</SelectItem>
-                                <SelectItem value="7days">Últimos 7 dias</SelectItem>
-                                <SelectItem value="30days">Últimos 30 dias</SelectItem>
-                                {/*<SelectItem value="custom">Intervalo personalizado</SelectItem>*/}
-                            </SelectContent>
-                        </Select>
+        <DashboardHomeContext value={{
+            dateFilter
+        }}>
+            <div className="">
+                <div className="mx-auto space-y-6">
+                    {/* Header */}
+                    <div
+                        className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+                        <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+                            <Select value={dateFilter} onValueChange={(value: DateFilter) => setDateFilter(value)}>
+                                <SelectTrigger className="w-full sm:w-48">
+                                    <Calendar className="h-4 w-4 mr-2"/>
+                                    <SelectValue/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="today">Hoje</SelectItem>
+                                    <SelectItem value="yesterday">Ontem</SelectItem>
+                                    <SelectItem value="7days">Últimos 7 dias</SelectItem>
+                                    <SelectItem value="30days">Últimos 30 dias</SelectItem>
+                                    {/*<SelectItem value="custom">Intervalo personalizado</SelectItem>*/}
+                                </SelectContent>
+                            </Select>
 
-                        <Select value={shiftFilter} onValueChange={(value: ShiftFilter) => setShiftFilter(value)}>
-                            <SelectTrigger className="w-full sm:w-32">
-                                <Filter className="h-4 w-4 mr-2" />
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Todos</SelectItem>
-                                <SelectItem value="lunch">Almoço</SelectItem>
-                                <SelectItem value="dinner">Jantar</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-
-                {/* Métricas Principais */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-                    <MetricCard
-                        title="Total de Vendas"
-                        value={salesSummary?.totalSales ?? 0}
-                        growth={0}
-                        icon={DollarSign}
-                        format="currency"
-                    />
-                    <MetricCard
-                        title="Faturas Emitidas"
-                        value={invoiceSummary?.invoiceCount ?? 0}
-                        growth={0}
-                        icon={Receipt}
-                        format="number"
-                    />
-                    <MetricCard
-                        title="Valor Médio por Fatura"
-                        value={salesSummary?.averageInvoice ?? 0}
-                        growth={0}
-                        icon={ShoppingCart}
-                        format="currency"
-                    />
-                    <MetricCard
-                        title="Mesas Servidas"
-                        value={salesSummary?.distinctTables ?? 0}
-                        growth={0}
-                        icon={Users}
-                        format="number"
-                    />
-                    <MetricCard
-                        title="Receita por Mesa"
-                        value={salesSummary?.revenuePerTable ?? 0}
-                        growth={0}
-                        icon={TrendingUp}
-                        format="currency"
-                    />
-                </div>
-
-                {/* Gráficos e Análises */}
-                <div className="grid gap-6 lg:grid-cols-3">
-                    <SalesChart />
-                    <OrdersChart />
-                </div>
-
-                <div className="grid gap-6 lg:grid-cols-2">
-                    <PopularItemsChart />
-                    <SessionsCard />
-                </div>
-
-                {/* Insights */}
-                <InsightsCard />
-
-                {/* Botões de Exportação */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Exportar Dados</CardTitle>
-                        <CardDescription>Descarregue os dados do dashboard em diferentes formatos</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
-                            <Button
-                                className="flex items-center space-x-2"
-                                onClick={handleExportCSV}
-                                disabled={isExporting}
-                            >
-                                <Download className="h-4 w-4" />
-                                <span>{isExporting ? "A exportar..." : "Exportar CSV"}</span>
-                            </Button>
-                            <Button
-                                className="flex items-center space-x-2"
-                                onClick={handleExportPDF}
-                                disabled={isExporting}
-                            >
-                                <FileText className="h-4 w-4" />
-                                <span>{isExporting ? "A exportar..." : "Exportar PDF"}</span>
-                            </Button>
+                            <Select value={shiftFilter} onValueChange={(value: ShiftFilter) => setShiftFilter(value)}>
+                                <SelectTrigger className="w-full sm:w-32">
+                                    <Filter className="h-4 w-4 mr-2"/>
+                                    <SelectValue/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Todos</SelectItem>
+                                    <SelectItem value="lunch">Almoço</SelectItem>
+                                    <SelectItem value="dinner">Jantar</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+
+                    {/* Métricas Principais */}
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                        <MetricCard
+                            title="Total de Vendas"
+                            value={salesSummary?.totalSales ?? 0}
+                            growth={0}
+                            icon={DollarSign}
+                            format="currency"
+                        />
+                        <MetricCard
+                            title="Faturas Emitidas"
+                            value={invoiceSummary?.invoiceCount ?? 0}
+                            growth={0}
+                            icon={Receipt}
+                            format="number"
+                        />
+                        <MetricCard
+                            title="Valor Médio por Fatura"
+                            value={salesSummary?.averageInvoice ?? 0}
+                            growth={0}
+                            icon={ShoppingCart}
+                            format="currency"
+                        />
+                        <MetricCard
+                            title="Mesas Servidas"
+                            value={salesSummary?.distinctTables ?? 0}
+                            growth={0}
+                            icon={Users}
+                            format="number"
+                        />
+                        <MetricCard
+                            title="Receita por Mesa"
+                            value={salesSummary?.revenuePerTable ?? 0}
+                            growth={0}
+                            icon={TrendingUp}
+                            format="currency"
+                        />
+                    </div>
+
+                    {/* Gráficos e Análises */}
+                    <div className="grid gap-6 lg:grid-cols-3">
+                        <SalesChart/>
+                        <OrdersChart/>
+                    </div>
+
+                    <div className="grid gap-6 lg:grid-cols-2">
+                        <PopularItemsChart/>
+                        <SessionsCard/>
+                    </div>
+
+                    {/* Insights */}
+                    <InsightsCard/>
+
+                    {/* Botões de Exportação */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Exportar Dados</CardTitle>
+                            <CardDescription>Descarregue os dados do dashboard em diferentes formatos</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
+                                <Button
+                                    className="flex items-center space-x-2"
+                                    onClick={handleExportCSV}
+                                    disabled={isExporting}
+                                >
+                                    <Download className="h-4 w-4"/>
+                                    <span>{isExporting ? "A exportar..." : "Exportar CSV"}</span>
+                                </Button>
+                                <Button
+                                    className="flex items-center space-x-2"
+                                    onClick={handleExportPDF}
+                                    disabled={isExporting}
+                                >
+                                    <FileText className="h-4 w-4"/>
+                                    <span>{isExporting ? "A exportar..." : "Exportar PDF"}</span>
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </DashboardHomeContext>
+
     )
 }
