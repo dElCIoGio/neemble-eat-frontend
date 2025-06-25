@@ -150,32 +150,32 @@ export default function RestaurantDashboard(): JSX.Element {
     console.log(getDateRangeFromFilter(dateFilter).to)
 
     // Analytics hooks
-    const { data: salesSummary } = useGetSalesSummary({
+    const { data: salesSummary, isLoading: isSalesSummaryLoading } = useGetSalesSummary({
         restaurantId: restaurant._id,
         fromDate: getDateRangeFromFilter(dateFilter).from,
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: invoiceSummary } = useGetInvoiceSummary({
+    const { data: invoiceSummary, isLoading: isInvoiceSummaryLoading } = useGetInvoiceSummary({
         restaurantId: restaurant._id,
         status: "completed",
         fromDate: getDateRangeFromFilter(dateFilter).from,
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: ordersSummary } = useGetOrdersSummary({
+    const { data: ordersSummary, isLoading: isOrdersSummaryLoading } = useGetOrdersSummary({
         restaurantId: restaurant._id,
         fromDate: getDateRangeFromFilter(dateFilter).from,
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: cancelledOrdersSummary } = useGetCancelledOrdersSummary({
+    const { data: cancelledOrdersSummary, isLoading: isCancelledOrdersSummaryLoading } = useGetCancelledOrdersSummary({
         restaurantId: restaurant._id,
         fromDate: getDateRangeFromFilter(dateFilter).from,
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: topItemsSummary } = useGetTopItemsSummary({
+    const { data: topItemsSummary, isLoading: isTopItemsSummaryLoading } = useGetTopItemsSummary({
         restaurantId: restaurant._id,
         topN: 8,
         fromDate: getDateRangeFromFilter(itemsTimeRange).from,
@@ -185,15 +185,15 @@ export default function RestaurantDashboard(): JSX.Element {
     console.log("TOP:", topItemsSummary)
 
 
-    const { data: sessionDurationSummary } = useGetSessionDurationSummary({
+    const { data: sessionDurationSummary, isLoading: isSessionDurationSummaryLoading } = useGetSessionDurationSummary({
         restaurantId: restaurant._id
     })
 
-    const { data: activeSessionsSummary } = useGetActiveSessionsSummary({
+    const { data: activeSessionsSummary, isLoading: isActiveSessionsSummaryLoading } = useGetActiveSessionsSummary({
         restaurantId: restaurant._id
     })
 
-    const { data: lastSevenDaysOrdersCount } = useGetLastSevenDaysCount({
+    const { data: lastSevenDaysOrdersCount, isLoading: isLastSevenDaysOrdersCountLoading } = useGetLastSevenDaysCount({
         restaurantId: restaurant._id,
     })
 
@@ -290,6 +290,14 @@ export default function RestaurantDashboard(): JSX.Element {
             sessionDurationSummary,
             activeSessionsSummary,
             lastSevenDaysOrdersCount,
+            isSalesSummaryLoading,
+            isInvoiceSummaryLoading,
+            isOrdersSummaryLoading,
+            isCancelledOrdersSummaryLoading,
+            isTopItemsSummaryLoading,
+            isSessionDurationSummaryLoading,
+            isActiveSessionsSummaryLoading,
+            isLastSevenDaysOrdersCountLoading,
             insights,
             handleExportCSV,
             handleExportPDF,
@@ -299,11 +307,46 @@ export default function RestaurantDashboard(): JSX.Element {
                 <div className="mx-auto space-y-6">
                     <DashboardHomeHeader />
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-                        <MetricCard title="Total de Vendas" value={salesSummary?.totalSales ?? 0} growth={0} icon={DollarSign} format="currency" />
-                        <MetricCard title="Faturas Emitidas" value={invoiceSummary?.invoiceCount ?? 0} growth={0} icon={Receipt} format="number" />
-                        <MetricCard title="Valor Médio por Fatura" value={salesSummary?.averageInvoice ?? 0} growth={0} icon={ShoppingCart} format="currency" />
-                        <MetricCard title="Mesas Servidas" value={salesSummary?.distinctTables ?? 0} growth={0} icon={Users} format="number" />
-                        <MetricCard title="Receita por Mesa" value={salesSummary?.revenuePerTable ?? 0} growth={0} icon={TrendingUp} format="currency" />
+                        <MetricCard
+                            title="Total de Vendas"
+                            value={salesSummary?.totalSales}
+                            growth={0}
+                            icon={DollarSign}
+                            format="currency"
+                            isLoading={isSalesSummaryLoading}
+                        />
+                        <MetricCard
+                            title="Faturas Emitidas"
+                            value={invoiceSummary?.invoiceCount}
+                            growth={0}
+                            icon={Receipt}
+                            format="number"
+                            isLoading={isInvoiceSummaryLoading}
+                        />
+                        <MetricCard
+                            title="Valor Médio por Fatura"
+                            value={salesSummary?.averageInvoice}
+                            growth={0}
+                            icon={ShoppingCart}
+                            format="currency"
+                            isLoading={isSalesSummaryLoading}
+                        />
+                        <MetricCard
+                            title="Mesas Servidas"
+                            value={salesSummary?.distinctTables}
+                            growth={0}
+                            icon={Users}
+                            format="number"
+                            isLoading={isSalesSummaryLoading}
+                        />
+                        <MetricCard
+                            title="Receita por Mesa"
+                            value={salesSummary?.revenuePerTable}
+                            growth={0}
+                            icon={TrendingUp}
+                            format="currency"
+                            isLoading={isSalesSummaryLoading}
+                        />
                     </div>
                     <div className="grid gap-6 lg:grid-cols-3">
                         <SalesChart />
