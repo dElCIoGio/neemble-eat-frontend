@@ -19,6 +19,13 @@ export const membershipsApi = {
     deactivateMembership: async (userId: string, restaurantId: string) => {
         const result = await apiClient.put<User>(`${baseRoute}/${userId}/restaurant/${restaurantId}/deactivate`)
         return result.data
+    },
+
+    updateRole: async (userId: string, restaurantId: string, roleId: string) => {
+        const result = await apiClient.put<Membership>(
+            `${baseRoute}/${userId}/restaurant/${restaurantId}/role/${roleId}`
+        )
+        return result.data
     }
 
 
