@@ -13,7 +13,7 @@ import {analyticsApi} from "@/api/endpoints/analytics/requests";
 
 export function useGetSalesSummary(params: SalesSummaryProps){
 
-    const queryKey = ["sales-summary", params.restaurantId];
+    const queryKey = ["sales-summary", params.restaurantId, params.fromDate, params.toDate];
 
     return useQuery({
         queryKey,
@@ -27,7 +27,7 @@ export function useGetSalesSummary(params: SalesSummaryProps){
 
 export function useGetInvoiceSummary(params: InvoicesSummaryProps){
 
-    const queryKey = ["invoices-summary", params.restaurantId];
+    const queryKey = ["invoices-summary", params.restaurantId, params.status, params.fromDate, params.toDate];
 
     return useQuery({
         queryKey,
@@ -39,7 +39,7 @@ export function useGetInvoiceSummary(params: InvoicesSummaryProps){
 
 export function useGetOrdersSummary(params: OrdersSummaryProps){
 
-    const queryKey = ["orders-summary", params.restaurantId];
+    const queryKey = ["orders-summary", params.restaurantId, params.fromDate, params.toDate];
 
     return useQuery({
         queryKey,
@@ -53,7 +53,7 @@ export function useGetOrdersSummary(params: OrdersSummaryProps){
 
 export function useGetTopItemsSummary(params: TopItemsSummaryProps){
 
-    const queryKey = ["top-items-summary", params.restaurantId];
+    const queryKey = ["top-items-summary", params.restaurantId, params.topN, params.fromDate, params.toDate];
 
     return useQuery({
         queryKey,
@@ -67,7 +67,7 @@ export function useGetTopItemsSummary(params: TopItemsSummaryProps){
 
 export function useGetCancelledOrdersSummary(params: CancelledOrdersSummaryProps){
 
-    const queryKey = ["cancelled orders summary", params.restaurantId];
+    const queryKey = ["cancelled orders summary", params.restaurantId, params.fromDate, params.toDate];
 
     return useQuery({
         queryKey,

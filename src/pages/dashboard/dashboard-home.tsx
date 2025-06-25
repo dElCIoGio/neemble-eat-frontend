@@ -150,32 +150,32 @@ export default function RestaurantDashboard(): JSX.Element {
     console.log(getDateRangeFromFilter(dateFilter).to)
 
     // Analytics hooks
-    const { data: salesSummary, isLoading: isSalesSummaryLoading } = useGetSalesSummary({
+    const { data: salesSummary, isLoading: salesSummaryLoading, isFetching: salesSummaryFetching } = useGetSalesSummary({
         restaurantId: restaurant._id,
         fromDate: getDateRangeFromFilter(dateFilter).from,
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: invoiceSummary, isLoading: isInvoiceSummaryLoading } = useGetInvoiceSummary({
+    const { data: invoiceSummary, isLoading: invoiceSummaryLoading, isFetching: invoiceSummaryFetching } = useGetInvoiceSummary({
         restaurantId: restaurant._id,
         status: "completed",
         fromDate: getDateRangeFromFilter(dateFilter).from,
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: ordersSummary, isLoading: isOrdersSummaryLoading } = useGetOrdersSummary({
+    const { data: ordersSummary, isLoading: ordersSummaryLoading, isFetching: ordersSummaryFetching } = useGetOrdersSummary({
         restaurantId: restaurant._id,
         fromDate: getDateRangeFromFilter(dateFilter).from,
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: cancelledOrdersSummary, isLoading: isCancelledOrdersSummaryLoading } = useGetCancelledOrdersSummary({
+    const { data: cancelledOrdersSummary, isLoading: cancelledOrdersSummaryLoading, isFetching: cancelledOrdersSummaryFetching } = useGetCancelledOrdersSummary({
         restaurantId: restaurant._id,
         fromDate: getDateRangeFromFilter(dateFilter).from,
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: topItemsSummary, isLoading: isTopItemsSummaryLoading } = useGetTopItemsSummary({
+    const { data: topItemsSummary, isLoading: topItemsSummaryLoading, isFetching: topItemsSummaryFetching } = useGetTopItemsSummary({
         restaurantId: restaurant._id,
         topN: 8,
         fromDate: getDateRangeFromFilter(itemsTimeRange).from,
@@ -185,19 +185,28 @@ export default function RestaurantDashboard(): JSX.Element {
     console.log("TOP:", topItemsSummary)
 
 
-    const { data: sessionDurationSummary, isLoading: isSessionDurationSummaryLoading } = useGetSessionDurationSummary({
+    const { data: sessionDurationSummary, isLoading: sessionDurationSummaryLoading, isFetching: sessionDurationSummaryFetching } = useGetSessionDurationSummary({
         restaurantId: restaurant._id
     })
 
-    const { data: activeSessionsSummary, isLoading: isActiveSessionsSummaryLoading } = useGetActiveSessionsSummary({
+    const { data: activeSessionsSummary, isLoading: activeSessionsSummaryLoading, isFetching: activeSessionsSummaryFetching } = useGetActiveSessionsSummary({
         restaurantId: restaurant._id
     })
 
-    const { data: lastSevenDaysOrdersCount, isLoading: isLastSevenDaysOrdersCountLoading } = useGetLastSevenDaysCount({
+    const { data: lastSevenDaysOrdersCount, isLoading: lastSevenDaysOrdersCountLoading, isFetching: lastSevenDaysOrdersCountFetching } = useGetLastSevenDaysCount({
         restaurantId: restaurant._id,
     })
 
     console.log("LAST:", lastSevenDaysOrdersCount)
+
+    const isSalesSummaryLoading = salesSummaryLoading || salesSummaryFetching
+    const isInvoiceSummaryLoading = invoiceSummaryLoading || invoiceSummaryFetching
+    const isOrdersSummaryLoading = ordersSummaryLoading || ordersSummaryFetching
+    const isCancelledOrdersSummaryLoading = cancelledOrdersSummaryLoading || cancelledOrdersSummaryFetching
+    const isTopItemsSummaryLoading = topItemsSummaryLoading || topItemsSummaryFetching
+    const isSessionDurationSummaryLoading = sessionDurationSummaryLoading || sessionDurationSummaryFetching
+    const isActiveSessionsSummaryLoading = activeSessionsSummaryLoading || activeSessionsSummaryFetching
+    const isLastSevenDaysOrdersCountLoading = lastSevenDaysOrdersCountLoading || lastSevenDaysOrdersCountFetching
 
 
     const getDateFilterLabel = useCallback((filter: DateFilter): string => {
