@@ -6,6 +6,7 @@ import { useDashboardContext } from "@/context/dashboard-context"
 import { useGetAllMembers } from "@/hooks/use-get-all-members"
 import { useListRestaurantRoles } from "@/hooks/use-list-restaurant-roles"
 import { showSuccessToast, showErrorToast } from "@/utils/notifications/toast"
+import { useUpdateMemberRole } from "@/api/endpoints/memberships/hooks"
 import { Badge } from "@/components/ui/badge"
 import { restaurantApi } from "@/api/endpoints/restaurants/requests"
 
@@ -60,6 +61,7 @@ interface DashboardStaffContextType {
     handleSelectAll: (checked: boolean) => void
     handleEditMember: (member: User) => void
     handleDeleteMember: (member: User) => void
+    updateMemberRole: (memberId: string, roleId: string) => void
     getRoleName: (roleId: string) => string
     getStatusBadge: (status: string) => JSX.Element
     handleBulkAction: (action: string) => void
@@ -100,6 +102,7 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
     })
 
     const { data: roles } = useListRestaurantRoles(restaurant._id)
+    const updateMemberRoleMutation = useUpdateMemberRole()
     const { data: users = [] } = useGetAllMembers({
         restaurantId: restaurant._id
     })
@@ -176,6 +179,14 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    const updateMemberRole = (memberId: string, roleId: string) => {
+        updateMemberRoleMutation.mutate({
+            userId: memberId,
+            restaurantId: restaurant._id,
+            roleId
+        })
+    }
+
     const getRoleName = (roleId: string) => {
         if (!roleId) return "Sem função"
         const role = roles?.find(r => r._id === roleId)
@@ -238,6 +249,7 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
             handleSelectAll,
             handleEditMember,
             handleDeleteMember,
+            updateMemberRole,
             getRoleName,
             getStatusBadge,
             handleBulkAction

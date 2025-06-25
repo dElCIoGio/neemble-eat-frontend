@@ -3,6 +3,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select"
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -18,6 +25,7 @@ import { useDashboardStaff } from "@/context/dashboard-staff-context"
 import {User} from "@/types/user";
 import {useGetUserMemberships} from "@/api/endpoints/memberships/hooks";
 import {useDashboardContext} from "@/context/dashboard-context";
+import {useListRestaurantRoles} from "@/hooks/use-list-restaurant-roles";
 
 export function MembersTable() {
 
@@ -83,7 +91,8 @@ function MemberRow({user}: {user: User}) {
         handleEditMember,
         handleDeleteMember,
         getRoleName,
-        getStatusBadge
+        getStatusBadge,
+        updateMemberRole
     } = useDashboardStaff()
 
     const {
@@ -93,6 +102,8 @@ function MemberRow({user}: {user: User}) {
     const {
         data: membership
     } = useGetUserMemberships(user._id, restaurant._id)
+
+    const { data: roles } = useListRestaurantRoles(restaurant._id)
 
     return (
         <TableRow key={user._id}>
@@ -117,11 +128,21 @@ function MemberRow({user}: {user: User}) {
                 </div>
             </TableCell>
             <TableCell>
-                <div>
-                    <Badge>
-                        {getRoleName(user.memberships[0]?.roleId)}
-                    </Badge>
-                </div>
+                <Select
+                    value={membership?.roleId ?? ""}
+                    onValueChange={(value) => updateMemberRole(user._id, value)}
+                >
+                    <SelectTrigger className="w-32 h-8">
+                        <SelectValue placeholder="Sem função" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {roles.map((role) => (
+                            <SelectItem key={role._id} value={role._id}>
+                                {role.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </TableCell>
             <TableCell>
                 <div className="space-y-1">
