@@ -1,4 +1,4 @@
-import React, {JSX} from "react"
+import {JSX} from "react"
 
 import { useState, useCallback } from "react"
 import {
@@ -156,12 +156,12 @@ export default function RestaurantDashboard(): JSX.Element {
         toDate: getDateRangeFromFilter(dateFilter).to
     })
 
-    const { data: invoiceSummary, isLoading: isInvoiceSummaryLoading } = useGetInvoiceSummary({
-        restaurantId: restaurant._id,
-        status: "completed",
-        fromDate: getDateRangeFromFilter(dateFilter).from,
-        toDate: getDateRangeFromFilter(dateFilter).to
-    })
+        const { data: invoiceSummary, isLoading: isInvoiceSummaryLoading } = useGetInvoiceSummary({
+            restaurantId: restaurant._id,
+            status: "completed",
+            fromDate: getDateRangeFromFilter(dateFilter).from,
+            toDate: getDateRangeFromFilter(dateFilter).to
+        })
 
     const { data: ordersSummary, isLoading: isOrdersSummaryLoading } = useGetOrdersSummary({
         restaurantId: restaurant._id,
