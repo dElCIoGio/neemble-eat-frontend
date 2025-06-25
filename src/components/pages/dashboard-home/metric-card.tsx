@@ -4,10 +4,11 @@ import { MetricFormat } from "@/types/dashboard"
 
 interface MetricCardProps {
     title: string
-    value: number
+    value?: number
     growth: number
     icon: React.ComponentType<{ className?: string }>
     format?: MetricFormat
+    isLoading?: boolean
 }
 
 function formatValue(val: number, format: MetricFormat): string {
@@ -21,7 +22,7 @@ function formatValue(val: number, format: MetricFormat): string {
     }
 }
 
-export default function MetricCard({ title, value, growth, icon: Icon, format = "currency" }: MetricCardProps) {
+export default function MetricCard({ title, value, growth, icon: Icon, format = "currency", isLoading = false }: MetricCardProps) {
     const isPositive = growth > 0
     const GrowthIcon = isPositive ? TrendingUp : TrendingDown
 
@@ -32,12 +33,24 @@ export default function MetricCard({ title, value, growth, icon: Icon, format = 
                 <Icon className="h-4 w-4 text-purple-700" />
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">{formatValue(value, format)}</div>
-                <div className="flex items-center space-x-1 text-xs">
-                    <GrowthIcon className={`h-3 w-3 ${isPositive ? "text-green-500" : "text-red-500"}`} />
-                    <span className={isPositive ? "text-green-500" : "text-red-500"}>{Math.abs(growth).toFixed(1)}%</span>
-                    <span className="text-muted-foreground">vs. período anterior</span>
-                </div>
+                {isLoading ? (
+                    <div className="flex items-center justify-center h-16">
+                        <span className="text-sm text-muted-foreground">A carregar...</span>
+                    </div>
+                ) : value === undefined ? (
+                    <div className="flex items-center justify-center h-16">
+                        <span className="text-sm text-muted-foreground">Sem dados disponíveis</span>
+                    </div>
+                ) : (
+                    <>
+                        <div className="text-2xl font-bold">{formatValue(value ?? 0, format)}</div>
+                        <div className="flex items-center space-x-1 text-xs">
+                            <GrowthIcon className={`h-3 w-3 ${isPositive ? "text-green-500" : "text-red-500"}`} />
+                            <span className={isPositive ? "text-green-500" : "text-red-500"}>{Math.abs(growth).toFixed(1)}%</span>
+                            <span className="text-muted-foreground">vs. período anterior</span>
+                        </div>
+                    </>
+                )}
             </CardContent>
         </Card>
     )
