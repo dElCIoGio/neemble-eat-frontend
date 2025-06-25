@@ -26,6 +26,14 @@ export interface DashboardHomeContextProps {
     sessionDurationSummary?: AverageSessionDuration
     activeSessionsSummary?: ActiveSessionCount
     lastSevenDaysOrdersCount?: TotalOrdersCount[]
+    isSalesSummaryLoading: boolean
+    isInvoiceSummaryLoading: boolean
+    isOrdersSummaryLoading: boolean
+    isCancelledOrdersSummaryLoading: boolean
+    isTopItemsSummaryLoading: boolean
+    isSessionDurationSummaryLoading: boolean
+    isActiveSessionsSummaryLoading: boolean
+    isLastSevenDaysOrdersCountLoading: boolean
     insights: Insight[]
     handleExportCSV: () => Promise<void>
     handleExportPDF: () => Promise<void>
