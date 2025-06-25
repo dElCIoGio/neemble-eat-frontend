@@ -20,6 +20,8 @@ import {useGetMenuItemsBySlug} from "@/api/endpoints/menu/hooks";
 import {useListRestaurantTables} from "@/api/endpoints/tables/hooks";
 import {useCart} from "@/hooks/use-cart";
 import {showErrorToast, showPromiseToast, showWarningToast} from "@/utils/notifications/toast";
+import {ordersApi} from "@/api/endpoints/orders/requests";
+import {sessionApi} from "@/api/endpoints/sessions/requests";
 
 
 export default function OrderCustomizationPage() {
@@ -291,7 +293,23 @@ export default function OrderCustomizationPage() {
             return
         }
 
-        const promise = new Promise<void>((resolve) => setTimeout(resolve, 1000))
+        const promise = sessionApi.getActiveSessionByTableNumber(selectedTable, restaurant._id)
+            .then((session) => {
+                const orders = cart.map((cartItem) => ({
+                    sessionId: session._id,
+                    itemId: cartItem.id,
+                    quantity: cartItem.quantity,
+                    additionalNote: cartItem.additionalNotes,
+                    customisations: cartItem.customisations,
+                    orderedItemName: cartItem.name,
+                    restaurantId: restaurant._id,
+                    unitPrice: cartItem.price,
+                    total: cartItem.price * cartItem.quantity,
+                    tableNumber: selectedTable,
+                }))
+
+                return ordersApi.addOrdersGroup(orders, session._id)
+            })
 
         showPromiseToast(promise, {
             loading: "Submitting order...",
