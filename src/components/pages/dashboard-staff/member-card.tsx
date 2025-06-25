@@ -27,7 +27,6 @@ export function MemberCard({ member }: MemberCardProps) {
         handleSelectMember,
         handleEditMember,
         handleDeleteMember,
-        getRoleColor,
         getRoleName,
         getStatusBadge
     } = useDashboardStaff()
@@ -79,7 +78,7 @@ export function MemberCard({ member }: MemberCardProps) {
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Função:</span>
-                    <Badge className={getRoleColor(member.memberships[0]?.roleId)}>
+                    <Badge>
                         {getRoleName(member.memberships[0]?.roleId)}
                     </Badge>
                 </div>

@@ -42,8 +42,8 @@ interface DashboardStaffContextType {
     setIsEditRoleDialogOpen: (open: boolean) => void
     inviteForm: InvitationCreate
     setInviteForm: (form: InvitationCreate) => void
-    roleForm: RoleCreate & { color: string }
-    setRoleForm: (form: RoleCreate & { color: string }) => void
+    roleForm: RoleCreate
+    setRoleForm: (form: RoleCreate) => void
     // Computed values
     stats: {
         total: number
@@ -61,7 +61,6 @@ interface DashboardStaffContextType {
     handleEditMember: (member: User) => void
     handleDeleteMember: (member: User) => void
     getRoleName: (roleId: string) => string
-    getRoleColor: (roleOrId: Role | string | undefined) => string
     getStatusBadge: (status: string) => JSX.Element
     handleBulkAction: (action: string) => void
 }
@@ -93,11 +92,11 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
         restaurantId: restaurant._id
     })
 
-    const [roleForm, setRoleForm] = useState<RoleCreate & { color: string }>({
+    const [roleForm, setRoleForm] = useState<RoleCreate>({
         name: "",
         description: "",
         permissions: [] as SectionPermission[],
-        color: "bg-gray-100 text-gray-800"
+        restaurantId: restaurant._id
     })
 
     const { data: roles } = useListRestaurantRoles(restaurant._id)
@@ -183,14 +182,6 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
         return role?.name || "Sem função"
     }
 
-    const getRoleColor = (roleOrId: Role | string | undefined) => {
-        if (!roleOrId) return "bg-gray-100 text-gray-800"
-        if (typeof roleOrId === "string") {
-            const role = roles?.find(r => r._id === roleOrId)
-            return role?.color || "bg-gray-100 text-gray-800"
-        }
-        return roleOrId.color || "bg-gray-100 text-gray-800"
-    }
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -248,7 +239,6 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
             handleEditMember,
             handleDeleteMember,
             getRoleName,
-            getRoleColor,
             getStatusBadge,
             handleBulkAction
         }}>

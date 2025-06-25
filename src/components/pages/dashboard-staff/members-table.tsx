@@ -82,7 +82,6 @@ function MemberRow({user}: {user: User}) {
         handleSelectMember,
         handleEditMember,
         handleDeleteMember,
-        getRoleColor,
         getRoleName,
         getStatusBadge
     } = useDashboardStaff()
@@ -119,7 +118,7 @@ function MemberRow({user}: {user: User}) {
             </TableCell>
             <TableCell>
                 <div>
-                    <Badge className={getRoleColor(user.memberships[0]?.roleId)}>
+                    <Badge>
                         {getRoleName(user.memberships[0]?.roleId)}
                     </Badge>
                 </div>

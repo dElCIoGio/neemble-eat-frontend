@@ -232,7 +232,7 @@ function StaffContent() {
             name: roleForm.name,
             description: roleForm.description,
             permissions: roleForm.permissions,
-            color: roleForm.color
+            restaurantId: restaurant._id
         }
         
         createRoleMutation.mutate(roleData, {
@@ -243,7 +243,7 @@ function StaffContent() {
                     name: "",
                     description: "",
                     permissions: [],
-                    color: "bg-gray-100 text-gray-800"
+                    restaurantId: restaurant._id
                 })
             }
         })
@@ -320,7 +320,7 @@ function StaffContent() {
                                                         <div key={role._id} className="flex items-center justify-between p-3 border rounded-lg">
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-2">
-                                                                    <Badge className={roleForm.color}>{role.name}</Badge>
+                                                                    <Badge>{role.name}</Badge>
                                                                     <Badge variant="outline">Personalizada</Badge>
                                                                 </div>
                                                                 <p className="text-sm text-gray-600 mt-1">{role.description}</p>
@@ -349,24 +349,6 @@ function StaffContent() {
                                                             onChange={(e) => setRoleForm({ ...roleForm, name: e.target.value })}
                                                             placeholder="Ex: Supervisor de Turno"
                                                         />
-                                                    </div>
-                                                    <div>
-                                                        <Label htmlFor="roleColor">Cor</Label>
-                                                        <Select
-                                                            value={roleForm.color}
-                                                            onValueChange={(value) => setRoleForm({ ...roleForm, color: value })}
-                                                        >
-                                                            <SelectTrigger>
-                                                                <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectItem value="bg-blue-100 text-blue-800">Azul</SelectItem>
-                                                                <SelectItem value="bg-green-100 text-green-800">Verde</SelectItem>
-                                                                <SelectItem value="bg-purple-100 text-purple-800">Roxo</SelectItem>
-                                                                <SelectItem value="bg-orange-100 text-orange-800">Laranja</SelectItem>
-                                                                <SelectItem value="bg-pink-100 text-pink-800">Rosa</SelectItem>
-                                                            </SelectContent>
-                                                        </Select>
                                                     </div>
                                                 </div>
 
