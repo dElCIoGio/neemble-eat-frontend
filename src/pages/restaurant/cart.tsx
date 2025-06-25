@@ -60,29 +60,28 @@ export function Cart() {
         const items = cart.map((item) => item)
 
         if (session && session?._id) {
+            const orders = items.map(item => ({
+                sessionId: session._id,
+                itemId: item.id,
+                quantity: item.quantity,
+                additionalNote: item.additionalNote,
+                customizations: [],
+                orderedItemName: item.name,
+                restaurantId: restaurant._id,
+                unitPrice: item.price,
+                total: item.price * item.quantity,
+                tableNumber: Number(tableNumber)
+            }))
 
-            // TODO: post the orders as a list
-            for (const item of items) {
-                ordersApi.addOrder({
-                    sessionId: session?._id,
-                    itemId: item.id,
-                    quantity: item.quantity,
-                    additionalNote: item.additionalNote,
-                    customizations: [],
-                    orderedItemName: item.name,
-                    restaurantId: restaurant._id,
-                    unitPrice: item.price,
-                    total: item.price * item.quantity,
-                    tableNumber: Number(tableNumber)
-                }, session._id).catch(() => {
-                    setOrderStatus("Error")
-                    setAlertMessage("Houve um erro com o seu pedido, um garçon irá confirmar o seu pedido em breve.")
-                }).then(() => {
-                    setOrderStatus("Success")
-                    setAlertMessage(`O seu pedido será levado á sua mesa em breve!`)
-                    setCartEmpty()
-                })
-            }
+            ordersApi.addOrdersGroup(orders, session._id).catch(() => {
+                setOrderStatus("Error")
+                setAlertMessage("Houve um erro com o seu pedido, um garçon irá confirmar o seu pedido em breve.")
+            }).then(() => {
+                setOrderStatus("Success")
+                setAlertMessage(`O seu pedido será levado á sua mesa em breve!`)
+                setCartEmpty()
+            })
+
             if (session && session._id)
                 invalidateOrdersKey()
         }
