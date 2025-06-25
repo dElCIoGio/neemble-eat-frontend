@@ -1,18 +1,20 @@
 import {formatDateString} from "@/lib/helpers/format-date-string";
 import {Order} from "@/types/order";
+import {ChevronDown} from "lucide-react";
+import {useState} from "react";
 
 interface Props {
     order: Order
 }
 
 export function OrderSingleItem({order}: Props) {
-
     const {day, month, time} = formatDateString(order.orderTime)
+    const [expanded, setExpanded] = useState(false)
 
 
     return (
-        <div className='flex justify-between items-center text-sm'>
-            <div>
+        <div className='text-sm cursor-pointer' onClick={() => setExpanded(!expanded)}>
+            <div className='flex justify-between items-center'>
                 <div className='flex'>
                     <p className='font-semibold'>Pedido:&nbsp;</p>
                     <p className='truncate hover:overflow-clip w-32'>
@@ -22,10 +24,11 @@ export function OrderSingleItem({order}: Props) {
                         x {order.quantity}
                     </p>
                 </div>
-                <p className='text-sm text-gray-400'>
-                    {`${day} de ${month} | ${time}`}
-                </p>
+                <ChevronDown size={16} className={`ml-2 transition-transform ${expanded ? "rotate-180" : ""}`}/>
             </div>
+            <p className='text-sm text-gray-400'>
+                {`${day} de ${month} | ${time}`}
+            </p>
             <div className='text-sm'>
                 <div className='flex'>
 
@@ -35,6 +38,12 @@ export function OrderSingleItem({order}: Props) {
                     <p>&nbsp;Kz</p>
                 </div>
             </div>
+            {expanded && (
+                <div className='mt-1 text-xs text-gray-600 space-y-1'>
+                    <p>Mesa: {order.tableNumber}</p>
+                    {order.additionalNote && <p>Nota: {order.additionalNote}</p>}
+                </div>
+            )}
         </div>
 
     );

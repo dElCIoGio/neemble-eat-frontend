@@ -79,7 +79,8 @@ export function Orders() {
             orders: orders,
             isFetchingOrders: isFetchingOrders,
             customerName,
-            cleanList
+            cleanList,
+            setBillDialogOpen: setIsPopupOpen
         }}>
             <div className="p-4">
                 <Background className={`bg-gray-100`}/>
@@ -92,16 +93,14 @@ export function Orders() {
                         Abaixo estão os seus pedidos
                     </p>
                 </div>
-                <div >
+                <div>
                     {
-                        orders ?
-                            orders.length === 0 ?
-                                <NoOrders/> :
-                                <>
-                                    <OrdersDisplay/>
-                                    <Payment/>
-                                </> :
-                            <NoOrders/>
+                        !isPopupOpen && orders ? (
+                            orders.length === 0 ? <NoOrders/> : <>
+                                <OrdersDisplay/>
+                                <Payment/>
+                            </>
+                        ) : !isPopupOpen ? <NoOrders/> : null
                     }
                 </div>
 

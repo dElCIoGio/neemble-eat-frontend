@@ -8,6 +8,7 @@ interface ContextProps {
     isFetchingOrders: boolean;
     customerName: string
     cleanList: () => void
+    setBillDialogOpen: (open: boolean) => void
 }
 
 export const OrdersContext = createContext<ContextProps | undefined>(undefined)
