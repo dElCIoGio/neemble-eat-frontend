@@ -44,7 +44,7 @@ interface DashboardStaffContextType {
     inviteForm: InvitationCreate
     setInviteForm: (form: InvitationCreate) => void
     roleForm: RoleCreate
-    setRoleForm: (form: RoleCreate) => void
+    setRoleForm: React.Dispatch<React.SetStateAction<RoleCreate>>
     // Computed values
     stats: {
         total: number
