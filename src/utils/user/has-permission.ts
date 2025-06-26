@@ -10,8 +10,23 @@ import { Role, Permissions } from "@/types/role";
  * @param operation The operation to check (e.g., "view", "create", etc.)
  * @returns boolean indicating if the operation is allowed
  */
-export function hasPermission(role: Role, section: string, operation: Permissions): boolean {
+export function hasPermission(
+    role: Role,
+    section: string,
+    operation: Permissions
+): boolean {
     const sectionPermission = role.permissions.find((p) => p.section === section);
     if (!sectionPermission) return false;
-    return sectionPermission.permissions.includes(operation);
+
+    switch (operation) {
+        case "view":
+            return sectionPermission.permissions.canView;
+        case "create":
+        case "update":
+            return sectionPermission.permissions.canEdit;
+        case "delete":
+            return sectionPermission.permissions.canDelete;
+        default:
+            return false;
+    }
 }

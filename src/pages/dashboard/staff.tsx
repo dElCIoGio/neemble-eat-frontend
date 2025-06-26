@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { User } from "@/types/user"
-import {RoleCreate, SectionPermission, Role, Permissions, PartialRole} from "@/types/role"
+import {RoleCreate, SectionPermission, Role, PartialRole} from "@/types/role"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -49,56 +49,56 @@ import {Checkbox} from "@/components/ui/checkbox";
 
 const defaultSectionPermissions: SectionPermission[] = [
     // 🍽️ RestaurantMenu & Ordering
-    { section: "menus", permissions: ["view", "create", "update", "delete"] },
-    { section: "categories", permissions: ["view", "create", "update", "delete"] },
-    { section: "items", permissions: ["view", "create", "update", "delete"] },
-    { section: "customizations", permissions: ["view", "create", "update", "delete"] },
-    { section: "orders", permissions: ["view", "update"] },
+    { section: "menus", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "categories", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "items", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "customizations", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "orders", permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 🛒 Customer Experience
-    { section: "cart_view", permissions: ["view"] },
-    { section: "customer_orders_summary", permissions: ["view"] },
-    { section: "table_qr_access_control", permissions: ["view", "update"] },
+    { section: "cart_view", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: "customer_orders_summary", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: "table_qr_access_control", permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 👨‍🍳 Restaurant Operations
-    { section: "kitchen_view", permissions: ["view", "update"] },
-    { section: "bar_view", permissions: ["view", "update"] },
-    { section: "order_queue", permissions: ["view", "update"] },
-    { section: "tables", permissions: ["view", "create", "update", "delete"] },
-    { section: "reservations", permissions: ["view", "create", "update", "delete"] },
+    { section: "kitchen_view", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: "bar_view", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: "order_queue", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: "tables", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "reservations", permissions: { canView: true, canEdit: true, canDelete: true } },
 
     // 👥 Team & Roles
-    { section: "users", permissions: ["view", "create", "update", "delete"] },
-    { section: "roles", permissions: ["view", "create", "update", "delete"] },
-    { section: "permissions", permissions: ["view", "update"] },
+    { section: "users", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "roles", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "permissions", permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 💳 Sales & Billing
-    { section: "sales_dashboard", permissions: ["view"] },
-    { section: "invoices", permissions: ["view", "update"] },
-    { section: "payments", permissions: ["view"] },
-    { section: "reports", permissions: ["view", "create"] },
+    { section: "sales_dashboard", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: "invoices", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: "payments", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: "reports", permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 📊 Analytics & Insights
-    { section: "performance_insights", permissions: ["view"] },
-    { section: "product_popularity", permissions: ["view"] },
-    { section: "revenue_trends", permissions: ["view"] },
-    { section: "customer_feedback", permissions: ["view"] },
+    { section: "performance_insights", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: "product_popularity", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: "revenue_trends", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: "customer_feedback", permissions: { canView: true, canEdit: false, canDelete: false } },
 
     // ⚙️ Settings & Config
-    { section: "restaurant_settings", permissions: ["view", "update"] },
-    { section: "opening_hours", permissions: ["view", "update"] },
-    { section: "printer_setup", permissions: ["view", "update"] },
-    { section: "table_qr_configuration", permissions: ["view", "update"] },
+    { section: "restaurant_settings", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: "opening_hours", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: "printer_setup", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: "table_qr_configuration", permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 📢 Marketing & Communication
-    { section: "promotions", permissions: ["view", "create", "update", "delete"] },
-    { section: "announcements", permissions: ["view", "create", "update", "delete"] },
-    { section: "customer_reviews", permissions: ["view", "update", "delete"] },
+    { section: "promotions", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "announcements", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: "customer_reviews", permissions: { canView: true, canEdit: true, canDelete: true } },
 
     // 🛠️ Support & Maintenance
-    { section: "system_logs", permissions: ["view"] },
-    { section: "integration_settings", permissions: ["view", "update"] },
-    { section: "help_requests", permissions: ["view", "update", "delete"] },
+    { section: "system_logs", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: "integration_settings", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: "help_requests", permissions: { canView: true, canEdit: true, canDelete: true } },
 ];
 
 const useCreateRole = () => {
@@ -160,7 +160,11 @@ function StaffContent() {
     const updateRoleMutation = useUpdateRole(restaurant._id)
     const [newPermission, setNewPermission] = useState<SectionPermission>({
         section: "",
-        permissions: []
+        permissions: {
+            canView: false,
+            canEdit: false,
+            canDelete: false,
+        }
     })
 
     const filteredMembers = users.filter((member) => {
@@ -199,7 +203,11 @@ function StaffContent() {
 
     const convertToSectionPermission = (section: string): SectionPermission => ({
         section,
-        permissions: ["view"]
+        permissions: {
+            canView: true,
+            canEdit: false,
+            canDelete: false,
+        }
     })
 
     const handleRolePermissionToggle = (section: string) => {
@@ -294,14 +302,18 @@ function StaffContent() {
         setIsEditRoleDialogOpen(true)
     }
 
-    const togglePermission = (index: number, perm: Permissions) => {
+    const togglePermission = (
+        index: number,
+        perm: keyof SectionPermission["permissions"]
+    ) => {
         const permissions = roleForm.permissions.map((p, i) => {
             if (i !== index) return p
             return {
                 ...p,
-                permissions: p.permissions.includes(perm)
-                    ? p.permissions.filter(pr => pr !== perm)
-                    : [...p.permissions, perm]
+                permissions: {
+                    ...p.permissions,
+                    [perm]: !p.permissions[perm],
+                },
             }
         })
         setRoleForm({ ...roleForm, permissions })
@@ -314,12 +326,15 @@ function StaffContent() {
         }))
     }
 
-    const handleToggleNewPerm = (perm: Permissions) => {
+    const handleToggleNewPerm = (
+        perm: keyof SectionPermission["permissions"]
+    ) => {
         setNewPermission(prev => ({
             ...prev,
-            permissions: prev.permissions.includes(perm)
-                ? prev.permissions.filter(p => p !== perm)
-                : [...prev.permissions, perm]
+            permissions: {
+                ...prev.permissions,
+                [perm]: !prev.permissions[perm],
+            },
         }))
     }
 
@@ -329,7 +344,10 @@ function StaffContent() {
             ...roleForm,
             permissions: [...roleForm.permissions, newPermission]
         })
-        setNewPermission({ section: "", permissions: [] })
+        setNewPermission({
+            section: "",
+            permissions: { canView: false, canEdit: false, canDelete: false },
+        })
     }
 
     const handleSaveRole = () => {
@@ -473,7 +491,10 @@ function StaffContent() {
                                                                                     {permission.section.replace(/_/g, ' ')}
                                                                                 </Label>
                                                                                 <p className="text-xs text-muted-foreground">
-                                                                                    Permissões: {permission.permissions.join(', ')}
+                                                                                    Permissões:
+                                                                                    {permission.permissions.canView && ' ver'}
+                                                                                    {permission.permissions.canEdit && ', editar'}
+                                                                                    {permission.permissions.canDelete && ', eliminar'}
                                                                                 </p>
                                                                             </div>
                                                                         </div>
@@ -532,14 +553,14 @@ function StaffContent() {
                                                             </Button>
                                                         </div>
                                                         <div className="flex flex-wrap gap-3 mt-2">
-                                                            {(['view','create','update','delete'] as Permissions[]).map(p => (
+                                                            {(['canView','canEdit','canDelete'] as (keyof SectionPermission['permissions'])[]).map(p => (
                                                                 <label key={p} className="flex items-center gap-2 text-sm">
                                                                     <Checkbox
-                                                                        checked={perm.permissions.includes(p)}
+                                                                        checked={perm.permissions[p]}
                                                                         onCheckedChange={() => togglePermission(idx, p)}
                                                                         id={`${perm.section}-${p}`}
                                                                     />
-                                                                    {p}
+                                                                    {p.replace('can', '').toLowerCase()}
                                                                 </label>
                                                             ))}
                                                         </div>
@@ -555,13 +576,13 @@ function StaffContent() {
                                                            section: e.target.value
                                                        })}/>
                                                 <div className="flex flex-wrap gap-3 mt-2">
-                                                    {['view', 'create', 'update', 'delete'].map(p => (
+                                                    {(['canView','canEdit','canDelete'] as (keyof SectionPermission['permissions'])[]).map(p => (
                                                         <label key={p} className="flex items-center gap-2 text-sm">
                                                             <Checkbox
-                                                                checked={newPermission.permissions.includes(p as Permissions)}
-                                                                onCheckedChange={() => handleToggleNewPerm(p as Permissions)}
+                                                                checked={newPermission.permissions[p]}
+                                                                onCheckedChange={() => handleToggleNewPerm(p)}
                                                                 id={`new-${p}`}/>
-                                                            {p}
+                                                            {p.replace('can', '').toLowerCase()}
                                                         </label>
                                                     ))}
                                                 </div>
