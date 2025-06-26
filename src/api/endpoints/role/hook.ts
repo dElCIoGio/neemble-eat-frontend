@@ -1,7 +1,8 @@
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useQuery, useQueryClient, useMutation} from "@tanstack/react-query";
 import {roleApi} from "@/api/endpoints/role/requests";
 import {User} from "@/types/user";
-import {Role} from "@/types/role";
+import {Role, PartialRole} from "@/types/role";
+import {showSuccessToast, showErrorToast} from "@/utils/notifications/toast";
 
 
 export function useGetRole(roleId: string | undefined) {
@@ -51,4 +52,22 @@ export function useListRestaurantRoles(restaurantId: string) {
         removeRole,
     }
 
+}
+
+export function useUpdateRole(restaurantId: string) {
+    const queryClient = useQueryClient()
+    const queryKey = ["roles", restaurantId]
+
+    return useMutation({
+        mutationFn: ({roleId, data}: {roleId: string; data: PartialRole}) => roleApi.updateRole(roleId, data),
+        onSuccess: (role) => {
+            queryClient.setQueryData<Role[]>(queryKey, (old = []) =>
+                old.map(r => r._id === role._id ? role : r)
+            )
+            showSuccessToast("Função atualizada com sucesso")
+        },
+        onError: () => {
+            showErrorToast("Erro ao atualizar função")
+        }
+    })
 }

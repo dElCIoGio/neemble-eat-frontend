@@ -22,10 +22,17 @@ export function useListRestaurantRoles(restaurantId: string) {
         )
     }
 
+    const updateRole = (updated: Role) => {
+        queryClient.setQueryData<Role[]>(["roles", restaurantId], (old = []) =>
+            old.map(role => role._id === updated._id ? updated : role)
+        )
+    }
+
     return {
         data: data ? data : [],
         ...query,
         addRole,
-        removeRole
+        removeRole,
+        updateRole
     }
-} 
+}

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { User } from "@/types/user"
-import { RoleCreate, SectionPermission } from "@/types/role"
+import { RoleCreate, SectionPermission, Role, Permissions } from "@/types/role"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { roleApi } from "@/api/endpoints/role/requests"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useUpdateRole } from "@/api/endpoints/role/hook"
 import { showSuccessToast, showErrorToast, showPromiseToast } from "@/utils/notifications/toast"
 import { invitationApi } from "@/api/endpoints/invitation/requests"
 import { useGetRestaurantInvitations } from "@/hooks/use-get-restaurant-invitations"
@@ -129,6 +130,10 @@ function StaffContent() {
         isRoleDialogOpen,
         isInviteDialogOpen,
         setIsInviteDialogOpen,
+        editingRole,
+        setEditingRole,
+        isEditRoleDialogOpen,
+        setIsEditRoleDialogOpen,
 
     } = useDashboardStaff()
 
@@ -137,7 +142,8 @@ function StaffContent() {
     const {
         data: roles,
         addRole,
-        removeRole
+        removeRole,
+        updateRole
     } = useListRestaurantRoles(restaurant._id)
 
     console.log("ROLES:", roles)
@@ -152,6 +158,8 @@ function StaffContent() {
     const [newInvitation, setNewInvitation] = useState<Invitation | null>(null)
 
     const createRoleMutation = useCreateRole()
+    const updateRoleMutation = useUpdateRole(restaurant._id)
+    const [newPermission, setNewPermission] = useState<SectionPermission>({ section: "", permissions: [] })
 
     const filteredMembers = users.filter((member) => {
         const matchesSearch =
@@ -271,6 +279,74 @@ function StaffContent() {
         setIsRoleDialogOpen(false)
     }
 
+    const handleEditRole = (role: Role) => {
+        setEditingRole(role)
+        setRoleForm({
+            name: role.name,
+            description: role.description,
+            permissions: role.permissions,
+            restaurantId: role.restaurantId,
+            level: role.level
+        })
+        setIsEditRoleDialogOpen(true)
+    }
+
+    const togglePermission = (index: number, perm: Permissions) => {
+        const permissions = roleForm.permissions.map((p, i) => {
+            if (i !== index) return p
+            return {
+                ...p,
+                permissions: p.permissions.includes(perm)
+                    ? p.permissions.filter(pr => pr !== perm)
+                    : [...p.permissions, perm]
+            }
+        })
+        setRoleForm({ ...roleForm, permissions })
+    }
+
+    const handleToggleNewPerm = (perm: Permissions) => {
+        setNewPermission(prev => ({
+            ...prev,
+            permissions: prev.permissions.includes(perm)
+                ? prev.permissions.filter(p => p !== perm)
+                : [...prev.permissions, perm]
+        }))
+    }
+
+    const handleAddPermission = () => {
+        if (!newPermission.section) return
+        setRoleForm({
+            ...roleForm,
+            permissions: [...roleForm.permissions, newPermission]
+        })
+        setNewPermission({ section: "", permissions: [] })
+    }
+
+    const handleSaveRole = () => {
+        if (!editingRole) return
+        const data = {
+            name: roleForm.name,
+            description: roleForm.description,
+            permissions: roleForm.permissions,
+            restaurantId: restaurant._id,
+            level: roleForm.level
+        }
+        updateRoleMutation.mutate({ roleId: editingRole._id, data }, {
+            onSuccess: (updated) => {
+                updateRole(updated)
+                setIsEditRoleDialogOpen(false)
+                setEditingRole(null)
+                setRoleForm({
+                    name: "",
+                    description: "",
+                    permissions: [],
+                    restaurantId: restaurant._id,
+                    level: 0
+                })
+            }
+        })
+    }
+
 
 
     const groupedPermissions = defaultSectionPermissions.reduce(
@@ -327,7 +403,7 @@ function StaffContent() {
                                                                 <p className="text-xs text-gray-500 mt-1">{role.permissions.length} permissões</p>
                                                             </div>
                                                             <div className="flex gap-2">
-                                                                <Button variant="ghost" size="sm">
+                                                                <Button variant="ghost" size="sm" onClick={() => handleEditRole(role)}>
                                                                     <Edit className="w-4 h-4" />
                                                                 </Button>
                                                                 <Button variant="ghost" size="sm" onClick={() => handleDeleteRole(role._id)} className="text-red-600">
@@ -403,6 +479,64 @@ function StaffContent() {
                                                 </DialogFooter>
                                             </TabsContent>
                                         </Tabs>
+                                    </DialogContent>
+                                </Dialog>
+                                <Dialog open={isEditRoleDialogOpen} onOpenChange={setIsEditRoleDialogOpen}>
+                                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                                        <DialogHeader>
+                                            <DialogTitle>Editar Função</DialogTitle>
+                                            <DialogDescription>Atualize nível e permissões desta função.</DialogDescription>
+                                        </DialogHeader>
+                                        <div className="space-y-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <Label htmlFor="edit-role-name">Nome</Label>
+                                                    <Input id="edit-role-name" value={roleForm.name} onChange={(e) => setRoleForm({ ...roleForm, name: e.target.value })} />
+                                                </div>
+                                                <div>
+                                                    <Label htmlFor="edit-role-level">Nível</Label>
+                                                    <Input id="edit-role-level" type="number" value={roleForm.level} onChange={(e) => setRoleForm({ ...roleForm, level: Number(e.target.value) })} />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <Label htmlFor="edit-role-description">Descrição</Label>
+                                                <Textarea id="edit-role-description" value={roleForm.description} onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })} />
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                {roleForm.permissions.map((perm, idx) => (
+                                                    <div key={idx} className="border p-3 rounded-lg">
+                                                        <Label className="capitalize">{perm.section.replace(/_/g, ' ')}</Label>
+                                                        <div className="flex flex-wrap gap-3 mt-2">
+                                                            {['view','create','update','delete'].map(p => (
+                                                                <label key={p} className="flex items-center gap-2 text-sm">
+                                                                    <Checkbox checked={perm.permissions.includes(p as any)} onCheckedChange={() => togglePermission(idx, p)} id={`${perm.section}-${p}`} />
+                                                                    {p}
+                                                                </label>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Novo Módulo</Label>
+                                                <Input placeholder="ex: reports" value={newPermission.section} onChange={(e) => setNewPermission({ ...newPermission, section: e.target.value })} />
+                                                <div className="flex flex-wrap gap-3 mt-2">
+                                                    {['view','create','update','delete'].map(p => (
+                                                        <label key={p} className="flex items-center gap-2 text-sm">
+                                                            <Checkbox checked={newPermission.permissions.includes(p as any)} onCheckedChange={() => handleToggleNewPerm(p)} id={`new-${p}`} />
+                                                            {p}
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                                <Button variant="ghost" size="sm" onClick={handleAddPermission}>Adicionar Permissão</Button>
+                                            </div>
+                                        </div>
+                                        <DialogFooter className="mt-4">
+                                            <Button variant="outline" onClick={() => setIsEditRoleDialogOpen(false)}>Cancelar</Button>
+                                            <Button onClick={handleSaveRole}>Salvar</Button>
+                                        </DialogFooter>
                                     </DialogContent>
                                 </Dialog>
                                 <Dialog
