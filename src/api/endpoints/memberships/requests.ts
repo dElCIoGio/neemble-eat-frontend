@@ -7,7 +7,7 @@ const baseRoute = "/memberships"
 export const membershipsApi = {
 
     getUserMembership: async (userId: string, restaurantId: string) => {
-        const result = await apiClient.get<Membership>(`${baseRoute}/${userId}/restaurants/${restaurantId}`)
+        const result = await apiClient.get<Membership>(`${baseRoute}/${userId}/restaurant/${restaurantId}`)
         return result.data
     },
 

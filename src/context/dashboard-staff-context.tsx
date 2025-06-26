@@ -98,7 +98,8 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
         name: "",
         description: "",
         permissions: [] as SectionPermission[],
-        restaurantId: restaurant._id
+        restaurantId: restaurant._id,
+        level: 0,
     })
 
     const { data: roles } = useListRestaurantRoles(restaurant._id)

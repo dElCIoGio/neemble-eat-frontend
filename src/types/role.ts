@@ -11,7 +11,7 @@ export type RoleCreate = {
     description: string;
     permissions: SectionPermission[];
     restaurantId: string;
-    role: number
+    level: number
 }
 
 export type Role = {
