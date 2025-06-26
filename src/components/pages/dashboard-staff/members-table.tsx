@@ -22,7 +22,6 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { useDashboardStaff } from "@/context/dashboard-staff-context"
 import {User} from "@/types/user";
-import {useGetUserMemberships} from "@/api/endpoints/memberships/hooks";
 import {useDashboardContext} from "@/context/dashboard-context";
 import {useListRestaurantRoles} from "@/hooks/use-list-restaurant-roles";
 
@@ -97,11 +96,9 @@ function MemberRow({user}: {user: User}) {
         restaurant
     } = useDashboardContext()
 
-    const {
-        data: membership
-    } = useGetUserMemberships(user._id, restaurant._id)
-
     const { data: roles } = useListRestaurantRoles(restaurant._id)
+
+    const membership = user.memberships[0]
 
     return (
         <TableRow key={user._id}>

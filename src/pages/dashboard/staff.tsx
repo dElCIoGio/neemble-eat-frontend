@@ -246,7 +246,7 @@ function StaffContent() {
 
     const handleCreateRole = () => {
         const roleData: RoleCreate = {
-            level: 0,
+            level: roleForm.level,
             name: roleForm.name,
             description: roleForm.description,
             permissions: roleForm.permissions,
@@ -447,7 +447,7 @@ function StaffContent() {
                                             </TabsContent>
 
                                             <TabsContent value="create" className="space-y-4">
-                                                <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                     <div>
                                                         <Label htmlFor="roleName">Nome da Função</Label>
                                                         <Input
@@ -455,6 +455,15 @@ function StaffContent() {
                                                             value={roleForm.name}
                                                             onChange={(e) => setRoleForm({ ...roleForm, name: e.target.value })}
                                                             placeholder="Ex: Supervisor de Turno"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <Label htmlFor="roleLevel">Nível</Label>
+                                                        <Input
+                                                            id="roleLevel"
+                                                            type="number"
+                                                            value={roleForm.level}
+                                                            onChange={(e) => setRoleForm({ ...roleForm, level: Number(e.target.value) })}
                                                         />
                                                     </div>
                                                 </div>
