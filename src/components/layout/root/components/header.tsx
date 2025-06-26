@@ -33,7 +33,7 @@ export function Header() {
             <div className="w-full bg-zinc-800 text-white text-center py-2 text-sm">
                 <span>Oferta Especial para Novos Restaurantes: </span>
                 <span className="text-purple-300 hover:text-purple-100">
-                    1 Mês Grátis
+                    1 Mês Gratuito
                 </span>
             </div>
 

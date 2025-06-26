@@ -3,7 +3,7 @@
 cat <<EOF > /usr/share/nginx/html/env.js
 window.ENV = {
   VITE_ENV: "${VITE_ENV}",
-  VITE_API_URL: "api.neemble-eat.com",
+  VITE_API_URL: "${VITE_API_URL}",
   VITE_API_KEY: "${VITE_API_KEY}",
   VITE_AUTH_DOMAIN: "${VITE_AUTH_DOMAIN}",
   VITE_PROJECT_ID: "${VITE_PROJECT_ID}",

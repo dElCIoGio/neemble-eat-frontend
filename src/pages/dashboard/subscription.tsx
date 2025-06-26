@@ -732,7 +732,7 @@ export default function Subscription() {
                                         </CardHeader>
                                         <CardContent className="space-y-3">
                                             <p className="text-sm text-gray-600">
-                                                Indique amigos e ganhe 1 mês grátis para cada novo cliente!
+                                                Indique amigos e ganhe 1 mês gratuito para cada novo cliente!
                                             </p>
                                             <div className="p-3 bg-purple-50 rounded-lg">
                                                 <p className="text-xs font-medium text-purple-700 mb-1">Seu código de indicação:</p>
