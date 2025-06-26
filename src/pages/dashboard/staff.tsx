@@ -137,7 +137,6 @@ function StaffContent() {
 
     } = useDashboardStaff()
 
-    console.log(roleForm)
 
     const { restaurant, user } = useDashboardContext()
 
@@ -159,7 +158,10 @@ function StaffContent() {
 
     const createRoleMutation = useCreateRole()
     const updateRoleMutation = useUpdateRole(restaurant._id)
-    const [newPermission, setNewPermission] = useState<SectionPermission>({ section: "", permissions: [] })
+    const [newPermission, setNewPermission] = useState<SectionPermission>({
+        section: "",
+        permissions: []
+    })
 
     const filteredMembers = users.filter((member) => {
         const matchesSearch =
@@ -303,6 +305,13 @@ function StaffContent() {
             }
         })
         setRoleForm({ ...roleForm, permissions })
+    }
+
+    const handleRemovePermission = (index: number) => {
+        setRoleForm(prev => ({
+            ...prev,
+            permissions: prev.permissions.filter((_, i) => i !== index)
+        }))
     }
 
     const handleToggleNewPerm = (perm: Permissions) => {
@@ -509,21 +518,32 @@ function StaffContent() {
 
                                             <div className="space-y-4">
                                                 {roleForm.permissions.map((perm, idx) => (
-                                                    perm && (
-                                                        <div key={idx} className="border p-3 rounded-lg">
-                                                            <Label
-                                                                className="capitalize">{perm.section.replace(/_/g, ' ')}</Label>
-                                                            <div className="flex flex-wrap gap-3 mt-2">
-                                                                <label className="flex items-center gap-2 text-sm">
-                                                                    <Checkbox
-                                                                        checked={perm.permissions.canView}
-                                                                        onCheckedChange={() => togglePermission(idx, p as Permissions)}
-                                                                        id={`${perm.section}-view`}/>
-                                                                </label>
-                                                            </div>
+                                                    <div key={perm.section} className="border p-3 rounded-lg space-y-2">
+                                                        <div className="flex items-center justify-between">
+                                                            <Label className="capitalize">
+                                                                {perm.section.replace(/_/g, " ")}
+                                                            </Label>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleRemovePermission(idx)}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
                                                         </div>
-                                                    )
-
+                                                        <div className="flex flex-wrap gap-3 mt-2">
+                                                            {(['view','create','update','delete'] as Permissions[]).map(p => (
+                                                                <label key={p} className="flex items-center gap-2 text-sm">
+                                                                    <Checkbox
+                                                                        checked={perm.permissions.includes(p)}
+                                                                        onCheckedChange={() => togglePermission(idx, p)}
+                                                                        id={`${perm.section}-${p}`}
+                                                                    />
+                                                                    {p}
+                                                                </label>
+                                                            ))}
+                                                        </div>
+                                                    </div>
                                                 ))}
                                             </div>
 
