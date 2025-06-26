@@ -12,6 +12,16 @@ import {Loader} from "@/components/ui/loader";
 import {menuApi} from "@/api/endpoints/menu/requests";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import type {Menu} from "@/types/menu";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 
 
@@ -29,6 +39,8 @@ export default function MenuManager() {
     console.log(menus)
 
     const [searchTerm, setSearchTerm] = useState("")
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [menuToDelete, setMenuToDelete] = useState<Menu | null>(null)
 
     const filteredMenus = menus? menus.filter(
         (menu) =>
@@ -36,11 +48,11 @@ export default function MenuManager() {
             menu.description.toLowerCase().includes(searchTerm.toLowerCase()),
     ): []
 
-    const handleDeleteMenu = async (id: string, e: React.MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation();
-        e.preventDefault();
+    const confirmDeleteMenu = async () => {
+        if (!menuToDelete) return
 
         try {
+            const id = menuToDelete._id
             showPromiseToast(
                 menuApi.deleteMenu(id).then(() => {
                     removeMenu(id)
@@ -50,9 +62,12 @@ export default function MenuManager() {
                     success: "RestaurantMenu deleted successfully!",
                     error: "Failed to delete menu. Please try again."
                 }
-            );
+            )
         } catch (error) {
-            console.error("Error deleting menu:", error);
+            console.error("Error deleting menu:", error)
+        } finally {
+            setDeleteDialogOpen(false)
+            setMenuToDelete(null)
         }
     }
 
@@ -157,7 +172,15 @@ export default function MenuManager() {
                                                     <DropdownMenuItem onClick={(e) => handleToggleStatus(menu, e)}>
                                                         {menu.isActive ? "Desativar" : "Ativar"}
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={(e) => handleDeleteMenu(menu._id, e)} className="text-red-600">
+                                                    <DropdownMenuItem
+                                                        onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            e.preventDefault()
+                                                            setMenuToDelete(menu)
+                                                            setDeleteDialogOpen(true)
+                                                        }}
+                                                        className="text-red-600"
+                                                    >
                                                         <Trash2 className="h-4 w-4 mr-2" />
                                                         Excluir
                                                     </DropdownMenuItem>
@@ -172,6 +195,22 @@ export default function MenuManager() {
                     )}
                 </div>
             </div>
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Excluir cardápio</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Tem a certeza que deseja excluir o cardápio "{menuToDelete?.name}"?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDeleteMenu} className="bg-red-600 hover:bg-red-700">
+                            Excluir
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }
