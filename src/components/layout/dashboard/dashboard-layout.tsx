@@ -52,6 +52,9 @@ function DashboardLayout() {
     const { data: user } = useMe()
     const { data: restaurant } = useGetCurrentRestaurant()
 
+
+
+
     if (!user) {
         return <div className={ "flex h-dvh items-center justify-center"}>
             <Loader/>
