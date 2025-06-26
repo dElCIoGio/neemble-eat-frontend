@@ -19,7 +19,7 @@ function HomeLayout() {
     useEffect(() => {
         console.log("Warming up...")
         warmUp()
-    })
+    }, [location])
 
     useEffect(() => {
         window.scrollTo(0, 0);
