@@ -23,7 +23,7 @@ jobs:
           project_id: ${{ secrets.PROJECT_ID }}
 
       - name: Build and push Docker image
-        continue-on-error: true
+#        continue-on-error: true
         run: |
           gcloud builds submit --tag gcr.io/${{ secrets.PROJECT_ID }}/${{ secrets.SERVICE_NAME }} || echo "Build finished (log streaming failed)"
 
