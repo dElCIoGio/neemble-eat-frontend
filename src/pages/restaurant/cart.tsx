@@ -65,7 +65,7 @@ export function Cart() {
                 itemId: item.id,
                 quantity: item.quantity,
                 additionalNote: item.additionalNote,
-                customizations: [],
+                customisations: item.customisations ?? [],
                 orderedItemName: item.name,
                 restaurantId: restaurant._id,
                 unitPrice: item.price,

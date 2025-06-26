@@ -54,6 +54,17 @@ export function CartItemCard({itemIndex}: CartItemProps) {
                         <p className='mx-1'>x</p>
                         <p className='font-bold'>{getItem().quantity}</p>
                     </div>
+                    {item.customisations?.map((c) => (
+                        <div key={c.ruleName} className='text-xs text-gray-600'>
+                            <span className='font-medium'>{c.ruleName}: </span>
+                            {c.selectedOptions.map(o => `${o.optionName} (${o.quantity})`).join(', ')}
+                        </div>
+                    ))}
+                    {item.additionalNote && (
+                        <div className='text-xs text-gray-600'>
+                            <span className='font-medium'>Obs: </span>{item.additionalNote}
+                        </div>
+                    )}
                     <div className='flex justify-between items-center max-w-28 mt-3.5'>
                         <div className='flex space-x-3'>
                             <div
