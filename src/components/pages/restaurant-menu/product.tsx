@@ -200,10 +200,10 @@ export function Product({children, item}: props) {
                 name: item.name,
                 price: unitPrice,
                 quantity: numberOfItems,
-                additionalNote: note,
+                additionalNotes: note,
                 customisations: selectedCustomizations.filter(c => c.selectedOptions.length > 0),
             }
-            if (note == "") data.additionalNote = note
+            if (note == "") data.additionalNotes = note
             addItem(data)
         }
         setNumberOfItems(0)
@@ -223,7 +223,12 @@ export function Product({children, item}: props) {
             onSubmit: handleSubmit,
             onClickItemQuantity: handleQuantityChange,
             quantity: numberOfItems,
-            total
+            total,
+            handleCustomizationChange,
+            getOptionQuantity,
+            canSelectMore,
+            isOptionSelected,
+            allRequiredRulesSatisfied
         }}>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger>
@@ -268,7 +273,13 @@ export function Product({children, item}: props) {
 
 export function ProductContent() {
 
-    const {item} = useProductContext()
+    const {
+        item,
+        handleCustomizationChange,
+        getOptionQuantity,
+        isOptionSelected,
+        canSelectMore
+    } = useProductContext()
 
 
     return <div>

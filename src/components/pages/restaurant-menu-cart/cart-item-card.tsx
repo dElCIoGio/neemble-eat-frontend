@@ -60,9 +60,9 @@ export function CartItemCard({itemIndex}: CartItemProps) {
                             {c.selectedOptions.map(o => `${o.optionName} (${o.quantity})`).join(', ')}
                         </div>
                     ))}
-                    {item.additionalNote && (
+                    {item.additionalNotes && (
                         <div className='text-xs text-gray-600'>
-                            <span className='font-medium'>Obs: </span>{item.additionalNote}
+                            <span className='font-medium'>Obs: </span>{item.additionalNotes}
                         </div>
                     )}
                     <div className='flex justify-between items-center max-w-28 mt-3.5'>

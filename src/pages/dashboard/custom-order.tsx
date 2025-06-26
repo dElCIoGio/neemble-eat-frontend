@@ -293,6 +293,11 @@ export default function OrderCustomizationPage() {
             return
         }
 
+        if (!restaurant){
+            showErrorToast("Please select a restaurant first")
+            return
+        }
+
         const promise = sessionApi.getActiveSessionByTableNumber(selectedTable, restaurant._id)
             .then((session) => {
                 const orders = cart.map((cartItem) => ({

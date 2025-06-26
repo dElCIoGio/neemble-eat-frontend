@@ -333,7 +333,7 @@ export default function RestaurantInvitation() {
                       <p className="font-medium text-gray-900">{role.name}</p>
                       <p className="text-sm text-gray-600">{role.description}</p>
                     </div>
-                    <Badge className="flex items-center gap-1" style={{ backgroundColor: role.color, color: "white" }}>
+                    <Badge className="flex items-center gap-1" style={{ color: "white" }}>
                       {getRoleIcon(role.name)}
                       {role.name}
                     </Badge>

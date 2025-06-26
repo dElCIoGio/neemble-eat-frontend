@@ -1,6 +1,6 @@
 import {createContext, useContext} from "react";
 import {z} from "zod";
-import {Item} from "@/types/item";
+import {CustomizationRule, Item} from "@/types/item";
 import {AdditionalNoteSchema} from "@/lib/schemas/additional-note";
 
 
@@ -11,6 +11,17 @@ type ProductContextProps = {
     total: number;
     quantity: number;
     productAdded: boolean
+    handleCustomizationChange: (
+        ruleName: string,
+        optionName: string,
+        priceModifier: number,
+        isSelected: boolean,
+        optionQuantity?: number
+    ) => void;
+    getOptionQuantity: (ruleName: string, optionName: string) => number;
+    canSelectMore: (rule: CustomizationRule) => boolean;
+    isOptionSelected: (ruleName: string, optionName: string) => boolean;
+    allRequiredRulesSatisfied: () => boolean;
 }
 
 export const ProductContext = createContext<ProductContextProps | undefined>(undefined)
