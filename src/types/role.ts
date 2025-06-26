@@ -3,11 +3,7 @@ export type Permissions = "view" | "create" | "update" | "delete";
 export type SectionPermission = {
     description?: string
     section: string;
-    permissions: {
-        canView: boolean,
-        canEdit: boolean,
-        canDelete: boolean,
-    };
+    permissions: Permissions[];
 };
 
 export type RoleCreate = {
