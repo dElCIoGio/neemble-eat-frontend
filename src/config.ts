@@ -3,7 +3,6 @@ import {getEnv} from "@/lib/get-env";
 const ENV = import.meta.env
 
 const {
-    API_URL,
     FIREBASE_AUTH_DOMAIN,
     FIREBASE_API_KEY,
     FIREBASE_MEASUREMENT_ID,
@@ -22,7 +21,7 @@ const appConfig: {
 }
 
 const apiConfig = {
-    apiUrl: appConfig.env == "development"? "http://localhost:8000": API_URL,
+    apiUrl: appConfig.env == "development"? "http://localhost:8000": "https://api.neemble-eat.com",
     timeout: 10000,
 }
 
