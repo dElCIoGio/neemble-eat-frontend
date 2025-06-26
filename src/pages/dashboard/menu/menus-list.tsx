@@ -11,6 +11,7 @@ import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
 import {Loader} from "@/components/ui/loader";
 import {menuApi} from "@/api/endpoints/menu/requests";
 import {showPromiseToast} from "@/utils/notifications/toast";
+import type {Menu} from "@/types/menu";
 
 
 
@@ -21,7 +22,8 @@ export default function MenuManager() {
     const {
         data: menus,
         isLoading,
-        removeMenu
+        removeMenu,
+        setMenuActive,
     } = useGetRestaurantMenus(restaurant._id)
 
     console.log(menus)
@@ -54,12 +56,20 @@ export default function MenuManager() {
         }
     }
 
-    const handleToggleStatus = (id: string, e: React.MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation();
-        e.preventDefault();
-        console.log(id)
+    const handleToggleStatus = (menu: Menu, e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        e.preventDefault()
 
-        // set a menu as disabled
+        const promise = (menu.isActive ? menuApi.deactivateMenu(menu._id) : menuApi.activateMenu(menu._id))
+            .then(() => {
+                setMenuActive(menu._id, !menu.isActive)
+            })
+
+        showPromiseToast(promise, {
+            loading: "Updating menu...",
+            success: "Menu updated successfully!",
+            error: "Failed to update menu. Please try again."
+        })
     }
 
     if (isLoading){
@@ -144,7 +154,7 @@ export default function MenuManager() {
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onClick={(e) => handleToggleStatus(menu._id, e)}>
+                                                    <DropdownMenuItem onClick={(e) => handleToggleStatus(menu, e)}>
                                                         {menu.isActive ? "Desativar" : "Ativar"}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem onClick={(e) => handleDeleteMenu(menu._id, e)} className="text-red-600">
