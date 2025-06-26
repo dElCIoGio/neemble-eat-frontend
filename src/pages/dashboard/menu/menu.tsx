@@ -10,6 +10,12 @@ import {CategoriesTab} from "@/components/pages/dashboard-menu/categories-tab";
 import {ItemsTab} from "@/components/pages/dashboard-menu/items-tab";
 import {useGetMenuBySlug} from "@/api/endpoints/menu/hooks";
 import {Loader} from "@/components/ui/loader";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
+import {useDashboardContext} from "@/context/dashboard-context";
+import {restaurantApi} from "@/api/endpoints/restaurants/requests";
+import {showPromiseToast} from "@/utils/notifications/toast";
+import {useQueryClient} from "@tanstack/react-query";
+import type {Restaurant} from "@/types/restaurant";
 
 
 
@@ -17,12 +23,30 @@ export default function MenuManagementPage() {
 
     const { menuId } = useParams() as unknown as { menuId: string }
 
+    const { restaurant } = useDashboardContext()
+    const queryClient = useQueryClient()
+
     const { data: menu, updateMenu, isLoading } = useGetMenuBySlug(menuId)
 
     const [activeTab, setActiveTab] = useState("overview")
 
     const handleMenuUpdate = (updatedMenu: Partial<Menu>) => {
         updateMenu(updatedMenu)
+    }
+
+    const handlePublishMenu = () => {
+        const promise = restaurantApi.changeCurrentMenu(restaurant._id, menu!._id)
+            .then(() => {
+                queryClient.setQueryData<Restaurant | undefined>(["currentRestaurantId"], (old) =>
+                    old ? { ...old, currentMenuId: menu!._id } : old
+                )
+            })
+
+        showPromiseToast(promise, {
+            loading: "Publishing menu...",
+            success: "Menu published successfully!",
+            error: "Failed to publish menu. Please try again."
+        })
     }
 
 
@@ -37,6 +61,9 @@ export default function MenuManagementPage() {
             There was an error while fetching the data
         </div>
     }
+
+    const isCurrentMenu = restaurant.currentMenuId === menu._id
+    const isPublishDisabled = !menu.isActive || isCurrentMenu
 
     return (
         <div className="">
@@ -65,7 +92,18 @@ export default function MenuManagementPage() {
                                 <Eye className="h-4 w-4 mr-2" />
                                 Visualizar cardápio
                             </Button>
-                            <Button size="sm">Publicar</Button>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button size="sm" disabled={isPublishDisabled} onClick={handlePublishMenu}>
+                                        Publicar
+                                    </Button>
+                                </TooltipTrigger>
+                                {isPublishDisabled && (
+                                    <TooltipContent>
+                                        {menu.isActive ? "Este já é o cardápio atual" : "Ative o cardápio para publicá-lo"}
+                                    </TooltipContent>
+                                )}
+                            </Tooltip>
                             <Button variant="ghost" size="sm">
                                 <Settings className="h-4 w-4" />
                             </Button>

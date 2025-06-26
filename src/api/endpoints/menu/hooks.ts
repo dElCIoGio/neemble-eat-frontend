@@ -12,17 +12,27 @@ export function useGetRestaurantMenus(restaurantId: string){
 
     const removeMenu = (menuId: string) => {
         queryClient.setQueryData<Menu[]>(queryKey, (oldData) => {
-            if (!oldData) return [];
-            return oldData.filter(menu => menu._id !== menuId);
-        });
-    };
+            if (!oldData) return []
+            return oldData.filter(menu => menu._id !== menuId)
+        })
+    }
+
+    const setMenuActive = (menuId: string, isActive: boolean) => {
+        queryClient.setQueryData<Menu[]>(queryKey, (oldData) => {
+            if (!oldData) return []
+            return oldData.map(menu =>
+                menu._id === menuId ? { ...menu, isActive } : menu
+            )
+        })
+    }
 
     return {
         ...useQuery({
             queryKey,
             queryFn: () => menuApi.getRestaurantMenus(restaurantId)
         }),
-        removeMenu
+        removeMenu,
+        setMenuActive,
     }
 }
 
