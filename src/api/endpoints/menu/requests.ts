@@ -42,6 +42,16 @@ export const menuApi = {
     getMenuCategories: async (menuId: string) => {
         const response = await apiClient.get<Category[]>(`${baseRoute}/${menuId}/categories`)
         return response.data
+    },
+
+    deactivateMenu: async (menuId: string) => {
+        const response = await apiClient.put<Menu>(`${baseRoute}/${menuId}/deactivate`)
+        return response.data
+    },
+
+    activateMenu: async (menuId: string) => {
+        const response = await apiClient.put<Menu>(`${baseRoute}/${menuId}/activate`)
+        return response.data
     }
 
 }
