@@ -40,6 +40,11 @@ export function ItemsTab() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [itemToDelete, setItemToDelete] = useState<Item | null>(null)
 
+    const handleCancelDelete = () => {
+        setDeleteDialogOpen(false)
+        setItemToDelete(null)
+    }
+
     const filteredItems = items? items.filter((item) => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
         const matchesCategory = categoryFilter === "all" || item.categoryId === categoryFilter
@@ -268,7 +273,13 @@ export function ItemsTab() {
                     </p>
                 </div>
             )}
-            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <AlertDialog
+                open={deleteDialogOpen}
+                onOpenChange={(open) => {
+                    if (!open) setItemToDelete(null)
+                    setDeleteDialogOpen(open)
+                }}
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Excluir item</AlertDialogTitle>
@@ -277,7 +288,9 @@ export function ItemsTab() {
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogCancel onClick={handleCancelDelete}>
+                            Cancelar
+                        </AlertDialogCancel>
                         <AlertDialogAction onClick={confirmDeleteItem} className="bg-red-600 hover:bg-red-700">
                             Excluir
                         </AlertDialogAction>
