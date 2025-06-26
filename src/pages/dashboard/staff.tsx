@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { User } from "@/types/user"
-import { RoleCreate, SectionPermission, Role, Permissions } from "@/types/role"
+import {RoleCreate, SectionPermission, Role, Permissions, PartialRole} from "@/types/role"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -137,6 +137,8 @@ function StaffContent() {
 
     } = useDashboardStaff()
 
+    console.log(roleForm)
+
     const { restaurant, user } = useDashboardContext()
 
     const {
@@ -145,8 +147,6 @@ function StaffContent() {
         removeRole,
         updateRole
     } = useListRestaurantRoles(restaurant._id)
-
-    console.log("ROLES:", roles)
 
     const { data: users = [] } = useGetAllMembers({
         restaurantId: restaurant._id
@@ -186,7 +186,6 @@ function StaffContent() {
     const paginatedMembers = sortedMembers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
     const handleRoleChange = (roleId: string) => {
-        console.log(roleId)
         const role = roles?.find((r) => r._id === roleId)
         if (role) {
             setInviteForm({
@@ -237,6 +236,7 @@ function StaffContent() {
 
     const handleCreateRole = () => {
         const roleData: RoleCreate = {
+            level: 0,
             name: roleForm.name,
             description: roleForm.description,
             permissions: roleForm.permissions,
@@ -251,7 +251,8 @@ function StaffContent() {
                     name: "",
                     description: "",
                     permissions: [],
-                    restaurantId: restaurant._id
+                    restaurantId: restaurant._id,
+                    level: 0
                 })
             }
         })
@@ -324,12 +325,15 @@ function StaffContent() {
 
     const handleSaveRole = () => {
         if (!editingRole) return
-        const data = {
+        const data: PartialRole = {
             name: roleForm.name,
             description: roleForm.description,
             permissions: roleForm.permissions,
             restaurantId: restaurant._id,
-            level: roleForm.level
+            level: roleForm.level,
+            _id: editingRole._id,
+            createdAt: editingRole.createdAt,
+            updatedAt: editingRole.updatedAt,
         }
         updateRoleMutation.mutate({ roleId: editingRole._id, data }, {
             onSuccess: (updated) => {
@@ -505,27 +509,38 @@ function StaffContent() {
 
                                             <div className="space-y-4">
                                                 {roleForm.permissions.map((perm, idx) => (
-                                                    <div key={idx} className="border p-3 rounded-lg">
-                                                        <Label className="capitalize">{perm.section.replace(/_/g, ' ')}</Label>
-                                                        <div className="flex flex-wrap gap-3 mt-2">
-                                                            {['view','create','update','delete'].map(p => (
-                                                                <label key={p} className="flex items-center gap-2 text-sm">
-                                                                    <Checkbox checked={perm.permissions.includes(p as any)} onCheckedChange={() => togglePermission(idx, p)} id={`${perm.section}-${p}`} />
-                                                                    {p}
+                                                    perm && (
+                                                        <div key={idx} className="border p-3 rounded-lg">
+                                                            <Label
+                                                                className="capitalize">{perm.section.replace(/_/g, ' ')}</Label>
+                                                            <div className="flex flex-wrap gap-3 mt-2">
+                                                                <label className="flex items-center gap-2 text-sm">
+                                                                    <Checkbox
+                                                                        checked={perm.permissions.canView}
+                                                                        onCheckedChange={() => togglePermission(idx, p as Permissions)}
+                                                                        id={`${perm.section}-view`}/>
                                                                 </label>
-                                                            ))}
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    )
+
                                                 ))}
                                             </div>
 
                                             <div className="space-y-2">
                                                 <Label>Novo Módulo</Label>
-                                                <Input placeholder="ex: reports" value={newPermission.section} onChange={(e) => setNewPermission({ ...newPermission, section: e.target.value })} />
+                                                <Input placeholder="ex: reports" value={newPermission.section}
+                                                       onChange={(e) => setNewPermission({
+                                                           ...newPermission,
+                                                           section: e.target.value
+                                                       })}/>
                                                 <div className="flex flex-wrap gap-3 mt-2">
-                                                    {['view','create','update','delete'].map(p => (
+                                                    {['view', 'create', 'update', 'delete'].map(p => (
                                                         <label key={p} className="flex items-center gap-2 text-sm">
-                                                            <Checkbox checked={newPermission.permissions.includes(p as any)} onCheckedChange={() => handleToggleNewPerm(p)} id={`new-${p}`} />
+                                                            <Checkbox
+                                                                checked={newPermission.permissions.includes(p as Permissions)}
+                                                                onCheckedChange={() => handleToggleNewPerm(p as Permissions)}
+                                                                id={`new-${p}`}/>
                                                             {p}
                                                         </label>
                                                     ))}
