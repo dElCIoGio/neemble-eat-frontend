@@ -24,6 +24,8 @@ export function CategoriesTab() {
 
     const { data: categories, isLoading, removeCategory, setCategoryActive } = useGetMenuCategoriesBySlug(menuId)
 
+    console.log("CATEGORIES:", categories)
+
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
 
