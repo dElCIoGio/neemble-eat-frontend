@@ -13,6 +13,17 @@ import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks";
 import { showPromiseToast } from "@/utils/notifications/toast";
 import { itemsApi } from "@/api/endpoints/item/requests";
 import { Loader } from "@/components/ui/loader";
+import type { Item } from "@/types/item";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 
 export function ItemsTab() {
@@ -26,6 +37,8 @@ export function ItemsTab() {
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedItems, setSelectedItems] = useState<string[]>([])
     const [categoryFilter, setCategoryFilter] = useState<string>("all")
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [itemToDelete, setItemToDelete] = useState<Item | null>(null)
 
     const filteredItems = items? items.filter((item) => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -54,20 +67,25 @@ export function ItemsTab() {
         }
     }
 
-    const handleDeleteItem = (itemId: string) => {
+    const confirmDeleteItem = () => {
+        if (!itemToDelete) return
+
+        const id = itemToDelete._id
 
         showPromiseToast(
-            itemsApi.deleteItem(itemId).then(() => {
-                removeItem(itemId)
+            itemsApi.deleteItem(id).then(() => {
+                removeItem(id)
             }),
             {
                 loading: "Deleting menu...",
                 success: "RestaurantMenu deleted successfully!",
                 error: "Failed to delete menu. Please try again."
             }
-        );
+        )
 
-        setSelectedItems(selectedItems.filter((id) => id !== itemId))
+        setSelectedItems(selectedItems.filter((selected) => selected !== id))
+        setDeleteDialogOpen(false)
+        setItemToDelete(null)
     }
 
     const handleToggleAvailability = (itemId: string) => {
@@ -221,7 +239,10 @@ export function ItemsTab() {
                                                         {item.isAvailable ? "Marcar como indisponível" : "Marcar como disponível"}
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem
-                                                        onClick={() => handleDeleteItem(item._id)}
+                                                        onClick={() => {
+                                                            setItemToDelete(item)
+                                                            setDeleteDialogOpen(true)
+                                                        }}
                                                         className="text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4 mr-2" />
@@ -247,6 +268,22 @@ export function ItemsTab() {
                     </p>
                 </div>
             )}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Excluir item</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Tem a certeza que deseja excluir o item "{itemToDelete?.name}"?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDeleteItem} className="bg-red-600 hover:bg-red-700">
+                            Excluir
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

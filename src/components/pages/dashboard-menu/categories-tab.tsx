@@ -13,6 +13,16 @@ import {Loader} from "@/components/ui/loader";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {categoryApi} from "@/api/endpoints/categories/requests";
 import {Category} from "@/types/category";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 
 
@@ -28,6 +38,8 @@ export function CategoriesTab() {
 
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null)
 
     const filteredCategories = categories? categories.filter((category) =>
         category.name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -49,25 +61,28 @@ export function CategoriesTab() {
         }
     }
 
-    const handleDeleteCategory = (categoryId: string) => {
+    const confirmDeleteCategory = () => {
+        if (!categoryToDelete) return
 
         try {
+            const id = categoryToDelete._id
             showPromiseToast(
-                categoryApi.deleteCategory(categoryId).then(() => {
-                    removeCategory(categoryId)
+                categoryApi.deleteCategory(id).then(() => {
+                    removeCategory(id)
                 }),
                 {
                     loading: "Apagando menu...",
                     success: "RestaurantMenu apagado com sucesso!",
                     error: "Falha ao apagar o menu. Tente novamente."
                 }
-            );
+            )
+            setSelectedCategories(selectedCategories.filter((sel) => sel !== id))
         } catch (error) {
-            console.error("Error deleting menu:", error);
+            console.error("Error deleting menu:", error)
+        } finally {
+            setDeleteDialogOpen(false)
+            setCategoryToDelete(null)
         }
-
-
-        setSelectedCategories(selectedCategories.filter((id) => id !== categoryId))
     }
 
     const handleToggleStatus = (category: Category) => {
@@ -205,7 +220,10 @@ export function CategoriesTab() {
                                                     {category.isActive ? "Desativar" : "Ativar"}
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
-                                                    onClick={() => handleDeleteCategory(category._id)}
+                                                    onClick={() => {
+                                                        setCategoryToDelete(category)
+                                                        setDeleteDialogOpen(true)
+                                                    }}
                                                     className="text-red-600"
                                                 >
                                                     <Trash2 className="h-4 w-4 mr-2" />
@@ -226,6 +244,22 @@ export function CategoriesTab() {
                     <p className="text-gray-500">Nenhuma categoria encontrada com sua busca.</p>
                 </div>
             )}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Excluir categoria</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Tem a certeza que deseja excluir a categoria "{categoryToDelete?.name}"?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDeleteCategory} className="bg-red-600 hover:bg-red-700">
+                            Excluir
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }
