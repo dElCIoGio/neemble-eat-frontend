@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Link, useParams } from "react-router";
+import {Link, useNavigate, useParams} from "react-router";
 import { useGetMenuItemsBySlug } from "@/api/endpoints/menu/hooks";
 import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks";
 import { showPromiseToast } from "@/utils/notifications/toast";
@@ -266,6 +266,7 @@ function ItemRow({
 }) {
 
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
+    const navigate = useNavigate()
 
     return (
         <TableRow>
@@ -325,7 +326,7 @@ function ItemRow({
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`items/${item.slug}`)}>
                             <Edit className="h-4 w-4 mr-2" />
                             Editar
                         </DropdownMenuItem>

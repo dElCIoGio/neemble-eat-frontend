@@ -26,8 +26,4 @@ export type Role = {
 
 type OptionalRoleFields = Partial<Omit<Role, '_id' | 'createdAt' | 'updatedAt'>>;
 
-export type PartialRole = OptionalRoleFields & {
-    _id: string;
-    createdAt: string;
-    updatedAt: string;
-};
+export type PartialRole = OptionalRoleFields

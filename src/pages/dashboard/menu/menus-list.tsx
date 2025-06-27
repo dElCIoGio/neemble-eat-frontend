@@ -36,8 +36,6 @@ export default function MenuManager() {
         setMenuActive,
     } = useGetRestaurantMenus(restaurant._id)
 
-    console.log(menus)
-
     const [searchTerm, setSearchTerm] = useState("")
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [menuToDelete, setMenuToDelete] = useState<Menu | null>(null)
@@ -142,53 +140,12 @@ export default function MenuManager() {
                     ) : (
                         filteredMenus.map((menu) => (
                             <Link className="" key={menu._id} to={menu.slug}>
-                                <Card className="hover:shadow-sm transition-shadow py-4">
-                                    <CardContent className="px-4">
-                                        <div className="flex items-center gap-4">
-                                            {/* RestaurantMenu Details */}
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-semibold text-gray-900 ">{menu.name}</h3>
-                                                <p className="text-gray-500 text-sm">{menu.description}</p>
-                                            </div>
-
-                                            {/* Status Badge */}
-                                            <Badge variant={menu.isActive ? "default" : "secondary"} className="text-xs">
-                                                {menu.isActive ? "Ativo" : "Inativo"}
-                                            </Badge>
-
-                                            {/* Actions */}
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild
-                                                                     onClick={(e) => {
-                                                                         e.stopPropagation();
-                                                                         e.preventDefault();
-                                                                     }}
-                                                >
-                                                    <Button variant="ghost" size="sm" className="text-gray-500">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem onClick={(e) => handleToggleStatus(menu, e)}>
-                                                        {menu.isActive ? "Desativar" : "Ativar"}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        onClick={(e) => {
-                                                            e.stopPropagation()
-                                                            e.preventDefault()
-                                                            setMenuToDelete(menu)
-                                                            setDeleteDialogOpen(true)
-                                                        }}
-                                                        className="text-red-600"
-                                                    >
-                                                        <Trash2 className="h-4 w-4 mr-2" />
-                                                        Excluir
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                <MenuCard
+                                    menu={menu}
+                                    setDeleteDialogOpen={setDeleteDialogOpen}
+                                    handleToggleStatus={handleToggleStatus}
+                                    setMenuToDelete={setMenuToDelete}
+                                />
                             </Link>
 
                         ))
@@ -212,5 +169,70 @@ export default function MenuManager() {
                 </AlertDialogContent>
             </AlertDialog>
         </div>
+    )
+}
+
+
+interface MenuCardProps {
+    menu: Menu
+    setMenuToDelete: (menu: Menu | null) => void
+    handleToggleStatus: (menu: Menu, e: React.MouseEvent<HTMLDivElement>) => void
+    setDeleteDialogOpen: (isOpen: boolean) => void
+}
+
+function MenuCard({menu, setMenuToDelete, setDeleteDialogOpen, handleToggleStatus}: MenuCardProps) {
+
+    const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState<boolean>(false)
+
+    return (
+        <Card className="hover:shadow-sm transition-shadow py-4">
+            <CardContent className="px-4">
+                <div className="flex items-center gap-4">
+                    {/* RestaurantMenu Details */}
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-semibold text-gray-900 ">{menu.name}</h3>
+                        <p className="text-gray-500 text-sm">{menu.description}</p>
+                    </div>
+
+                    {/* Status Badge */}
+                    <Badge variant={menu.isActive ? "default" : "secondary"} className="text-xs">
+                        {menu.isActive ? "Ativo" : "Inativo"}
+                    </Badge>
+
+                    {/* Actions */}
+                    <DropdownMenu open={isDropdownMenuOpen} onOpenChange={setIsDropdownMenuOpen}>
+                        <DropdownMenuTrigger asChild
+                                             onClick={(e) => {
+                                                 e.stopPropagation();
+                                                 e.preventDefault();
+                                             }}
+                        >
+                            <Button variant="ghost" size="sm" className="text-gray-500">
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={(e) => handleToggleStatus(menu, e)}>
+                                {menu.isActive ? "Desativar" : "Ativar"}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    e.preventDefault()
+                                    setIsDropdownMenuOpen(false)
+                                    setMenuToDelete(menu)
+                                    setDeleteDialogOpen(true)
+                                }}
+                                className="text-red-600"
+                            >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Excluir
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </CardContent>
+        </Card>
+
     )
 }

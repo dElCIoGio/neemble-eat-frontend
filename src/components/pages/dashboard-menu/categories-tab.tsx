@@ -28,13 +28,9 @@ import {
 
 export function CategoriesTab() {
 
-    const navigate = useNavigate();
-
     const { menuId } = useParams() as unknown as { menuId: string }
 
     const { data: categories, isLoading, removeCategory, setCategoryActive } = useGetMenuCategoriesBySlug(menuId)
-
-    console.log("CATEGORIES:", categories)
 
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
@@ -159,80 +155,15 @@ export function CategoriesTab() {
                         </TableHeader>
                         <TableBody className="divide-y divide-zinc-200">
                             {filteredCategories.map((category) => (
-                                <TableRow
-                                    key={category._id}
-                                    onClick={() => navigate(`categories/${category.slug}`)}
-                                    className=""
-                                >
-                                    {/* Prevent checkbox from triggering navigation */}
-                                    <TableCell onClick={(e) => e.stopPropagation()}>
-                                        <Checkbox
-                                            checked={selectedCategories.includes(category._id)}
-                                            onCheckedChange={(checked) =>
-                                                handleSelectCategory(category._id, !!checked)
-                                            }
-                                        />
-                                    </TableCell>
-
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <div>
-                                                <div className="font-medium">{category.name}</div>
-                                                <div className="text-sm text-gray-500 sm:hidden">
-                                                    {category.itemIds.length} itens
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </TableCell>
-
-                                    <TableCell className="hidden md:table-cell">
-                                      <span className="text-sm text-gray-600">
-                                        {category.itemIds.length} itens
-                                      </span>
-                                    </TableCell>
-
-                                    <TableCell className="hidden sm:table-cell">
-                                        <Badge variant={category.isActive ? "default" : "secondary"}>
-                                            {category.isActive ? "Ativo" : "Inativo"}
-                                        </Badge>
-                                    </TableCell>
-
-                                    {/* Prevent dropdown from triggering navigation */}
-                                    <TableCell onClick={(e) => e.stopPropagation()}>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="sm">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem>
-                                                    <Eye className="h-4 w-4 mr-2" />
-                                                    Ver itens
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem>
-                                                    <Edit className="h-4 w-4 mr-2" />
-                                                    Editar
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={() => handleToggleStatus(category)}
-                                                >
-                                                    {category.isActive ? "Desativar" : "Ativar"}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    onClick={() => {
-                                                        setCategoryToDelete(category)
-                                                        setDeleteDialogOpen(true)
-                                                    }}
-                                                    className="text-red-600"
-                                                >
-                                                    <Trash2 className="h-4 w-4 mr-2" />
-                                                    Excluir
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
-                                </TableRow>
+                                <CategoryRow
+                                    category={category}
+                                    setCategoryToDelete={setCategoryToDelete}
+                                    setSelectedCategories={setSelectedCategories}
+                                    handleToggleStatus={handleToggleStatus}
+                                    setDeleteDialogOpen={setDeleteDialogOpen}
+                                    handleSelectCategory={handleSelectCategory}
+                                    selectedCategories={selectedCategories}
+                                />
                             ))}
                         </TableBody>
                     </Table>
@@ -261,5 +192,101 @@ export function CategoriesTab() {
                 </AlertDialogContent>
             </AlertDialog>
         </div>
+    )
+}
+
+
+interface CategoryRowProps {
+    category: Category
+    selectedCategories: string[]
+    setSelectedCategories: (selectedCategory: string[]) => void
+    handleSelectCategory: (categoryId: string, checked: boolean) => void
+    handleToggleStatus: (category: Category) => void
+    setCategoryToDelete: (category: Category | null) => void
+    setDeleteDialogOpen: (isOpen: boolean) => void
+}
+
+function CategoryRow({category, selectedCategories, handleSelectCategory, handleToggleStatus, setDeleteDialogOpen, setCategoryToDelete}: CategoryRowProps){
+
+    const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState<boolean>(false)
+
+    const navigate = useNavigate()
+
+    return (
+        <TableRow
+            key={category._id}
+            onClick={() => navigate(`categories/${category.slug}`)}
+            className=""
+        >
+            {/* Prevent checkbox from triggering navigation */}
+            <TableCell onClick={(e) => e.stopPropagation()}>
+                <Checkbox
+                    checked={selectedCategories.includes(category._id)}
+                    onCheckedChange={(checked) =>
+                        handleSelectCategory(category._id, !!checked)
+                    }
+                />
+            </TableCell>
+
+            <TableCell>
+                <div className="flex items-center gap-3">
+                    <div>
+                        <div className="font-medium">{category.name}</div>
+                        <div className="text-sm text-gray-500 sm:hidden">
+                            {category.itemIds.length} itens
+                        </div>
+                    </div>
+                </div>
+            </TableCell>
+
+            <TableCell className="hidden md:table-cell">
+                                      <span className="text-sm text-gray-600">
+                                        {category.itemIds.length} itens
+                                      </span>
+            </TableCell>
+
+            <TableCell className="hidden sm:table-cell">
+                <Badge variant={category.isActive ? "default" : "secondary"}>
+                    {category.isActive ? "Ativo" : "Inativo"}
+                </Badge>
+            </TableCell>
+
+            {/* Prevent dropdown from triggering navigation */}
+            <TableCell onClick={(e) => e.stopPropagation()}>
+                <DropdownMenu open={isDropdownMenuOpen} onOpenChange={setIsDropdownMenuOpen}>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver itens
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`categories/${category.slug}`)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => handleToggleStatus(category)}
+                        >
+                            {category.isActive ? "Desativar" : "Ativar"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setIsDropdownMenuOpen(false)
+                                setCategoryToDelete(category)
+                                setDeleteDialogOpen(true)
+                            }}
+                            className="text-red-600"
+                        >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Excluir
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </TableCell>
+        </TableRow>
     )
 }

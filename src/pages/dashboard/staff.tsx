@@ -358,9 +358,6 @@ function StaffContent() {
             permissions: roleForm.permissions,
             restaurantId: restaurant._id,
             level: roleForm.level,
-            _id: editingRole._id,
-            createdAt: editingRole.createdAt,
-            updatedAt: editingRole.updatedAt,
         }
         updateRoleMutation.mutate({ roleId: editingRole._id, data }, {
             onSuccess: (updated) => {
