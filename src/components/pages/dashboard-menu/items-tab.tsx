@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import { Search, MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -33,6 +34,8 @@ export function ItemsTab() {
 
     const { data: categories, isLoading: isCategoriesLoading } = useGetMenuCategoriesBySlug(menuId)
     const { data: items, removeItem, isLoading: isItemsLoading } = useGetMenuItemsBySlug(menuId)
+
+    const queryClient = useQueryClient()
 
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedItems, setSelectedItems] = useState<string[]>([])
@@ -93,9 +96,19 @@ export function ItemsTab() {
         setItemToDelete(null)
     }
 
-    const handleToggleAvailability = (itemId: string) => {
+    const handleToggleAvailability = (item: Item) => {
+        const promise = itemsApi.switchItemAvailability(item._id).then((updated) => {
+            queryClient.setQueryData<Item[]>(["menu items", menuId], (old) => {
+                if (!old) return []
+                return old.map((it) => it._id === updated._id ? updated : it)
+            })
+        })
 
-        console.log(itemId)
+        showPromiseToast(promise, {
+            loading: "Atualizando item...",
+            success: `O item \"${item.name}\" foi atualizado com sucesso!`,
+            error: "Houve uma falha ao atualizar o item, tente novamente.",
+        })
     }
 
     if (isItemsLoading || isCategoriesLoading){
@@ -249,7 +262,7 @@ function ItemRow({
     setItemToDelete: (item: Item | null) => void
     itemToDelete: Item | null
     setDeleteDialogOpen: (isOpen: boolean) => void
-    handleToggleAvailability: (itemId: string) => void
+    handleToggleAvailability: (item: Item) => void
 }) {
 
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
@@ -316,7 +329,7 @@ function ItemRow({
                             <Edit className="h-4 w-4 mr-2" />
                             Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleToggleAvailability(item._id)}>
+                        <DropdownMenuItem onClick={() => handleToggleAvailability(item)}>
                             {item.isAvailable ? "Marcar como indisponível" : "Marcar como disponível"}
                         </DropdownMenuItem>
                         <DropdownMenuItem
