@@ -156,6 +156,8 @@ export default function RestaurantDashboard(): JSX.Element {
         toDate: dateRange.to
     })
 
+    console.log(salesSummary)
+
     const { data: invoiceSummary, isLoading: isInvoiceSummaryLoading } = useGetInvoiceSummary({
         restaurantId: restaurant._id,
         status: "completed",
@@ -305,7 +307,7 @@ export default function RestaurantDashboard(): JSX.Element {
                         <MetricCard
                             title="Total de Vendas"
                             value={salesSummary?.totalSales}
-                            growth={0}
+                            growth={salesSummary?.totalSalesGrowth ?? 0}
                             icon={DollarSign}
                             format="currency"
                             isLoading={isSalesSummaryLoading}
@@ -313,7 +315,7 @@ export default function RestaurantDashboard(): JSX.Element {
                         <MetricCard
                             title="Faturas Emitidas"
                             value={invoiceSummary?.invoiceCount}
-                            growth={0}
+                            growth={salesSummary?.invoiceCountGrowth ?? 0}
                             icon={Receipt}
                             format="number"
                             isLoading={isInvoiceSummaryLoading}
@@ -321,7 +323,7 @@ export default function RestaurantDashboard(): JSX.Element {
                         <MetricCard
                             title="Valor Médio por Fatura"
                             value={salesSummary?.averageInvoice}
-                            growth={0}
+                            growth={salesSummary?.averageInvoiceGrowth ?? 0}
                             icon={ShoppingCart}
                             format="currency"
                             isLoading={isSalesSummaryLoading}
@@ -329,7 +331,7 @@ export default function RestaurantDashboard(): JSX.Element {
                         <MetricCard
                             title="Mesas Servidas"
                             value={salesSummary?.distinctTables}
-                            growth={0}
+                            growth={salesSummary?.distinctTablesGrowth ?? 0}
                             icon={Users}
                             format="number"
                             isLoading={isSalesSummaryLoading}
@@ -337,7 +339,7 @@ export default function RestaurantDashboard(): JSX.Element {
                         <MetricCard
                             title="Receita por Mesa"
                             value={salesSummary?.revenuePerTable}
-                            growth={0}
+                            growth={salesSummary?.revenuePerTableGrowth ?? 0}
                             icon={TrendingUp}
                             format="currency"
                             isLoading={isSalesSummaryLoading}

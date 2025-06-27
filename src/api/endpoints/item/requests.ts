@@ -34,7 +34,7 @@ export const itemsApi = {
     },
 
     switchItemAvailability: async (itemId: string) => {
-        const response = await apiClient.get<Item>(`${baseRoute}/${itemId}/availability`)
+        const response = await apiClient.put<Item>(`${baseRoute}/${itemId}/availability`)
         return response.data
     },
 

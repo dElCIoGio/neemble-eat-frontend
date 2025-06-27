@@ -106,7 +106,7 @@ export function ItemsTab() {
 
         showPromiseToast(promise, {
             loading: "Atualizando item...",
-            success: `O item \"${item.name}\" foi atualizado com sucesso!`,
+            success: `O item "${item.name}" foi atualizado com sucesso!`,
             error: "Houve uma falha ao atualizar o item, tente novamente.",
         })
     }

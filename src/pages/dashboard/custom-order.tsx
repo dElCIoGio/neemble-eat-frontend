@@ -532,10 +532,10 @@ export default function OrderCustomizationPage() {
                                         <div className="flex items-center justify-between w-full">
                                             <div className="flex-1">
                                                 <div className="font-medium">{item.name}</div>
-                                                <div className="text-sm text-gray-600 truncate max-w-[200px]">{item.description}</div>
+                                                <div className="text-sm text-gray-600 truncate max-w-[200px] hidden">{item.description}</div>
                                             </div>
                                             <Badge variant="secondary" className="ml-3">
-                                                ${item.price.toFixed(2)}
+                                                Kz {item.price.toFixed(2)}
                                             </Badge>
                                         </div>
                                     </SelectItem>

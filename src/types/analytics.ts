@@ -10,6 +10,12 @@ export interface SalesSummary {
     averageInvoice: number;
     distinctTables: number;
     revenuePerTable: number;
+
+    totalSalesGrowth: number;
+    invoiceCountGrowth: number;
+    averageInvoiceGrowth: number;
+    distinctTablesGrowth: number;
+    revenuePerTableGrowth: number;
 }
 
 export interface InvoiceCount {
