@@ -135,7 +135,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
             </Card>
 
             {/* Preferências de Exibição */}
-            <Card>
+            <Card className="hidden">
                 <CardHeader>
                     <CardTitle>Preferências de Exibição</CardTitle>
                 </CardHeader>

@@ -13,6 +13,7 @@ export type OpeningHours = {
 
 export type RestaurantSettings = {
     openingHours?: OpeningHours | null;
+    automaticStockAdjustments: boolean
 };
 
 

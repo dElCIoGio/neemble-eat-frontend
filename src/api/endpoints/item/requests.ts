@@ -19,7 +19,7 @@ export const itemsApi = {
     },
 
     getItemBySlug : async (slug: string) => {
-        const response = await apiClient.get<Item>(`${baseRoute}/slug/${slug}`)
+        const response = await apiClient.get<Item>(`${baseRoute}/${slug}/slug`)
         return response.data
     },
 

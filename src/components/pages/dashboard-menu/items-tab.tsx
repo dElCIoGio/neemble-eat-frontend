@@ -176,7 +176,7 @@ export function ItemsTab() {
                             {filteredItems.map((item) => (
                                 <Link
                                     key={item._id}
-                                    to={`items/${item._id}`}
+                                    to={`items/${item.slug}`}
                                     className="contents"
                                 >
                                     <TableRow>
