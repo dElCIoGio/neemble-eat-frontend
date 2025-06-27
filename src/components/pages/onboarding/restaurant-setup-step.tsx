@@ -34,7 +34,8 @@ export function RestaurantSetupStep({ onNext, onBack }: RestaurantSetupStepProps
                 tuesday: "",
                 wednesday: "",
                 sunday: "",
-            }
+            },
+            automaticStockAdjustments: false
         }
     })
 

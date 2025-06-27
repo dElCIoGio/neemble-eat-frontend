@@ -40,6 +40,7 @@ const dummyRestaurant: Restaurant = {
             saturday: "10:00-23:00",
             sunday: "10:00-20:00",
         },
+        automaticStockAdjustments: false
     },
 };
 
