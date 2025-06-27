@@ -179,84 +179,16 @@ export function ItemsTab() {
                                     to={`items/${item.slug}`}
                                     className="contents"
                                 >
-                                    <TableRow>
-                                        {/* Checkbox (no navigation) */}
-                                        <TableCell onClick={(e) => e.stopPropagation()}>
-                                            <Checkbox
-                                                checked={selectedItems.includes(item._id)}
-                                                onCheckedChange={(checked) => handleSelectItem(item._id, !!checked)}
-                                            />
-                                        </TableCell>
-
-                                        <TableCell>
-                                            <div className="flex items-center gap-3">
-                                                <img
-                                                    src={item.imageUrl || "/placeholder.svg"}
-                                                    alt={item.name}
-                                                    className="w-10 h-10 rounded object-cover"
-                                                />
-                                                <div>
-                                                    <div className="font-medium">{item.name}</div>
-                                                    <div className="text-sm text-gray-500 sm:hidden">
-                                                        Kz {item.price.toFixed(2)} • {getCategoryName(item.categoryId)}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </TableCell>
-
-                                        <TableCell className="hidden sm:table-cell">
-                                            <Badge variant="outline">{getCategoryName(item.categoryId)}</Badge>
-                                        </TableCell>
-
-                                        <TableCell className="hidden md:table-cell">
-                                            <div className="flex items-center gap-1">
-                                                Kz
-                                                <span>{item.price.toFixed(2)}</span>
-                                            </div>
-                                        </TableCell>
-
-                                        <TableCell className="hidden lg:table-cell">
-                                          <span className="text-sm text-gray-600">
-                                            {item.customizations.length} Personalização{item.customizations.length !== 1 ? "s" : ""}
-                                          </span>
-                                        </TableCell>
-
-                                        <TableCell className="hidden sm:table-cell">
-                                            <Badge variant={item.isAvailable ? "default" : "secondary"}>
-                                                {item.isAvailable ? "Disponível" : "Indisponível"}
-                                            </Badge>
-                                        </TableCell>
-
-                                        {/* Dropdown menu (no navigation) */}
-                                        <TableCell onClick={(e) => e.stopPropagation()}>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="sm">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem>
-                                                        <Edit className="h-4 w-4 mr-2" />
-                                                        Editar
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => handleToggleAvailability(item._id)}>
-                                                        {item.isAvailable ? "Marcar como indisponível" : "Marcar como disponível"}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        onClick={() => {
-                                                            setItemToDelete(item)
-                                                            setDeleteDialogOpen(true)
-                                                        }}
-                                                        className="text-red-600"
-                                                    >
-                                                        <Trash2 className="h-4 w-4 mr-2" />
-                                                        Excluir
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
+                                    <ItemRow
+                                        item={item}
+                                        setItemToDelete={setItemToDelete}
+                                        itemToDelete={itemToDelete}
+                                        getCategoryName={getCategoryName}
+                                        handleSelectItem={handleSelectItem}
+                                        handleToggleAvailability={handleToggleAvailability}
+                                        selectedItems={selectedItems}
+                                        setDeleteDialogOpen={setDeleteDialogOpen}
+                                    />
                                 </Link>
                             ))}
                         </TableBody>
@@ -299,4 +231,109 @@ export function ItemsTab() {
             </AlertDialog>
         </div>
     )
+}
+
+function ItemRow({
+    item,
+    selectedItems,
+    getCategoryName,
+    handleSelectItem,
+    setItemToDelete,
+    setDeleteDialogOpen,
+    handleToggleAvailability
+                 }: {
+    item: Item,
+    selectedItems: string[]
+    getCategoryName: (categoryId: string) => string
+    handleSelectItem: (itemId: string, checked: boolean) => void
+    setItemToDelete: (item: Item | null) => void
+    itemToDelete: Item | null
+    setDeleteDialogOpen: (isOpen: boolean) => void
+    handleToggleAvailability: (itemId: string) => void
+}) {
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
+
+    return (
+        <TableRow>
+            {/* Checkbox (no navigation) */}
+            <TableCell onClick={(e) => e.stopPropagation()}>
+                <Checkbox
+                    checked={selectedItems.includes(item._id)}
+                    onCheckedChange={(checked) => handleSelectItem(item._id, !!checked)}
+                />
+            </TableCell>
+
+            <TableCell>
+                <div className="flex items-center gap-3">
+                    <img
+                        src={item.imageUrl || "/placeholder.svg"}
+                        alt={item.name}
+                        className="w-10 h-10 rounded object-cover"
+                    />
+                    <div>
+                        <div className="font-medium">{item.name}</div>
+                        <div className="text-sm text-gray-500 sm:hidden">
+                            Kz {item.price.toFixed(2)} • {getCategoryName(item.categoryId)}
+                        </div>
+                    </div>
+                </div>
+            </TableCell>
+
+            <TableCell className="hidden sm:table-cell">
+                <Badge variant="outline">{getCategoryName(item.categoryId)}</Badge>
+            </TableCell>
+
+            <TableCell className="hidden md:table-cell">
+                <div className="flex items-center gap-1">
+                    Kz
+                    <span>{item.price.toFixed(2)}</span>
+                </div>
+            </TableCell>
+
+            <TableCell className="hidden lg:table-cell">
+                                          <span className="text-sm text-gray-600">
+                                            {item.customizations.length} Personalização{item.customizations.length !== 1 ? "s" : ""}
+                                          </span>
+            </TableCell>
+
+            <TableCell className="hidden sm:table-cell">
+                <Badge variant={item.isAvailable ? "default" : "secondary"}>
+                    {item.isAvailable ? "Disponível" : "Indisponível"}
+                </Badge>
+            </TableCell>
+
+            {/* Dropdown menu (no navigation) */}
+            <TableCell onClick={(e) => e.stopPropagation()}>
+                <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleToggleAvailability(item._id)}>
+                            {item.isAvailable ? "Marcar como indisponível" : "Marcar como disponível"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onSelect={() => {
+                                setIsDropdownOpen(false)
+                                setItemToDelete(item)
+                                setDeleteDialogOpen(true)
+                            }}
+                            className="text-red-600"
+                        >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Excluir
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </TableCell>
+        </TableRow>
+    )
+
 }

@@ -42,8 +42,4 @@ export type Item = {
 
 type OptionalItemFields = Partial<Omit<Item, '_id' | 'createdAt' | 'updatedAt'>>;
 
-export type PartialItem = OptionalItemFields & {
-    _id: string;
-    createdAt: string;
-    updatedAt: string;
-};
+export type PartialItem = OptionalItemFields;

@@ -66,6 +66,14 @@ export const itemsApi = {
     deleteCustomizationOption: async (itemId: string, customizationIndex: number, optionIndex: number) => {
         const response = await apiClient.delete(`${itemId}/customizations/${customizationIndex}/options/${optionIndex}`)
         return response.data
+    },
+
+    updateItemImage: async (itemId: string, file: File) => {
+        const formData = new FormData();
+        formData.append('imageFile', file);
+        const response = await apiClient.post<Item>(`${baseRoute}/${itemId}/images`, formData)
+        return response.data
+
     }
 
 }

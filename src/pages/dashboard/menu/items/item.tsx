@@ -46,9 +46,6 @@ export default function ItemDetailsPage() {
     useEffect(() => {
         if (item) {
             setEditValues({
-                _id: item._id,
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt,
                 name: item.name,
                 price: item.price,
                 restaurantId: item.restaurantId,
@@ -78,7 +75,7 @@ export default function ItemDetailsPage() {
 
     const saveField = async (field: string) => {
         if (!item || !editValues) return
-        const value = editValues[field as keyof Item]
+        const value = editValues[field as keyof PartialItem]
 
         // Validation
         if (field === "name" && (!value || (value as string).trim() === "")) {
@@ -100,9 +97,6 @@ export default function ItemDetailsPage() {
             await updateItem.mutateAsync({
                 itemId: item._id,
                 data: {
-                    _id: item._id,
-                    createdAt: item.createdAt,
-                    updatedAt: item.updatedAt,
                     [field]: value
                 }
             })
@@ -138,9 +132,6 @@ export default function ItemDetailsPage() {
                     await updateItem.mutateAsync({
                         itemId: item._id,
                         data: {
-                            _id: item._id,
-                            createdAt: item.createdAt,
-                            updatedAt: item.updatedAt,
                             imageUrl: newImageUrl
                         }
                     })
@@ -247,9 +238,6 @@ export default function ItemDetailsPage() {
             await updateItem.mutateAsync({
                 itemId: item._id,
                 data: {
-                    _id: item._id,
-                    createdAt: item.createdAt,
-                    updatedAt: item.updatedAt,
                     customizations,
                 },
             })

@@ -43,5 +43,21 @@ export const restaurantApi = {
     changeCurrentMenu: async (restaurantId: string, menuId: string) => {
         const response = await apiClient.put<boolean>(`${baseRoute}/${restaurantId}/current-menu/${menuId}`)
         return response.data
-    }
+    },
+
+    updateRestaurantBanner: async (restaurantId: string, file: File) => {
+        const formData = new FormData();
+        formData.append('bannerFile', file);
+        const response = await apiClient.put<Restaurant>(`${baseRoute}/${restaurantId}/banner`, formData)
+        return response.data
+    },
+
+    updateRestaurantLogo: async (restaurantId: string, file: File) => {
+        const formData = new FormData();
+        formData.append('logoFile', file);
+        const response = await apiClient.put<Restaurant>(`${baseRoute}/${restaurantId}/logo`, formData)
+        return response.data
+    },
+
+
 }
