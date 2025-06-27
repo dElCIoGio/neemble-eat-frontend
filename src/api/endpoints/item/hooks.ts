@@ -146,3 +146,19 @@ export function useDeleteCustomizationOption() {
         }
     })
 }
+
+export function useUpdateItemImage() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: ({ itemId, file }: { itemId: string; file: File }) =>
+            itemsApi.updateItemImage(itemId, file),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["item"] })
+            showSuccessToast("Item image updated successfully")
+        },
+        onError: () => {
+            showErrorToast("Failed to update item image")
+        }
+    })
+}
