@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CustomizationOption, CustomizationRule, Item, LimitType, PartialItem } from "@/types/item"
 import { Link, useParams } from "react-router"
+import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks"
 import {
     useGetItemBySlug,
     useUpdateItem,
@@ -31,12 +32,18 @@ const limitTypeOptions = [
 ]
 
 export default function ItemDetailsPage() {
-    const { itemSlug } = useParams() as unknown as { itemSlug: string }
+    const { itemSlug, menuId } = useParams() as unknown as { itemSlug: string; menuId: string }
     const { data: item, isLoading } = useGetItemBySlug(itemSlug)
+    const { data: categories } = useGetMenuCategoriesBySlug(menuId)
     const updateItem = useUpdateItem()
     const toggleAvailability = useToggleItemAvailability()
     const updateItemImage = useUpdateItemImage()
     const deleteCustomization = useDeleteCustomization()
+
+    const getCategoryName = (categoryId: string) => {
+        const category = categories?.find((cat) => cat._id === categoryId)
+        return category?.name || "Unknown"
+    }
 
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({})
     const [editValues, setEditValues] = useState<PartialItem | null>(null)
@@ -398,6 +405,49 @@ export default function ItemDetailsPage() {
                                                 </div>
                                             )}
                                             {errors.price && <p className="text-sm text-red-500">{errors.price}</p>}
+                                        </div>
+
+                                        {/* Category */}
+                                        <div className="space-y-2">
+                                            <Label>Category</Label>
+                                            {isEditing.categoryId ? (
+                                                <div className="flex items-center gap-2">
+                                                    <Select
+                                                        value={editValues?.categoryId || ""}
+                                                        onValueChange={(value) => handleInputChange("categoryId", value)}
+                                                    >
+                                                        <SelectTrigger className={errors.categoryId ? "border-red-500" : ""}>
+                                                            <SelectValue placeholder="Select category" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {categories?.map((category) => (
+                                                                <SelectItem key={category._id} value={category._id}>
+                                                                    {category.name}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <Button size="sm" onClick={() => saveField("categoryId")}> 
+                                                        <Save className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button size="sm" variant="outline" onClick={() => cancelEditing("categoryId")}> 
+                                                        <X className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-between group">
+                                                    <span className="text-lg font-medium">{getCategoryName(item.categoryId)}</span>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        onClick={() => startEditing("categoryId")}
+                                                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        <Edit2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            )}
+                                            {errors.categoryId && <p className="text-sm text-red-500">{errors.categoryId}</p>}
                                         </div>
 
                                         {/* Description */}
