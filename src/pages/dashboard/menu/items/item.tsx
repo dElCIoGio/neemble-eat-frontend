@@ -19,6 +19,7 @@ import {
     useUpdateItem,
     useToggleItemAvailability,
     useUpdateItemImage,
+    useDeleteCustomization,
 } from "@/api/endpoints/item/hooks"
 import { showErrorToast } from "@/utils/notifications/toast"
 
@@ -35,6 +36,7 @@ export default function ItemDetailsPage() {
     const updateItem = useUpdateItem()
     const toggleAvailability = useToggleItemAvailability()
     const updateItemImage = useUpdateItemImage()
+    const deleteCustomization = useDeleteCustomization()
 
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({})
     const [editValues, setEditValues] = useState<PartialItem | null>(null)
@@ -177,9 +179,15 @@ export default function ItemDetailsPage() {
         setCustomizationsDirty(true)
     }
 
-    const handleRemoveCustomization = (index: number) => {
-        setCustomizations((prev) => prev.filter((_, i) => i !== index))
-        setCustomizationsDirty(true)
+    const handleRemoveCustomization = async (index: number) => {
+        if (!item) return
+        try {
+            await deleteCustomization.mutateAsync({ itemId: item._id, index })
+            setCustomizations((prev) => prev.filter((_, i) => i !== index))
+        } catch (error) {
+            console.error(error)
+            showErrorToast("Failed to delete customization")
+        }
     }
 
     const handleAddOption = (customizationIndex: number) => {
