@@ -18,12 +18,6 @@ import {
     useGetItemBySlug,
     useUpdateItem,
     useToggleItemAvailability,
-    useAddCustomization,
-    useUpdateCustomization,
-    useDeleteCustomization,
-    useAddCustomizationOption,
-    useUpdateCustomizationOption,
-    useDeleteCustomizationOption
 } from "@/api/endpoints/item/hooks"
 import { showErrorToast } from "@/utils/notifications/toast"
 
@@ -39,12 +33,6 @@ export default function ItemDetailsPage() {
     const { data: item, isLoading } = useGetItemBySlug(itemSlug)
     const updateItem = useUpdateItem()
     const toggleAvailability = useToggleItemAvailability()
-    const addCustomization = useAddCustomization()
-    const updateCustomization = useUpdateCustomization()
-    const deleteCustomization = useDeleteCustomization()
-    const addCustomizationOption = useAddCustomizationOption()
-    const updateCustomizationOption = useUpdateCustomizationOption()
-    const deleteCustomizationOption = useDeleteCustomizationOption()
 
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({})
     const [editValues, setEditValues] = useState<PartialItem | null>(null)
@@ -52,6 +40,8 @@ export default function ItemDetailsPage() {
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
     const [activeTab, setActiveTab] = useState("details")
+    const [customizations, setCustomizations] = useState<CustomizationRule[]>([])
+    const [customizationsDirty, setCustomizationsDirty] = useState(false)
 
     useEffect(() => {
         if (item) {
@@ -69,6 +59,7 @@ export default function ItemDetailsPage() {
                 isAvailable: item.isAvailable,
                 slug: item.slug
             })
+            setCustomizations(item.customizations)
         }
     }, [item])
 
@@ -174,8 +165,7 @@ export default function ItemDetailsPage() {
         }
     }
 
-    const handleAddCustomization = async () => {
-        if (!item) return
+    const handleAddCustomization = () => {
         const newCustomization: CustomizationRule = {
             name: "",
             description: "",
@@ -184,108 +174,89 @@ export default function ItemDetailsPage() {
             limit: 1,
             options: [],
         }
-        try {
-            await addCustomization.mutateAsync({
-                itemId: item._id,
-                customization: newCustomization
-            })
-            setHasUnsavedChanges(false)
-        } catch (error) {
-            console.error(error)
-            showErrorToast("Failed to add customization")
-        }
+        setCustomizations((prev) => [...prev, newCustomization])
+        setCustomizationsDirty(true)
     }
 
-    const handleUpdateCustomization = async (index: number, field: keyof CustomizationRule, value: CustomizationRule[keyof CustomizationRule]) => {
-        if (!item) return
-        const customization = item.customizations[index]
-        if (!customization) return
-
-        try {
-            await updateCustomization.mutateAsync({
-                itemId: item._id,
-                index,
-                customization: { ...customization, [field]: value }
-            })
-            setHasUnsavedChanges(false)
-        } catch (error) {
-            console.error(error)
-            showErrorToast("Failed to update customization")
-        }
+    const handleUpdateCustomization = (index: number, field: keyof CustomizationRule, value: CustomizationRule[keyof CustomizationRule]) => {
+        setCustomizations((prev) =>
+            prev.map((c, i) => (i === index ? { ...c, [field]: value } : c))
+        )
+        setCustomizationsDirty(true)
     }
 
-    const handleRemoveCustomization = async (index: number) => {
-        if (!item) return
-        try {
-            await deleteCustomization.mutateAsync({
-                itemId: item._id,
-                index
-            })
-            setHasUnsavedChanges(false)
-        } catch (error) {
-            console.error(error)
-            showErrorToast("Failed to remove customization")
-        }
+    const handleRemoveCustomization = (index: number) => {
+        setCustomizations((prev) => prev.filter((_, i) => i !== index))
+        setCustomizationsDirty(true)
     }
 
-    const handleAddOption = async (customizationIndex: number) => {
-        if (!item) return
+    const handleAddOption = (customizationIndex: number) => {
         const newOption: CustomizationOption = {
             name: "",
             priceModifier: 0,
             maxQuantity: 1,
         }
-        try {
-            await addCustomizationOption.mutateAsync({
-                itemId: item._id,
-                index: customizationIndex,
-                option: newOption
-            })
-            setHasUnsavedChanges(false)
-        } catch (error) {
-            console.error(error)
-            showErrorToast("Failed to add option")
-        }
+        setCustomizations((prev) =>
+            prev.map((c, i) =>
+                i === customizationIndex
+                    ? { ...c, options: [...c.options, newOption] }
+                    : c
+            )
+        )
+        setCustomizationsDirty(true)
     }
 
-    const handleUpdateOption = async (
+    const handleUpdateOption = (
         customizationIndex: number,
         optionIndex: number,
         field: keyof CustomizationOption,
         value: CustomizationOption[keyof CustomizationOption],
     ) => {
-        if (!item) return
-        const customization = item.customizations[customizationIndex]
-        if (!customization) return
-        const option = customization.options[optionIndex]
-        if (!option) return
-
-        try {
-            await updateCustomizationOption.mutateAsync({
-                itemId: item._id,
-                customizationIndex,
-                optionIndex,
-                option: { ...option, [field]: value }
-            })
-            setHasUnsavedChanges(false)
-        } catch (error) {
-            console.error(error)
-            showErrorToast("Failed to update option")
-        }
+        setCustomizations((prev) =>
+            prev.map((c, i) =>
+                i === customizationIndex
+                    ? {
+                          ...c,
+                          options: c.options.map((o, j) =>
+                              j === optionIndex ? { ...o, [field]: value } : o
+                          ),
+                      }
+                    : c
+            )
+        )
+        setCustomizationsDirty(true)
     }
 
-    const handleRemoveOption = async (customizationIndex: number, optionIndex: number) => {
+    const handleRemoveOption = (customizationIndex: number, optionIndex: number) => {
+        setCustomizations((prev) =>
+            prev.map((c, i) =>
+                i === customizationIndex
+                    ? {
+                          ...c,
+                          options: c.options.filter((_, j) => j !== optionIndex),
+                      }
+                    : c
+            )
+        )
+        setCustomizationsDirty(true)
+    }
+
+    const handleSaveCustomizations = async () => {
         if (!item) return
         try {
-            await deleteCustomizationOption.mutateAsync({
+            await updateItem.mutateAsync({
                 itemId: item._id,
-                customizationIndex,
-                optionIndex
+                data: {
+                    _id: item._id,
+                    createdAt: item.createdAt,
+                    updatedAt: item.updatedAt,
+                    customizations,
+                },
             })
-            setHasUnsavedChanges(false)
+            setCustomizationsDirty(false)
         } catch (error) {
             console.error(error)
-            showErrorToast("Failed to remove option")
+            showErrorToast("Failed to save customizations")
         }
     }
 
@@ -343,7 +314,7 @@ export default function ItemDetailsPage() {
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                     <TabsList className="w-full">
                         <TabsTrigger value="details">Item Details</TabsTrigger>
-                        <TabsTrigger value="customizations">Customizations ({item.customizations.length})</TabsTrigger>
+                        <TabsTrigger value="customizations">Customizations ({customizations.length})</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="details" className="mt-6">
@@ -527,12 +498,12 @@ export default function ItemDetailsPage() {
                                     <CardContent className="space-y-4">
                                         <div className="grid grid-cols-1 gap-4">
                                             <div className="text-center">
-                                                <div className="text-2xl font-bold text-blue-600">{item.customizations.length}</div>
+                                                <div className="text-2xl font-bold text-blue-600">{customizations.length}</div>
                                                 <div className="text-sm text-gray-500">Customizations</div>
                                             </div>
                                             <div className="text-center">
                                                 <div className="text-2xl font-bold text-purple-600">
-                                                    {item.customizations.reduce((total, custom) => total + custom.options.length, 0)}
+                                                    {customizations.reduce((total, custom) => total + custom.options.length, 0)}
                                                 </div>
                                                 <div className="text-sm text-gray-500">Total Options</div>
                                             </div>
@@ -556,18 +527,31 @@ export default function ItemDetailsPage() {
 
                     <TabsContent value="customizations" className="mt-6">
                         <div className="space-y-6">
+                            {customizationsDirty && (
+                                <Alert>
+                                    <AlertDescription>You have unsaved customization changes.</AlertDescription>
+                                </Alert>
+                            )}
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h2 className="text-2xl font-bold text-gray-900">Customizations</h2>
                                     <p className="text-gray-600">Manage options that customers can select for this item</p>
                                 </div>
-                                <Button onClick={handleAddCustomization}>
-                                    <Plus className="h-4 w-4 mr-2" />
-                                    Add Customization
-                                </Button>
+                                <div className="flex gap-2">
+                                    {customizationsDirty && (
+                                        <Button onClick={handleSaveCustomizations} className="bg-green-600 hover:bg-green-700">
+                                            <Save className="h-4 w-4 mr-2" />
+                                            Save
+                                        </Button>
+                                    )}
+                                    <Button onClick={handleAddCustomization}>
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Add Customization
+                                    </Button>
+                                </div>
                             </div>
 
-                            {item.customizations.length === 0 ? (
+                            {customizations.length === 0 ? (
                                 <Card>
                                     <CardContent className="text-center py-12">
                                         <Settings className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -581,7 +565,7 @@ export default function ItemDetailsPage() {
                                 </Card>
                             ) : (
                                 <div className="space-y-6">
-                                    {item.customizations.map((customization, customIndex) => (
+                                    {customizations.map((customization, customIndex) => (
                                         <Card key={customIndex}>
                                             <CardHeader>
                                                 <div className="flex items-center justify-between">
