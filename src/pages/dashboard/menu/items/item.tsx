@@ -18,6 +18,7 @@ import {
     useGetItemBySlug,
     useUpdateItem,
     useToggleItemAvailability,
+    useUpdateItemImage,
 } from "@/api/endpoints/item/hooks"
 import { showErrorToast } from "@/utils/notifications/toast"
 
@@ -33,6 +34,7 @@ export default function ItemDetailsPage() {
     const { data: item, isLoading } = useGetItemBySlug(itemSlug)
     const updateItem = useUpdateItem()
     const toggleAvailability = useToggleItemAvailability()
+    const updateItemImage = useUpdateItemImage()
 
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({})
     const [editValues, setEditValues] = useState<PartialItem | null>(null)
@@ -121,27 +123,26 @@ export default function ItemDetailsPage() {
     }
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!item || !editValues) return
+        if (!item) return
         const file = e.target.files?.[0]
         if (file) {
             const reader = new FileReader()
-            reader.onload = async (e) => {
-                const newImageUrl = e.target?.result as string
-                setImagePreview(newImageUrl)
-                try {
-                    await updateItem.mutateAsync({
-                        itemId: item._id,
-                        data: {
-                            imageUrl: newImageUrl
-                        }
-                    })
-                    setHasUnsavedChanges(false)
-                } catch (error) {
-                    console.error(error)
-                    showErrorToast("Failed to update image")
-                }
+            reader.onload = (ev) => {
+                const newPreview = ev.target?.result as string
+                setImagePreview(newPreview)
             }
             reader.readAsDataURL(file)
+
+            try {
+                await updateItemImage.mutateAsync({
+                    itemId: item._id,
+                    file
+                })
+                setHasUnsavedChanges(false)
+            } catch (error) {
+                console.error(error)
+                showErrorToast("Failed to update image")
+            }
         }
     }
 
