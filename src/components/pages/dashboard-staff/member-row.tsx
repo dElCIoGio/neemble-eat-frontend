@@ -32,7 +32,7 @@ interface MemberRowProps {
     user: User
 }
 
-export function MemberRow({ user }: MemberRowProps) {
+export default function MemberRow({ user }: MemberRowProps) {
     const {
         selectedMembers,
         handleSelectMember,

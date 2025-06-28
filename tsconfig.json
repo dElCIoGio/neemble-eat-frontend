@@ -17,6 +17,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/types"]
+  "include": ["src/types", "C:/Users/dagos/WebstormProjects/neemble-eat/src/components/pages/dashboard-staff/member-row"]
 }
 

@@ -8,7 +8,7 @@ import {
     Lifebuoy,
     QrCode,
     UsersThree,
-    Package, CallBell,
+    Package, CallBell, Chair,
 } from "@phosphor-icons/react";
 import {useLocation, useNavigate} from "react-router";
 import {
@@ -41,7 +41,7 @@ const navigation: {
         href: "menu",
     },
     {
-        label: "Mesas e QR Code",
+        label: "QR Codes",
         icon: QrCode,
         href: "qrcode",
     },
@@ -59,6 +59,11 @@ const navigation: {
         label: "Pedidos",
         icon: CallBell,
         href: "orders-tracking"
+    },
+    {
+        label: "Mesas",
+        icon: Chair,
+        href: "table-monitor"
     },
     {
         label: "Stock",

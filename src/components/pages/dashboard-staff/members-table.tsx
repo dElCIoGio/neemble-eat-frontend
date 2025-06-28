@@ -3,7 +3,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ArrowUpDown } from "lucide-react"
 import { useDashboardStaff } from "@/context/dashboard-staff-context"
-import { MemberRow } from "./member-row"
+import MemberRow from "@/components/pages/dashboard-staff/member-row";
+
+
 
 export function MembersTable() {
 

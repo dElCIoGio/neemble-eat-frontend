@@ -1,9 +1,6 @@
-export type TableSessionStatus = "active" | "closed" | "cancelled";
+export type TableSessionStatus = "active" | "closed" | "cancelled" | "paid" | "needs bill";
 
 export type TableSessionReview = {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
     stars: number; // 1 to 5
     comment?: string | null;
 };

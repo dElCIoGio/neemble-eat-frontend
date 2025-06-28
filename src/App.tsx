@@ -47,6 +47,7 @@ import DataAnalysis from "@/pages/root/DataAnalysis";
 import {ForgotPassword} from "@/pages/root/ForgotPassword";
 import RestaurantInvitation from "@/pages/dashboard/invitation";
 import OrderCustomizationPage from "@/pages/dashboard/custom-order";
+import TableMonitor from "@/pages/dashboard/table-monitor";
 
 
 
@@ -122,6 +123,7 @@ function App() {
                     <Route path="stock" element={<StockManagement/>}/>
                     <Route path="notifications" element={<NotificationsPage/>}/>
                     <Route path="orders-tracking" element={<OrdersTracking/>}/>
+                    <Route path="table-monitor" element={<TableMonitor/>}/>
                 </Route>
             </Route>
 
