@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator"
 import { Clock, Users, CreditCard, AlertTriangle, Play, Trash2, CheckCircle } from "lucide-react"
 import type { Table } from "@/types/table"
 import type { TableSession } from "@/types/table-session"
-import type { Order } from "@/types/order"
 import { useDashboardContext } from "@/context/dashboard-context"
 import { useListRestaurantTables } from "@/api/endpoints/tables/hooks"
 import { useGetSessionOrders } from "@/api/endpoints/orders/hooks"
@@ -159,6 +158,8 @@ export default function TableMonitor() {
     }
 
     const handleStartSession = (tableId: string) => {
+
+        console.log(tableId)
         showPromiseToast(Promise.resolve(), {
             loading: "Iniciando sessão...",
             success: "Funcionalidade não implementada",
