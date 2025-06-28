@@ -548,11 +548,11 @@ export default function OrderCustomizationPage() {
                 {/* Current Item Display */}
                 <Card className="mb-6">
                     <CardContent className="p-0">
-                        <div className="relative h-48 md:h-64">
+                        <div className="relative w-full h-48 md:h-64">
                             <img
                                 src={currentItem.imageUrl || "/placeholder.svg"}
                                 alt={currentItem.name}
-                                className="object-cover rounded-t-lg"
+                                className="object-cover w-full h-full rounded-t-lg"
                             />
                         </div>
                         <div className="p-4 md:p-6">
