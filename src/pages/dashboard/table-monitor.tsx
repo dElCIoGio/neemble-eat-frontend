@@ -98,8 +98,9 @@ export default function TableMonitor() {
             const session: TableSession = JSON.parse(event.data)
             setSessions((prev) => {
                 if (["closed", "cancelled", "paid"].includes(session.status)) {
-                    const { [session.tableId]: _removed, ...rest } = prev
-                    return rest
+                    const updated = { ...prev }
+                    delete updated[session.tableId]
+                    return updated
                 }
                 return { ...prev, [session.tableId]: session }
             })
@@ -130,8 +131,9 @@ export default function TableMonitor() {
             setSessions((prev) => {
                 const entry = Object.values(prev).find((s) => s._id === sessionId)
                 if (!entry) return prev
-                const { [entry.tableId]: _r, ...rest } = prev
-                return rest
+                const updated = { ...prev }
+                delete updated[entry.tableId]
+                return updated
             })
         })
         showPromiseToast(promise, {
@@ -145,8 +147,9 @@ export default function TableMonitor() {
     const handleClearTable = (tableId: string) => {
         const promise = tableApi.cleanTable(tableId).then(() => {
             setSessions((prev) => {
-                const { [tableId]: _r, ...rest } = prev
-                return rest
+                const updated = { ...prev }
+                delete updated[tableId]
+                return updated
             })
         })
         showPromiseToast(promise, {
@@ -189,6 +192,10 @@ export default function TableMonitor() {
 
     const selectedSession = selectedTable ? sessions[selectedTable._id] : null
     const { data: sessionOrders = [] } = useGetSessionOrders(selectedSession?._id)
+    const sessionTotal = useMemo(
+        () => sessionOrders.reduce((sum, order) => sum + order.total, 0),
+        [sessionOrders]
+    )
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -258,7 +265,7 @@ export default function TableMonitor() {
 
                 {/* Details Sheet */}
                 <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                    <SheetContent className="w-full sm:max-w-md">
+                    <SheetContent className="w-full sm:max-w-md overflow-y-auto">
                         {selectedTable && (
                             <>
                                 <SheetHeader>
@@ -287,7 +294,7 @@ export default function TableMonitor() {
                                                     </div>
                                                     <div className="flex justify-between font-medium">
                                                         <span className="text-gray-600">Total Atual:</span>
-                                                        <span>{selectedSession.total ? formatCurrency(selectedSession.total) : "€0,00"}</span>
+                                                        <span>{formatCurrency(sessionTotal)}</span>
                                                     </div>
                                                 </div>
                                             </div>
