@@ -32,6 +32,7 @@ export function Orders() {
 
     const [customerName, ] = useState<string>("")
     const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
+    const [billRequested, setBillRequested] = useState<boolean>(false);
 
 
     const {
@@ -80,7 +81,9 @@ export function Orders() {
             isFetchingOrders: isFetchingOrders,
             customerName,
             cleanList,
-            setBillDialogOpen: setIsPopupOpen
+            setBillDialogOpen: setIsPopupOpen,
+            billRequested,
+            setBillRequested
         }}>
             <div className="p-4">
                 <Background className={`bg-gray-100`}/>
@@ -95,12 +98,12 @@ export function Orders() {
                 </div>
                 <div>
                     {
-                        !isPopupOpen && orders ? (
+                        orders ? (
                             orders.length === 0 ? <NoOrders/> : <>
                                 <OrdersDisplay/>
                                 <Payment/>
                             </>
-                        ) : !isPopupOpen ? <NoOrders/> : null
+                        ) : <NoOrders/>
                     }
                 </div>
 

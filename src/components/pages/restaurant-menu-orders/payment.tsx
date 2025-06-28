@@ -9,7 +9,7 @@ import {PaymentMethods} from "@/components/pages/restaurant-menu-orders/payment-
 export function Payment() {
 
     const [sessionPrice, setSessionPrice] = useState<number>(0)
-    const {orders} = useOrdersContext()
+    const {orders, billRequested} = useOrdersContext()
 
     const [tip, setTip] = useState<number>(0);
     const [paymentMethodShowing, setPaymentMethodShowing] = useState<boolean>(false)
@@ -25,7 +25,7 @@ export function Payment() {
     }, [orders]);
 
     function toggleShowPaymentMethods() {
-        if ((sessionPrice + tip) != 0) {
+        if ((sessionPrice + tip) != 0 && !billRequested) {
             setPaymentMethodShowing(!paymentMethodShowing)
         }
     }
@@ -43,15 +43,27 @@ export function Payment() {
                         <Total tip={tip} sessionPrice={sessionPrice}/>
                     </div>
                     <div>
-                        <button
-                            className={`px-7 py-3 ${(sessionPrice + tip) == 0 ? "bg-gray-600 cursor-not-allowed" : "bg-black"} text-sm hover:bg-gray-600 transition duration-100 text-white rounded-full `}
-                            onClick={toggleShowPaymentMethods}>
-                            Pedir Conta
-                        </button>
+                        {
+                            billRequested ? (
+                                <button
+                                    className="px-7 py-3 bg-gray-600 text-sm text-white rounded-full cursor-not-allowed"
+                                    disabled
+                                >
+                                    Alguém irá até você em instantes
+                                </button>
+                            ) : (
+                                <button
+                                    className={`px-7 py-3 ${(sessionPrice + tip) == 0 ? "bg-gray-600 cursor-not-allowed" : "bg-black"} text-sm hover:bg-gray-600 transition duration-100 text-white rounded-full `}
+                                    onClick={toggleShowPaymentMethods}
+                                >
+                                    Pedir Conta
+                                </button>
+                            )
+                        }
                     </div>
                 </div>
                 {
-                    paymentMethodShowing &&
+                    paymentMethodShowing && !billRequested &&
                     <div className='mt-3 border-t border-gray-100 pt-3'>
                         <div className='flex mb-3 items-center'>
                             <h1 className='mr-2 hidden'>
