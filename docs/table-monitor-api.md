@@ -14,6 +14,6 @@ This page lists the backend endpoints that the Table Monitor screen is expected 
 - `POST /sessions/{sessionId}/mark-paid` – marks the session as paid and ends it (could reuse `/close`).
 - `POST /sessions/{sessionId}/clean` – cancel all orders, cancel the session and open a new empty session for that table.
 - `POST /sessions` – create a new session manually when a table becomes occupied without an order.
-- **WebSocket** `/ws/{restaurantId}/table-status` – pushes live updates when a table calls a waiter or requests the bill.
+- **WebSocket** `/ws/{restaurantId}/session-status` – pushes live updates when a (active) session is changed.
 
 These endpoints would allow the front‑end to show real‑time table status and give staff direct controls to manage each session from the monitoring page.
