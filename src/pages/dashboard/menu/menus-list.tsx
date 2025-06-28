@@ -122,7 +122,8 @@ export default function MenuManager() {
 
                 {/* RestaurantMenu List */}
                 <div className="space-y-2 flex flex-col">
-                    {filteredMenus.length === 0 ? (
+                    {
+                        filteredMenus.length === 0 ? (
                         <div className="text-center py-12">
                             <ChefHat className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                             <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum cardápio encontrado</h3>
@@ -153,9 +154,8 @@ export default function MenuManager() {
                                 </Link>
                             )
                         })
-
                         )
-                    )}
+                    }
                 </div>
             </div>
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
