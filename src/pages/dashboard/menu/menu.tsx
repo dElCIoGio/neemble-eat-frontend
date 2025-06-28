@@ -82,9 +82,11 @@ export default function MenuManagementPage() {
                                     <h1 className="text-2xl font-bold text-gray-900">{menu.name}</h1>
                                 </div>
 
-                                <Badge variant="secondary" className="bg-green-100 text-green-800">
-                                Publicado
-                                </Badge>
+                                {isCurrentMenu && (
+                                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                        Cardápio atual
+                                    </Badge>
+                                )}
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -95,7 +97,7 @@ export default function MenuManagementPage() {
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button size="sm" disabled={isPublishDisabled} onClick={handlePublishMenu}>
-                                        Publicar
+                                        Definir como cardápio atual
                                     </Button>
                                 </TooltipTrigger>
                                 {isPublishDisabled && (

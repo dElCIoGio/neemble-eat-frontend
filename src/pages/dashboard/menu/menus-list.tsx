@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { cn } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {Link} from "react-router";
 import {useDashboardContext} from "@/context/dashboard-context";
@@ -138,17 +139,22 @@ export default function MenuManager() {
                             )}
                         </div>
                     ) : (
-                        filteredMenus.map((menu) => (
-                            <Link className="" key={menu._id} to={menu.slug}>
-                                <MenuCard
-                                    menu={menu}
-                                    setDeleteDialogOpen={setDeleteDialogOpen}
-                                    handleToggleStatus={handleToggleStatus}
-                                    setMenuToDelete={setMenuToDelete}
-                                />
-                            </Link>
+                        filteredMenus.map((menu) => {
+                            const isCurrentMenu = restaurant.currentMenuId === menu._id
+                            return (
+                                <Link className="" key={menu._id} to={menu.slug}>
+                                    <MenuCard
+                                        menu={menu}
+                                        isCurrentMenu={isCurrentMenu}
+                                        setDeleteDialogOpen={setDeleteDialogOpen}
+                                        handleToggleStatus={handleToggleStatus}
+                                        setMenuToDelete={setMenuToDelete}
+                                    />
+                                </Link>
+                            )
+                        })
 
-                        ))
+                        )
                     )}
                 </div>
             </div>
@@ -175,17 +181,21 @@ export default function MenuManager() {
 
 interface MenuCardProps {
     menu: Menu
+    isCurrentMenu: boolean
     setMenuToDelete: (menu: Menu | null) => void
     handleToggleStatus: (menu: Menu, e: React.MouseEvent<HTMLDivElement>) => void
     setDeleteDialogOpen: (isOpen: boolean) => void
 }
 
-function MenuCard({menu, setMenuToDelete, setDeleteDialogOpen, handleToggleStatus}: MenuCardProps) {
+function MenuCard({menu, isCurrentMenu, setMenuToDelete, setDeleteDialogOpen, handleToggleStatus}: MenuCardProps) {
 
     const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState<boolean>(false)
 
     return (
-        <Card className="hover:shadow-sm transition-shadow py-4">
+        <Card className={cn(
+            "hover:shadow-sm transition-shadow py-4",
+            isCurrentMenu && "bg-green-50 border-green-200"
+        )}>
             <CardContent className="px-4">
                 <div className="flex items-center gap-4">
                     {/* RestaurantMenu Details */}
@@ -196,7 +206,7 @@ function MenuCard({menu, setMenuToDelete, setDeleteDialogOpen, handleToggleStatu
 
                     {/* Status Badge */}
                     <Badge variant={menu.isActive ? "default" : "secondary"} className="text-xs">
-                        {menu.isActive ? "Ativo" : "Inativo"}
+                        {isCurrentMenu ? "Cardápio atual" : menu.isActive ? "Ativo" : "Inativo"}
                     </Badge>
 
                     {/* Actions */}
