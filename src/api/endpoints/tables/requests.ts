@@ -29,6 +29,11 @@ export const tableApi = {
     deleteTable: async (tableId: string) => {
         const response = await apiClient.delete<boolean>(`${baseRoute}/${tableId}`)
         return response.data
+    },
+
+    cleanTable: async (tableId: string) => {
+      const response = await apiClient.post<Table>(`${baseRoute}/${tableId}/clean`);
+      return response.data
     }
 
 }
