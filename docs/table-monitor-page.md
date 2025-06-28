@@ -36,4 +36,6 @@ This document describes the planned **Table Monitor** page used by staff to foll
 5. **Cleaning a Table**
    - If the client leaves without paying, the staff uses **Limpar Mesa**. This cancels outstanding orders, cancels the session and immediately starts a new empty session for the table so it becomes available again.
 
+The implementation fetches tables using `useListRestaurantTables` and active sessions via `sessionApi.listActiveSessions`. A WebSocket connection (`/ws/{restaurantId}/session-status`) keeps the table state updated in real time. Actions such as marking the bill as paid or cleaning the table call the corresponding API helpers.
+
 The page therefore centralises table activity so waiters can react quickly to customer requests and keep track of which tables are in use.

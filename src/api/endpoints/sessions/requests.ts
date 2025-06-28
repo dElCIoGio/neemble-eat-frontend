@@ -32,7 +32,7 @@ export const sessionApi = {
     },
 
     listActiveSessions: async (restaurantId: string) => {
-        const response = await apiClient.get<TableSession>(`${baseRoute}/restaurant/${restaurantId}/active`);
+        const response = await apiClient.get<TableSession[]>(`${baseRoute}/restaurant/${restaurantId}/active`);
         return response.data;
     },
 
