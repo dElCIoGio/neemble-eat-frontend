@@ -1,5 +1,5 @@
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,167 +9,22 @@ import { Clock, Users, CreditCard, AlertTriangle, Play, Trash2, CheckCircle } fr
 import type { Table } from "@/types/table"
 import type { TableSession } from "@/types/table-session"
 import type { Order } from "@/types/order"
-
-// Mock data for demonstration
-const mockTables: Table[] = [
-    {
-        _id: "1",
-        createdAt: "2024-01-01",
-        updatedAt: "2024-01-01",
-        restaurantId: "rest1",
-        number: 1,
-        currentSessionId: "session1",
-        url: null,
-        isActive: true,
-    },
-    {
-        _id: "2",
-        createdAt: "2024-01-01",
-        updatedAt: "2024-01-01",
-        restaurantId: "rest1",
-        number: 2,
-        currentSessionId: null,
-        url: null,
-        isActive: true,
-    },
-    {
-        _id: "3",
-        createdAt: "2024-01-01",
-        updatedAt: "2024-01-01",
-        restaurantId: "rest1",
-        number: 3,
-        currentSessionId: "session3",
-        url: null,
-        isActive: true,
-    },
-    {
-        _id: "4",
-        createdAt: "2024-01-01",
-        updatedAt: "2024-01-01",
-        restaurantId: "rest1",
-        number: 4,
-        currentSessionId: "session4",
-        url: null,
-        isActive: true,
-    },
-    {
-        _id: "5",
-        createdAt: "2024-01-01",
-        updatedAt: "2024-01-01",
-        restaurantId: "rest1",
-        number: 5,
-        currentSessionId: null,
-        url: null,
-        isActive: true,
-    },
-    {
-        _id: "6",
-        createdAt: "2024-01-01",
-        updatedAt: "2024-01-01",
-        restaurantId: "rest1",
-        number: 6,
-        currentSessionId: "session6",
-        url: null,
-        isActive: true,
-    },
-]
-
-const mockSessions: Record<string, TableSession> = {
-    session1: {
-        _id: "session1",
-        createdAt: "2024-01-01T10:00:00Z",
-        updatedAt: "2024-01-01T10:00:00Z",
-        tableId: "1",
-        restaurantId: "rest1",
-        startTime: "2024-01-01T10:00:00Z",
-        orders: ["order1", "order2"],
-        status: "active",
-        total: 45.5,
-    },
-    session3: {
-        _id: "session3",
-        createdAt: "2024-01-01T11:30:00Z",
-        updatedAt: "2024-01-01T11:30:00Z",
-        tableId: "3",
-        restaurantId: "rest1",
-        startTime: "2024-01-01T11:30:00Z",
-        orders: ["order3"],
-        status: "active",
-        total: 28.75,
-    },
-    session4: {
-        _id: "session4",
-        createdAt: "2024-01-01T09:15:00Z",
-        updatedAt: "2024-01-01T09:15:00Z",
-        tableId: "4",
-        restaurantId: "rest1",
-        startTime: "2024-01-01T09:15:00Z",
-        orders: ["order4", "order5"],
-        status: "active",
-        total: 67.25,
-    },
-    session6: {
-        _id: "session6",
-        createdAt: "2024-01-01T12:00:00Z",
-        updatedAt: "2024-01-01T12:00:00Z",
-        tableId: "6",
-        restaurantId: "rest1",
-        startTime: "2024-01-01T12:00:00Z",
-        orders: ["order6"],
-        status: "active",
-        total: 32.0,
-    },
-}
-
-const mockOrders: Record<string, Order> = {
-    order1: {
-        _id: "order1",
-        createdAt: "2024-01-01T10:15:00Z",
-        updatedAt: "2024-01-01T10:15:00Z",
-        sessionId: "session1",
-        itemId: "item1",
-        quantity: 2,
-        unitPrice: 12.5,
-        total: 25.0,
-        orderedItemName: "Hambúrguer Clássico",
-        restaurantId: "rest1",
-        customisations: [],
-        tableNumber: 1,
-        prepStatus: "served",
-        orderTime: "2024-01-01T10:15:00Z",
-    },
-    order2: {
-        _id: "order2",
-        createdAt: "2024-01-01T10:30:00Z",
-        updatedAt: "2024-01-01T10:30:00Z",
-        sessionId: "session1",
-        itemId: "item2",
-        quantity: 1,
-        unitPrice: 20.5,
-        total: 20.5,
-        orderedItemName: "Pizza Margherita",
-        restaurantId: "rest1",
-        customisations: [],
-        tableNumber: 1,
-        prepStatus: "ready",
-        orderTime: "2024-01-01T10:30:00Z",
-    },
-}
-
-// Simulate different table statuses for demo
-const tableStatuses = {
-    1: "ocupada" as const,
-    2: "disponivel" as const,
-    3: "conta_pedida" as const,
-    4: "chamando_funcionario" as const,
-    5: "disponivel" as const,
-    6: "ocupada" as const,
-}
+import { useDashboardContext } from "@/context/dashboard-context"
+import { useListRestaurantTables } from "@/api/endpoints/tables/hooks"
+import { useGetSessionOrders } from "@/api/endpoints/orders/hooks"
+import { sessionApi } from "@/api/endpoints/sessions/requests"
+import { tableApi } from "@/api/endpoints/tables/requests"
+import useWebSocket from "@/hooks/use-web-socket"
+import config from "@/config"
+import { showPromiseToast } from "@/utils/notifications/toast"
 
 type TableStatus = "disponivel" | "ocupada" | "conta_pedida" | "chamando_funcionario"
 
-const getTableStatus = (table: Table): TableStatus => {
-    return tableStatuses[table.number as keyof typeof tableStatuses] || "disponivel"
+const getTableStatus = (table: Table, sessions: Record<string, TableSession>): TableStatus => {
+    const session = sessions[table._id]
+    if (!session) return "disponivel"
+    if (session.status === "needs bill") return "conta_pedida"
+    return "ocupada"
 }
 
 const getStatusConfig = (status: TableStatus) => {
@@ -222,14 +77,49 @@ const formatCurrency = (amount: number) => {
 }
 
 export default function TableMonitor() {
+    const { restaurant } = useDashboardContext()
+    const { data: tables = [] } = useListRestaurantTables(restaurant._id)
+
+    const [sessions, setSessions] = useState<Record<string, TableSession>>({})
+
+    useEffect(() => {
+        sessionApi.listActiveSessions(restaurant._id).then((data) => {
+            if (!data) return
+            const list = Array.isArray(data) ? data : []
+            const mapping: Record<string, TableSession> = {}
+            list.forEach((s) => {
+                mapping[s.tableId] = s
+            })
+            setSessions(mapping)
+        })
+    }, [restaurant._id])
+
+    const handleSessionUpdate = useCallback((event: MessageEvent) => {
+        try {
+            const session: TableSession = JSON.parse(event.data)
+            setSessions((prev) => {
+                if (["closed", "cancelled", "paid"].includes(session.status)) {
+                    const { [session.tableId]: _removed, ...rest } = prev
+                    return rest
+                }
+                return { ...prev, [session.tableId]: session }
+            })
+        } catch (error) {
+            console.error("Error parsing websocket message", error)
+        }
+    }, [])
+
+    const wsUrl = `${config.api.apiUrl.replace("http", "ws")}/ws/${restaurant._id}/session-status`
+    useWebSocket(wsUrl, { onMessage: handleSessionUpdate, reconnectInterval: 2000 })
+
     const [selectedFilter, setSelectedFilter] = useState<TableStatus | "todas">("todas")
     const [selectedTable, setSelectedTable] = useState<Table | null>(null)
     const [isSheetOpen, setIsSheetOpen] = useState(false)
 
     const filteredTables = useMemo(() => {
-        if (selectedFilter === "todas") return mockTables
-        return mockTables.filter((table) => getTableStatus(table) === selectedFilter)
-    }, [selectedFilter])
+        if (selectedFilter === "todas") return tables
+        return tables.filter((table) => getTableStatus(table, sessions) === selectedFilter)
+    }, [selectedFilter, tables, sessions])
 
     const handleTableClick = (table: Table) => {
         setSelectedTable(table)
@@ -237,49 +127,67 @@ export default function TableMonitor() {
     }
 
     const handleMarkAsPaid = (sessionId: string) => {
-        // In a real app, this would make an API call
-        console.log("Marking session as paid:", sessionId)
+        const promise = sessionApi.paySession(sessionId).then(() => {
+            setSessions((prev) => {
+                const entry = Object.values(prev).find((s) => s._id === sessionId)
+                if (!entry) return prev
+                const { [entry.tableId]: _r, ...rest } = prev
+                return rest
+            })
+        })
+        showPromiseToast(promise, {
+            loading: "Processando...",
+            success: "Sessão paga com sucesso",
+            error: "Falha ao marcar como paga"
+        })
         setIsSheetOpen(false)
     }
 
     const handleClearTable = (tableId: string) => {
-        // In a real app, this would make an API call
-        console.log("Clearing table:", tableId)
+        const promise = tableApi.cleanTable(tableId).then(() => {
+            setSessions((prev) => {
+                const { [tableId]: _r, ...rest } = prev
+                return rest
+            })
+        })
+        showPromiseToast(promise, {
+            loading: "Limpando mesa...",
+            success: "Mesa limpa",
+            error: "Erro ao limpar mesa"
+        })
         setIsSheetOpen(false)
     }
 
     const handleStartSession = (tableId: string) => {
-        // In a real app, this would make an API call
-        console.log("Starting new session for table:", tableId)
+        showPromiseToast(Promise.resolve(), {
+            loading: "Iniciando sessão...",
+            success: "Funcionalidade não implementada",
+            error: ""
+        })
         setIsSheetOpen(false)
     }
 
     const filters = [
-        { key: "todas" as const, label: "Todas", count: mockTables.length },
+        { key: "todas" as const, label: "Todas", count: tables.length },
         {
             key: "disponivel" as const,
             label: "Disponíveis",
-            count: mockTables.filter((t) => getTableStatus(t) === "disponivel").length,
+            count: tables.filter((t) => getTableStatus(t, sessions) === "disponivel").length,
         },
         {
             key: "ocupada" as const,
             label: "Ocupadas",
-            count: mockTables.filter((t) => getTableStatus(t) === "ocupada").length,
+            count: tables.filter((t) => getTableStatus(t, sessions) === "ocupada").length,
         },
         {
             key: "conta_pedida" as const,
             label: "Conta Pedida",
-            count: mockTables.filter((t) => getTableStatus(t) === "conta_pedida").length,
-        },
-        {
-            key: "chamando_funcionario" as const,
-            label: "Chamando Funcionário",
-            count: mockTables.filter((t) => getTableStatus(t) === "chamando_funcionario").length,
+            count: tables.filter((t) => getTableStatus(t, sessions) === "conta_pedida").length,
         },
     ]
 
-    const selectedSession = selectedTable?.currentSessionId ? mockSessions[selectedTable.currentSessionId] : null
-    const sessionOrders = selectedSession?.orders.map((orderId) => mockOrders[orderId]).filter(Boolean) || []
+    const selectedSession = selectedTable ? sessions[selectedTable._id] : null
+    const { data: sessionOrders = [] } = useGetSessionOrders(selectedSession?._id)
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -311,10 +219,10 @@ export default function TableMonitor() {
                 {/* Table Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
                     {filteredTables.map((table) => {
-                        const status = getTableStatus(table)
+                        const status = getTableStatus(table, sessions)
                         const statusConfig = getStatusConfig(status)
                         const StatusIcon = statusConfig.icon
-                        const session = table.currentSessionId ? mockSessions[table.currentSessionId] : null
+                        const session = sessions[table._id]
 
                         return (
                             <Card
@@ -355,8 +263,8 @@ export default function TableMonitor() {
                                 <SheetHeader>
                                     <SheetTitle className="flex items-center gap-2">
                                         Mesa {selectedTable.number}
-                                        <Badge className={getStatusConfig(getTableStatus(selectedTable)).color}>
-                                            {getStatusConfig(getTableStatus(selectedTable)).label}
+                                        <Badge className={getStatusConfig(getTableStatus(selectedTable, sessions)).color}>
+                                            {getStatusConfig(getTableStatus(selectedTable, sessions)).label}
                                         </Badge>
                                     </SheetTitle>
                                 </SheetHeader>
