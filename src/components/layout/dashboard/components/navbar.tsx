@@ -11,12 +11,13 @@ import {
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {useDashboardContext} from "@/context/dashboard-context";
 import RestaurantSelection from "@/components/layout/dashboard/components/restaurant-selection";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import {useAuth} from "@/context/auth-context";
 
 
 function DashboardNavbar() {
 
+    const navigate = useNavigate()
     const isMobile = useIsMobile()
     const { open, toggleSidebar } = useSidebar()
     const {
@@ -69,7 +70,7 @@ function DashboardNavbar() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end"
                                              className="w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md">
-                            <DropdownMenuItem className="flex items-center space-x-2">
+                            <DropdownMenuItem onClick={() => navigate("/dashboard/profile")} className="flex items-center space-x-2">
                                 <User size={18}/>
                                 <span>Perfil</span>
                             </DropdownMenuItem>

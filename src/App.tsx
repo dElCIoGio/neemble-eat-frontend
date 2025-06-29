@@ -48,6 +48,7 @@ import {ForgotPassword} from "@/pages/root/ForgotPassword";
 import RestaurantInvitation from "@/pages/dashboard/invitation";
 import OrderCustomizationPage from "@/pages/dashboard/custom-order";
 import TableMonitor from "@/pages/dashboard/table-monitor";
+import UserProfile from "@/pages/dashboard/profile";
 
 
 
@@ -124,6 +125,7 @@ function App() {
                     <Route path="notifications" element={<NotificationsPage/>}/>
                     <Route path="orders-tracking" element={<OrdersTracking/>}/>
                     <Route path="table-monitor" element={<TableMonitor/>}/>
+                    <Route path="profile" element={<UserProfile/>}/>
                 </Route>
             </Route>
 
