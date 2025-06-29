@@ -24,7 +24,7 @@ import {
     Globe,
 } from "lucide-react"
 import {Restaurant} from "@/types/restaurant";
-import {User as UserType, Membership} from "@/types/user";
+import {User as UserType} from "@/types/user";
 import {Role} from "@/types/role";
 import { useMe } from "@/api/endpoints/auth/hooks";
 import { restaurantApi } from "@/api/endpoints/restaurants/requests";
@@ -77,14 +77,14 @@ export default function UserProfile() {
     }
 
     const handlePreferenceChange = (key: keyof UserType["preferences"], value: boolean | string) => {
-        if (!user) return
+        if (!user) return;
         setUser((prev) => prev ? ({
             ...prev,
             preferences: {
                 ...prev.preferences,
                 [key]: value,
             },
-        }))
+        }): prev)
 
         // TODO: call updateUserPreferences mutation when available
         showSuccessToast("Preferences updated successfully")

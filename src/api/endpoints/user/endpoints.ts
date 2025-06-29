@@ -2,7 +2,7 @@ import { apiClient } from "@/api/axios";
 import {UserRestaurants} from "@/api/endpoints/user/types";
 import {Restaurant} from "@/types/restaurant";
 import {Role} from "@/types/role";
-import {User} from "@/types/user";
+import {Preferences, User} from "@/types/user";
 
 
 const baseRoute = "/users"
@@ -42,6 +42,11 @@ export const userApi = {
 
     setCurrentRestaurantById: async (restaurantId: string) => {
         const result = await apiClient.put(`${baseRoute}/restaurant/${restaurantId}`)
+        return result.data
+    },
+
+    updatePreferences: async (preferences: Preferences) => {
+        const result = await apiClient.put<User>(`${baseRoute}/preferences`, preferences)
         return result.data
     }
 
