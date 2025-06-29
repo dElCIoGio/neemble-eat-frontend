@@ -27,7 +27,7 @@ export const roleApi = {
     },
 
     deleteRole: async (roleId: string) => {
-        const response = await apiClient.delete<boolean>(`${baseRoute}/${roleId}`)
+        const response = await apiClient.delete<boolean>(`${baseRoute}/hard/${roleId}`)
         return response.data
     }
 
