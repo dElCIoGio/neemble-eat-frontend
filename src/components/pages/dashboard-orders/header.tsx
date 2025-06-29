@@ -4,12 +4,17 @@ import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTri
 import {useState} from "react";
 import {SortAscending, SortDescending, ArrowRight} from "@phosphor-icons/react"
 import {FILTERS, Tag} from "@/pages/dashboard/order-tracking";
+import type {OrderPrepStatus} from "@/types/order";
 import {useOrdersTrackingContext} from "@/context/orders-tracking-context";
 
 
-export function Header() {
+interface HeaderProps {
+    customOrderUrl: string;
+}
 
-    const { filterMode, handleFilterModeChange, orders, handleTableFilterChange, sorting, handleSortingChange} = useOrdersTrackingContext()
+export function Header({ customOrderUrl }: HeaderProps) {
+
+    const { activeFilters, toggleFilter, clearFilters, orders, handleTableFilterChange, sorting, handleSortingChange} = useOrdersTrackingContext()
     const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
 
     function toggleSheet() {
@@ -39,18 +44,22 @@ export function Header() {
                             </SheetHeader>
                             <div className="flex flex-col gap-2">
                                 {
-                                    FILTERS.map((filter) =>
-                                        filter.tag === filterMode.tag ?
-                                            <Button key={filter.tag} className="text-sm bg-amethyst text-white hover:bg-amethyst-400" variant="secondary">
-                                                {filter.name}
-                                            </Button>:
-                                            <Button onClick={() => {
-                                                handleFilterModeChange(filter)
-                                                toggleSheet()
-                                            }} key={filter.tag} className="text-sm bg-white" variant="secondary">
+                                    FILTERS.map((filter) => {
+                                        if (filter.tag === 'all') {
+                                            const active = activeFilters.length === 0
+                                            return (
+                                                <Button key={filter.tag} onClick={clearFilters} className={active ? "text-sm bg-amethyst text-white hover:bg-amethyst-400" : "text-sm bg-white"} variant="secondary">
+                                                    {filter.name}
+                                                </Button>
+                                            )
+                                        }
+                                        const active = activeFilters.includes(filter.tag as OrderPrepStatus)
+                                        return (
+                                            <Button onClick={() => toggleFilter(filter.tag as OrderPrepStatus)} key={filter.tag} className={active ? "text-sm bg-amethyst text-white hover:bg-amethyst-400" : "text-sm bg-white"} variant="secondary">
                                                 {filter.name}
                                             </Button>
-                                    )
+                                        )
+                                    })
                                 }
                             </div>
 
@@ -60,15 +69,22 @@ export function Header() {
                 <div className="lg:flex items-center gap-2 hidden">
 
                     {
-                        FILTERS.map((filter) =>
-                            filter.tag === filterMode.tag ?
-                                <Button key={filter.tag} className="text-sm bg-amethyst border-[1.5px] border-zinc-300 bg-zinc-200 text-[#70469f] hover:bg-amethyst-400" variant="secondary">
-                                    {filter.name}
-                                </Button>:
-                                <Button onClick={() => handleFilterModeChange(filter)} key={filter.tag} className="text-sm bg-white" variant="secondary">
+                        FILTERS.map((filter) => {
+                            if (filter.tag === 'all') {
+                                const active = activeFilters.length === 0
+                                return (
+                                    <Button key={filter.tag} onClick={clearFilters} className={active ? "text-sm bg-amethyst border-[1.5px] border-zinc-300 bg-zinc-200 text-[#70469f] hover:bg-amethyst-400" : "text-sm bg-white"} variant="secondary">
+                                        {filter.name}
+                                    </Button>
+                                )
+                            }
+                            const active = activeFilters.includes(filter.tag as OrderPrepStatus)
+                            return (
+                                <Button onClick={() => toggleFilter(filter.tag as OrderPrepStatus)} key={filter.tag} className={active ? "text-sm bg-amethyst border-[1.5px] border-zinc-300 bg-zinc-200 text-[#70469f] hover:bg-amethyst-400" : "text-sm bg-white"} variant="secondary">
                                     {filter.name}
                                 </Button>
-                        )
+                            )
+                        })
                     }
                 </div>
             </div>
@@ -109,6 +125,11 @@ export function Header() {
                         }
                     </Button>
                 </div>
+                <Button variant="outline" asChild>
+                    <a href={customOrderUrl} target="_blank" rel="noopener noreferrer">
+                        Registar Pedido
+                    </a>
+                </Button>
             </div>
         </div>
     );
