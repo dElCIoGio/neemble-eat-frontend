@@ -93,7 +93,13 @@ export default function UserProfile() {
             .filter((item) => item.role && item.restaurant)
     }, [user, roles, restaurants])
 
+
     const formatDate = (date: Date) => {
+
+        console.log("DATE")
+        console.log(date)
+
+
         return new Intl.DateTimeFormat("en-US", {
             year: "numeric",
             month: "long",

@@ -17,6 +17,8 @@ export function useMe() {
         select: (user) => ({
             ...user,
             createdAt: new Date(user.createdAt),
+            updatedAt: new Date(user.updatedAt),
+            lastLogged: user.lastLogged? new Date(user.lastLogged): user.lastLogged,
         }),
     })
 }
