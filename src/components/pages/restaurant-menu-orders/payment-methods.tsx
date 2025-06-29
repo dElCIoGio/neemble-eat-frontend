@@ -1,6 +1,7 @@
 import {ReactNode} from "react";
 import {useOrdersContext} from "@/context/order-context";
 import {SwipeToConfirmButton} from "@/components/pages/restaurant-menu-orders/swipe-to-confirm";
+import {Banknote, CreditCard} from "lucide-react";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {sessionApi} from "@/api/endpoints/sessions/requests";
 import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
@@ -23,7 +24,7 @@ PaymentMethods.Confirm = function Confirm() {
     const {refreshOrders, setBillDialogOpen, setBillRequested} = useOrdersContext()
     const { session } = useRestaurantMenuContext()
 
-    const handleRequestBill = async () =>{
+    const handleRequestBill = async () => {
         setBillDialogOpen(true)
 
         showPromiseToast(
@@ -37,19 +38,35 @@ PaymentMethods.Confirm = function Confirm() {
                 success: "Conta está a caminho!",
                 error: "Falha ao pedir a conta. Tente novamente."
             }
-        );
-
+        )
     }
 
-    return <SwipeToConfirmButton label="Confirmar"
-                                 onConfirm={
-                                     async () => {
-                                         try {
-                                             await handleRequestBill()
-                                         } catch (error) {
-                                             console.error(error)
-                                         }
-                                     }
-                                 }
-                                 color="bg-black"/>
+    return (
+        <>
+            <SwipeToConfirmButton
+                label="Dinheiro"
+                icon={<Banknote className="h-4 w-4 mr-2" />}
+                onConfirm={async () => {
+                    try {
+                        await handleRequestBill()
+                    } catch (error) {
+                        console.error(error)
+                    }
+                }}
+                color="bg-black"
+            />
+            <SwipeToConfirmButton
+                label="Cartão"
+                icon={<CreditCard className="h-4 w-4 mr-2" />}
+                onConfirm={async () => {
+                    try {
+                        await handleRequestBill()
+                    } catch (error) {
+                        console.error(error)
+                    }
+                }}
+                color="bg-black"
+            />
+        </>
+    )
 }
