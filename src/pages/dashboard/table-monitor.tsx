@@ -19,11 +19,15 @@ import { showPromiseToast } from "@/utils/notifications/toast"
 
 type TableStatus = "disponivel" | "ocupada" | "conta_pedida" | "chamando_funcionario"
 
-const getTableStatus = (table: Table, sessions: Record<string, TableSession>): TableStatus => {
+const getTableStatus = (
+    table: Table,
+    sessions: Record<string, TableSession>
+): TableStatus => {
     const session = sessions[table._id]
     if (!session) return "disponivel"
     if (session.status === "needs bill") return "conta_pedida"
-    return "ocupada"
+    if (session.orders && session.orders.length > 0) return "ocupada"
+    return "disponivel"
 }
 
 const getStatusConfig = (status: TableStatus) => {
