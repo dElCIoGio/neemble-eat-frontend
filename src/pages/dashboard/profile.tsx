@@ -25,25 +25,21 @@ import {
 import {Restaurant} from "@/types/restaurant";
 import {User as UserType} from "@/types/user";
 import {Role} from "@/types/role";
-import { useMe } from "@/api/endpoints/auth/hooks";
 import { restaurantApi } from "@/api/endpoints/restaurants/requests";
 import { roleApi } from "@/api/endpoints/role/requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { showSuccessToast, showErrorToast } from "@/utils/notifications/toast";
 import { useUpdatePreferences } from "@/api/endpoints/user/hooks";
 import { Loader } from "@/components/ui/loader";
+import {useDashboardContext} from "@/context/dashboard-context";
 
 export default function UserProfile() {
-    const { data: me } = useMe()
-    const [user, setUser] = useState<UserType | null>(null)
+    const {user} = useDashboardContext()
     const [roles, setRoles] = useState<Record<string, Role>>({})
     const [restaurants, setRestaurants] = useState<Record<string, Restaurant>>({})
     const queryClient = useQueryClient()
     const updatePreferencesMutation = useUpdatePreferences()
 
-    useEffect(() => {
-        if (me) setUser(me)
-    }, [me])
 
     useEffect(() => {
         const load = async () => {

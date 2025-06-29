@@ -13,7 +13,11 @@ export function useMe() {
 
     return useQuery({
         queryKey,
-        queryFn: authApi.me
+        queryFn: authApi.me,
+        select: (user) => ({
+            ...user,
+            createdAt: new Date(user.createdAt),
+        }),
     })
 }
 
