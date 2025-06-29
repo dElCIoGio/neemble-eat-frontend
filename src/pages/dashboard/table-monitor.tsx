@@ -165,7 +165,7 @@ export default function TableMonitor() {
     }
 
     const handleCancelCheckout = (sessionId: string) => {
-        const promise = sessionApi.cancelCheckout(sessionId).then((updated) => {
+        const promise = sessionApi.cancelCheckout(sessionId).then(() => {
             setSessions((prev) => {
                 const entry = Object.values(prev).find((s) => s._id === sessionId)
                 if (!entry) return prev
