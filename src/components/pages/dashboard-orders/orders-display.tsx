@@ -7,8 +7,10 @@ export function OrdersDisplay() {
     const {orders, filterMode, tableFilter, sorting} = useOrdersTrackingContext()
 
     const filteredOrders = orders.filter((order) => {
+        console.log("FILTERING ORDERS:")
+        console.log(order)
         const matchesFilterMode = filterMode.tag === 'all' || filterMode.tag === order.prepStatus;
-        const matchesTableFilter = tableFilter === "all" || tableFilter === null || tableFilter === order.tableNumber.toString();
+        const matchesTableFilter = tableFilter === "all" || tableFilter === null || tableFilter === (order.tableNumber?.toString() ?? null);
         return matchesFilterMode && matchesTableFilter;
     }).sort((a, b) => {
         const timeA = new Date(a.orderTime).getTime();
