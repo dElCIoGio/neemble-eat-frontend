@@ -272,6 +272,15 @@ export default function ItemDetailsPage() {
         }
     }
 
+    const handleBlur = (field: string) => (e: React.FocusEvent<HTMLElement>) => {
+        const related = e.relatedTarget as HTMLElement | null
+        if (related?.dataset?.action === "cancel") {
+            cancelEditing(field)
+        } else {
+            saveField(field)
+        }
+    }
+
     if (isLoading || !item) {
         return <div>Loading...</div>
     }
@@ -340,19 +349,20 @@ export default function ItemDetailsPage() {
                                                         value={editValues?.name || ""}
                                                         onChange={(e) => handleInputChange("name", e.target.value)}
                                                         onKeyDown={(e) => handleKeyPress(e, "name")}
+                                                        onBlur={handleBlur("name")}
                                                         className={errors.name ? "border-red-500" : ""}
                                                         autoFocus
                                                     />
                                                     <Button size="sm" onClick={() => saveField("name")}>
                                                         <Save className="h-4 w-4" />
                                                     </Button>
-                                                    <Button size="sm" variant="outline" onClick={() => cancelEditing("name")}>
+                                                    <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("name")}>
                                                         <X className="h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center justify-between group">
-                                                    <span className="text-lg font-medium">{item.name}</span>
+                                                <div className="flex items-center justify-between group" onClick={() => startEditing("name") }>
+                                                    <span className="text-lg font-medium cursor-text">{item.name}</span>
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
@@ -380,6 +390,7 @@ export default function ItemDetailsPage() {
                                                             value={editValues?.price || 0}
                                                             onChange={(e) => handleInputChange("price", Number.parseFloat(e.target.value) || 0)}
                                                             onKeyDown={(e) => handleKeyPress(e, "price")}
+                                                            onBlur={handleBlur("price")}
                                                             className={`pl-10 ${errors.price ? "border-red-500" : ""}`}
                                                             autoFocus
                                                         />
@@ -387,13 +398,13 @@ export default function ItemDetailsPage() {
                                                     <Button size="sm" onClick={() => saveField("price")}>
                                                         <Save className="h-4 w-4" />
                                                     </Button>
-                                                    <Button size="sm" variant="outline" onClick={() => cancelEditing("price")}>
+                                                    <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("price")}>
                                                         <X className="h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center justify-between group">
-                                                    <span className="text-lg font-medium text-green-600">${item.price.toFixed(2)}</span>
+                                                <div className="flex items-center justify-between group" onClick={() => startEditing("price") }>
+                                                    <span className="text-lg font-medium text-green-600 cursor-text">${item.price.toFixed(2)}</span>
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
@@ -414,7 +425,7 @@ export default function ItemDetailsPage() {
                                                 <div className="flex items-center gap-2">
                                                     <Select
                                                         value={editValues?.categoryId || ""}
-                                                        onValueChange={(value) => handleInputChange("categoryId", value)}
+                                                        onValueChange={(value) => {handleInputChange("categoryId", value); saveField("categoryId")}}
                                                     >
                                                         <SelectTrigger className={errors.categoryId ? "border-red-500" : ""}>
                                                             <SelectValue placeholder="Select category" />
@@ -430,13 +441,13 @@ export default function ItemDetailsPage() {
                                                     <Button size="sm" onClick={() => saveField("categoryId")}> 
                                                         <Save className="h-4 w-4" />
                                                     </Button>
-                                                    <Button size="sm" variant="outline" onClick={() => cancelEditing("categoryId")}> 
+                                                    <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("categoryId")}>
                                                         <X className="h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center justify-between group">
-                                                    <span className="text-lg font-medium">{getCategoryName(item.categoryId)}</span>
+                                                <div className="flex items-center justify-between group" onClick={() => startEditing("categoryId") }>
+                                                    <span className="text-lg font-medium cursor-text">{getCategoryName(item.categoryId)}</span>
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
@@ -458,6 +469,7 @@ export default function ItemDetailsPage() {
                                                     <Textarea
                                                         value={editValues?.description || ""}
                                                         onChange={(e) => handleInputChange("description", e.target.value)}
+                                                        onBlur={handleBlur("description")}
                                                         rows={3}
                                                         autoFocus
                                                     />
@@ -466,15 +478,15 @@ export default function ItemDetailsPage() {
                                                             <Save className="h-4 w-4 mr-2" />
                                                             Save
                                                         </Button>
-                                                        <Button size="sm" variant="outline" onClick={() => cancelEditing("description")}>
+                                                        <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("description")}>
                                                             <X className="h-4 w-4 mr-2" />
                                                             Cancel
                                                         </Button>
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="group">
-                                                    <div className="flex items-start justify-between p-3 border border-transparent rounded-md hover:border-gray-200 transition-colors">
+                                                <div className="group" onClick={() => startEditing("description") }>
+                                                    <div className="flex items-start justify-between p-3 border border-transparent rounded-md hover:border-gray-200 transition-colors cursor-text">
                                                         <p className="text-gray-700 flex-1">{item.description || "No description provided"}</p>
                                                         <Button
                                                             size="sm"

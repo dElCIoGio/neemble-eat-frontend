@@ -39,6 +39,15 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
         setIsEditingDescription(false)
     }
 
+    const handleBlur = (field: "name" | "description") => (e: React.FocusEvent<HTMLElement>) => {
+        const related = e.relatedTarget as HTMLElement | null
+        if (related?.dataset?.action === "cancel") {
+            field === "name" ? handleNameCancel() : handleDescriptionCancel()
+        } else {
+            field === "name" ? handleNameSave() : handleDescriptionSave()
+        }
+    }
+
     const handlePreferenceChange = (key: keyof typeof menu.preferences, value: boolean) => {
         onUpdate({
             preferences: {
@@ -65,19 +74,20 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                                     id="menu-name"
                                     value={tempName}
                                     onChange={(e) => setTempName(e.target.value)}
+                                    onBlur={handleBlur("name")}
                                     className="flex-1"
                                     autoFocus
                                 />
                                 <Button size="sm" onClick={handleNameSave}>
                                     <Check className="h-4 w-4" />
                                 </Button>
-                                <Button size="sm" variant="outline" onClick={handleNameCancel}>
+                                <Button size="sm" variant="outline" data-action="cancel" onClick={handleNameCancel}>
                                     <X className="h-4 w-4" />
                                 </Button>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-2 group">
-                                <div className="flex-1 p-2 border border-transparent rounded-md hover:border-gray-200 transition-colors">
+                            <div className="flex items-center gap-2 group" onClick={() => setIsEditingName(true)}>
+                                <div className="flex-1 p-2 border border-transparent rounded-md hover:border-gray-200 transition-colors cursor-text">
                                     <span className="text-sm font-medium">{menu.name}</span>
                                 </div>
                                 <Button
@@ -101,6 +111,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                                     id="menu-description"
                                     value={tempDescription}
                                     onChange={(e) => setTempDescription(e.target.value)}
+                                    onBlur={handleBlur("description")}
                                     rows={3}
                                     autoFocus
                                 />
@@ -109,15 +120,15 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                                         <Check className="h-4 w-4 mr-2" />
                                         Salvar
                                     </Button>
-                                    <Button size="sm" variant="outline" onClick={handleDescriptionCancel}>
+                                    <Button size="sm" variant="outline" data-action="cancel" onClick={handleDescriptionCancel}>
                                         <X className="h-4 w-4 mr-2" />
                                         Cancelar
                                     </Button>
                                 </div>
                             </div>
                         ) : (
-                            <div className="group">
-                                <div className="p-2 border border-transparent rounded-md hover:border-gray-200 transition-colors min-h-[80px] flex items-start justify-between">
+                            <div className="group" onClick={() => setIsEditingDescription(true)}>
+                                <div className="p-2 border border-transparent rounded-md hover:border-gray-200 transition-colors min-h-[80px] flex items-start justify-between cursor-text">
                                     <p className="text-sm text-gray-600 flex-1">{menu.description}</p>
                                     <Button
                                         size="sm"
