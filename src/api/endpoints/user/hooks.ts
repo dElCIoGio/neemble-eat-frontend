@@ -1,6 +1,8 @@
 import {useAuth} from "@/context/auth-context";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {userApi} from "@/api/endpoints/user/endpoints";
+import {Preferences} from "@/types/user";
+import {showSuccessToast, showErrorToast} from "@/utils/notifications/toast";
 
 
 export function useGetUserRestaurants(){
@@ -59,6 +61,22 @@ export function useSetCurrentRestaurant() {
         onSuccess: () => {
             // Invalidate so useGetCurrentRestaurant picks up the new value
             queryClient.invalidateQueries({ queryKey: ["currentRestaurantId"] });
+        },
+    });
+}
+
+export function useUpdatePreferences() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (preferences: Preferences) => userApi.updatePreferences(preferences),
+        onSuccess: (user) => {
+            queryClient.setQueryData(["me"], user);
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+            showSuccessToast("Preferences updated successfully");
+        },
+        onError: () => {
+            showErrorToast("Failed to update preferences");
         },
     });
 }

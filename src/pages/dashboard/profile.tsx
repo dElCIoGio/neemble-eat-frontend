@@ -1,5 +1,4 @@
 
-// TODO: implement updateUserPreferences API hook and use it in this page
 import { useEffect, useMemo, useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -31,6 +30,7 @@ import { restaurantApi } from "@/api/endpoints/restaurants/requests";
 import { roleApi } from "@/api/endpoints/role/requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { showSuccessToast, showErrorToast } from "@/utils/notifications/toast";
+import { useUpdatePreferences } from "@/api/endpoints/user/hooks";
 import { Loader } from "@/components/ui/loader";
 
 export default function UserProfile() {
@@ -39,6 +39,7 @@ export default function UserProfile() {
     const [roles, setRoles] = useState<Record<string, Role>>({})
     const [restaurants, setRestaurants] = useState<Record<string, Restaurant>>({})
     const queryClient = useQueryClient()
+    const updatePreferencesMutation = useUpdatePreferences()
 
     useEffect(() => {
         if (me) setUser(me)
@@ -78,16 +79,13 @@ export default function UserProfile() {
 
     const handlePreferenceChange = (key: keyof UserType["preferences"], value: boolean | string) => {
         if (!user) return;
-        setUser((prev) => prev ? ({
-            ...prev,
-            preferences: {
-                ...prev.preferences,
-                [key]: value,
-            },
-        }): prev)
+        const newPrefs = {
+            ...user.preferences,
+            [key]: value,
+        }
+        setUser(prev => prev ? ({ ...prev, preferences: newPrefs }) : prev)
 
-        // TODO: call updateUserPreferences mutation when available
-        showSuccessToast("Preferences updated successfully")
+        updatePreferencesMutation.mutate(newPrefs)
     }
 
     const restaurantMemberships = useMemo(() => {
