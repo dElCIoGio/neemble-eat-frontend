@@ -9,7 +9,6 @@ export enum Sections {
     ORDERS = "orders",
 
     // 🛒 Customer Experience
-    CART_VIEW = "cart_view",
     CUSTOMER_ORDERS_SUMMARY = "customer_orders_summary",
     TABLE_QR_ACCESS_CONTROL = "table_qr_access_control",
 
