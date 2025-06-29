@@ -21,8 +21,9 @@ export function PaymentMethods({children}: Props) {
 }
 
 PaymentMethods.Confirm = function Confirm() {
-    const {refreshOrders, setBillDialogOpen, setBillRequested} = useOrdersContext()
+    const {refreshOrders, setBillDialogOpen} = useOrdersContext()
     const { session } = useRestaurantMenuContext()
+
 
     const handleRequestBill = async () => {
         setBillDialogOpen(true)
@@ -31,7 +32,6 @@ PaymentMethods.Confirm = function Confirm() {
             sessionApi.markSessionNeedsBill(session._id)
                 .then(() => {
                     refreshOrders()
-                    setBillRequested(true)
                 }),
             {
                 loading: "Pedindo a conta...",

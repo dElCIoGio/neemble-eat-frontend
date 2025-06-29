@@ -1,5 +1,5 @@
 import {useParams} from "react-router";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import Background from "@/components/ui/background";
 import ReturnNav from "@/components/ui/return-nav";
@@ -34,7 +34,6 @@ export function Orders() {
     const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
     const [billRequested, setBillRequested] = useState<boolean>(false);
 
-
     const {
         data: session,
         error: sessionError,
@@ -51,6 +50,12 @@ export function Orders() {
         refetch: refreshOrders,
         cleanList
     } = useGetSessionOrders(session?._id)
+
+    useEffect(() => {
+        if (session)
+            setBillRequested(session.status === "needs bill")
+
+    }, [session, session?.status]);
 
 
     if (ordersError || sessionError) {
@@ -83,7 +88,6 @@ export function Orders() {
             cleanList,
             setBillDialogOpen: setIsPopupOpen,
             billRequested,
-            setBillRequested
         }}>
             <div className="p-4">
                 <Background className={`bg-gray-100`}/>

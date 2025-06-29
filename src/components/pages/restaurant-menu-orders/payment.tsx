@@ -11,6 +11,7 @@ export function Payment() {
     const [sessionPrice, setSessionPrice] = useState<number>(0)
     const {orders, billRequested} = useOrdersContext()
 
+
     const [tip, setTip] = useState<number>(0);
     const [paymentMethodShowing, setPaymentMethodShowing] = useState<boolean>(false)
 
