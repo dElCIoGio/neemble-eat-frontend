@@ -64,7 +64,7 @@ export function OrderListing({order}: OrderCardProps) {
                     </div>
                     <div className="flex space-x-1.5 items-center text-zinc-600 font-poppins-regular">
                         <Clock color={"#70469f"}/>
-                        <h3>Tempo: <span className="text-zinc-800 font-poppins-medium">{time} atrás</span></h3>
+                        <h3>Tempo: <span className="text-zinc-800 font-poppins-medium">{time.slice(0, 1) === "-"? "Agora": `${time} atrás`}</span></h3>
                     </div>
                     <div className="flex space-x-1.5 items-center text-zinc-600 font-poppins-regular">
                         <Tag color={"#70469f"}/>
