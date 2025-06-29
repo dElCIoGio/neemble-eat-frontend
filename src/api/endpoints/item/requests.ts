@@ -71,7 +71,7 @@ export const itemsApi = {
     updateItemImage: async (itemId: string, file: File) => {
         const formData = new FormData();
         formData.append('imageFile', file);
-        const response = await apiClient.post<Item>(`${baseRoute}/${itemId}/images`, formData)
+        const response = await apiClient.put<Item>(`${baseRoute}/${itemId}/image`, formData)
         return response.data
 
     }
