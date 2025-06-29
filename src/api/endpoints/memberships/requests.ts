@@ -26,6 +26,11 @@ export const membershipsApi = {
             `${baseRoute}/${userId}/restaurant/${restaurantId}/role/${roleId}`
         )
         return result.data
+    },
+
+    g: async (userId: string, roleId: string) => {
+        const response = await apiClient.post<User>(`${baseRoute}/`, {data: {userId, roleId}})
+        return response.data
     }
 
 

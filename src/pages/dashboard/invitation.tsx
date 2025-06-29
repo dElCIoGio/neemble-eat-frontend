@@ -118,6 +118,8 @@ export default function RestaurantInvitation() {
 
         if (!firebaseId) return;
 
+        if (!invitation) return;
+
         const user = await authApi.register({
           idToken: token,
           userData: {
@@ -160,6 +162,8 @@ export default function RestaurantInvitation() {
         const email = cred.user.email;
 
         if (!email) return;
+
+        if (!invitation) return;
 
         const user = await authApi.register({
           idToken: token,
