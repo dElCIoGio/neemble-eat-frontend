@@ -130,9 +130,8 @@ export default function RestaurantInvitation() {
           },
         });
 
-        await membershipsApi.updateRole(
+        await membershipsApi.addMembership(
           user._id,
-          invitation.restaurantId,
           invitation.roleId
         );
         await membershipsApi.activateMembership(
@@ -175,9 +174,8 @@ export default function RestaurantInvitation() {
           },
         });
 
-        await membershipsApi.updateRole(
+        await membershipsApi.addMembership(
           user._id,
-          invitation.restaurantId,
           invitation.roleId
         );
         await membershipsApi.activateMembership(
