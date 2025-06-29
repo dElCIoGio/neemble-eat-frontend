@@ -6,6 +6,7 @@ import {SortAscending, SortDescending, ArrowRight} from "@phosphor-icons/react"
 import {FILTERS, Tag} from "@/pages/dashboard/order-tracking";
 import type {OrderPrepStatus} from "@/types/order";
 import {useOrdersTrackingContext} from "@/context/orders-tracking-context";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 
 interface HeaderProps {
@@ -13,6 +14,8 @@ interface HeaderProps {
 }
 
 export function Header({ customOrderUrl }: HeaderProps) {
+
+    const isMobile = useIsMobile()
 
     const { activeFilters, toggleFilter, clearFilters, orders, handleTableFilterChange, sorting, handleSortingChange} = useOrdersTrackingContext()
     const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
@@ -27,7 +30,7 @@ export function Header({ customOrderUrl }: HeaderProps) {
             <div className={`flex justify-between items-center`}>
                 <div className="laptop:hidden my-2">
                     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen} defaultOpen={false}>
-                        <SheetTrigger asChild>
+                        <SheetTrigger className={`${isMobile? "":"hidden"}`} asChild>
                             <Button variant={"default"}>
                                 Selecionar estado
                             </Button>
