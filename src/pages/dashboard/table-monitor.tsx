@@ -277,7 +277,7 @@ export default function TableMonitor() {
                                     </SheetTitle>
                                 </SheetHeader>
 
-                                <div className="mt-6 space-y-6">
+                                <div className="mt-6 space-y-6 p-4">
                                     {selectedSession ? (
                                         <>
                                             {/* Session Info */}
