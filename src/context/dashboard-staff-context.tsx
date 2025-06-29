@@ -191,7 +191,8 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
     const getRoleName = (roleId: string) => {
         if (!roleId) return "Sem função"
         const role = roles?.find(r => r._id === roleId)
-        return role?.name || "Sem função"
+        if (!role || role.name === "no_role") return "Sem função"
+        return role.name
     }
 
 
