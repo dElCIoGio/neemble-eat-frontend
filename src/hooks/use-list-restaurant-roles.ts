@@ -12,6 +12,8 @@ export function useListRestaurantRoles(restaurantId: string) {
         queryFn: () => roleApi.listRestaurantRoles(restaurantId)
     })
 
+    const filtered = (data ?? []).filter(r => r.name !== 'no_role')
+
     const addRole = (role: Role) => {
         queryClient.setQueryData<Role[]>(["roles", restaurantId], (old = []) => [...old, role])
     }
@@ -29,7 +31,7 @@ export function useListRestaurantRoles(restaurantId: string) {
     }
 
     return {
-        data: data ? data : [],
+        data: filtered,
         ...query,
         addRole,
         removeRole,

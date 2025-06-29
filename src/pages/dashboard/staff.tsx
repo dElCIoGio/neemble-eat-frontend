@@ -4,6 +4,7 @@ import {RoleCreate, SectionPermission, Role, PartialRole, Sections} from "@/type
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { getRoleLabel } from "@/utils/user/role-translations"
 import { Invitation, InvitationCreate } from "@/types/invitation"
 
 import {
@@ -423,7 +424,7 @@ function StaffContent() {
                                                         <div key={role._id} className="flex items-center justify-between p-3 border rounded-lg">
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-2">
-                                                                    <Badge>{role.name}</Badge>
+                                                                    <Badge>{getRoleLabel(role.name)}</Badge>
                                                                     <Badge variant="outline">Personalizada</Badge>
                                                                 </div>
                                                                 <p className="text-sm text-gray-600 mt-1">{role.description}</p>
@@ -652,7 +653,7 @@ function StaffContent() {
                                                         <SelectContent>
                                                             {roles.map((role) => (
                                                                 <SelectItem key={role._id} value={role._id}>
-                                                                    {role.name}
+                                                                    {getRoleLabel(role.name)}
                                                                 </SelectItem>
                                                             ))}
                                                         </SelectContent>

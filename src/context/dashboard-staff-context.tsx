@@ -8,6 +8,7 @@ import { useListRestaurantRoles } from "@/hooks/use-list-restaurant-roles"
 import { showSuccessToast, showErrorToast } from "@/utils/notifications/toast"
 import { useUpdateMemberRole } from "@/api/endpoints/memberships/hooks"
 import { Badge } from "@/components/ui/badge"
+import { getRoleLabel } from "@/utils/user/role-translations"
 import { restaurantApi } from "@/api/endpoints/restaurants/requests"
 
 type SortableUserFields = keyof Pick<User, 'firstName' | 'lastName' | 'email' | 'isActive' | 'updatedAt'>
@@ -191,7 +192,9 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
     const getRoleName = (roleId: string) => {
         if (!roleId) return "Sem função"
         const role = roles?.find(r => r._id === roleId)
-        return role?.name || "Sem função"
+        if (!role) return "Sem função"
+        if (role.name === "no_role") return "Sem função"
+        return getRoleLabel(role.name)
     }
 
 

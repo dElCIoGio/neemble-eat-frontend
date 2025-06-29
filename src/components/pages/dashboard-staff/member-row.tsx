@@ -27,6 +27,7 @@ import { ptBR } from "date-fns/locale"
 import { Clock, Edit, Eye, Mail, MoreHorizontal, Phone, Trash2 } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
+import { getRoleLabel } from "@/utils/user/role-translations"
 
 interface MemberRowProps {
     user: User
@@ -81,8 +82,8 @@ export default function MemberRow({ user }: MemberRowProps) {
                 </TableCell>
                 <TableCell>
                     <Select
-                        defaultValue={membership?.roleId}
-                        value={membership?.roleId ?? ""}
+                        defaultValue={membership?.roleId && membership.roleId !== 'no_role' ? membership.roleId : undefined}
+                        value={membership?.roleId && membership.roleId !== 'no_role' ? membership.roleId : ""}
                         onValueChange={(value) => updateMemberRole(user._id, value)}
                     >
                         <SelectTrigger className="w-32 h-8">
@@ -91,7 +92,7 @@ export default function MemberRow({ user }: MemberRowProps) {
                         <SelectContent>
                             {roles.map((role) => (
                                 <SelectItem key={role._id} value={role._id}>
-                                    {role.name}
+                                    {getRoleLabel(role.name)}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -149,7 +150,7 @@ export default function MemberRow({ user }: MemberRowProps) {
                     </SheetHeader>
                     <div className="p-4 space-y-3 overflow-y-auto h-full">
                         <div>
-                            <p className="font-semibold">Função: {role?.name || "Sem função"}</p>
+                            <p className="font-semibold">Função: {role ? getRoleLabel(role.name) : "Sem função"}</p>
                             {role?.description && <p className="text-sm text-muted-foreground">{role.description}</p>}
                         </div>
                         <div className="space-y-2">
