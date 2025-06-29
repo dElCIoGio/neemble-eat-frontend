@@ -27,6 +27,7 @@ import { ptBR } from "date-fns/locale"
 import { Clock, Edit, Eye, Mail, MoreHorizontal, Phone, Trash2 } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
+import { getSectionLabel } from "@/lib/helpers/section-label"
 
 interface MemberRowProps {
     user: User
@@ -44,12 +45,14 @@ export default function MemberRow({ user }: MemberRowProps) {
 
     const { restaurant } = useDashboardContext()
     const { data: roles } = useListRestaurantRoles(restaurant._id)
+    const filteredRoles = (roles ?? []).filter(r => r.name !== "no_role")
 
     const membership = user.memberships[0]
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isSheetOpen, setIsSheetOpen] = useState(false)
 
     const role = roles.find((r) => r._id === membership?.roleId)
+    const roleName = role?.name === "no_role" || !role ? "Sem função" : role.name
 
     function handleViewPermissions() {
         setIsMenuOpen(false)
@@ -81,15 +84,15 @@ export default function MemberRow({ user }: MemberRowProps) {
                 </TableCell>
                 <TableCell>
                     <Select
-                        defaultValue={membership?.roleId}
-                        value={membership?.roleId ?? ""}
+                        defaultValue={role?.name === "no_role" ? "" : membership?.roleId}
+                        value={role?.name === "no_role" ? "" : (membership?.roleId ?? "")}
                         onValueChange={(value) => updateMemberRole(user._id, value)}
                     >
                         <SelectTrigger className="w-32 h-8">
                             <SelectValue placeholder="Sem função" />
                         </SelectTrigger>
                         <SelectContent>
-                            {roles.map((role) => (
+                            {filteredRoles.map((role) => (
                                 <SelectItem key={role._id} value={role._id}>
                                     {role.name}
                                 </SelectItem>
@@ -149,13 +152,13 @@ export default function MemberRow({ user }: MemberRowProps) {
                     </SheetHeader>
                     <div className="p-4 space-y-3 overflow-y-auto h-full">
                         <div>
-                            <p className="font-semibold">Função: {role?.name || "Sem função"}</p>
+                            <p className="font-semibold">Função: {roleName}</p>
                             {role?.description && <p className="text-sm text-muted-foreground">{role.description}</p>}
                         </div>
                         <div className="space-y-2">
                             {role?.permissions.map((perm) => (
                                 <div key={perm.section} className="flex items-start justify-between">
-                                    <span className="capitalize">{perm.section.replace(/_/g, " ")}</span>
+                                    <span className="capitalize">{getSectionLabel(perm.section)}</span>
                                     <div className="flex gap-1">
                                         {perm.permissions.canView && <Badge variant="secondary">ver</Badge>}
                                         {perm.permissions.canEdit && <Badge variant="secondary">editar</Badge>}

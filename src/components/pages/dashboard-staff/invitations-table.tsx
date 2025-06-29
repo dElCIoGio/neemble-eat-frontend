@@ -66,11 +66,12 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
     }
 
     const {data: role} = useGetRole(invitation.roleId)
+    const roleName = role?.name === "no_role" ? "Sem função" : role?.name ?? "Carregando..."
 
     return (
         <TableRow>
             <TableCell>{invitation.name}</TableCell>
-            <TableCell>{role?.name ?? "Carregando..."}</TableCell>
+            <TableCell>{roleName}</TableCell>
             <TableCell>{format(new Date(invitation.createdAt), "dd/MM/yyyy", { locale: ptBR })}</TableCell>
             <TableCell className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={handleCopy}>

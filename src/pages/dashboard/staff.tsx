@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { User } from "@/types/user"
 import {RoleCreate, SectionPermission, Role, PartialRole, Sections} from "@/types/role"
+import { getSectionLabel } from "@/lib/helpers/section-label"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -145,6 +146,8 @@ function StaffContent() {
         removeRole,
         updateRole
     } = useListRestaurantRoles(restaurant._id)
+
+    const filteredRoles = (roles ?? []).filter(r => r.name !== "no_role")
 
     const { data: users = [] } = useGetAllMembers({
         restaurantId: restaurant._id
@@ -419,7 +422,7 @@ function StaffContent() {
 
                                             <TabsContent value="existing" className="space-y-4">
                                                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                                                    {roles.map((role) => (
+                                                    {filteredRoles.map((role) => (
                                                         <div key={role._id} className="flex items-center justify-between p-3 border rounded-lg">
                                                             <div className="flex-1">
                                                                 <div className="flex items-center gap-2">
@@ -493,7 +496,7 @@ function StaffContent() {
                                                                                     htmlFor={`role-${permission.section}`}
                                                                                     className="text-sm font-medium leading-none"
                                                                                 >
-                                                                                    {permission.section.replace(/_/g, ' ')}
+    {getSectionLabel(permission.section)}
                                                                                 </Label>
                                                                                 <p className="text-xs text-muted-foreground">
                                                                                     Permissões:
@@ -547,7 +550,7 @@ function StaffContent() {
                                                     <div key={perm.section} className="border p-3 rounded-lg space-y-2">
                                                         <div className="flex items-center justify-between">
                                                             <Label className="capitalize">
-                                                                {perm.section.replace(/_/g, " ")}
+                                                                {getSectionLabel(perm.section)}
                                                             </Label>
                                                             <Button
                                                                 variant="ghost"
@@ -584,7 +587,7 @@ function StaffContent() {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {Object.values(Sections).map(sec => (
-                                                            <SelectItem key={sec} value={sec}>{sec.replace(/_/g, ' ')}</SelectItem>
+                                                            <SelectItem key={sec} value={sec}>{getSectionLabel(sec)}</SelectItem>
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
@@ -650,13 +653,13 @@ function StaffContent() {
                                                             <SelectValue placeholder="Selecione uma função" />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            {roles.map((role) => (
+                                                            {filteredRoles.map((role) => (
                                                                 <SelectItem key={role._id} value={role._id}>
                                                                     {role.name}
                                                                 </SelectItem>
                                                             ))}
                                                         </SelectContent>
-                                                    </Select>
+                                                   </Select>
                                                 </div>
                                             </div>
 
