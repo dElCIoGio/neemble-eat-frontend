@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { useGetInvitation } from "@/api/endpoints/invitation/hooks";
 import { useGetRestaurant } from "@/api/endpoints/restaurants/hooks";
 import { useGetRole } from "@/api/endpoints/role/hook";
 import { useGetUser } from "@/api/endpoints/user/hooks";
+import { membershipsApi } from "@/api/endpoints/memberships/requests";
 import { showPromiseToast } from "@/utils/notifications/toast";
 import { useGoogleAuth } from "@/hooks/use-google-auth";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -42,13 +43,43 @@ const formatOpeningHours = (hours: string) => {
   return `${open} - ${close}`;
 };
 
+const renderError = (message: string) => (
+  <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-4 text-center">
+    <p className="text-lg font-semibold">{message}</p>
+    <div className="flex gap-4">
+      <Button asChild>
+        <Link to="/">Início</Link>
+      </Button>
+      <Button variant="outline" asChild>
+        <Link to="/contact">Contacto</Link>
+      </Button>
+    </div>
+  </div>
+);
+
 export default function RestaurantInvitation() {
   const { invitationId } = useParams() as { invitationId: string };
 
-  const { data: invitation } = useGetInvitation(invitationId);
-  const { data: role } = useGetRole(invitation?.roleId);
-  const { data: restaurant } = useGetRestaurant(invitation?.restaurantId);
-  const { data: manager } = useGetUser(invitation?.managerId);
+  const {
+    data: invitation,
+    isError: invitationError,
+    isLoading: invitationLoading,
+  } = useGetInvitation(invitationId);
+  const {
+    data: role,
+    isError: roleError,
+    isLoading: roleLoading,
+  } = useGetRole(invitation?.roleId);
+  const {
+    data: restaurant,
+    isError: restaurantError,
+    isLoading: restaurantLoading,
+  } = useGetRestaurant(invitation?.restaurantId);
+  const {
+    data: manager,
+    isError: managerError,
+    isLoading: managerLoading,
+  } = useGetUser(invitation?.managerId);
 
   const invitedEmail = (invitation as unknown as { email?: string })?.email ?? "";
 
@@ -83,21 +114,29 @@ export default function RestaurantInvitation() {
   const handleGoogleSignup = () => {
     const promise = signInWithGoogle()
       .then(async ({ token, credential }) => {
+        const firebaseId = await auth.currentUser?.getIdToken();
 
-          const firebaseId = await auth.currentUser?.getIdToken()
+        if (!firebaseId) return;
 
-          if (firebaseId){
-            return authApi.register({
-              idToken: token,
-              userData: {
-                firstName: signupData.firstName,
-                lastName: signupData.lastName,
-                email: credential.user.email ?? "",
-                phoneNumber: signupData.phoneNumber,
-              },
-            });
-          }
+        const user = await authApi.register({
+          idToken: token,
+          userData: {
+            firstName: signupData.firstName,
+            lastName: signupData.lastName,
+            email: credential.user.email ?? "",
+            phoneNumber: signupData.phoneNumber,
+          },
+        });
 
+        await membershipsApi.updateRole(
+          user._id,
+          invitation.restaurantId,
+          invitation.roleId
+        );
+        await membershipsApi.activateMembership(
+          user._id,
+          invitation.restaurantId
+        );
       })
       .then(() => navigate("/dashboard"));
 
@@ -118,20 +157,29 @@ export default function RestaurantInvitation() {
     )
       .then(async (cred) => {
         const token = await cred.user.getIdToken();
-        const email = cred.user.email
+        const email = cred.user.email;
 
-        if (email){
-          return authApi.register({
-            idToken: token,
-            userData: {
-              firstName: signupData.firstName,
-              lastName: signupData.lastName,
-              email: email,
-              phoneNumber: signupData.phoneNumber,
-            },
-          });
-        }
+        if (!email) return;
 
+        const user = await authApi.register({
+          idToken: token,
+          userData: {
+            firstName: signupData.firstName,
+            lastName: signupData.lastName,
+            email: email,
+            phoneNumber: signupData.phoneNumber,
+          },
+        });
+
+        await membershipsApi.updateRole(
+          user._id,
+          invitation.restaurantId,
+          invitation.roleId
+        );
+        await membershipsApi.activateMembership(
+          user._id,
+          invitation.restaurantId
+        );
       })
       .then(() => navigate("/dashboard"));
 
@@ -145,12 +193,33 @@ export default function RestaurantInvitation() {
     setSignupData((prev) => ({ ...prev, [field]: value }));
   };
 
-  if (!invitation || !restaurant || !role || !manager) {
+  if (
+    invitationLoading ||
+    roleLoading ||
+    restaurantLoading ||
+    managerLoading
+  ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader />
       </div>
     );
+  }
+
+  if (invitationError || !invitation) {
+    return renderError("Convite não encontrado.");
+  }
+
+  if (restaurantError || !restaurant) {
+    return renderError("Restaurante não encontrado.");
+  }
+
+  if (roleError || !role) {
+    return renderError("Função não encontrada.");
+  }
+
+  if (managerError || !manager) {
+    return renderError("Usuário não encontrado.");
   }
 
   if (currentView === "signup") {
