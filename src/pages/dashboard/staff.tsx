@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { User } from "@/types/user"
-import {RoleCreate, SectionPermission, Role, PartialRole} from "@/types/role"
+import {RoleCreate, SectionPermission, Role, PartialRole, Sections} from "@/types/role"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -49,56 +49,55 @@ import {Checkbox} from "@/components/ui/checkbox";
 
 const defaultSectionPermissions: SectionPermission[] = [
     // 🍽️ RestaurantMenu & Ordering
-    { section: "menus", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "categories", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "items", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "customizations", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "orders", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.MENUS, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.CATEGORIES, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.ITEMS, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.CUSTOMIZATIONS, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.ORDERS, permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 🛒 Customer Experience
-    { section: "cart_view", permissions: { canView: true, canEdit: false, canDelete: false } },
-    { section: "customer_orders_summary", permissions: { canView: true, canEdit: false, canDelete: false } },
-    { section: "table_qr_access_control", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.CUSTOMER_ORDERS_SUMMARY, permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: Sections.TABLE_QR_ACCESS_CONTROL, permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 👨‍🍳 Restaurant Operations
-    { section: "kitchen_view", permissions: { canView: true, canEdit: true, canDelete: false } },
-    { section: "bar_view", permissions: { canView: true, canEdit: true, canDelete: false } },
-    { section: "order_queue", permissions: { canView: true, canEdit: true, canDelete: false } },
-    { section: "tables", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "reservations", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.KITCHEN_VIEW, permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.BAR_VIEW, permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.ORDER_QUEUE, permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.TABLES, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.RESERVATIONS, permissions: { canView: true, canEdit: true, canDelete: true } },
 
     // 👥 Team & Roles
-    { section: "users", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "roles", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "permissions", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.USERS, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.ROLES, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.PERMISSIONS, permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 💳 Sales & Billing
-    { section: "sales_dashboard", permissions: { canView: true, canEdit: false, canDelete: false } },
-    { section: "invoices", permissions: { canView: true, canEdit: true, canDelete: false } },
-    { section: "payments", permissions: { canView: true, canEdit: false, canDelete: false } },
-    { section: "reports", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.SALES_DASHBOARD, permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: Sections.INVOICES, permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.PAYMENTS, permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: Sections.REPORTS, permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 📊 Analytics & Insights
-    { section: "performance_insights", permissions: { canView: true, canEdit: false, canDelete: false } },
-    { section: "product_popularity", permissions: { canView: true, canEdit: false, canDelete: false } },
-    { section: "revenue_trends", permissions: { canView: true, canEdit: false, canDelete: false } },
-    { section: "customer_feedback", permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: Sections.PERFORMANCE_INSIGHTS, permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: Sections.PRODUCT_POPULARITY, permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: Sections.REVENUE_TRENDS, permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: Sections.CUSTOMER_FEEDBACK, permissions: { canView: true, canEdit: false, canDelete: false } },
 
     // ⚙️ Settings & Config
-    { section: "restaurant_settings", permissions: { canView: true, canEdit: true, canDelete: false } },
-    { section: "opening_hours", permissions: { canView: true, canEdit: true, canDelete: false } },
-    { section: "printer_setup", permissions: { canView: true, canEdit: true, canDelete: false } },
-    { section: "table_qr_configuration", permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.RESTAURANT_SETTINGS, permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.OPENING_HOURS, permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.PRINTER_SETUP, permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.TABLE_QR_CONFIGURATION, permissions: { canView: true, canEdit: true, canDelete: false } },
 
     // 📢 Marketing & Communication
-    { section: "promotions", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "announcements", permissions: { canView: true, canEdit: true, canDelete: true } },
-    { section: "customer_reviews", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.PROMOTIONS, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.ANNOUNCEMENTS, permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.CUSTOMER_REVIEWS, permissions: { canView: true, canEdit: true, canDelete: true } },
 
     // 🛠️ Support & Maintenance
-    { section: "system_logs", permissions: { canView: true, canEdit: false, canDelete: false } },
-    { section: "integration_settings", permissions: { canView: true, canEdit: true, canDelete: false } },
-    { section: "help_requests", permissions: { canView: true, canEdit: true, canDelete: true } },
+    { section: Sections.SYSTEM_LOGS, permissions: { canView: true, canEdit: false, canDelete: false } },
+    { section: Sections.INTEGRATION_SETTINGS, permissions: { canView: true, canEdit: true, canDelete: false } },
+    { section: Sections.HELP_REQUESTS, permissions: { canView: true, canEdit: true, canDelete: true } },
 ];
 
 const useCreateRole = () => {
@@ -576,11 +575,19 @@ function StaffContent() {
 
                                             <div className="space-y-2">
                                                 <Label>Novo Módulo</Label>
-                                                <Input placeholder="ex: reports" value={newPermission.section}
-                                                       onChange={(e) => setNewPermission({
-                                                           ...newPermission,
-                                                           section: e.target.value
-                                                       })}/>
+                                                <Select value={newPermission.section} onValueChange={(value) => setNewPermission({
+                                                    ...newPermission,
+                                                    section: value
+                                                })}>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Selecionar" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {Object.values(Sections).map(sec => (
+                                                            <SelectItem key={sec} value={sec}>{sec.replace(/_/g, ' ')}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
                                                 <div className="flex flex-wrap gap-3 mt-2">
                                                     {(['canView','canEdit','canDelete'] as (keyof SectionPermission['permissions'])[]).map(p => (
                                                         <label key={p} className="flex items-center gap-2 text-sm">
