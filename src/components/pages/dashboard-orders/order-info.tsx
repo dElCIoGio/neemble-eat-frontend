@@ -105,6 +105,25 @@ export function OrderInfo({order}: OrderInfoProps) {
                     </div>
                 </div>
             }
+            {
+                order.customisations && order.customisations.length > 0 &&
+                <div>
+                    <Separator className="my-4"/>
+                    <div>
+                        <h1 className="font-poppins-regular text-zinc-500">
+                            Personalizações:
+                        </h1>
+                        <Card className="p-4 bg-zinc-100 rounded-2xl my-2 border-amethyst-300 space-y-1.5">
+                            {order.customisations.map((c) => (
+                                <p key={c.ruleName} className="text-sm font-poppins-regular text-zinc-800">
+                                    <span className="font-medium">{c.ruleName}: </span>
+                                    {c.selectedOptions.map(o => `${o.optionName} (${o.quantity})`).join(', ')}
+                                </p>
+                            ))}
+                        </Card>
+                    </div>
+                </div>
+            }
             <Separator className="my-4"/>
             <div className="mb-12 lg:mb-0">
                 <h1 className="font-poppins-semibold text-zinc-500 my-2">
