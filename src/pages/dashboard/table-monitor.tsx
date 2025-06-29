@@ -198,7 +198,7 @@ export default function TableMonitor() {
     )
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+        <div className="bg-gray-50">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-6">
                     <h1 className="text-2xl font-bold text-gray-900 mb-2">Monitor de Mesas</h1>
@@ -363,9 +363,9 @@ export default function TableMonitor() {
                                                 <div className="text-gray-500">
                                                     <CheckCircle className="h-12 w-12 mx-auto mb-2" />
                                                     <p>Mesa disponível</p>
-                                                    <p className="text-sm">Nenhuma sessão ativa</p>
+                                                    <p className="text-sm hidden">Nenhuma sessão ativa</p>
                                                 </div>
-                                                <Button onClick={() => handleStartSession(selectedTable._id)} className="w-full" size="lg">
+                                                <Button onClick={() => handleStartSession(selectedTable._id)} className="w-full hidden" size="lg">
                                                     <Play className="h-4 w-4 mr-2" />
                                                     Iniciar Sessão
                                                 </Button>
