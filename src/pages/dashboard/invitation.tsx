@@ -14,6 +14,7 @@ import { useGetRestaurant } from "@/api/endpoints/restaurants/hooks";
 import { useGetRole } from "@/api/endpoints/role/hook";
 import { useGetUser } from "@/api/endpoints/user/hooks";
 import { membershipsApi } from "@/api/endpoints/memberships/requests";
+import { invitationApi } from "@/api/endpoints/invitation/requests";
 import { showPromiseToast } from "@/utils/notifications/toast";
 import { useGoogleAuth } from "@/hooks/use-google-auth";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -138,6 +139,7 @@ export default function RestaurantInvitation() {
           user._id,
           invitation.restaurantId
         );
+        await invitationApi.deleteInvitation(invitation._id);
       })
       .then(() => navigate("/dashboard"));
 
@@ -182,6 +184,7 @@ export default function RestaurantInvitation() {
           user._id,
           invitation.restaurantId
         );
+        await invitationApi.deleteInvitation(invitation._id);
       })
       .then(() => navigate("/dashboard"));
 
