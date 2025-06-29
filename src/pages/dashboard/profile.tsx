@@ -43,9 +43,9 @@ export default function UserProfile() {
 
     useEffect(() => {
         const load = async () => {
-            if (!me) return
+            if (!user) return
             try {
-                const roleResults = await Promise.all(me.memberships.map(m => roleApi.getRole(m.roleId)))
+                const roleResults = await Promise.all(user.memberships.map(m => roleApi.getRole(m.roleId)))
                 const roleMap: Record<string, Role> = {}
                 roleResults.forEach(r => { roleMap[r._id] = r })
                 setRoles(roleMap)
@@ -60,7 +60,7 @@ export default function UserProfile() {
             }
         }
         load()
-    }, [me])
+    }, [user])
 
     const handleRemoveMembership = async (restaurantId: string) => {
         if (!user) return
@@ -79,8 +79,6 @@ export default function UserProfile() {
             ...user.preferences,
             [key]: value,
         }
-        setUser(prev => prev ? ({ ...prev, preferences: newPrefs }) : prev)
-
         updatePreferencesMutation.mutate(newPrefs)
     }
 
