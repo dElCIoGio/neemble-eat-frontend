@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
-import { Clock, Users, CreditCard, AlertTriangle, Play, Trash2, CheckCircle } from "lucide-react"
+import { Clock, Users, CreditCard, AlertTriangle, Play, Trash2, CheckCircle, XCircle } from "lucide-react"
 import type { Table } from "@/types/table"
 import type { TableSession } from "@/types/table-session"
 import { useDashboardContext } from "@/context/dashboard-context"
@@ -160,6 +160,22 @@ export default function TableMonitor() {
             loading: "Limpando mesa...",
             success: "Mesa limpa",
             error: "Erro ao limpar mesa"
+        })
+        setIsSheetOpen(false)
+    }
+
+    const handleCancelCheckout = (sessionId: string) => {
+        const promise = sessionApi.cancelCheckout(sessionId).then((updated) => {
+            setSessions((prev) => {
+                const entry = Object.values(prev).find((s) => s._id === sessionId)
+                if (!entry) return prev
+                return { ...prev, [entry.tableId]: { ...entry, status: "active" } }
+            })
+        })
+        showPromiseToast(promise, {
+            loading: "Cancelando conta...",
+            success: "Conta cancelada",
+            error: "Erro ao cancelar conta"
         })
         setIsSheetOpen(false)
     }
@@ -345,6 +361,12 @@ export default function TableMonitor() {
 
                                             {/* Actions */}
                                             <div className="space-y-3">
+                                                {selectedSession.status === "needs bill" && (
+                                                    <Button onClick={() => handleCancelCheckout(selectedSession._id)} variant="outline" className="w-full" size="lg">
+                                                        <XCircle className="h-4 w-4 mr-2" />
+                                                        Cancelar Conta
+                                                    </Button>
+                                                )}
                                                 <Button onClick={() => handleMarkAsPaid(selectedSession._id)} className="w-full" size="lg">
                                                     <CreditCard className="h-4 w-4 mr-2" />
                                                     Marcar como Paga

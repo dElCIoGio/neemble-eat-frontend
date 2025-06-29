@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {useParams} from "react-router";
 import {useQueryClient} from "@tanstack/react-query";
 import {useCart} from "@/hooks/use-cart";
@@ -11,6 +11,7 @@ import {NumberOfItems} from "@/components/pages/restaurant-menu-cart/number-of-i
 import {Checkout} from "@/components/pages/restaurant-menu-cart/checkout";
 import {ItemsSection} from "@/components/pages/restaurant-menu-cart/items-section";
 import {ordersApi} from "@/api/endpoints/orders/requests";
+import {showWarningToast} from "@/utils/notifications/toast";
 
 export function Cart() {
 
@@ -49,6 +50,14 @@ export function Cart() {
         restaurantId: restaurant._id
     })
 
+    const billRequested = session?.status === "needs bill"
+
+    useEffect(() => {
+        if (billRequested) {
+            showWarningToast("Conta já solicitada. Novos pedidos estão desabilitados.")
+        }
+    }, [billRequested])
+
     function invalidateOrdersKey() {
         const key = ["active", tableNumber, restaurant._id]
         queryClient.invalidateQueries({
@@ -57,6 +66,11 @@ export function Cart() {
     }
 
     function handleSubmit() {
+        if (session?.status === "needs bill") {
+            showWarningToast("A conta já foi solicitada. Não é possível fazer novos pedidos.")
+            return
+        }
+
         const items = cart.map((item) => item)
 
         if (session && session?._id) {
@@ -110,7 +124,7 @@ export function Cart() {
                 <ReturnNav path={`..`} title={"Carrinho"}/>
                 <NumberOfItems/>
                 <ItemsSection/>
-                <Checkout onSubmit={handleSubmit}/>
+                <Checkout onSubmit={handleSubmit} disabled={billRequested}/>
             </div>
         </CartContext.Provider>
     );
