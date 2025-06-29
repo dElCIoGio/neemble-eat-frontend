@@ -61,7 +61,7 @@ export function OrdersTracking() {
     const handleMessageNewOrder = useCallback((event: MessageEvent) => {
         try {
             console.log(event.data)
-            const order = JSON.parse(event.data);
+            const order: Order = JSON.parse(event.data);
             console.log(order)
             addOrder(order);
         } catch (error) {
