@@ -21,6 +21,7 @@ export function useUpdateMemberRole() {
         mutationFn: ({userId, restaurantId, roleId}: {userId: string, restaurantId: string, roleId: string}) =>
             membershipsApi.updateRole(userId, restaurantId, roleId),
         onSuccess: (_data, variables) => {
+            queryClient.invalidateQueries({queryKey: ["members", variables.restaurantId]})
             queryClient.invalidateQueries({queryKey: ["restaurant members", variables.restaurantId]})
             showSuccessToast("Função atualizada")
         },
