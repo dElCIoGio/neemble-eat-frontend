@@ -51,8 +51,6 @@ export function useGetRecentOrders(restaurantId: string){
     }
 
     function addOrder(order: Order) {
-        console.log("ADDING ORDER:")
-        console.log(order);
         queryClient.setQueryData(queryKey, (oldOrders: Order[] = []) => {
 
             return oldOrders.some(o => o._id === order._id) ? oldOrders : [...oldOrders, order];

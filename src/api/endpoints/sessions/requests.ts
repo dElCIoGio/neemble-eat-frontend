@@ -44,5 +44,10 @@ export const sessionApi = {
     markSessionNeedsBill: async (sessionId: string) => {
         const response = await apiClient.post<TableSession>(`${baseRoute}/${sessionId}/needs-bill`);
         return response.data;
+    },
+
+    cancelCheckout: async (sessionId: string) => {
+        const response = await apiClient.post<TableSession>(`${baseRoute}/${sessionId}/cancel-checkout`);
+        return response.data;
     }
 }

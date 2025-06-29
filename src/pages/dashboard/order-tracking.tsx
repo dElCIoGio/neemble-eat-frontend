@@ -58,9 +58,7 @@ export function OrdersTracking() {
 
     const handleMessageNewOrder = useCallback((event: MessageEvent) => {
         try {
-            console.log(event.data)
             const order: Order = JSON.parse(event.data);
-            console.log(order)
             addOrder(order);
         } catch (error) {
             console.error('Error parsing WebSocket message:', error);
