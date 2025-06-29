@@ -28,8 +28,8 @@ export const membershipsApi = {
         return result.data
     },
 
-    g: async (userId: string, roleId: string) => {
-        const response = await apiClient.post<User>(`${baseRoute}/`, {data: {userId, roleId}})
+    addMembership: async (userId: string, roleId: string) => {
+        const response = await apiClient.post<User>(`${baseRoute}/`, { userId, roleId })
         return response.data
     }
 
