@@ -1,6 +1,5 @@
 import {createContext, useContext} from "react";
-import {Order} from "@/types/order";
-import {Filter} from "@/pages/dashboard/order-tracking";
+import {Order, OrderPrepStatus} from "@/types/order";
 
 
 interface OrdersTrackingContextProps {
@@ -8,8 +7,9 @@ interface OrdersTrackingContextProps {
     handleOrderSelected: (order: Order) => void;
     handleOrderDeselected: () => void;
     orders: Order[]
-    filterMode: Filter,
-    handleFilterModeChange: (filterMode: Filter) => void
+    activeFilters: OrderPrepStatus[],
+    toggleFilter: (status: OrderPrepStatus) => void,
+    clearFilters: () => void,
     tableFilter: string | null,
     handleTableFilterChange: (tableFilter: string | null) => void,
     updateOrderStatus: (orderId: string, newStatus: string) => void

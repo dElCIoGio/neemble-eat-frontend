@@ -1,4 +1,4 @@
-import {useCallback} from "react";
+import {useCallback, useState} from "react";
 import Background from "@/components/ui/background";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {BowlFood} from "@phosphor-icons/react";
@@ -15,8 +15,6 @@ import {Header} from "@/components/pages/dashboard-orders/header";
 import {OrdersDisplay} from "@/components/pages/dashboard-orders/orders-display";
 import {OrderInfo} from "@/components/pages/dashboard-orders/order-info";
 import {MobileOrderInfo} from "@/components/pages/dashboard-orders/mobile-order-info";
-import {Link} from "react-router";
-import {Button} from "@/components/ui/button";
 
 
 
@@ -51,7 +49,7 @@ export function OrdersTracking() {
     const newOrdersWsUrl = `${api.apiUrl.replace("http", "ws")}/ws/${restaurant._id}/order`;
     const billedOrdersWsUrl = `${api.apiUrl.replace("http", "ws")}/ws/${restaurant._id}/billed`;
 
-    const {state: filterMode, handleState: setFilterMode} = useSelectedState<Filter>(FILTERS[0])
+    const [activeFilters, setActiveFilters] = useState<OrderPrepStatus[]>([])
     const {state: tableFilter, handleState: handleTableFilterChange} = useSelectedState<string | null>(null)
     const {state: orderSelected, handleState} = useSelectedState<Order | null>(null)
     const {state: sorting, handleState: handleSortingChange} = useSelectedState<"asc" | "desc">("desc")
@@ -69,9 +67,11 @@ export function OrdersTracking() {
         }
     }, [addOrder]);
 
-    const handleFilterModeChange = useCallback((filterMode: Filter) => {
-        setFilterMode(filterMode);
-    }, [setFilterMode]);
+    const toggleFilter = useCallback((status: OrderPrepStatus) => {
+        setActiveFilters(prev => prev.includes(status) ? prev.filter(s => s !== status) : [...prev, status]);
+    }, [])
+
+    const clearFilters = useCallback(() => setActiveFilters([]), [])
 
     const handleMessageBilledOrder = useCallback((event: MessageEvent) => {
         const billedOrders: Order[] = JSON.parse(event.data);
@@ -113,8 +113,9 @@ export function OrdersTracking() {
                         orders &&
                         <OrdersTrackingContext.Provider value={{
                             orders,
-                            filterMode,
-                            handleFilterModeChange,
+                            activeFilters,
+                            toggleFilter,
+                            clearFilters,
                             orderSelected,
                             handleOrderSelected: (order) => handleState(order),
                             handleOrderDeselected: () => handleState(null),
@@ -135,15 +136,10 @@ export function OrdersTracking() {
                                             Pedidos
                                         </h2>
                                     </div>
-                                    <Button variant="link" asChild>
-                                        <Link to={`/custom-order/${restaurant.slug}`}>
-                                            Registar Pedido
-                                        </Link>
-                                    </Button>
                                 </div>
 
                                 <div className="space-y-4 h-max lg:flex lg:flex-1 lg:flex-col">
-                                    <Header/>
+                                    <Header customOrderUrl={`/custom-order/${restaurant.slug}`} />
                                     <div
                                         className={`flex flex-1 rounded-2xl w-full `}>
                                         {
