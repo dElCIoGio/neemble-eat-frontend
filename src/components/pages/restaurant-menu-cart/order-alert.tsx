@@ -12,14 +12,28 @@ import {Button} from "@/components/ui/button";
 import {useCartContext} from "@/context/cart-context";
 
 
-export function OrderAlert() {
+interface Props {
+    disabled?: boolean
+}
+
+export function OrderAlert({disabled = false}: Props) {
 
     const {alertMessage, orderStatus, customerName, totalValue, iSFetchingSession} = useCartContext()
+
+    const isDisabled = iSFetchingSession || disabled
+
+    if (isDisabled || totalValue === 0) {
+        return (
+            <Button disabled className={`w-full cursor-not-allowed bg-zinc-600 pt-2`}>
+                Confirmar
+            </Button>
+        )
+    }
 
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild className={`w-full pt-2`}>
-                <Button disabled={iSFetchingSession} className={`w-full ${totalValue === 0 && "cursor-not-allowed bg-zinc-600"}`}>
+                <Button className="w-full">
                     Confirmar
                 </Button>
             </AlertDialogTrigger>
