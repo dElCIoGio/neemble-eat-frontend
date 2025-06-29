@@ -17,9 +17,6 @@ export function Header({ customOrderUrl }: HeaderProps) {
     const { activeFilters, toggleFilter, clearFilters, orders, handleTableFilterChange, sorting, handleSortingChange} = useOrdersTrackingContext()
     const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
 
-    function toggleSheet() {
-        setIsSheetOpen(!isSheetOpen)
-    }
 
     function toggleSorting(){
         handleSortingChange(sorting == "asc"? "desc" : "asc")
@@ -48,14 +45,14 @@ export function Header({ customOrderUrl }: HeaderProps) {
                                         if (filter.tag === 'all') {
                                             const active = activeFilters.length === 0
                                             return (
-                                                <Button key={filter.tag} onClick={clearFilters} className={active ? "text-sm bg-amethyst text-white hover:bg-amethyst-400" : "text-sm bg-white"} variant="secondary">
+                                                <Button key={filter.tag} onClick={clearFilters} className={active ? "text-sm bg-amethyst text-purple-600 hover:bg-amethyst-400" : "text-sm bg-white"} variant="secondary">
                                                     {filter.name}
                                                 </Button>
                                             )
                                         }
                                         const active = activeFilters.includes(filter.tag as OrderPrepStatus)
                                         return (
-                                            <Button onClick={() => toggleFilter(filter.tag as OrderPrepStatus)} key={filter.tag} className={active ? "text-sm bg-amethyst text-white hover:bg-amethyst-400" : "text-sm bg-white"} variant="secondary">
+                                            <Button onClick={() => toggleFilter(filter.tag as OrderPrepStatus)} key={filter.tag} className={active ? "text-sm bg-amethyst text-purple-600 hover:bg-amethyst-400" : "text-sm bg-white"} variant="secondary">
                                                 {filter.name}
                                             </Button>
                                         )
@@ -88,49 +85,52 @@ export function Header({ customOrderUrl }: HeaderProps) {
                     }
                 </div>
             </div>
-            <div className="flex sm:flex-col space-y-2 md:items-center md:justify-between md:flex-row md:space-x-4">
-                <Select onValueChange={handleTableFilterChange} defaultValue={"All" as Tag}>
-                    <SelectTrigger className="w-[180px] focus:ring-0 focus:outline-none ">
-                        <SelectValue placeholder={"Selecione uma mesa"}/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value={"All" as Tag}>Todas</SelectItem>
-                            {
-                                [...new Set(orders.map(order => order.tableNumber))].map((tableNumber, index) => (
-                                    <SelectItem key={tableNumber} value={index.toString()}>
-                                        {`Mesa ${tableNumber}`}
-                                    </SelectItem>
-                                ))
-                            }
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <div>
-                    <Button variant="secondary" className="hover:bg-zinc-200" onClick={toggleSorting}>
-                        {sorting == "asc" ?
-                            <>
-                                <SortDescending/>
-                                <span className="flex items-center">
+            <div className="space-y-2">
+                <div className="flex sm:flex-col space-y-2 md:items-center md:justify-between md:flex-row md:space-x-4">
+                    <Select onValueChange={handleTableFilterChange} defaultValue={"All" as Tag}>
+                        <SelectTrigger className="w-[180px] focus:ring-0 focus:outline-none ">
+                            <SelectValue placeholder={"Selecione uma mesa"}/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value={"All" as Tag}>Todas</SelectItem>
+                                {
+                                    [...new Set(orders.map(order => order.tableNumber))].map((tableNumber, index) => (
+                                        <SelectItem key={tableNumber} value={index.toString()}>
+                                            {`Mesa ${tableNumber}`}
+                                        </SelectItem>
+                                    ))
+                                }
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <div>
+                        <Button variant="secondary" className="hover:bg-zinc-200" onClick={toggleSorting}>
+                            {sorting == "asc" ?
+                                <>
+                                    <SortDescending/>
+                                    <span className="flex items-center">
                                     Antigo <ArrowRight className="mx-1.5"/> Recente
                                 </span>
-                            </> :
-                            <>
-                                <SortAscending/>
-                                <span className="flex items-center">
+                                </> :
+                                <>
+                                    <SortAscending/>
+                                    <span className="flex items-center">
                                     Recente <ArrowRight className="mx-1.5"/> Antigo
                                 </span>
-                            </>
+                                </>
 
-                        }
-                    </Button>
+                            }
+                        </Button>
+                    </div>
                 </div>
                 <Button variant="outline" asChild>
-                    <a href={customOrderUrl} target="_blank" rel="noopener noreferrer">
-                        Registar Pedido
-                    </a>
-                </Button>
+                <a href={customOrderUrl} target="_blank" rel="noopener noreferrer">
+                    Registar Pedido
+                </a>
+            </Button>
             </div>
+
         </div>
     );
 }
