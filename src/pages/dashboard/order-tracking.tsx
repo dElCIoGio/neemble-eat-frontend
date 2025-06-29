@@ -139,7 +139,7 @@ export function OrdersTracking() {
                                 <div className="space-y-4 h-max lg:flex lg:flex-1 lg:flex-col">
                                     <Header customOrderUrl={`/custom-order/${restaurant.slug}`} />
                                     <div
-                                        className={`flex flex-1 rounded-2xl w-full `}>
+                                        className={`flex flex-1 rounded-2xl w-full overflow-hidden`}>
                                         {
                                             orders.length == 0 ?
                                                 <div
@@ -154,7 +154,7 @@ export function OrdersTracking() {
                                                 </div> :
                                                 <>
                                                     <div
-                                                        className={`transition-all lg:flex lg:flex-col lg:flex-1 overflow-y-hidden lg:flex-grow duration-150 ease-in-out w-full ${orderSelected === null ? 'w-full' : 'lg:w-3/5'}`}>
+                                                        className={`transition-all lg:flex lg:flex-col lg:flex-1 overflow-y-hidden lg:flex-grow duration-150 ease-in-out w-full ${orderSelected === null ? 'w-full' : 'lg:w-1/2'}`}>
                                                         <ScrollArea className="w-full rounded-l-2xl lg:flex-1 lg:flex lg:flex-col">
                                                             <div className=" ">
                                                                 <OrdersDisplay/>
@@ -164,7 +164,7 @@ export function OrdersTracking() {
                                                     {
                                                         isDesktop ?
                                                             <div
-                                                                className={` transition-all duration-150 ease-in-out ${orderSelected === null ? 'lg:hidden' : 'lg:block'}`}>
+                                                                className={` transition-all duration-150 ease-in-out ${orderSelected === null ? 'lg:hidden' : 'lg:block lg:w-1/2 lg:sticky lg:top-0'}`}> 
                                                                 {orderSelected && <OrderInfo order={orderSelected}/>}
                                                             </div> :
                                                             <MobileOrderInfo order={orderSelected}
