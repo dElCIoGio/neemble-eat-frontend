@@ -81,8 +81,8 @@ export function Header() {
                         <SelectGroup>
                             <SelectItem value={"All" as Tag}>Todas</SelectItem>
                             {
-                                [...new Set(orders.map(order => order.tableNumber))].map((tableNumber) => (
-                                    <SelectItem key={tableNumber} value={tableNumber.toString()}>
+                                [...new Set(orders.map(order => order.tableNumber))].map((tableNumber, index) => (
+                                    <SelectItem key={tableNumber} value={index.toString()}>
                                         {`Mesa ${tableNumber}`}
                                     </SelectItem>
                                 ))
