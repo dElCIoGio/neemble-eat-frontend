@@ -73,9 +73,9 @@ const formatDuration = (startTime: string) => {
 }
 
 const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pt-BR", {
+    return new Intl.NumberFormat("pt-AO", {
         style: "currency",
-        currency: "EUR",
+        currency: "AOA",
     }).format(amount)
 }
 
