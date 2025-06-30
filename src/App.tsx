@@ -35,7 +35,7 @@ import {RestaurantMenuProvider} from "@/context/restaurant-menu-context";
 import Cart from "@/pages/restaurant/cart";
 import {Orders} from "@/pages/restaurant/orders";
 import {OrdersTracking} from "@/pages/dashboard/order-tracking";
-import PrivacyPolicy from "@/pages/root/PrivacyPolicy";
+import PrivacyPolicy from "@/pages/outframe/privacy-policy";
 import ContactPage from "@/pages/root/Contact";
 import AboutUs from "@/pages/root/AboutUs";
 import Demo from "@/pages/root/Demo";
@@ -49,6 +49,7 @@ import RestaurantInvitation from "@/pages/dashboard/invitation";
 import OrderCustomizationPage from "@/pages/dashboard/custom-order";
 import TableMonitor from "@/pages/dashboard/table-monitor";
 import UserProfile from "@/pages/dashboard/profile";
+import TermsOfUse from "@/pages/outframe/terms-of-use";
 
 
 
@@ -154,6 +155,13 @@ function App() {
             <Route path="custom-order/:restaurantSlug" element={<OrderCustomizationPage/>}/>
 
             <Route path="*" element={<NotFound/>}/>
+
+            <Route path="outframe">
+                <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
+                <Route path="terms-of-use" element={<TermsOfUse/>}/>
+
+
+            </Route>
         </Routes>
     );
 }
