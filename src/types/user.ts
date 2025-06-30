@@ -32,3 +32,7 @@ export type User = {
     memberships: Membership[]
     preferences: Preferences
 }
+
+type OptionalUserFields = Partial<Omit<User, '_id' | 'createdAt' | 'updatedAt'>>;
+
+export type PartialUser = OptionalUserFields;
