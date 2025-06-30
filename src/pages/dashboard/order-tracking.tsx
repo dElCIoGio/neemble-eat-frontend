@@ -59,7 +59,7 @@ export function OrdersTracking() {
     const updateOrderAndSelectionStatus = useCallback((orderId: string, newStatus: string) => {
         updateOrderStatus(orderId, newStatus)
         if (orderSelected && orderSelected._id === orderId) {
-            handleState({ ...orderSelected, prepStatus: newStatus })
+            handleState({ ...orderSelected, prepStatus: newStatus as OrderPrepStatus })
         }
     }, [updateOrderStatus, orderSelected, handleState])
 

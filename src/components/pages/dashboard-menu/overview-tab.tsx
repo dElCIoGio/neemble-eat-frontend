@@ -41,10 +41,17 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
 
     const handleBlur = (field: "name" | "description") => (e: React.FocusEvent<HTMLElement>) => {
         const related = e.relatedTarget as HTMLElement | null
+        const isFieldName = field === "name";
         if (related?.dataset?.action === "cancel") {
-            field === "name" ? handleNameCancel() : handleDescriptionCancel()
+            if (isFieldName)
+                handleNameCancel()
+            else
+                handleDescriptionCancel()
         } else {
-            field === "name" ? handleNameSave() : handleDescriptionSave()
+            if (isFieldName)
+                handleNameSave()
+            else
+                handleDescriptionSave()
         }
     }
 

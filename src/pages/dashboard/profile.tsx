@@ -250,7 +250,7 @@ export default function UserProfile() {
                                             <Button variant="outline" onClick={handleCancelEdit}>
                                                 Cancelar
                                             </Button>
-                                            <Button onClick={handleSaveProfile} disabled={updateUserMutation.isLoading}>
+                                            <Button onClick={handleSaveProfile} disabled={updateUserMutation.isPending}>
                                                 Salvar
                                             </Button>
                                         </div>
