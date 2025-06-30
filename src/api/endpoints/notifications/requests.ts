@@ -1,7 +1,6 @@
 import {apiClient} from "@/api/axios";
 import {
     NotificationCreate,
-    NotificationType,
     NotificationFilterType,
     Notification
 } from "@/types/notification";
