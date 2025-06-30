@@ -56,7 +56,7 @@ export default function UserProfile() {
                 restaurantResults.forEach(r => { restaurantMap[r._id] = r })
                 setRestaurants(restaurantMap)
             } catch {
-                showErrorToast("Failed to load user restaurants")
+                showErrorToast("Falha ao carregar restaurantes do usuário")
             }
         }
         load()
@@ -67,9 +67,9 @@ export default function UserProfile() {
         try {
             await restaurantApi.removeMember(restaurantId, user._id)
             queryClient.invalidateQueries({ queryKey: ["me"] })
-            showSuccessToast("Restaurant association removed successfully")
+            showSuccessToast("Associação de restaurante removida com sucesso")
         } catch {
-            showErrorToast("Failed to remove restaurant association")
+            showErrorToast("Falha ao remover associação de restaurante")
         }
     }
 
@@ -100,7 +100,7 @@ export default function UserProfile() {
         console.log(date)
 
 
-        return new Intl.DateTimeFormat("en-US", {
+        return new Intl.DateTimeFormat("pt-BR", {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -117,21 +117,21 @@ export default function UserProfile() {
 
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">User Profile</h1>
-                    <p className="text-gray-600">Manage your account information and restaurant associations</p>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Perfil do Usuário</h1>
+                    <p className="text-gray-600">Gerencie suas informações de conta e associações de restaurantes</p>
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     {/* Left Column - User Info */}
                     <div className="lg:col-span-2 space-y-6">
-                        {/* Personal Information */}
+                        {/* Informações Pessoais */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <User className="h-5 w-5" />
-                                    Personal Information
+                                    Informações Pessoais
                                 </CardTitle>
-                                <CardDescription>Your basic account details</CardDescription>
+                                <CardDescription>Seus dados básicos de conta</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex items-start gap-4 mb-6">
@@ -150,25 +150,25 @@ export default function UserProfile() {
                                             {user.isVerified && (
                                                 <Badge variant="secondary" className="bg-green-100 text-green-800">
                                                     <CheckCircle className="h-3 w-3 mr-1" />
-                                                    Verified
+                                                    Verificado
                                                 </Badge>
                                             )}
                                             {user.isAdmin && (
                                                 <Badge variant="secondary" className="bg-purple-100 text-purple-800">
                                                     <Shield className="h-3 w-3 mr-1" />
-                                                    Admin
+                                                    Administrador
                                                 </Badge>
                                             )}
                                             {user.isDeveloper && (
                                                 <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                                                     <Code className="h-3 w-3 mr-1" />
-                                                    Developer
+                                                    Desenvolvedor
                                                 </Badge>
                                             )}
                                             {!user.isActive && (
                                                 <Badge variant="destructive">
                                                     <XCircle className="h-3 w-3 mr-1" />
-                                                    Inactive
+                                                    Inativo
                                                 </Badge>
                                             )}
                                         </div>
@@ -186,14 +186,14 @@ export default function UserProfile() {
                                     <div className="flex items-center gap-3">
                                         <Phone className="h-4 w-4 text-gray-500" />
                                         <div>
-                                            <p className="text-sm text-gray-500">Phone</p>
+                                            <p className="text-sm text-gray-500">Telefone</p>
                                             <p className="font-medium">{user.phoneNumber}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <Calendar className="h-4 w-4 text-gray-500" />
                                         <div>
-                                            <p className="text-sm text-gray-500">Member Since</p>
+                                            <p className="text-sm text-gray-500">Membro desde</p>
                                             <p className="font-medium">{formatDate(user.createdAt)}</p>
                                         </div>
                                     </div>
@@ -201,7 +201,7 @@ export default function UserProfile() {
                                         <div className="flex items-center gap-3">
                                             <Calendar className="h-4 w-4 text-gray-500" />
                                             <div>
-                                                <p className="text-sm text-gray-500">Last Login</p>
+                                                <p className="text-sm text-gray-500">Último Login</p>
                                                 <p className="font-medium">{formatDate(user.lastLogged)}</p>
                                             </div>
                                         </div>
@@ -215,14 +215,14 @@ export default function UserProfile() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Building2 className="h-5 w-5" />
-                                    Restaurant Associations
+                                    Associações de Restaurantes
                                 </CardTitle>
-                                <CardDescription>Restaurants you're associated with and your roles</CardDescription>
+                                <CardDescription>Restaurantes aos quais você está associado e seus papéis</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
                                     {restaurantMemberships.length === 0 ? (
-                                        <p className="text-gray-500 text-center py-8">No restaurant associations found</p>
+                                        <p className="text-gray-500 text-center py-8">Nenhuma associação de restaurante encontrada</p>
                                     ) : (
                                         restaurantMemberships.map(({ membership, role, restaurant }) => (
                                             <div key={role!._id} className="border rounded-lg p-4">
@@ -241,16 +241,16 @@ export default function UserProfile() {
                                                         </div>
                                                         <div className="flex items-center gap-4 text-sm">
                                                             <div className="flex items-center gap-2">
-                                                                <span className="text-gray-500">Role:</span>
+                                                                <span className="text-gray-500">Função:</span>
                                                                 <Badge variant="outline">{role!.name}</Badge>
                                                             </div>
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-gray-500">Status:</span>
                                                                 <Badge variant={membership.isActive ? "default" : "secondary"}>
-                                                                    {membership.isActive ? "Active" : "Inactive"}
+                                                                    {membership.isActive ? "Ativo" : "Inativo"}
                                                                 </Badge>
                                                             </div>
-                                                            {!restaurant!.isActive && <Badge variant="destructive">Restaurant Inactive</Badge>}
+                                                            {!restaurant!.isActive && <Badge variant="destructive">Restaurante Inativo</Badge>}
                                                         </div>
                                                         <p className="text-sm text-gray-600 mt-2">{role!.description}</p>
                                                     </div>
@@ -261,7 +261,7 @@ export default function UserProfile() {
                                                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                                     >
                                                         <Trash2 className="h-4 w-4 mr-1" />
-                                                        Remove
+                                                        Remover
                                                     </Button>
                                                 </div>
                                             </div>
@@ -272,16 +272,16 @@ export default function UserProfile() {
                         </Card>
                     </div>
 
-                    {/* Right Column - Preferences & Status */}
+                    {/* Coluna Direita - Preferências & Status */}
                     <div className="space-y-6">
-                        {/* Account Status */}
+                        {/* Status da Conta */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Account Status</CardTitle>
+                                <CardTitle>Status da Conta</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-sm">Account Active</span>
+                                    <span className="text-sm">Conta Ativa</span>
                                     {user.isActive ? (
                                         <CheckCircle className="h-5 w-5 text-green-500" />
                                     ) : (
@@ -289,7 +289,7 @@ export default function UserProfile() {
                                     )}
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-sm">Email Verified</span>
+                                    <span className="text-sm">Email Verificado</span>
                                     {user.isVerified ? (
                                         <CheckCircle className="h-5 w-5 text-green-500" />
                                     ) : (
@@ -297,7 +297,7 @@ export default function UserProfile() {
                                     )}
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-sm">Onboarding Complete</span>
+                                    <span className="text-sm">Onboarding Completo</span>
                                     {user.isOnboardingCompleted ? (
                                         <CheckCircle className="h-5 w-5 text-green-500" />
                                     ) : (
@@ -307,17 +307,17 @@ export default function UserProfile() {
                             </CardContent>
                         </Card>
 
-                        {/* Preferences */}
+                        {/* Preferências */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Preferences</CardTitle>
-                                <CardDescription>Customize your experience</CardDescription>
+                                <CardTitle>Preferências</CardTitle>
+                                <CardDescription>Personalize sua experiência</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <Bell className="h-4 w-4" />
-                                        <Label htmlFor="notifications">Notifications</Label>
+                                        <Label htmlFor="notifications">Notificações</Label>
                                     </div>
                                     <Switch
                                         id="notifications"
@@ -331,7 +331,7 @@ export default function UserProfile() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <Moon className="h-4 w-4" />
-                                        <Label htmlFor="darkmode">Dark Mode</Label>
+                                        <Label htmlFor="darkmode">Modo Escuro</Label>
                                     </div>
                                     <Switch
                                         id="darkmode"
@@ -346,34 +346,34 @@ export default function UserProfile() {
                                     <div className="flex items-center gap-2">
                                         <Globe className="h-4 w-4" />
                                         <div>
-                                            <Label>Language</Label>
+                                            <Label>Idioma</Label>
                                             <p className="text-sm text-gray-500">{user.preferences.language}</p>
                                         </div>
                                     </div>
                                     <Button variant="outline" size="sm">
-                                        Change
+                                        Alterar
                                     </Button>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        {/* Quick Actions */}
+                        {/* Ações Rápidas */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Quick Actions</CardTitle>
+                                <CardTitle>Ações Rápidas</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <Button variant="outline" className="w-full justify-start bg-transparent">
-                                    Edit Profile
+                                    Editar Perfil
                                 </Button>
                                 <Button variant="outline" className="w-full justify-start bg-transparent">
-                                    Change Password
+                                    Alterar Senha
                                 </Button>
                                 <Button variant="outline" className="w-full justify-start bg-transparent">
-                                    Download Data
+                                    Baixar Dados
                                 </Button>
                                 <Button variant="destructive" className="w-full justify-start">
-                                    Delete Account
+                                    Excluir Conta
                                 </Button>
                             </CardContent>
                         </Card>
