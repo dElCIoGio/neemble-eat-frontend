@@ -1,7 +1,7 @@
 import {useAuth} from "@/context/auth-context";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {userApi} from "@/api/endpoints/user/endpoints";
-import {Preferences} from "@/types/user";
+import {Preferences, PartialUser} from "@/types/user";
 import {showSuccessToast, showErrorToast} from "@/utils/notifications/toast";
 
 
@@ -77,6 +77,23 @@ export function useUpdatePreferences() {
         },
         onError: () => {
             showErrorToast("Failed to update preferences");
+        },
+    });
+}
+
+export function useUpdateUser() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ userId, data }: { userId: string; data: PartialUser }) =>
+            userApi.userUpdate(userId, data),
+        onSuccess: (user) => {
+            queryClient.setQueryData(["me"], user);
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+            showSuccessToast("Perfil atualizado com sucesso");
+        },
+        onError: () => {
+            showErrorToast("Falha ao atualizar perfil");
         },
     });
 }
