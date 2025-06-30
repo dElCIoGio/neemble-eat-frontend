@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
+import { Loader } from "@/components/ui/loader"
 import { Clock, Users, CreditCard, AlertTriangle, Play, Trash2, CheckCircle, XCircle } from "lucide-react"
 import type { Table } from "@/types/table"
 import type { TableSession } from "@/types/table-session"
@@ -81,7 +82,7 @@ const formatCurrency = (amount: number) => {
 
 export default function TableMonitor() {
     const { restaurant } = useDashboardContext()
-    const { data: tables = [] } = useListRestaurantTables(restaurant._id)
+    const { data: tables = [], isLoading } = useListRestaurantTables(restaurant._id)
 
     const [sessions, setSessions] = useState<Record<string, TableSession>>({})
 
@@ -229,6 +230,14 @@ export default function TableMonitor() {
         [sessionOrders]
     )
 
+    if (isLoading) {
+        return (
+            <div className="flex-1 flex justify-center items-center">
+                <Loader />
+            </div>
+        )
+    }
+
     return (
         <div className="bg-gray-50">
             <div className="mx-auto max-w-7xl">
@@ -348,16 +357,18 @@ export default function TableMonitor() {
                                                                     <div className="text-right">
                                                                         <p className="font-medium text-sm">{formatCurrency(order.total)}</p>
                                                                         <Badge
-                                                                            variant={order.prepStatus === "served" ? "default" : "secondary"}
+                                                                            variant={order.prepStatus === "served" ? "default" : order.prepStatus === "cancelled" ? "destructive" : "secondary"}
                                                                             className="text-xs"
                                                                         >
                                                                             {order.prepStatus === "served"
                                                                                 ? "Servido"
                                                                                 : order.prepStatus === "ready"
-                                                                                    ? "Pronto"
-                                                                                    : order.prepStatus === "in_progress"
-                                                                                        ? "Preparando"
-                                                                                        : "Na fila"}
+    ? "Pronto"
+    : order.prepStatus === "in_progress"
+        ? "Preparando"
+        : order.prepStatus === "cancelled"
+            ? "Cancelado"
+            : "Na fila"}
                                                                         </Badge>
                                                                     </div>
                                                                 </div>
