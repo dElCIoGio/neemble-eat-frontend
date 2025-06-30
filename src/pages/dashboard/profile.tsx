@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
@@ -29,7 +30,7 @@ import { restaurantApi } from "@/api/endpoints/restaurants/requests";
 import { roleApi } from "@/api/endpoints/role/requests";
 import { useQueryClient } from "@tanstack/react-query";
 import { showSuccessToast, showErrorToast } from "@/utils/notifications/toast";
-import { useUpdatePreferences } from "@/api/endpoints/user/hooks";
+import { useUpdatePreferences, useUpdateUser } from "@/api/endpoints/user/hooks";
 import { Loader } from "@/components/ui/loader";
 import {useDashboardContext} from "@/context/dashboard-context";
 
@@ -39,9 +40,22 @@ export default function UserProfile() {
     const [restaurants, setRestaurants] = useState<Record<string, Restaurant>>({})
     const queryClient = useQueryClient()
     const updatePreferencesMutation = useUpdatePreferences()
+    const updateUserMutation = useUpdateUser()
+
+    const [isEditing, setIsEditing] = useState(false)
+    const [editData, setEditData] = useState({
+        firstName: user?.firstName ?? "",
+        lastName: user?.lastName ?? "",
+        phoneNumber: user?.phoneNumber ?? "",
+    })
 
 
     useEffect(() => {
+        setEditData({
+            firstName: user?.firstName ?? "",
+            lastName: user?.lastName ?? "",
+            phoneNumber: user?.phoneNumber ?? "",
+        })
         const load = async () => {
             if (!user) return
             try {
@@ -80,6 +94,24 @@ export default function UserProfile() {
             [key]: value,
         }
         updatePreferencesMutation.mutate(newPrefs)
+    }
+
+    const handleSaveProfile = () => {
+        if (!user) return
+        updateUserMutation.mutate(
+            { userId: user._id, data: editData },
+            { onSuccess: () => setIsEditing(false) }
+        )
+    }
+
+    const handleCancelEdit = () => {
+        if (!user) return
+        setEditData({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            phoneNumber: user.phoneNumber,
+        })
+        setIsEditing(false)
     }
 
     const restaurantMemberships = useMemo(() => {
@@ -142,71 +174,121 @@ export default function UserProfile() {
                                             {user.lastName[0]}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-semibold">
-                                            {user.firstName} {user.lastName}
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {user.isVerified && (
-                                                <Badge variant="secondary" className="bg-green-100 text-green-800">
-                                                    <CheckCircle className="h-3 w-3 mr-1" />
-                                                    Verificado
-                                                </Badge>
-                                            )}
-                                            {user.isAdmin && (
-                                                <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-                                                    <Shield className="h-3 w-3 mr-1" />
-                                                    Administrador
-                                                </Badge>
-                                            )}
-                                            {user.isDeveloper && (
-                                                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                                                    <Code className="h-3 w-3 mr-1" />
-                                                    Desenvolvedor
-                                                </Badge>
-                                            )}
-                                            {!user.isActive && (
-                                                <Badge variant="destructive">
-                                                    <XCircle className="h-3 w-3 mr-1" />
-                                                    Inativo
-                                                </Badge>
-                                            )}
-                                        </div>
+                                    <div className="flex-1 space-y-2">
+                                        {isEditing ? (
+                                            <div className="grid gap-2 sm:grid-cols-2">
+                                                <div className="space-y-1">
+                                                    <Label htmlFor="firstName">Nome</Label>
+                                                    <Input
+                                                        id="firstName"
+                                                        value={editData.firstName}
+                                                        onChange={(e) =>
+                                                            setEditData({ ...editData, firstName: e.target.value })
+                                                        }
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <Label htmlFor="lastName">Sobrenome</Label>
+                                                    <Input
+                                                        id="lastName"
+                                                        value={editData.lastName}
+                                                        onChange={(e) =>
+                                                            setEditData({ ...editData, lastName: e.target.value })
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <h3 className="text-xl font-semibold">
+                                                    {user.firstName} {user.lastName}
+                                                </h3>
+                                                <div className="flex flex-wrap gap-2 mt-2">
+                                                    {user.isVerified && (
+                                                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                                            <CheckCircle className="h-3 w-3 mr-1" />
+                                                            Verificado
+                                                        </Badge>
+                                                    )}
+                                                    {user.isAdmin && (
+                                                        <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+                                                            <Shield className="h-3 w-3 mr-1" />
+                                                            Administrador
+                                                        </Badge>
+                                                    )}
+                                                    {user.isDeveloper && (
+                                                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                                                            <Code className="h-3 w-3 mr-1" />
+                                                            Desenvolvedor
+                                                        </Badge>
+                                                    )}
+                                                    {!user.isActive && (
+                                                        <Badge variant="destructive">
+                                                            <XCircle className="h-3 w-3 mr-1" />
+                                                            Inativo
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
 
-                                <div className="grid gap-4 sm:grid-cols-2">
-                                    <div className="flex items-center gap-3">
-                                        <Mail className="h-4 w-4 text-gray-500" />
-                                        <div>
-                                            <p className="text-sm text-gray-500">Email</p>
-                                            <p className="font-medium">{user.email}</p>
+                                {isEditing ? (
+                                    <div className="space-y-4">
+                                        <div className="space-y-1">
+                                            <Label htmlFor="phoneNumber">Telefone</Label>
+                                            <Input
+                                                id="phoneNumber"
+                                                value={editData.phoneNumber}
+                                                onChange={(e) =>
+                                                    setEditData({ ...editData, phoneNumber: e.target.value })
+                                                }
+                                            />
+                                        </div>
+                                        <div className="flex justify-end gap-2">
+                                            <Button variant="outline" onClick={handleCancelEdit}>
+                                                Cancelar
+                                            </Button>
+                                            <Button onClick={handleSaveProfile} disabled={updateUserMutation.isLoading}>
+                                                Salvar
+                                            </Button>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <Phone className="h-4 w-4 text-gray-500" />
-                                        <div>
-                                            <p className="text-sm text-gray-500">Telefone</p>
-                                            <p className="font-medium">{user.phoneNumber}</p>
+                                ) : (
+                                    <div className="grid gap-4 sm:grid-cols-2">
+                                        <div className="flex items-center gap-3">
+                                            <Mail className="h-4 w-4 text-gray-500" />
+                                            <div>
+                                                <p className="text-sm text-gray-500">Email</p>
+                                                <p className="font-medium">{user.email}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <Calendar className="h-4 w-4 text-gray-500" />
-                                        <div>
-                                            <p className="text-sm text-gray-500">Membro desde</p>
-                                            <p className="font-medium">{formatDate(user.createdAt)}</p>
+                                        <div className="flex items-center gap-3">
+                                            <Phone className="h-4 w-4 text-gray-500" />
+                                            <div>
+                                                <p className="text-sm text-gray-500">Telefone</p>
+                                                <p className="font-medium">{user.phoneNumber}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    {user.lastLogged && (
                                         <div className="flex items-center gap-3">
                                             <Calendar className="h-4 w-4 text-gray-500" />
                                             <div>
-                                                <p className="text-sm text-gray-500">Último Login</p>
-                                                <p className="font-medium">{formatDate(user.lastLogged)}</p>
+                                                <p className="text-sm text-gray-500">Membro desde</p>
+                                                <p className="font-medium">{formatDate(user.createdAt)}</p>
                                             </div>
                                         </div>
-                                    )}
-                                </div>
+                                        {user.lastLogged && (
+                                            <div className="flex items-center gap-3">
+                                                <Calendar className="h-4 w-4 text-gray-500" />
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Último Login</p>
+                                                    <p className="font-medium">{formatDate(user.lastLogged)}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 
@@ -363,9 +445,15 @@ export default function UserProfile() {
                                 <CardTitle>Ações Rápidas</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                <Button variant="outline" className="w-full justify-start bg-transparent">
-                                    Editar Perfil
-                                </Button>
+                                {isEditing ? (
+                                    <Button variant="outline" className="w-full justify-start bg-transparent" onClick={handleCancelEdit}>
+                                        Cancelar Edição
+                                    </Button>
+                                ) : (
+                                    <Button variant="outline" className="w-full justify-start bg-transparent" onClick={() => setIsEditing(true)}>
+                                        Editar Perfil
+                                    </Button>
+                                )}
                                 <Button variant="outline" className="w-full justify-start bg-transparent">
                                     Alterar Senha
                                 </Button>
