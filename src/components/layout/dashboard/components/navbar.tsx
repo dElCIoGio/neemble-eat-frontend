@@ -1,5 +1,5 @@
 import {Button} from "@/components/ui/button";
-import { ChevronDown, Menu, X, Settings, LogOut, User} from "lucide-react"
+import { ChevronDown, Menu, X, Settings, LogOut, User, Bell } from "lucide-react"
 import {useIsMobile} from "@/hooks/use-mobile";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import {
@@ -13,6 +13,7 @@ import {useDashboardContext} from "@/context/dashboard-context";
 import RestaurantSelection from "@/components/layout/dashboard/components/restaurant-selection";
 import {Link, useNavigate} from "react-router";
 import {useAuth} from "@/context/auth-context";
+import { useUnreadCount } from "@/api/endpoints/notifications/hooks";
 
 
 function DashboardNavbar() {
@@ -26,6 +27,8 @@ function DashboardNavbar() {
     const {
         logout
     } = useAuth()
+
+    const { data: unreadCount = 0 } = useUnreadCount()
 
     return (
         <header className="w-full h-16 bg-zinc-50/50 backdrop-blur-md sticky top-0 z-10">
@@ -49,7 +52,16 @@ function DashboardNavbar() {
 
                 {/* Right side - Actions */}
                 <div className="flex items-center gap-2 ml-auto">
-
+                    <Button variant="ghost" size="icon" asChild>
+                        <Link to="/dashboard/notifications" className="relative">
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1 -right-1 text-[10px] bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                    {unreadCount}
+                                </span>
+                            )}
+                            <Bell className="size-5" />
+                        </Link>
+                    </Button>
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
