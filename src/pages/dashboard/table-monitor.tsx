@@ -211,7 +211,19 @@ export default function TableMonitor() {
     ]
 
     const selectedSession = selectedTable ? sessions[selectedTable._id] : null
-    const { data: sessionOrders = [] } = useGetSessionOrders(selectedSession?._id)
+    const {
+        data: sessionOrders = [],
+        refetch: refetchSessionOrders,
+    } = useGetSessionOrders(
+        selectedSession?._id,
+        { refetchInterval: isSheetOpen && selectedSession ? 2000 : false }
+    )
+
+    useEffect(() => {
+        if (isSheetOpen && selectedSession) {
+            refetchSessionOrders()
+        }
+    }, [isSheetOpen, selectedSession, refetchSessionOrders])
     const sessionTotal = useMemo(
         () => sessionOrders.reduce((sum, order) => sum + order.total, 0),
         [sessionOrders]

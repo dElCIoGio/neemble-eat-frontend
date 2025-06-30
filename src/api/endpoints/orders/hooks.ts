@@ -3,7 +3,10 @@ import {ordersApi} from "@/api/endpoints/orders/requests";
 import {Order} from "@/types/order";
 
 
-export function useGetSessionOrders(sessionId: string | undefined){
+export function useGetSessionOrders(
+    sessionId: string | undefined,
+    options?: { refetchInterval?: number | false }
+){
 
     const queryKey = ["sesion orders", sessionId]
 
@@ -16,10 +19,11 @@ export function useGetSessionOrders(sessionId: string | undefined){
         });
     };
 
-     const query = useQuery({
+    const query = useQuery({
         queryKey,
-        queryFn: () => sessionId? ordersApi.listSessionOrders(sessionId): undefined,
+        queryFn: () => sessionId ? ordersApi.listSessionOrders(sessionId) : undefined,
         enabled: typeof sessionId === "string",
+        refetchInterval: options?.refetchInterval,
     })
 
     return {
