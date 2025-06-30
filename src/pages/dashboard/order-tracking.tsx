@@ -56,6 +56,13 @@ export function OrdersTracking() {
 
     const { data: orders, addOrder, removeOrders, updateOrderStatus, isLoading } = useGetRecentOrders(restaurant._id)
 
+    const updateOrderAndSelectionStatus = useCallback((orderId: string, newStatus: string) => {
+        updateOrderStatus(orderId, newStatus)
+        if (orderSelected && orderSelected._id === orderId) {
+            handleState({ ...orderSelected, prepStatus: newStatus })
+        }
+    }, [updateOrderStatus, orderSelected, handleState])
+
     const handleMessageNewOrder = useCallback((event: MessageEvent) => {
         try {
             const order: Order = JSON.parse(event.data);
@@ -119,7 +126,7 @@ export function OrdersTracking() {
                             handleOrderDeselected: () => handleState(null),
                             tableFilter,
                             handleTableFilterChange,
-                            updateOrderStatus,
+                            updateOrderStatus: updateOrderAndSelectionStatus,
                             sorting,
                             handleSortingChange
                         }}>
