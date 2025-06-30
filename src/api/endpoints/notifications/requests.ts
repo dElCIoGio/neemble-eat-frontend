@@ -1,5 +1,10 @@
 import {apiClient} from "@/api/axios";
-import {NotificationCreate, NotificationType} from "@/types/notification";
+import {
+    NotificationCreate,
+    NotificationType,
+    NotificationFilterType,
+    Notification
+} from "@/types/notification";
 
 
 const baseRoute = "/notifications"
@@ -11,7 +16,12 @@ export const notificationsApi = {
         return response.data
     },
 
-    listNotifications: async (notificationType: NotificationType, isRead: boolean, search: string, page: number) => {
+    listNotifications: async (
+        notificationType: NotificationFilterType,
+        isRead: boolean,
+        search: string,
+        page: number
+    ) => {
         const response = await apiClient.get<Notification[]>(`${baseRoute}/`, {
             params: { notificationType, search, page, isRead }
         });

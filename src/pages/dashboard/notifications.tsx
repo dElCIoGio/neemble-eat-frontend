@@ -13,77 +13,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import type { Notification, NotificationSettings, NotificationFilterType } from "@/types/notification"
+import {
+    useListNotifications,
+    useUnreadCount,
+    useMarkAllRead,
+    useMarkNotificationRead,
+    useMarkNotificationUnread,
+    useDeleteNotification
+} from "@/api/endpoints/notifications/hooks"
 
-// Mock data for notifications
-const mockNotifications: Notification[] = [
-    {
-        _id: "1",
-        createdAt: new Date("2024-01-15T10:30:00"),
-        updatedAt: new Date("2024-01-15T10:30:00"),
-        userId: "user123",
-        notificationType: "system",
-        title: "Atualização do sistema concluída",
-        message:
-            "O sistema foi atualizado para a versão 2.1.0 com melhorias de segurança e correções de bugs. Todas as funcionalidades estão operando normalmente.",
-        category: "Sistema",
-        priority: "medium",
-        isRead: false,
-        restaurantId: "23456789"
-    },
-    {
-        _id: "2",
-        createdAt: new Date("2024-01-15T02:00:00"),
-        updatedAt: new Date("2024-01-15T02:00:00"),
-        userId: "user123",
-        notificationType: "data",
-        title: "Backup automático realizado",
-        message:
-            "Backup dos dados foi concluído com sucesso às 02:00. Todos os dados foram salvos de forma segura no servidor de backup.",
-        category: "Dados",
-        priority: "low",
-        isRead: true,
-        restaurantId: "23456789"
-
-    },
-    {
-        _id: "3",
-        createdAt: new Date("2024-01-14T14:20:00"),
-        updatedAt: new Date("2024-01-14T14:20:00"),
-        userId: "user123",
-        notificationType: "finances",
-        title: "Pagamento pendente",
-        message:
-            "A fatura #12345 no valor de R$ 1.250,00 vence em 3 dias. Por favor, efetue o pagamento para evitar interrupções no serviço.",
-        category: "Financeira",
-        priority: "high",
-        isRead: false,
-        restaurantId: "23456789"
-
-    },
-    {
-        _id: "4",
-        createdAt: new Date("2024-01-13T16:45:00"),
-        updatedAt: new Date("2024-01-13T16:45:00"),
-        userId: "user123",
-        notificationType: "notice",
-        title: "Manutenção programada",
-        message:
-            "Manutenção programada do servidor está agendada para domingo, 21 de janeiro, das 02:00 às 06:00. Durante este período, alguns serviços podem ficar indisponíveis.",
-        category: "Comunicado",
-        priority: "medium",
-        isRead: false,
-        restaurantId: "23456789"
-
-    },
-]
 
 const notificationTypes = [
     { value: "todas" as const, label: "Todas" },
-    { value: "sistema" as const, label: "Sistema" },
-    { value: "dados" as const, label: "Dados" },
-    { value: "financeira" as const, label: "Financeira" },
-    { value: "comunicado" as const, label: "Comunicado" },
-]
+    { value: "system" as const, label: "Sistema" },
+    { value: "data" as const, label: "Dados" },
+    { value: "finances" as const, label: "Financeira" },
+    { value: "notice" as const, label: "Comunicado" },
+] as const
 
 const priorityColors: Record<Notification["priority"], string> = {
     high: "bg-red-500",
@@ -92,12 +38,25 @@ const priorityColors: Record<Notification["priority"], string> = {
 }
 
 export default function NotificationsPage() {
-    const [notifications, setNotifications] = useState<Notification[]>(mockNotifications)
     const [selectedType, setSelectedType] = useState<NotificationFilterType>("todas")
     const [searchQuery, setSearchQuery] = useState<string>("")
     const [showUnreadOnly, setShowUnreadOnly] = useState<boolean>(false)
     const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null)
     const [settingsOpen, setSettingsOpen] = useState<boolean>(false)
+
+    const { data: notifications = [] } = useListNotifications({
+        notificationType: selectedType,
+        isRead: showUnreadOnly ? false : undefined,
+        search: searchQuery,
+        page: 1,
+    })
+
+    const { data: unreadCount = 0 } = useUnreadCount()
+
+    const markAllReadMutation = useMarkAllRead()
+    const markReadMutation = useMarkNotificationRead()
+    const markUnreadMutation = useMarkNotificationUnread()
+    const deleteNotificationMutation = useDeleteNotification()
 
     // Settings state
     const [settings, setSettings] = useState<NotificationSettings>({
@@ -136,21 +95,24 @@ export default function NotificationsPage() {
         return matchesType && matchesSearch && matchesReadStatus
     })
 
-    const unreadCount = notifications.filter((n) => !n.isRead).length
-
     const markAllAsRead = (): void => {
-        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
+        markAllReadMutation.mutate()
         toast.success("Todas as notificações foram marcadas como lidas.")
     }
 
     const toggleReadStatus = (id: string): void => {
-        setNotifications((prev) => prev.map((n) => (n._id === id ? { ...n, isRead: !n.isRead } : n)))
         const notification = notifications.find((n) => n._id === id)
-        toast.success(`Notificação marcada como ${notification?.isRead ? "não lida" : "lida"}.`)
+        if (!notification) return
+        if (notification.isRead) {
+            markUnreadMutation.mutate(id)
+        } else {
+            markReadMutation.mutate(id)
+        }
+        toast.success(`Notificação marcada como ${notification.isRead ? "não lida" : "lida"}.`)
     }
 
     const deleteNotification = (id: string): void => {
-        setNotifications((prev) => prev.filter((n) => n._id !== id))
+        deleteNotificationMutation.mutate(id)
         setSelectedNotification(null)
         toast.success("Notificação excluída com sucesso.")
     }
