@@ -5,15 +5,16 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
-import { Edit2, Check, X } from "lucide-react"
+import { Edit2, Check, X, Loader2 } from "lucide-react"
 import type { Menu, PartialMenu } from "@/types/menu";
 
 interface OverviewTabProps {
     menu: Menu
     onUpdate: (updatedMenu: PartialMenu) => void
+    isUpdating?: boolean
 }
 
-export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
+export function OverviewTab({ menu, onUpdate, isUpdating = false }: OverviewTabProps) {
     const [isEditingName, setIsEditingName] = useState(false)
     const [isEditingDescription, setIsEditingDescription] = useState(false)
     const [tempName, setTempName] = useState(menu.name)
@@ -65,7 +66,12 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 relative">
+            {isUpdating && (
+                <div className="absolute inset-0 bg-white/60 flex items-center justify-center rounded-md z-10">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                </div>
+            )}
             {/* Informações Básicas */}
             <Card>
                 <CardHeader>
@@ -84,11 +90,12 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                                     onBlur={handleBlur("name")}
                                     className="flex-1"
                                     autoFocus
+                                    disabled={isUpdating}
                                 />
-                                <Button size="sm" onClick={handleNameSave}>
-                                    <Check className="h-4 w-4" />
+                                <Button size="sm" onClick={handleNameSave} disabled={isUpdating}>
+                                    {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                                 </Button>
-                                <Button size="sm" variant="outline" data-action="cancel" onClick={handleNameCancel}>
+                                <Button size="sm" variant="outline" data-action="cancel" onClick={handleNameCancel} disabled={isUpdating}>
                                     <X className="h-4 w-4" />
                                 </Button>
                             </div>
@@ -121,13 +128,14 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                                     onBlur={handleBlur("description")}
                                     rows={3}
                                     autoFocus
+                                    disabled={isUpdating}
                                 />
                                 <div className="flex items-center gap-2">
-                                    <Button size="sm" onClick={handleDescriptionSave}>
-                                        <Check className="h-4 w-4 mr-2" />
+                                    <Button size="sm" onClick={handleDescriptionSave} disabled={isUpdating}>
+                                        {isUpdating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
                                         Salvar
                                     </Button>
-                                    <Button size="sm" variant="outline" data-action="cancel" onClick={handleDescriptionCancel}>
+                                    <Button size="sm" variant="outline" data-action="cancel" onClick={handleDescriptionCancel} disabled={isUpdating}>
                                         <X className="h-4 w-4 mr-2" />
                                         Cancelar
                                     </Button>
@@ -166,6 +174,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                         <Switch
                             checked={menu.preferences.highlightFeaturedItems}
                             onCheckedChange={(checked) => handlePreferenceChange("highlightFeaturedItems", checked)}
+                            disabled={isUpdating}
                         />
                     </div>
 
@@ -177,6 +186,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                         <Switch
                             checked={menu.preferences.showPrices}
                             onCheckedChange={(checked) => handlePreferenceChange("showPrices", checked)}
+                            disabled={isUpdating}
                         />
                     </div>
 
@@ -188,6 +198,7 @@ export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {
                         <Switch
                             checked={menu.preferences.showItemImages}
                             onCheckedChange={(checked) => handlePreferenceChange("showItemImages", checked)}
+                            disabled={isUpdating}
                         />
                     </div>
                 </CardContent>

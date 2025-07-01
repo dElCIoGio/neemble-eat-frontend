@@ -9,6 +9,7 @@ import {OverviewTab} from "@/components/pages/dashboard-menu/overview-tab";
 import {CategoriesTab} from "@/components/pages/dashboard-menu/categories-tab";
 import {ItemsTab} from "@/components/pages/dashboard-menu/items-tab";
 import {useGetMenuBySlug} from "@/api/endpoints/menu/hooks";
+import {menuApi} from "@/api/endpoints/menu/requests";
 import {Loader} from "@/components/ui/loader";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {useDashboardContext} from "@/context/dashboard-context";
@@ -29,9 +30,27 @@ export default function MenuManagementPage() {
     const { data: menu, updateMenu, isLoading } = useGetMenuBySlug(menuId)
 
     const [activeTab, setActiveTab] = useState("overview")
+    const [isUpdating, setIsUpdating] = useState(false)
 
     const handleMenuUpdate = (updatedMenu: Partial<Menu>) => {
-        updateMenu(updatedMenu)
+        if (!menu) return
+
+        setIsUpdating(true)
+
+        const promise = menuApi.updateMenu(menu._id, updatedMenu)
+            .then((updated) => {
+                updateMenu(updated)
+                queryClient.setQueryData<Menu[]>(["restaurant menus", restaurant._id], (old) =>
+                    old ? old.map(m => m._id === updated._id ? updated : m) : old
+                )
+            })
+            .finally(() => setIsUpdating(false))
+
+        showPromiseToast(promise, {
+            loading: "Updating menu...",
+            success: "Menu updated successfully!",
+            error: "Failed to update menu. Please try again."
+        })
     }
 
     const handlePublishMenu = () => {
@@ -158,7 +177,7 @@ export default function MenuManagementPage() {
 
                         <div className="mt-6 pb-8">
                             <TabsContent value="overview" className="mt-0">
-                                <OverviewTab menu={menu} onUpdate={handleMenuUpdate} />
+                                <OverviewTab menu={menu} onUpdate={handleMenuUpdate} isUpdating={isUpdating} />
                             </TabsContent>
                             <TabsContent value="categories" className="mt-0">
                                 <CategoriesTab  />
