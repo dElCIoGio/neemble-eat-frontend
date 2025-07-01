@@ -5,7 +5,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogFooter,
-    AlertDialogTrigger,
     AlertDialogCancel
 } from "@/components/ui/alert-dialog";
 import {Button} from "@/components/ui/button";
@@ -13,30 +12,27 @@ import {useCartContext} from "@/context/cart-context";
 
 
 interface Props {
-    disabled?: boolean
+    disabled?: boolean;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onConfirm: () => void;
 }
 
-export function OrderAlert({disabled = false}: Props) {
+export function OrderAlert({disabled = false, open, onOpenChange, onConfirm}: Props) {
 
     const {alertMessage, orderStatus, customerName, totalValue, iSFetchingSession} = useCartContext()
 
-    const isDisabled = iSFetchingSession || disabled
-
-    if (isDisabled || totalValue === 0) {
-        return (
-            <Button disabled className={`w-full cursor-not-allowed bg-zinc-600 pt-2`}>
-                Confirmar
-            </Button>
-        )
-    }
+    const isDisabled = iSFetchingSession || disabled || totalValue === 0
 
     return (
-        <AlertDialog>
-            <AlertDialogTrigger asChild className={`w-full pt-2`}>
-                <Button className="w-full">
-                    Confirmar
-                </Button>
-            </AlertDialogTrigger>
+        <AlertDialog open={open} onOpenChange={onOpenChange}>
+            <Button
+                disabled={isDisabled}
+                onClick={onConfirm}
+                className="w-full pt-2"
+            >
+                Confirmar
+            </Button>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
