@@ -6,11 +6,11 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Edit2, Check, X } from "lucide-react"
-import {Menu} from "@/types/menu";
+import type { Menu, PartialMenu } from "@/types/menu";
 
 interface OverviewTabProps {
     menu: Menu
-    onUpdate: (updatedMenu: Partial<Menu>) => void
+    onUpdate: (updatedMenu: PartialMenu) => void
 }
 
 export function OverviewTab({ menu, onUpdate }: OverviewTabProps) {

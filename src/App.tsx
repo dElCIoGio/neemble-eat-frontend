@@ -159,8 +159,6 @@ function App() {
             <Route path="outframe">
                 <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
                 <Route path="terms-of-use" element={<TermsOfUse/>}/>
-
-
             </Route>
         </Routes>
     );

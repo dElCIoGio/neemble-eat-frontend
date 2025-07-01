@@ -1,3 +1,4 @@
+
 export type MenuPreferences = {
     highlightFeaturedItems: boolean;
     showPrices: boolean;
@@ -22,3 +23,8 @@ export type Menu = {
     categoryIds: string[];
     position: number;
 } & MenuCreate;
+
+
+type OptionalMenuFields = Partial<Omit<Menu, '_id' | 'createdAt' | 'updatedAt'>>;
+
+export type PartialMenu = OptionalMenuFields;

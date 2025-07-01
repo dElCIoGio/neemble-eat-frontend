@@ -1,5 +1,5 @@
 import {apiClient} from "@/api/axios";
-import {Menu, MenuCreate} from "@/types/menu";
+import {Menu, MenuCreate, PartialMenu} from "@/types/menu";
 import {Item} from "@/types/item";
 import {Category} from "@/types/category";
 
@@ -52,6 +52,12 @@ export const menuApi = {
     activateMenu: async (menuId: string) => {
         const response = await apiClient.put<Menu>(`${baseRoute}/${menuId}/activate`)
         return response.data
+    },
+
+    updateMenu: async (menuId: string, data: PartialMenu) => {
+        const response = await apiClient.put<Menu>(`${baseRoute}/${menuId}/`, data);
+        return response.data
+
     }
 
 }

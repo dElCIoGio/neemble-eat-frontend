@@ -79,7 +79,7 @@ export function Header() {
                                                     Preços
                                                 </Link>
 
-                                                <div className="space-y-2 hidden">
+                                                <div className="space-y-2">
                                                     <div className="text-sm font-medium text-gray-500 px-2">Recursos
                                                     </div>
                                                     <div className="space-y-1">
@@ -143,7 +143,7 @@ export function Header() {
                                 </NavLink>
                             </div>
 
-                            <NavigationMenu className="hidden md:flex">
+                            <NavigationMenu className="md:flex">
                                 <NavigationMenuList>
                                     <NavigationMenuItem>
                                         <NavigationMenuTrigger className="bg-none">Soluções</NavigationMenuTrigger>
@@ -187,19 +187,18 @@ export function Header() {
                                     </NavigationMenuItem>
 
                                     {/* Recursos */}
-                                    <NavigationMenuItem className="hidden">
+                                    <NavigationMenuItem className="">
                                         <NavigationMenuTrigger className="bg-none">Recursos</NavigationMenuTrigger>
                                         <NavigationMenuContent>
-                                            <ul className="grid w-[300px] gap-2 p-4 bg-white/70 backdrop-blur-sm rounded-md shadow-md">
+                                            <ul className="grid w-[300px] gap-2 rounded-md">
                                                 <li>
-                                                    <NavigationMenuLink asChild>
+                                                    <NavigationMenuLink className="hover:bg-zinc-200">
                                                         <Link
                                                             to="#"
-                                                            className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
+                                                            className="flex items-center justify-between hover:bg-gray-50 w-full rounded-md"
                                                         >
-                                                            Sistema QR Code
-                                                            <Badge
-                                                                className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">POPULAR</Badge>
+                                                            <span>Sistema QR Code</span>
+                                                            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">POPULAR</Badge>
                                                         </Link>
                                                     </NavigationMenuLink>
                                                 </li>

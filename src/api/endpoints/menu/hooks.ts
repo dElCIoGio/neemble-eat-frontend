@@ -1,6 +1,6 @@
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {menuApi} from "@/api/endpoints/menu/requests";
-import {Menu} from "@/types/menu";
+import {Menu, PartialMenu} from "@/types/menu";
 import {Item} from "@/types/item";
 
 
@@ -42,7 +42,7 @@ export function useGetMenuBySlug(slug: string) {
     const queryClient = useQueryClient()
 
     // Hook return can include the updater
-    const updateMenu = (updatedFields: Partial<Menu>) => {
+    const updateMenu = (updatedFields: PartialMenu) => {
         queryClient.setQueryData<Menu>(queryKey, (oldData) => {
             if (!oldData) return oldData
             return {
