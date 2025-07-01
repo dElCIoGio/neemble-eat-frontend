@@ -94,6 +94,7 @@ export function Cart() {
                 setOrderStatus("Success")
                 setAlertMessage(`O seu pedido será levado á sua mesa em breve!`)
                 setCartEmpty()
+                setOrderConfirmed(true)
             })
 
             if (session && session._id)

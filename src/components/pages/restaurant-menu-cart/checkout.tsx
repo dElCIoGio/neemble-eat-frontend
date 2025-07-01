@@ -9,7 +9,7 @@ interface Props {
 
 export function Checkout({onSubmit, disabled = false}: Props) {
 
-    const {setCustomerName, totalValue} = useCartContext()
+    const {setCustomerName, totalValue, orderConfirmed, setOrderConfirmed} = useCartContext()
 
     const handleCustomerName = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -42,9 +42,12 @@ export function Checkout({onSubmit, disabled = false}: Props) {
                                           className="peer w-full text-base resize-none rounded-b-none border-b border-gray-300 bg-transparent pb-1.5 text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50 duration-200">
 
                                 </textarea>
-                            <div onClick={!disabled ? onSubmit : undefined}>
-                                <OrderAlert disabled={disabled}/>
-                            </div>
+                            <OrderAlert
+                                disabled={disabled}
+                                open={orderConfirmed}
+                                onOpenChange={setOrderConfirmed}
+                                onConfirm={!disabled ? onSubmit : () => {}}
+                            />
                             {disabled && (
                                 <p className="text-center text-xs text-red-600 mt-2">
                                     A conta foi solicitada. Novos pedidos não são permitidos.
