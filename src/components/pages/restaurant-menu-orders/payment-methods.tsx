@@ -3,8 +3,9 @@ import {useOrdersContext} from "@/context/order-context";
 import {SwipeToConfirmButton} from "@/components/pages/restaurant-menu-orders/swipe-to-confirm";
 import {Banknote, CreditCard} from "lucide-react";
 import {showPromiseToast} from "@/utils/notifications/toast";
-import {sessionApi} from "@/api/endpoints/sessions/requests";
 import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
+import {useMarkSessionNeedsBill} from "@/api/endpoints/sessions/hooks";
+import {useParams} from "react-router";
 
 
 
@@ -22,14 +23,21 @@ export function PaymentMethods({children}: Props) {
 
 PaymentMethods.Confirm = function Confirm() {
     const {refreshOrders, setBillDialogOpen} = useOrdersContext()
-    const { session } = useRestaurantMenuContext()
+    const { session, restaurant } = useRestaurantMenuContext()
+    const { tableNumber } = useParams() as unknown as { tableNumber: string }
+
+    const requestBill = useMarkSessionNeedsBill({
+        sessionId: session._id,
+        restaurantId: restaurant._id,
+        tableNumber: Number(tableNumber)
+    })
 
 
     const handleRequestBill = async () => {
         setBillDialogOpen(true)
 
         showPromiseToast(
-            sessionApi.markSessionNeedsBill(session._id)
+            requestBill.mutateAsync()
                 .then(() => {
                     refreshOrders()
                 }),
