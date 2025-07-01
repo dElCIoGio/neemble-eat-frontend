@@ -121,6 +121,8 @@ function StaffContent() {
         sortDirection,
         currentPage,
         itemsPerPage,
+        viewMode,
+        setViewMode,
         inviteForm,
         setInviteForm,
         roleForm,
@@ -708,20 +710,15 @@ function StaffContent() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            {/* Desktop Table View */}
-                            <div className="hidden lg:block">
+                            {viewMode === "table" ? (
                                 <MembersTable />
-                            </div>
-
-                            {/* Mobile Cards View */}
-                            <div className="lg:hidden space-y-4">
-                                {paginatedMembers.map((member: User) => (
-                                    <MemberCard 
-                                        key={member._id} 
-                                        member={member}
-                                    />
-                                ))}
-                            </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {paginatedMembers.map((member: User) => (
+                                        <MemberCard key={member._id} member={member} />
+                                    ))}
+                                </div>
+                            )}
 
                             <Pagination />
                         </CardContent>
