@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { sessionApi } from "@/api/endpoints/sessions/requests";
 import { TableSession } from "@/types/table-session";
 
@@ -69,5 +69,19 @@ export function useGetActiveSessionByTableNumber({restaurantId, tableNumber}: Pr
         ...query,
     }
 
+
+}
+
+export function useMarkSessionNeedsBill({sessionId, restaurantId, tableNumber}: {sessionId: string, restaurantId: string, tableNumber: number}) {
+
+    const queryClient = useQueryClient()
+    const queryKey = ["active", tableNumber, restaurantId]
+
+    return useMutation({
+        mutationFn: () => sessionApi.markSessionNeedsBill(sessionId),
+        onSuccess: (updatedSession) => {
+            queryClient.setQueryData<TableSession>(queryKey, updatedSession)
+        },
+    })
 
 }
