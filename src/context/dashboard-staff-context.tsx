@@ -1,4 +1,4 @@
-import {createContext, useContext, useState, ReactNode, JSX} from "react"
+import {createContext, useContext, useState, ReactNode, JSX, useEffect} from "react"
 import { User } from "@/types/user"
 import { Role, RoleCreate, SectionPermission } from "@/types/role"
 import { InvitationCreate } from "@/types/invitation"
@@ -9,6 +9,7 @@ import { showSuccessToast, showErrorToast } from "@/utils/notifications/toast"
 import { useUpdateMemberRole } from "@/api/endpoints/memberships/hooks"
 import { Badge } from "@/components/ui/badge"
 import { restaurantApi } from "@/api/endpoints/restaurants/requests"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 type SortableUserFields = keyof Pick<User, 'firstName' | 'lastName' | 'email' | 'isActive' | 'updatedAt'>
 
@@ -70,6 +71,7 @@ interface DashboardStaffContextType {
 const DashboardStaffContext = createContext<DashboardStaffContextType | undefined>(undefined)
 
 export function DashboardStaffProvider({ children }: { children: ReactNode }) {
+    const isMobile = useIsMobile()
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("todos")
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
@@ -81,7 +83,11 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
     const [currentPage, setCurrentPage] = useState(1)
     const [itemsPerPage] = useState(10)
-    const [viewMode, setViewMode] = useState<"table" | "cards">("table")
+    const [viewMode, setViewMode] = useState<"table" | "cards">(isMobile ? "cards" : "table")
+
+    useEffect(() => {
+        if (isMobile) setViewMode("cards")
+    }, [isMobile])
     const [editingRole, setEditingRole] = useState<Role | null>(null)
     const [isEditRoleDialogOpen, setIsEditRoleDialogOpen] = useState(false)
 

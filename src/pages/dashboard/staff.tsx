@@ -21,6 +21,7 @@ import { showSuccessToast, showErrorToast, showPromiseToast } from "@/utils/noti
 import { invitationApi } from "@/api/endpoints/invitation/requests"
 import { useGetRestaurantInvitations } from "@/hooks/use-get-restaurant-invitations"
 import { InvitationsTable } from "@/components/pages/dashboard-staff/invitations-table"
+import { InvitationCard } from "@/components/pages/dashboard-staff/invitation-card"
 import { DashboardStaffProvider, useDashboardStaff } from "@/context/dashboard-staff-context"
 import { Stats } from "@/components/pages/dashboard-staff/stats"
 import { Filters } from "@/components/pages/dashboard-staff/filters"
@@ -30,6 +31,7 @@ import { Pagination } from "@/components/pages/dashboard-staff/pagination"
 import { useGetAllMembers } from "@/hooks/use-get-all-members"
 import { useListRestaurantRoles } from "@/hooks/use-list-restaurant-roles"
 import { useDashboardContext } from "@/context/dashboard-context"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { copyToClipboard } from "@/lib/helpers/copy-to-clipboard"
 import {
     Dialog,
@@ -137,6 +139,8 @@ function StaffContent() {
         setIsEditRoleDialogOpen,
 
     } = useDashboardStaff()
+
+    const isMobile = useIsMobile()
 
 
     const { restaurant, user } = useDashboardContext()
@@ -710,7 +714,7 @@ function StaffContent() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            {viewMode === "table" ? (
+                            {viewMode === "table" && !isMobile ? (
                                 <MembersTable />
                             ) : (
                                 <div className="space-y-4">
@@ -734,7 +738,15 @@ function StaffContent() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <InvitationsTable invitations={invitations} />
+                            {viewMode === "table" && !isMobile ? (
+                                <InvitationsTable invitations={invitations} />
+                            ) : (
+                                <div className="space-y-4">
+                                    {invitations.map((inv) => (
+                                        <InvitationCard key={inv._id} invitation={inv} />
+                                    ))}
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </div>
