@@ -124,7 +124,6 @@ function StaffContent() {
         currentPage,
         itemsPerPage,
         viewMode,
-        setViewMode,
         inviteForm,
         setInviteForm,
         roleForm,
