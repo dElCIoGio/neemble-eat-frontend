@@ -24,7 +24,7 @@ import { useDashboardContext } from "@/context/dashboard-context"
 import { useListRestaurantRoles } from "@/hooks/use-list-restaurant-roles"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Clock, Edit, Eye, Mail, MoreHorizontal, Phone, Trash2 } from "lucide-react"
+import { Clock, Eye, Mail, MoreHorizontal, Phone, Trash2 } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { getSectionLabel } from "@/lib/helpers/section-label"
@@ -43,7 +43,6 @@ export default function MemberRow({ user }: MemberRowProps) {
     const {
         selectedMembers,
         handleSelectMember,
-        handleEditMember,
         handleDeleteMember,
         getStatusBadge,
         updateMemberRole,
@@ -145,10 +144,6 @@ export default function MemberRow({ user }: MemberRowProps) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => handleEditMember(user)}>
-                                <Edit className="w-4 h-4 mr-2" />
-                                Editar
-                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={handleViewPermissions}>
                                 <Eye className="w-4 h-4 mr-2" />
                                 Ver Permissões
