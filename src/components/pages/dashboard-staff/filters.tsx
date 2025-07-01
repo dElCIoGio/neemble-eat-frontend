@@ -28,19 +28,11 @@ export function Filters() {
                         <Button
                             variant={viewMode === "table" ? "default" : "outline"}
                             size="sm"
-                            onClick={() => setViewMode("table")}
+                            onClick={() => setViewMode(viewMode === "table" ? "cards" : "table")}
                             className="hidden lg:flex"
                         >
                             <BarChart3 className="w-4 h-4 mr-2" />
                             Tabela
-                        </Button>
-                        <Button
-                            variant={viewMode === "cards" ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setViewMode("cards")}
-                            className="lg:hidden"
-                        >
-                            Cards
                         </Button>
                     </div>
                 </div>
