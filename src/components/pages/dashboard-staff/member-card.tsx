@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { User } from "@/types/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -16,6 +17,16 @@ import { Edit, Eye, MoreHorizontal, Phone, Trash2 } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { useDashboardStaff } from "@/context/dashboard-staff-context"
+import { useDashboardContext } from "@/context/dashboard-context"
+import { useListRestaurantRoles } from "@/hooks/use-list-restaurant-roles"
+import { getSectionLabel } from "@/lib/helpers/section-label"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface MemberCardProps {
     member: User
@@ -30,8 +41,23 @@ export function MemberCard({ member }: MemberCardProps) {
         getRoleName,
         getStatusBadge
     } = useDashboardStaff()
+    const { restaurant, user: currentUser } = useDashboardContext()
+    const { data: roles } = useListRestaurantRoles(restaurant._id)
+
+    const membership = member.memberships[0]
+    const role = roles?.find((r) => r._id === membership?.roleId)
+    const roleName = role?.name === "no_role" || !role ? "Sem função" : role.name
+
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+    function handleViewPermissions() {
+        setIsMenuOpen(false)
+        setIsSheetOpen(true)
+    }
 
     return (
+        <>
         <Card className="p-4">
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -46,11 +72,22 @@ export function MemberCard({ member }: MemberCardProps) {
                         </AvatarFallback>
                     </Avatar>
                     <div>
-                        <div className="font-medium">{`${member.firstName} ${member.lastName}`}</div>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <div className="font-medium">
+                                        {member._id === currentUser._id ? "Eu" : `${member.firstName} ${member.lastName}`}
+                                    </div>
+                                </TooltipTrigger>
+                                {member._id === currentUser._id && (
+                                    <TooltipContent>{`${member.firstName} ${member.lastName}`}</TooltipContent>
+                                )}
+                            </Tooltip>
+                        </TooltipProvider>
                         <div className="text-sm text-gray-500">{member.email}</div>
                     </div>
                 </div>
-                <DropdownMenu>
+                <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm">
                             <MoreHorizontal className="w-4 h-4" />
@@ -62,12 +99,16 @@ export function MemberCard({ member }: MemberCardProps) {
                             <Edit className="w-4 h-4 mr-2" />
                             Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleViewPermissions}>
                             <Eye className="w-4 h-4 mr-2" />
                             Ver Permissões
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteMember(member)}>
+                        <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => handleDeleteMember(member)}
+                            disabled={member._id === currentUser._id}
+                        >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Remover
                         </DropdownMenuItem>
@@ -96,5 +137,33 @@ export function MemberCard({ member }: MemberCardProps) {
                 </div>
             </div>
         </Card>
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetContent>
+                <SheetHeader>
+                    <SheetTitle>Permissões de {member.firstName}</SheetTitle>
+                </SheetHeader>
+                <div className="p-4 space-y-3 overflow-y-auto h-full">
+                    <div>
+                        <p className="font-semibold">Função: {roleName}</p>
+                        {role?.description && (
+                            <p className="text-sm text-muted-foreground">{role.description}</p>
+                        )}
+                    </div>
+                    <div className="space-y-2">
+                        {role?.permissions.map((perm) => (
+                            <div key={perm.section} className="flex items-start justify-between">
+                                <span className="capitalize">{getSectionLabel(perm.section)}</span>
+                                <div className="flex gap-1">
+                                    {perm.permissions.canView && <Badge variant="secondary">ver</Badge>}
+                                    {perm.permissions.canEdit && <Badge variant="secondary">editar</Badge>}
+                                    {perm.permissions.canDelete && <Badge variant="secondary">apagar</Badge>}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </SheetContent>
+        </Sheet>
+        </>
     )
-} 
+}

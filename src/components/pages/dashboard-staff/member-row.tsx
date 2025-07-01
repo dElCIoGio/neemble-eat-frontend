@@ -28,6 +28,12 @@ import { Clock, Edit, Eye, Mail, MoreHorizontal, Phone, Trash2 } from "lucide-re
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { getSectionLabel } from "@/lib/helpers/section-label"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface MemberRowProps {
     user: User
@@ -43,7 +49,7 @@ export default function MemberRow({ user }: MemberRowProps) {
         updateMemberRole,
     } = useDashboardStaff()
 
-    const { restaurant } = useDashboardContext()
+    const { restaurant, user: currentUser } = useDashboardContext()
     const { data: roles } = useListRestaurantRoles(restaurant._id)
     const filteredRoles = (roles ?? []).filter(r => r.name !== "no_role")
 
@@ -77,7 +83,18 @@ export default function MemberRow({ user }: MemberRowProps) {
                             </AvatarFallback>
                         </Avatar>
                         <div>
-                            <div className="font-medium">{`${user.firstName} ${user.lastName}`}</div>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className="font-medium">
+                                            {user._id === currentUser._id ? "Eu" : `${user.firstName} ${user.lastName}`}
+                                        </div>
+                                    </TooltipTrigger>
+                                    {user._id === currentUser._id && (
+                                        <TooltipContent>{`${user.firstName} ${user.lastName}`}</TooltipContent>
+                                    )}
+                                </Tooltip>
+                            </TooltipProvider>
                             <div className="text-sm text-gray-500">{user.email}</div>
                         </div>
                     </div>
@@ -137,7 +154,11 @@ export default function MemberRow({ user }: MemberRowProps) {
                                 Ver Permissões
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteMember(user)}>
+                            <DropdownMenuItem
+                                className="text-red-600"
+                                onClick={() => handleDeleteMember(user)}
+                                disabled={user._id === currentUser._id}
+                            >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Remover
                             </DropdownMenuItem>
