@@ -24,7 +24,6 @@ import { InvitationsTable } from "@/components/pages/dashboard-staff/invitations
 import { DashboardStaffProvider, useDashboardStaff } from "@/context/dashboard-staff-context"
 import { Stats } from "@/components/pages/dashboard-staff/stats"
 import { Filters } from "@/components/pages/dashboard-staff/filters"
-import { BulkActions } from "@/components/pages/dashboard-staff/bulk-actions"
 import { MembersTable } from "@/components/pages/dashboard-staff/members-table"
 import { MemberCard } from "@/components/pages/dashboard-staff/member-card"
 import { Pagination } from "@/components/pages/dashboard-staff/pagination"
@@ -122,6 +121,8 @@ function StaffContent() {
         sortDirection,
         currentPage,
         itemsPerPage,
+        viewMode,
+        setViewMode,
         inviteForm,
         setInviteForm,
         roleForm,
@@ -698,7 +699,6 @@ function StaffContent() {
                     </div>
 
                     <Filters />
-                    <BulkActions />
 
                     <Card>
                         <CardHeader>
@@ -710,20 +710,15 @@ function StaffContent() {
                             </div>
                         </CardHeader>
                         <CardContent>
-                            {/* Desktop Table View */}
-                            <div className="hidden lg:block">
+                            {viewMode === "table" ? (
                                 <MembersTable />
-                            </div>
-
-                            {/* Mobile Cards View */}
-                            <div className="lg:hidden space-y-4">
-                                {paginatedMembers.map((member: User) => (
-                                    <MemberCard 
-                                        key={member._id} 
-                                        member={member}
-                                    />
-                                ))}
-                            </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {paginatedMembers.map((member: User) => (
+                                        <MemberCard key={member._id} member={member} />
+                                    ))}
+                                </div>
+                            )}
 
                             <Pagination />
                         </CardContent>
