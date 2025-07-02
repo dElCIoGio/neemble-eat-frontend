@@ -1,7 +1,7 @@
 import {apiClient} from "@/api/axios";
 import {GetRestaurantMembersProps} from "@/api/endpoints/restaurants/types";
 import {User} from "@/types/user";
-import {Restaurant} from "@/types/restaurant";
+import {OpeningHours, Restaurant} from "@/types/restaurant";
 import {Menu} from "@/types/menu";
 
 const baseRoute = "/restaurants";
@@ -58,6 +58,11 @@ export const restaurantApi = {
         const response = await apiClient.put<Restaurant>(`${baseRoute}/${restaurantId}/logo`, formData)
         return response.data
     },
+
+    updateRestaurantOpeningHours: async (restaurantId: string, openingHours: OpeningHours) => {
+        const response = await apiClient.put<Restaurant>(`${baseRoute}/${restaurantId}/opening-hours`, openingHours);
+        return response.data
+    }
 
 
 }
