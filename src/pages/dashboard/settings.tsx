@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Check, Save} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -10,15 +10,39 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {useDashboardContext} from "@/context/dashboard-context";
+import {useUpdateRestaurantOpeningHours} from "@/api/endpoints/restaurants/hooks";
+import {showPromiseToast} from "@/utils/notifications/toast";
+import {useQueryClient} from "@tanstack/react-query";
+import {OpeningHours} from "@/types/restaurant";
 
 export default function Settings() {
     const [saved, setSaved] = useState(false)
 
     const { restaurant } = useDashboardContext()
+    const queryClient = useQueryClient()
+    const updateOpeningHoursMutation = useUpdateRestaurantOpeningHours(restaurant._id)
+
+    const [openingHours, setOpeningHours] = useState<OpeningHours>(restaurant.settings.openingHours || {})
+
+    useEffect(() => {
+        setOpeningHours(restaurant.settings.openingHours || {})
+    }, [restaurant.settings.openingHours])
 
     const handleSave = () => {
-        setSaved(true)
-        setTimeout(() => setSaved(false), 2000)
+        const promise = updateOpeningHoursMutation
+            .mutateAsync(openingHours)
+            .then((updated) => {
+                queryClient.setQueryData(["currentRestaurantId"], updated)
+            })
+        showPromiseToast(promise, {
+            loading: "Atualizando horário...",
+            success: "Horário atualizado com sucesso",
+            error: "Erro ao atualizar horário",
+        })
+        promise.then(() => {
+            setSaved(true)
+            setTimeout(() => setSaved(false), 2000)
+        })
     }
 
 
@@ -161,42 +185,64 @@ export default function Settings() {
                                                     "thursday",
                                                     "friday",
                                                     "saturday",
-                                                ].map((day) => (
-                                                    <div key={day} className="flex items-center justify-between border-b pb-2">
-                                                        <div className="flex items-center gap-4">
-                                                            <Switch id={`day-sunday`}
-                                                                    defaultChecked={restaurant.settings.openingHours? !!restaurant.settings.openingHours[day as ("monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday")]: false}/>
-                                                            <Label htmlFor={`day-sunday`}>{day}</Label>
+                                                ].map((day) => {
+                                                    const value = openingHours[day as keyof typeof openingHours]
+                                                    const [open, close] = value ? value.split("-") : ["10:00", "22:00"]
+                                                    return (
+                                                        <div key={day} className="flex items-center justify-between border-b pb-2">
+                                                            <div className="flex items-center gap-4">
+                                                                <Switch id={`day-${day}`}
+                                                                        checked={!!value}
+                                                                        onCheckedChange={(checked) => {
+                                                                            setOpeningHours(prev => ({
+                                                                                ...prev,
+                                                                                [day]: checked ? `${open}-${close}` : undefined,
+                                                                            }))
+                                                                        }}/>
+                                                                <Label htmlFor={`day-${day}`}>{day}</Label>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <Select value={open}
+                                                                        onValueChange={(val) => setOpeningHours(prev => ({
+                                                                            ...prev,
+                                                                            [day]: `${val}-${close}`,
+                                                                        }))}
+                                                                        disabled={!value}
+                                                                >
+                                                                    <SelectTrigger className="w-24">
+                                                                        <SelectValue placeholder="Abertura"/>
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        {Array.from({length: 14}, (_, i) => i + 8).map((hour) => (
+                                                                            <SelectItem key={hour} value={`${hour}:00`}>
+                                                                                {`${hour}:00`}
+                                                                            </SelectItem>
+                                                                        ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                <span>até</span>
+                                                                <Select value={close}
+                                                                        onValueChange={(val) => setOpeningHours(prev => ({
+                                                                            ...prev,
+                                                                            [day]: `${open}-${val}`,
+                                                                        }))}
+                                                                        disabled={!value}
+                                                                >
+                                                                    <SelectTrigger className="w-24">
+                                                                        <SelectValue placeholder="Fecho"/>
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        {Array.from({length: 10}, (_, i) => i + 16).map((hour) => (
+                                                                            <SelectItem key={hour} value={`${hour}:00`}>
+                                                                                {`${hour}:00`}
+                                                                            </SelectItem>
+                                                                        ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex items-center gap-2">
-                                                            <Select defaultValue="10:00">
-                                                                <SelectTrigger className="w-24">
-                                                                    <SelectValue placeholder="Abertura"/>
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    {Array.from({length: 14}, (_, i) => i + 8).map((hour) => (
-                                                                        <SelectItem key={hour} value={`${hour}:00`}>
-                                                                            {`${hour}:00`}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-                                                            <span>até</span>
-                                                            <Select defaultValue="22:00">
-                                                                <SelectTrigger className="w-24">
-                                                                    <SelectValue placeholder="Fecho"/>
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    {Array.from({length: 10}, (_, i) => i + 16).map((hour) => (
-                                                                        <SelectItem key={hour} value={`${hour}:00`}>
-                                                                            {`${hour}:00`}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                    </div>
-                                                ))
+                                                    )
+                                                })
 
                                             }
 
