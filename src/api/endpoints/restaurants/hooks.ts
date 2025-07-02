@@ -1,7 +1,9 @@
 import {GetRestaurantMembersProps} from "@/api/endpoints/restaurants/types";
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {useQuery, useQueryClient, useMutation} from "@tanstack/react-query";
 import {restaurantApi} from "@/api/endpoints/restaurants/requests";
 import {User} from "@/types/user";
+import {OpeningHours} from "@/types/restaurant";
+import {showSuccessToast, showErrorToast} from "@/utils/notifications/toast";
 
 export function useGetAllMembers(props: GetRestaurantMembersProps) {
 
@@ -70,4 +72,21 @@ export function useGetCurrentMenu(restaurantId: string | undefined){
         enabled: typeof restaurantId == "string"
     })
 
+}
+
+export function useUpdateRestaurantOpeningHours(restaurantId: string) {
+    const queryClient = useQueryClient()
+    const queryKey = ["restaurant", restaurantId]
+
+    return useMutation({
+        mutationFn: (openingHours: OpeningHours) =>
+            restaurantApi.updateRestaurantOpeningHours(restaurantId, openingHours),
+        onSuccess: (restaurant) => {
+            queryClient.setQueryData(queryKey, restaurant)
+            showSuccessToast("Horário atualizado com sucesso")
+        },
+        onError: () => {
+            showErrorToast("Falha ao atualizar horário")
+        },
+    })
 }
