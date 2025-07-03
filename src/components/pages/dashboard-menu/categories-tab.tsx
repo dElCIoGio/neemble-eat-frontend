@@ -37,6 +37,7 @@ export function CategoriesTab() {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null)
+    const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
 
     useEffect(() => {
         const term = searchParams.get("categoriesSearch") || ""
@@ -108,6 +109,12 @@ export function CategoriesTab() {
         }
     }
 
+    const confirmBulkDelete = async () => {
+        await Promise.all(selectedCategories.map(id => categoryApi.deleteCategory(id).then(() => removeCategory(id))))
+        setSelectedCategories([])
+        setBulkDeleteDialogOpen(false)
+    }
+
     const handleToggleStatus = (category: Category) => {
         showPromiseToast(
             categoryApi.switchCategoryAvailability(category._id, !category.isActive).then(() => {
@@ -161,6 +168,11 @@ export function CategoriesTab() {
                     />
                     <Button variant="ghost" onClick={clearFilters} className="whitespace-nowrap">Limpar filtros</Button>
                 </div>
+                {selectedCategories.length > 1 && (
+                    <Button variant="destructive" size="sm" onClick={() => setBulkDeleteDialogOpen(true)}>
+                        Excluir selecionados
+                    </Button>
+                )}
             </div>
 
             {/* Categories Table */}
@@ -216,6 +228,20 @@ export function CategoriesTab() {
                         <AlertDialogAction onClick={confirmDeleteCategory} className="bg-red-600 hover:bg-red-700">
                             Excluir
                         </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Excluir categorias selecionadas</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Tem a certeza que deseja excluir {selectedCategories.length} categorias?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setBulkDeleteDialogOpen(false)}>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmBulkDelete} className="bg-red-600 hover:bg-red-700">Excluir</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

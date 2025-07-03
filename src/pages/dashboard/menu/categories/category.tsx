@@ -10,12 +10,24 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Link, useParams } from "react-router"
 import { Category } from "@/types/category"
+import type { Item } from "@/types/item"
 import { useGetCategoryBySlug, useGetCategoryItems } from "@/api/endpoints/categories/hooks"
 import { useQueryClient } from "@tanstack/react-query"
 import { categoryApi } from "@/api/endpoints/categories/requests"
+import { itemsApi } from "@/api/endpoints/item/requests"
 import { notifications } from "@/lib/notifications"
 
 export default function CategoryDetailsPage() {
@@ -29,6 +41,10 @@ export default function CategoryDetailsPage() {
     const [newTag, setNewTag] = useState("")
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+    const [openItemId, setOpenItemId] = useState<string | null>(null)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [itemToDelete, setItemToDelete] = useState<Item | null>(null)
+    const [pendingDelete, setPendingDelete] = useState(false)
 
     useEffect(() => {
         if (category) {
@@ -206,6 +222,34 @@ export default function CategoryDetailsPage() {
         if (e.key === "Enter") {
             e.preventDefault()
             addTag()
+        }
+    }
+
+    const handleToggleAvailability = async (item: Item) => {
+        try {
+            const updated = await itemsApi.switchItemAvailability(item._id)
+            queryClient.setQueryData<Item[]>(["category items", category?._id], (old) =>
+                old ? old.map((it) => it._id === updated._id ? updated : it) : []
+            )
+            notifications.success("Item atualizado com sucesso")
+        } catch (error) {
+            notifications.error("Falha ao atualizar item")
+        }
+    }
+
+    const confirmDeleteItem = async () => {
+        if (!itemToDelete || !category) return
+        try {
+            await itemsApi.deleteItem(itemToDelete._id)
+            queryClient.setQueryData<Item[]>(["category items", category._id], (old) =>
+                old ? old.filter((it) => it._id !== itemToDelete._id) : []
+            )
+            notifications.success("Item removido da categoria")
+        } catch (error) {
+            notifications.error("Falha ao remover item")
+        } finally {
+            setDeleteDialogOpen(false)
+            setItemToDelete(null)
         }
     }
 
@@ -400,9 +444,11 @@ export default function CategoryDetailsPage() {
                                         <CardTitle>Itens na Categoria</CardTitle>
                                         <CardDescription>{items?.length || 0} itens nesta categoria</CardDescription>
                                     </div>
-                                    <Button size="sm">
-                                        <Plus className="h-4 w-4 mr-2" />
-                                        Adicionar Item
+                                    <Button size="sm" asChild>
+                                        <Link to="../../items/create">
+                                            <Plus className="h-4 w-4 mr-2" />
+                                            Adicionar Item
+                                        </Link>
                                     </Button>
                                 </div>
                             </CardHeader>
@@ -440,7 +486,16 @@ export default function CategoryDetailsPage() {
                                                             </Badge>
                                                         </TableCell>
                                                         <TableCell>
-                                                            <DropdownMenu>
+                                                            <DropdownMenu
+                                                                open={openItemId === item._id}
+                                                                onOpenChange={(open) => {
+                                                                    setOpenItemId(open ? item._id : null)
+                                                                    if (!open && pendingDelete && itemToDelete?._id === item._id) {
+                                                                        setDeleteDialogOpen(true)
+                                                                        setPendingDelete(false)
+                                                                    }
+                                                                }}
+                                                            >
                                                                 <DropdownMenuTrigger asChild>
                                                                     <Button variant="ghost" size="sm">
                                                                         <MoreHorizontal className="h-4 w-4" />
@@ -448,16 +503,22 @@ export default function CategoryDetailsPage() {
                                                                 </DropdownMenuTrigger>
                                                                 <DropdownMenuContent align="end">
                                                                     <DropdownMenuItem asChild>
-                                                                        <Link to={`../../items/${item.slug}`}> 
+                                                                        <Link to={`../../items/${item.slug}`}>
                                                                             <Edit2 className="h-4 w-4 mr-2" />
                                                                             Editar
                                                                         </Link>
                                                                     </DropdownMenuItem>
-                                                                    <DropdownMenuItem>
+                                                                    <DropdownMenuItem onSelect={() => handleToggleAvailability(item)}>
                                                                         <EyeOff className="h-4 w-4 mr-2" />
                                                                         {item.isAvailable ? "Marcar como indisponível" : "Marcar como disponível"}
                                                                     </DropdownMenuItem>
-                                                                    <DropdownMenuItem className="text-red-600">
+                                                                    <DropdownMenuItem
+                                                                        className="text-red-600"
+                                                                        onSelect={() => {
+                                                                            setItemToDelete(item)
+                                                                            setPendingDelete(true)
+                                                                        }}
+                                                                    >
                                                                         <Trash2 className="h-4 w-4 mr-2" />
                                                                         Remover da categoria
                                                                     </DropdownMenuItem>
@@ -559,6 +620,20 @@ export default function CategoryDetailsPage() {
                     </div>
                 </div>
             </div>
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Remover item</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Tem a certeza que deseja remover o item "{itemToDelete?.name}"?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDeleteItem} className="bg-red-600 hover:bg-red-700">Remover</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }
