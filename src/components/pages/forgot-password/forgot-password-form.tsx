@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { CheckCircle } from "lucide-react"
-import {ForgotPasswordFormValues, forgotPasswordSchema} from "@/lib/schemas/auth";
+import { ForgotPasswordFormValues, forgotPasswordSchema } from "@/lib/schemas/auth"
+import { sendPasswordResetEmail } from "firebase/auth"
+import { auth } from "@/firebase/config"
+import { toast } from "sonner"
 
 interface ForgotPasswordFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string
@@ -29,15 +32,16 @@ export function ForgotPasswordForm({ className, ...props }: ForgotPasswordFormPr
 
     async function onSubmit(data: ForgotPasswordFormValues) {
         setIsLoading(true)
-        // In a real application, you would handle password reset here
-        console.log(data)
-
-        // Simulate API call
-        setTimeout(() => {
-            setIsLoading(false)
+        try {
+            await sendPasswordResetEmail(auth, data.email)
             setIsSubmitted(true)
             setSubmittedEmail(data.email)
-        }, 1000)
+            toast.success("Email de recuperação enviado")
+        } catch (e) {
+            toast.error("Não foi possível enviar o email de recuperação")
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
