@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Edit2, Check, X, Loader2 } from "lucide-react"
+import { useGetMenuItemsBySlug } from "@/api/endpoints/menu/hooks"
 import type { Menu, PartialMenu } from "@/types/menu";
 
 interface OverviewTabProps {
@@ -18,6 +19,7 @@ export function OverviewTab({ menu, onUpdate, isUpdating = false }: OverviewTabP
     const [isEditingDescription, setIsEditingDescription] = useState(false)
     const [tempName, setTempName] = useState(menu.name)
     const [tempDescription, setTempDescription] = useState(menu.description)
+    const { data: menuItems = [] } = useGetMenuItemsBySlug(menu.slug)
 
     const handleNameSave = () => {
         onUpdate({ name: tempName })
@@ -170,7 +172,7 @@ export function OverviewTab({ menu, onUpdate, isUpdating = false }: OverviewTabP
                             <div className="text-sm text-gray-400">Categorias</div>
                         </div>
                         <div className="text-center space-y-1">
-                            <div className="text-3xl font-medium text-gray-900">13</div>
+                            <div className="text-3xl font-medium text-gray-900">{menuItems.length}</div>
                             <div className="text-sm text-gray-400">Itens</div>
                         </div>
                         <div className="text-center space-y-1">

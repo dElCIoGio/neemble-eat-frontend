@@ -1,5 +1,5 @@
 
-import { ArrowLeft, Upload, Plus, Zap } from "lucide-react"
+import { ArrowLeft, Upload, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -7,9 +7,6 @@ import {Link} from "react-router";
 
 
 export default function AddMenuPage() {
-    const handleImportMenu = () => {
-
-    }
 
     return (
         <div className="">
@@ -41,9 +38,8 @@ export default function AddMenuPage() {
                                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
                                     <Upload className="h-8 w-8 text-blue-600" />
                                 </div>
-                                <Badge onClick={handleImportMenu} className="absolute -top-2 -right-2 bg-green-500 hover:bg-green-500">
-                                    <Zap className="h-3 w-3 mr-1" />
-                                    Faster
+                                <Badge className="absolute -top-2 -right-2 bg-gray-300 text-gray-600 cursor-not-allowed">
+                                    Coming Soon
                                 </Badge>
                             </div>
                             <CardTitle className="text-xl font-semibold text-gray-900">Import Menu</CardTitle>

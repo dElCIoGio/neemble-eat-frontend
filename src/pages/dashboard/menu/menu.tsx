@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { ArrowLeft, Eye, Settings, Plus } from "lucide-react"
+import { ArrowLeft, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -130,9 +130,6 @@ export default function MenuManagementPage() {
                                     </TooltipContent>
                                 )}
                             </Tooltip>
-                            <Button variant="ghost" size="sm">
-                                <Settings className="h-4 w-4" />
-                            </Button>
                         </div>
                     </div>
                     <div className="flex justify-end my-8 gap-2">

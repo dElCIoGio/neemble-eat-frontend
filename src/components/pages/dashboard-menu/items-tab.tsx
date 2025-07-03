@@ -44,6 +44,7 @@ export function ItemsTab() {
     const [statusFilter, setStatusFilter] = useState<string>(() => searchParams.get("itemStatus") || "all")
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [itemToDelete, setItemToDelete] = useState<Item | null>(null)
+    const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
 
     useEffect(() => {
         const s = searchParams.get("itemsSearch") || ""
@@ -151,6 +152,13 @@ export function ItemsTab() {
         setItemToDelete(null)
     }
 
+    const confirmBulkDelete = async () => {
+        const ids = selectedItems
+        await Promise.all(ids.map(id => itemsApi.deleteItem(id).then(() => removeItem(id))))
+        setSelectedItems([])
+        setBulkDeleteDialogOpen(false)
+    }
+
     const handleToggleAvailability = (item: Item) => {
         const promise = itemsApi.switchItemAvailability(item._id).then((updated) => {
             queryClient.setQueryData<Item[]>(["menu items", menuId], (old) => {
@@ -219,6 +227,11 @@ export function ItemsTab() {
                     />
                     <Button variant="ghost" onClick={clearFilters} className="whitespace-nowrap">Limpar filtros</Button>
                 </div>
+                {selectedItems.length > 1 && (
+                    <Button variant="destructive" size="sm" onClick={() => setBulkDeleteDialogOpen(true)}>
+                        Excluir selecionados
+                    </Button>
+                )}
             </div>
 
             {/* Items Table */}
@@ -295,6 +308,20 @@ export function ItemsTab() {
                         <AlertDialogAction onClick={confirmDeleteItem} className="bg-red-600 hover:bg-red-700">
                             Excluir
                         </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Excluir itens selecionados</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Tem a certeza que deseja excluir {selectedItems.length} itens?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setBulkDeleteDialogOpen(false)}>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmBulkDelete} className="bg-red-600 hover:bg-red-700">Excluir</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
