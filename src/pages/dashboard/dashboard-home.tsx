@@ -46,34 +46,6 @@ import InsightsCard from "@/components/pages/dashboard-home/insights-card";
 import ExportButtons from "@/components/pages/dashboard-home/export-buttons";
 
 
-// Dados mockados com tipos
-const salesData: SalesData = {
-    totalSales: 15420.5,
-    invoiceCount: 127,
-    averageInvoice: 121.42,
-    distinctTables: 45,
-    revenuePerTable: 342.68,
-    salesGrowth: 12.5,
-    invoiceGrowth: 8.3,
-    averageGrowth: 3.8,
-    tableGrowth: -2.1,
-    revenueGrowth: 15.2,
-}
-
-const ordersData: OrdersData = {
-    orderCount: 156,
-    cancelledCount: 23,
-    cancelledRate: 14.7,
-    ordersGrowth: 5.2,
-    cancelledGrowth: -8.1,
-}
-
-const sessionsData: SessionsData = {
-    averageDurationMinutes: 47,
-    activeSessions: 12,
-    durationGrowth: 6.8,
-    activeGrowth: 25.0,
-}
 
 const insights: Insight[] = [
     {
@@ -91,16 +63,6 @@ const insights: Insight[] = [
         message: "A Francesinha Especial continua a ser o prato mais popular do restaurante.",
         icon: ChefHat,
     },
-]
-
-const dailySales: DailySales[] = [
-    { date: "2024-01-20", sales: 1200, day: "Seg" },
-    { date: "2024-01-21", sales: 1800, day: "Ter" },
-    { date: "2024-01-22", sales: 1600, day: "Qua" },
-    { date: "2024-01-23", sales: 2100, day: "Qui" },
-    { date: "2024-01-24", sales: 1900, day: "Sex" },
-    { date: "2024-01-25", sales: 2300, day: "Sáb" },
-    { date: "2024-01-26", sales: 2000, day: "Dom" },
 ]
 
 
@@ -217,18 +179,51 @@ export default function RestaurantDashboard(): JSX.Element {
     }, [])
 
     const prepareExportData = useCallback((): ExportData => {
+        const salesData: SalesData = {
+            totalSales: salesSummary?.totalSales ?? 0,
+            invoiceCount: invoiceSummary?.invoiceCount ?? 0,
+            averageInvoice: salesSummary?.averageInvoice ?? 0,
+            distinctTables: salesSummary?.distinctTables ?? 0,
+            revenuePerTable: salesSummary?.revenuePerTable ?? 0,
+            salesGrowth: salesSummary?.totalSalesGrowth ?? 0,
+            invoiceGrowth: salesSummary?.invoiceCountGrowth ?? 0,
+            averageGrowth: salesSummary?.averageInvoiceGrowth ?? 0,
+            tableGrowth: salesSummary?.distinctTablesGrowth ?? 0,
+            revenueGrowth: salesSummary?.revenuePerTableGrowth ?? 0,
+        }
+
+        const ordersData: OrdersData = {
+            orderCount: ordersSummary?.orderCount ?? 0,
+            cancelledCount: cancelledOrdersSummary?.cancelledCount ?? 0,
+            cancelledRate:
+                ordersSummary && cancelledOrdersSummary && ordersSummary.orderCount > 0
+                    ? (cancelledOrdersSummary.cancelledCount / ordersSummary.orderCount) * 100
+                    : 0,
+            ordersGrowth: 0,
+            cancelledGrowth: 0,
+        }
+
+        const sessionsData: SessionsData = {
+            averageDurationMinutes: sessionDurationSummary?.averageDurationMinutes ?? 0,
+            activeSessions: activeSessionsSummary?.activeSessions ?? 0,
+            durationGrowth: 0,
+            activeGrowth: 0,
+        }
+
+        const dailySalesData: DailySales[] = lastSevenDaysOrdersCount ?? []
+
         return {
             salesData,
             ordersData,
-            popularItems: topItemsSummary? topItemsSummary: [],
+            popularItems: topItemsSummary ? topItemsSummary : [],
             sessionsData,
-            insights,
-            dailySales,
-            exportDate: new Date().toLocaleDateString("pt-PT"),
+            insights: [],
+            dailySales: dailySalesData,
+            exportDate: new Date().toLocaleString("pt-PT"),
             dateFilter: getDateFilterLabel(dateFilter),
             shiftFilter: getShiftFilterLabel(shiftFilter),
         }
-    }, [dateFilter, shiftFilter, getDateFilterLabel, getShiftFilterLabel])
+    }, [salesSummary, invoiceSummary, ordersSummary, cancelledOrdersSummary, topItemsSummary, sessionDurationSummary, activeSessionsSummary, lastSevenDaysOrdersCount, dateFilter, shiftFilter, getDateFilterLabel, getShiftFilterLabel])
 
     const handleExportCSV = useCallback(async (): Promise<void> => {
         try {

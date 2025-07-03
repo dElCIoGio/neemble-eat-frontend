@@ -99,8 +99,8 @@ export const generatePDFContent = (data: ExportData): string => {
 </head>
 <body>
     <div class="header">
-        <h1>Dashboard de Desempenho</h1>
-        <p>Relatório gerado em: ${data.exportDate}</p>
+        <h1>Relatório de Desempenho</h1>
+        <p>Gerado em: ${data.exportDate}</p>
         <p>Período: ${data.dateFilter} | Turno: ${data.shiftFilter}</p>
     </div>
 
@@ -151,16 +151,10 @@ export const generatePDFContent = (data: ExportData): string => {
             <div class="metric-card">
                 <div>Total de Pedidos</div>
                 <div class="metric-value">${data.ordersData.orderCount}</div>
-                <div class="metric-growth ${data.ordersData.ordersGrowth > 0 ? "positive" : "negative"}">
-                    ${data.ordersData.ordersGrowth > 0 ? "+" : ""}${data.ordersData.ordersGrowth.toFixed(1)}%
-                </div>
             </div>
             <div class="metric-card">
                 <div>Pedidos Cancelados</div>
                 <div class="metric-value">${data.ordersData.cancelledCount}</div>
-                <div class="metric-growth ${data.ordersData.cancelledGrowth > 0 ? "positive" : "negative"}">
-                    ${data.ordersData.cancelledGrowth > 0 ? "+" : ""}${data.ordersData.cancelledGrowth.toFixed(1)}%
-                </div>
             </div>
             <div class="metric-card">
                 <div>Taxa de Cancelamento</div>
@@ -191,24 +185,21 @@ export const generatePDFContent = (data: ExportData): string => {
             <div class="metric-card">
                 <div>Duração Média da Sessão</div>
                 <div class="metric-value">${data.sessionsData.averageDurationMinutes} min</div>
-                <div class="metric-growth ${data.sessionsData.durationGrowth > 0 ? "positive" : "negative"}">
-                    ${data.sessionsData.durationGrowth > 0 ? "+" : ""}${data.sessionsData.durationGrowth.toFixed(1)}%
-                </div>
             </div>
             <div class="metric-card">
                 <div>Sessões Ativas</div>
                 <div class="metric-value">${data.sessionsData.activeSessions}</div>
-                <div class="metric-growth ${data.sessionsData.activeGrowth > 0 ? "positive" : "negative"}">
-                    ${data.sessionsData.activeGrowth > 0 ? "+" : ""}${data.sessionsData.activeGrowth.toFixed(1)}%
-                </div>
             </div>
         </div>
     </div>
 
     <div class="section">
-        <h2>Insights</h2>
+        <h2>Glossário</h2>
         <ul>
-            ${data.insights.map((insight) => `<li>${insight.message}</li>`).join("")}
+            <li><strong>Total de Vendas</strong> - soma em kwanzas de todas as vendas no período.</li>
+            <li><strong>Faturas Emitidas</strong> - quantidade de faturas geradas.</li>
+            <li><strong>Mesas Servidas</strong> - número total de mesas atendidas.</li>
+            <li><strong>Taxa de Cancelamento</strong> - porcentagem de pedidos cancelados face ao total.</li>
         </ul>
     </div>
 
