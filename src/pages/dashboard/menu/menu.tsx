@@ -1,10 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ArrowLeft, Eye, Settings, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {Menu} from "@/types/menu";
-import {Link, useParams} from "react-router";
+import {Link, useParams, useSearchParams} from "react-router";
 import {OverviewTab} from "@/components/pages/dashboard-menu/overview-tab";
 import {CategoriesTab} from "@/components/pages/dashboard-menu/categories-tab";
 import {ItemsTab} from "@/components/pages/dashboard-menu/items-tab";
@@ -29,7 +29,16 @@ export default function MenuManagementPage() {
 
     const { data: menu, updateMenu, isLoading } = useGetMenuBySlug(menuId)
 
-    const [activeTab, setActiveTab] = useState("overview")
+    const [searchParams, setSearchParams] = useSearchParams()
+    const initialTab = searchParams.get("tab") || "overview"
+    const [activeTab, setActiveTabState] = useState(initialTab)
+
+    useEffect(() => {
+        const tab = searchParams.get("tab") || "overview"
+        if (tab !== activeTab) {
+            setActiveTabState(tab)
+        }
+    }, [searchParams])
     const [isUpdating, setIsUpdating] = useState(false)
 
     const handleMenuUpdate = (updatedMenu: Partial<Menu>) => {
@@ -151,7 +160,14 @@ export default function MenuManagementPage() {
                     </div>
 
                     {/* Navigation Tabs */}
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <Tabs value={activeTab} onValueChange={(tab) => {
+                        setActiveTabState(tab)
+                        setSearchParams(prev => {
+                            const newParams = new URLSearchParams(prev.toString())
+                            newParams.set("tab", tab)
+                            return newParams
+                        })
+                    }} className="w-full">
                         <div className="items-center justify-between">
                             <TabsList className=" p-0 w-full">
                                 <TabsTrigger
