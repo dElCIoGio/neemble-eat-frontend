@@ -1,11 +1,12 @@
 import {Outlet, useLocation} from "react-router";
+import {useEffect} from "react";
 import DashboardNavbar from "@/components/layout/dashboard/components/navbar";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import DashboardSidebar from "@/components/layout/dashboard/components/dashboard-sidebar";
 import {DashboardContext} from "@/context/dashboard-context";
 import {useMe} from "@/api/endpoints/auth/hooks";
 import {Loader} from "@/components/ui/loader";
-import {useGetCurrentRestaurant} from "@/api/endpoints/user/hooks";
+import {useGetCurrentRestaurant, useGetUserRestaurants, useSetCurrentRestaurant} from "@/api/endpoints/user/hooks";
 import {Restaurant} from "@/types/restaurant";
 
 
@@ -52,6 +53,14 @@ function DashboardLayout() {
 
     const { data: user } = useMe()
     const { data: restaurant } = useGetCurrentRestaurant()
+    const { data: restaurants } = useGetUserRestaurants()
+    const { mutate: setCurrentRestaurant } = useSetCurrentRestaurant()
+
+    useEffect(() => {
+        if (!restaurant && restaurants && restaurants.length > 0) {
+            setCurrentRestaurant(restaurants[0]._id)
+        }
+    }, [restaurant, restaurants, setCurrentRestaurant])
 
 
 
