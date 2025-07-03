@@ -1,13 +1,14 @@
 import type React from "react"
 
 import { useState } from "react"
-import { ArrowLeft, Upload, Plus, Trash2, X } from "lucide-react"
+import { ArrowLeft, Upload, Plus, Trash2, X, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -423,7 +424,19 @@ export default function CreateItemPage() {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label>Tipo de Limite</Label>
+                                            <div className="flex items-center gap-1">
+                                                <Label>Tipo de Limite</Label>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Info className="h-4 w-4 text-muted-foreground" />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            Define como o cliente pode selecionar as opções. Exemplo: "Até" permite escolher até o limite definido.
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            </div>
                                             <Select
                                                 value={customization.limitType}
                                                 onValueChange={(value) => updateCustomization(customIndex, "limitType", value as LimitType)}
@@ -445,7 +458,19 @@ export default function CreateItemPage() {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label>Limite</Label>
+                                            <div className="flex items-center gap-1">
+                                                <Label>Limite</Label>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Info className="h-4 w-4 text-muted-foreground" />
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            Número de opções permitidas segundo o tipo de limite selecionado.
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            </div>
                                             <Input
                                                 type="number"
                                                 min="1"
@@ -510,7 +535,19 @@ export default function CreateItemPage() {
                                                             </div>
 
                                                             <div className="space-y-1">
-                                                                <Label className="text-xs">Price Modifier</Label>
+                                                                <div className="flex items-center gap-1">
+                                                                    <Label className="text-xs">Price Modifier</Label>
+                                                                    <TooltipProvider>
+                                                                        <Tooltip>
+                                                                            <TooltipTrigger asChild>
+                                                                                <Info className="h-3 w-3 text-muted-foreground" />
+                                                                            </TooltipTrigger>
+                                                                            <TooltipContent>
+                                                                                Valor adicionado ao preço base quando esta opção é escolhida.
+                                                                            </TooltipContent>
+                                                                        </Tooltip>
+                                                                    </TooltipProvider>
+                                                                </div>
                                                                 <Input
                                                                     type="number"
                                                                     step="0.01"
@@ -528,7 +565,19 @@ export default function CreateItemPage() {
                                                             </div>
 
                                                             <div className="space-y-1">
-                                                                <Label className="text-xs">Max Quantity *</Label>
+                                                                <div className="flex items-center gap-1">
+                                                                    <Label className="text-xs">Max Quantity *</Label>
+                                                                    <TooltipProvider>
+                                                                        <Tooltip>
+                                                                            <TooltipTrigger asChild>
+                                                                                <Info className="h-3 w-3 text-muted-foreground" />
+                                                                            </TooltipTrigger>
+                                                                            <TooltipContent>
+                                                                                Limite máximo que o cliente pode escolher desta opção.
+                                                                            </TooltipContent>
+                                                                        </Tooltip>
+                                                                    </TooltipProvider>
+                                                                </div>
                                                                 <Input
                                                                     type="number"
                                                                     min="1"

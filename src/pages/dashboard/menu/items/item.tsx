@@ -1,6 +1,6 @@
 import type React from "react"
 import { useState, useEffect } from "react"
-import { ArrowLeft, Edit2, Save, X, Upload, Plus, Trash2, DollarSign, Settings } from "lucide-react"
+import { ArrowLeft, Edit2, Save, X, Upload, Plus, Trash2, DollarSign, Settings, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CustomizationOption, CustomizationRule, Item, LimitType, PartialItem } from "@/types/item"
 import { Link, useParams } from "react-router"
@@ -672,7 +673,19 @@ export default function ItemDetailsPage() {
                                                     </div>
 
                                                     <div className="space-y-2">
-                                                        <Label>Limit Type</Label>
+                                                        <div className="flex items-center gap-1">
+                                                            <Label>Limit Type</Label>
+                                                            <TooltipProvider>
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <Info className="h-4 w-4 text-muted-foreground" />
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent>
+                                                                        Define how customers can choose options. Example: "Up To" allows selecting up to the limit value.
+                                                                    </TooltipContent>
+                                                                </Tooltip>
+                                                            </TooltipProvider>
+                                                        </div>
                                                         <Select
                                                             value={customization.limitType}
                                                             onValueChange={(value) =>
@@ -696,7 +709,19 @@ export default function ItemDetailsPage() {
                                                     </div>
 
                                                     <div className="space-y-2">
-                                                        <Label>Limit</Label>
+                                                        <div className="flex items-center gap-1">
+                                                            <Label>Limit</Label>
+                                                            <TooltipProvider>
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <Info className="h-4 w-4 text-muted-foreground" />
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent>
+                                                                        Quantidade permitida conforme o tipo de limite selecionado.
+                                                                    </TooltipContent>
+                                                                </Tooltip>
+                                                            </TooltipProvider>
+                                                        </div>
                                                         <Input
                                                             type="number"
                                                             min="1"
@@ -739,7 +764,19 @@ export default function ItemDetailsPage() {
                                                                         </div>
 
                                                                         <div className="space-y-1">
-                                                                            <Label className="text-xs">Price Modifier</Label>
+                                                                            <div className="flex items-center gap-1">
+                                                                                <Label className="text-xs">Price Modifier</Label>
+                                                                                <TooltipProvider>
+                                                                                    <Tooltip>
+                                                                                        <TooltipTrigger asChild>
+                                                                                            <Info className="h-3 w-3 text-muted-foreground" />
+                                                                                        </TooltipTrigger>
+                                                                                        <TooltipContent>
+                                                                                            Valor extra somado ao preço do item quando selecionado.
+                                                                                        </TooltipContent>
+                                                                                    </Tooltip>
+                                                                                </TooltipProvider>
+                                                                            </div>
                                                                             <div className="relative">
                                                                                 <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
                                                                                 <Input
@@ -761,7 +798,19 @@ export default function ItemDetailsPage() {
                                                                         </div>
 
                                                                         <div className="space-y-1">
-                                                                            <Label className="text-xs">Max Quantity</Label>
+                                                                            <div className="flex items-center gap-1">
+                                                                                <Label className="text-xs">Max Quantity</Label>
+                                                                                <TooltipProvider>
+                                                                                    <Tooltip>
+                                                                                        <TooltipTrigger asChild>
+                                                                                            <Info className="h-3 w-3 text-muted-foreground" />
+                                                                                        </TooltipTrigger>
+                                                                                        <TooltipContent>
+                                                                                            Máximo permitido que o cliente pode selecionar desta opção.
+                                                                                        </TooltipContent>
+                                                                                    </Tooltip>
+                                                                                </TooltipProvider>
+                                                                            </div>
                                                                             <Input
                                                                                 type="number"
                                                                                 min="1"
