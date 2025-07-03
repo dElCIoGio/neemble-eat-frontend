@@ -26,10 +26,10 @@ import {
 import { showErrorToast } from "@/utils/notifications/toast"
 
 const limitTypeOptions = [
-    { value: "UP_TO", label: "Up To", description: "Select up to a maximum number of options" },
-    { value: "EXACTLY", label: "Exactly", description: "Must select exactly this number of options" },
-    { value: "AT_LEAST", label: "At Least", description: "Must select at least this number of options" },
-    { value: "ALL", label: "All", description: "Must select all options" },
+    { value: "UP_TO", label: "Até", description: "Permite selecionar até o número máximo de opções" },
+    { value: "EXACTLY", label: "Exatamente", description: "Deve selecionar exatamente este número de opções" },
+    { value: "AT_LEAST", label: "Pelo menos", description: "Deve selecionar pelo menos este número de opções" },
+    { value: "ALL", label: "Todas", description: "Deve selecionar todas as opções" },
 ]
 
 export default function ItemDetailsPage() {
@@ -43,7 +43,7 @@ export default function ItemDetailsPage() {
 
     const getCategoryName = (categoryId: string) => {
         const category = categories?.find((cat) => cat._id === categoryId)
-        return category?.name || "Unknown"
+        return category?.name || "Desconhecida"
     }
 
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({})
@@ -91,17 +91,17 @@ export default function ItemDetailsPage() {
 
         // Validation
         if (field === "name" && (!value || (value as string).trim() === "")) {
-            setErrors((prev) => ({ ...prev, [field]: "Item name is required" }))
+            setErrors((prev) => ({ ...prev, [field]: "Nome do item é obrigatório" }))
             return
         }
 
         if (field === "price" && (value as number) <= 0) {
-            setErrors((prev) => ({ ...prev, [field]: "Price must be greater than 0" }))
+            setErrors((prev) => ({ ...prev, [field]: "O preço deve ser maior que 0" }))
             return
         }
 
         if (field === "categoryId" && !value) {
-            setErrors((prev) => ({ ...prev, [field]: "Category is required" }))
+            setErrors((prev) => ({ ...prev, [field]: "Categoria é obrigatória" }))
             return
         }
 
@@ -117,7 +117,7 @@ export default function ItemDetailsPage() {
             setHasUnsavedChanges(false)
         } catch (error) {
             console.error(error)
-            showErrorToast(`Failed to update ${field}`)
+            showErrorToast(`Falha ao atualizar ${field}`)
         }
     }
 
@@ -151,7 +151,7 @@ export default function ItemDetailsPage() {
                 setHasUnsavedChanges(false)
             } catch (error) {
                 console.error(error)
-                showErrorToast("Failed to update image")
+                showErrorToast("Falha ao atualizar imagem")
             }
         }
     }
@@ -163,7 +163,7 @@ export default function ItemDetailsPage() {
             setHasUnsavedChanges(false)
         } catch (error) {
             console.error(error)
-            showErrorToast("Failed to update availability")
+            showErrorToast("Falha ao atualizar disponibilidade")
         }
     }
 
@@ -194,7 +194,7 @@ export default function ItemDetailsPage() {
             setCustomizations((prev) => prev.filter((_, i) => i !== index))
         } catch (error) {
             console.error(error)
-            showErrorToast("Failed to delete customization")
+            showErrorToast("Falha ao excluir personalização")
         }
     }
 
@@ -261,7 +261,7 @@ export default function ItemDetailsPage() {
             setCustomizationsDirty(false)
         } catch (error) {
             console.error(error)
-            showErrorToast("Failed to save customizations")
+            showErrorToast("Falha ao salvar personalizações")
         }
     }
 
@@ -283,7 +283,7 @@ export default function ItemDetailsPage() {
     }
 
     if (isLoading || !item) {
-        return <div>Loading...</div>
+        return <div>Carregando...</div>
     }
 
     return (
@@ -295,13 +295,13 @@ export default function ItemDetailsPage() {
                         <Link to="../../?tab=items">
                             <Button variant="ghost" size="sm">
                                 <ArrowLeft className="h-4 w-4 mr-2" />
-                                Back to Items
+                                Voltar para Itens
                             </Button>
                         </Link>
                         <div className="mt-4">
                             <h1 className="text-3xl font-bold text-gray-900">{item.name}</h1>
                             <p className="text-gray-500 text-sm">
-                                Created {new Date(item.createdAt).toLocaleDateString()} • Last updated{" "}
+                                Criado em {new Date(item.createdAt).toLocaleDateString()} • Última atualização {" "}
                                 {new Date(item.updatedAt).toLocaleDateString()}
                             </p>
                         </div>
@@ -310,25 +310,25 @@ export default function ItemDetailsPage() {
                         {hasUnsavedChanges && (
                             <Button onClick={() => saveField("name")} className="bg-green-600 hover:bg-green-700">
                                 <Save className="h-4 w-4 mr-2" />
-                                Save Changes
+                                Salvar Alterações
                             </Button>
                         )}
                         <Badge variant={item.isAvailable ? "default" : "secondary"}>
-                            {item.isAvailable ? "Available" : "Unavailable"}
+                            {item.isAvailable ? "Disponível" : "Indisponível"}
                         </Badge>
                     </div>
                 </div>
 
                 {hasUnsavedChanges && (
                     <Alert className="mb-6">
-                        <AlertDescription>You have unsaved changes. Don't forget to save your work!</AlertDescription>
+                        <AlertDescription>Você tem alterações não salvas. Não se esqueça de salvar seu trabalho!</AlertDescription>
                     </Alert>
                 )}
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                     <TabsList className="w-full">
-                        <TabsTrigger value="details">Item Details</TabsTrigger>
-                        <TabsTrigger value="customizations">Customizations ({customizations.length})</TabsTrigger>
+                        <TabsTrigger value="details">Detalhes do Item</TabsTrigger>
+                        <TabsTrigger value="customizations">Personalizações ({customizations.length})</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="details" className="mt-6">
@@ -338,12 +338,12 @@ export default function ItemDetailsPage() {
                                 {/* Basic Information */}
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Basic Information</CardTitle>
+                                        <CardTitle>Informações Básicas</CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-6">
                                         {/* Item Name */}
                                         <div className="space-y-2">
-                                            <Label>Item Name</Label>
+                                            <Label>Nome do Item</Label>
                                             {isEditing.name ? (
                                                 <div className="flex items-center gap-2">
                                                     <Input
@@ -379,7 +379,7 @@ export default function ItemDetailsPage() {
 
                                         {/* Price */}
                                         <div className="space-y-2">
-                                            <Label>Price</Label>
+                                            <Label>Preço</Label>
                                             {isEditing.price ? (
                                                 <div className="flex items-center gap-2">
                                                     <div className="relative">
@@ -421,7 +421,7 @@ export default function ItemDetailsPage() {
 
                                         {/* Category */}
                                         <div className="space-y-2">
-                                            <Label>Category</Label>
+                                            <Label>Categoria</Label>
                                             {isEditing.categoryId ? (
                                                 <div className="flex items-center gap-2">
                                                     <Select
@@ -429,7 +429,7 @@ export default function ItemDetailsPage() {
                                                         onValueChange={(value) => {handleInputChange("categoryId", value); saveField("categoryId")}}
                                                     >
                                                         <SelectTrigger className={errors.categoryId ? "border-red-500" : ""}>
-                                                            <SelectValue placeholder="Select category" />
+                                                            <SelectValue placeholder="Selecione a categoria" />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             {categories?.map((category) => (
@@ -464,7 +464,7 @@ export default function ItemDetailsPage() {
 
                                         {/* Description */}
                                         <div className="space-y-2">
-                                            <Label>Description</Label>
+                                            <Label>Descrição</Label>
                                             {isEditing.description ? (
                                                 <div className="space-y-2">
                                                     <Textarea
@@ -477,18 +477,18 @@ export default function ItemDetailsPage() {
                                                     <div className="flex items-center gap-2">
                                                         <Button size="sm" onClick={() => saveField("description")}>
                                                             <Save className="h-4 w-4 mr-2" />
-                                                            Save
+                                                            Salvar
                                                         </Button>
                                                         <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("description")}>
                                                             <X className="h-4 w-4 mr-2" />
-                                                            Cancel
+                                                            Cancelar
                                                         </Button>
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <div className="group" onClick={() => startEditing("description") }>
                                                     <div className="flex items-start justify-between p-3 border border-transparent rounded-md hover:border-gray-200 transition-colors cursor-text">
-                                                        <p className="text-gray-700 flex-1">{item.description || "No description provided"}</p>
+                                                        <p className="text-gray-700 flex-1">{item.description || "Nenhuma descrição fornecida"}</p>
                                                         <Button
                                                             size="sm"
                                                             variant="ghost"
@@ -505,11 +505,11 @@ export default function ItemDetailsPage() {
                                         {/* Availability Status */}
                                         <div className="flex items-center justify-between">
                                             <div>
-                                                <Label>Item Availability</Label>
+                                                <Label>Disponibilidade do Item</Label>
                                                 <p className="text-sm text-gray-500">
                                                     {item.isAvailable
-                                                        ? "This item is available for customers to order"
-                                                        : "This item is currently unavailable"}
+                                                        ? "Este item está disponível para os clientes"
+                                                        : "Este item está indisponível no momento"}
                                                 </p>
                                             </div>
                                             <Switch checked={item.isAvailable} onCheckedChange={handleToggleAvailability} />
@@ -523,7 +523,7 @@ export default function ItemDetailsPage() {
                                 {/* Item Image */}
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Item Image</CardTitle>
+                                        <CardTitle>Imagem do Item</CardTitle>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-4">
@@ -537,7 +537,7 @@ export default function ItemDetailsPage() {
                                                 className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 border-gray-300"
                                             >
                                                 <Upload className="w-6 h-6 mb-2 text-gray-500" />
-                                                <p className="text-sm text-gray-500">Change image</p>
+                                                <p className="text-sm text-gray-500">Alterar imagem</p>
                                                 <input
                                                     id="image-upload"
                                                     type="file"
@@ -553,29 +553,29 @@ export default function ItemDetailsPage() {
                                 {/* Item Statistics */}
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Item Statistics</CardTitle>
+                                        <CardTitle>Estatísticas do Item</CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
                                         <div className="grid grid-cols-1 gap-4">
                                             <div className="text-center">
                                                 <div className="text-2xl font-bold text-blue-600">{customizations.length}</div>
-                                                <div className="text-sm text-gray-500">Customizations</div>
+                                                <div className="text-sm text-gray-500">Personalizações</div>
                                             </div>
                                             <div className="text-center">
                                                 <div className="text-2xl font-bold text-purple-600">
                                                     {customizations.reduce((total, custom) => total + custom.options.length, 0)}
                                                 </div>
-                                                <div className="text-sm text-gray-500">Total Options</div>
+                                                <div className="text-sm text-gray-500">Total de Opções</div>
                                             </div>
                                         </div>
                                         <Separator />
                                         <div className="space-y-2 text-sm">
                                             <div className="flex justify-between">
-                                                <span className="text-gray-500">Item ID:</span>
+                                                <span className="text-gray-500">ID do Item:</span>
                                                 <span className="font-mono">{item._id}</span>
                                             </div>
                                             <div className="flex justify-between">
-                                                <span className="text-gray-500">Restaurant ID:</span>
+                                                <span className="text-gray-500">ID do Restaurante:</span>
                                                 <span className="font-mono">{item.restaurantId}</span>
                                             </div>
                                         </div>
@@ -589,24 +589,24 @@ export default function ItemDetailsPage() {
                         <div className="space-y-6">
                             {customizationsDirty && (
                                 <Alert>
-                                    <AlertDescription>You have unsaved customization changes.</AlertDescription>
+                                    <AlertDescription>Você tem alterações de personalização não salvas.</AlertDescription>
                                 </Alert>
                             )}
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h2 className="text-2xl font-bold text-gray-900">Customizations</h2>
-                                    <p className="text-gray-600">Manage options that customers can select for this item</p>
+                                    <h2 className="text-2xl font-bold text-gray-900">Personalizações</h2>
+                                    <p className="text-gray-600">Gerencie as opções que os clientes podem selecionar para este item</p>
                                 </div>
                                 <div className="flex gap-2">
                                     {customizationsDirty && (
                                         <Button onClick={handleSaveCustomizations} className="bg-green-600 hover:bg-green-700">
                                             <Save className="h-4 w-4 mr-2" />
-                                            Save
+                                            Salvar
                                         </Button>
                                     )}
                                     <Button onClick={handleAddCustomization}>
                                         <Plus className="h-4 w-4 mr-2" />
-                                        Add Customization
+                                        Adicionar Personalização
                                     </Button>
                                 </div>
                             </div>
@@ -615,11 +615,11 @@ export default function ItemDetailsPage() {
                                 <Card>
                                     <CardContent className="text-center py-12">
                                         <Settings className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                                        <h3 className="text-lg font-medium text-gray-900 mb-2">No customizations yet</h3>
-                                        <p className="text-gray-500 mb-4">Add customizations to let customers personalize this item</p>
+                                        <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma personalização ainda</h3>
+                                        <p className="text-gray-500 mb-4">Adicione personalizações para permitir que os clientes personalizem este item</p>
                                         <Button onClick={handleAddCustomization}>
                                             <Plus className="h-4 w-4 mr-2" />
-                                            Add First Customization
+                                            Adicionar Primeira Personalização
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -630,10 +630,10 @@ export default function ItemDetailsPage() {
                                             <CardHeader>
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-3">
-                                                        <Badge variant="outline">Customization {customIndex + 1}</Badge>
+                                                        <Badge variant="outline">Personalização {customIndex + 1}</Badge>
                                                         {customization.isRequired && (
                                                             <Badge variant="destructive" className="text-xs">
-                                                                Required
+                                                                Obrigatória
                                                             </Badge>
                                                         )}
                                                     </div>
@@ -645,20 +645,20 @@ export default function ItemDetailsPage() {
                                             <CardContent className="space-y-4">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div className="space-y-2">
-                                                        <Label>Customization Name</Label>
+                                                        <Label>Nome da Personalização</Label>
                                                         <Input
                                                             value={customization.name}
                                                             onChange={(e) => handleUpdateCustomization(customIndex, "name", e.target.value)}
-                                                            placeholder="e.g., Size, Toppings"
+                                                            placeholder="ex.: Tamanho, Coberturas"
                                                         />
                                                     </div>
 
                                                     <div className="space-y-2">
-                                                        <Label>Description</Label>
+                                                        <Label>Descrição</Label>
                                                         <Input
                                                             value={customization.description || ""}
                                                             onChange={(e) => handleUpdateCustomization(customIndex, "description", e.target.value)}
-                                                            placeholder="Optional description"
+                                                            placeholder="Descrição opcional"
                                                         />
                                                     </div>
                                                 </div>
@@ -669,19 +669,19 @@ export default function ItemDetailsPage() {
                                                             checked={customization.isRequired}
                                                             onCheckedChange={(checked) => handleUpdateCustomization(customIndex, "isRequired", checked)}
                                                         />
-                                                        <Label>Required</Label>
+                                                        <Label>Obrigatório</Label>
                                                     </div>
 
                                                     <div className="space-y-2">
                                                         <div className="flex items-center gap-1">
-                                                            <Label>Limit Type</Label>
+                                                            <Label>Tipo de Limite</Label>
                                                             <TooltipProvider>
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
                                                                         <Info className="h-4 w-4 text-muted-foreground" />
                                                                     </TooltipTrigger>
                                                                     <TooltipContent>
-                                                                        Define how customers can choose options. Example: "Up To" allows selecting up to the limit value.
+                                                                        Defina como os clientes podem escolher as opções. Exemplo: "Até" permite selecionar até o valor limite.
                                                                     </TooltipContent>
                                                                 </Tooltip>
                                                             </TooltipProvider>
@@ -710,7 +710,7 @@ export default function ItemDetailsPage() {
 
                                                     <div className="space-y-2">
                                                         <div className="flex items-center gap-1">
-                                                            <Label>Limit</Label>
+                                                            <Label>Limite</Label>
                                                             <TooltipProvider>
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
@@ -738,16 +738,16 @@ export default function ItemDetailsPage() {
                                                 {/* Options */}
                                                 <div className="space-y-4">
                                                     <div className="flex items-center justify-between">
-                                                        <Label className="text-base font-medium">Options</Label>
+                                                        <Label className="text-base font-medium">Opções</Label>
                                                         <Button variant="outline" size="sm" onClick={() => handleAddOption(customIndex)}>
                                                             <Plus className="h-4 w-4 mr-2" />
-                                                            Add Option
+                                                            Adicionar Opção
                                                         </Button>
                                                     </div>
 
                                                     {customization.options.length === 0 ? (
                                                         <Alert>
-                                                            <AlertDescription>Add at least one option for customers to choose from.</AlertDescription>
+                                                        <AlertDescription>Adicione pelo menos uma opção para os clientes escolherem.</AlertDescription>
                                                         </Alert>
                                                     ) : (
                                                         <div className="space-y-3">
@@ -755,17 +755,17 @@ export default function ItemDetailsPage() {
                                                                 <div key={optionIndex} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                                                                     <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
                                                                         <div className="space-y-1">
-                                                                            <Label className="text-xs">Option Name</Label>
+                                                                            <Label className="text-xs">Nome da Opção</Label>
                                                                             <Input
-                                                                                value={option.name}
-                                                                                onChange={(e) => handleUpdateOption(customIndex, optionIndex, "name", e.target.value)}
-                                                                                placeholder="e.g., Small, Large"
+                                                            value={option.name}
+                                                            onChange={(e) => handleUpdateOption(customIndex, optionIndex, "name", e.target.value)}
+                                                            placeholder="ex.: Pequeno, Grande"
                                                                             />
                                                                         </div>
 
                                                                         <div className="space-y-1">
                                                                             <div className="flex items-center gap-1">
-                                                                                <Label className="text-xs">Price Modifier</Label>
+<Label className="text-xs">Modificador de Preço</Label>
                                                                                 <TooltipProvider>
                                                                                     <Tooltip>
                                                                                         <TooltipTrigger asChild>
@@ -799,7 +799,7 @@ export default function ItemDetailsPage() {
 
                                                                         <div className="space-y-1">
                                                                             <div className="flex items-center gap-1">
-                                                                                <Label className="text-xs">Max Quantity</Label>
+<Label className="text-xs">Quantidade Máxima</Label>
                                                                                 <TooltipProvider>
                                                                                     <Tooltip>
                                                                                         <TooltipTrigger asChild>
