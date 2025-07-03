@@ -98,6 +98,18 @@ export default function CreateItemPage() {
     }
 
     const removeCustomization = (index: number) => {
+        const customization: any = formData.customizations[index]
+        const isPersisted = customization && customization._id
+
+        if (!isPersisted) {
+            setFormData((prev) => ({
+                ...prev,
+                customizations: prev.customizations.filter((_, i) => i !== index),
+            }))
+            return
+        }
+
+        // Customizations are local during creation, so there's no persisted case
         setFormData((prev) => ({
             ...prev,
             customizations: prev.customizations.filter((_, i) => i !== index),

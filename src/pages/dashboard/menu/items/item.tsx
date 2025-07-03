@@ -189,6 +189,15 @@ export default function ItemDetailsPage() {
 
     const handleRemoveCustomization = async (index: number) => {
         if (!item) return
+
+        const isPersisted = index < item.customizations.length
+
+        if (!isPersisted) {
+            setCustomizations((prev) => prev.filter((_, i) => i !== index))
+            setCustomizationsDirty(true)
+            return
+        }
+
         try {
             await deleteCustomization.mutateAsync({ itemId: item._id, index })
             setCustomizations((prev) => prev.filter((_, i) => i !== index))
