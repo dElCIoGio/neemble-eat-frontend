@@ -133,7 +133,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                             <FormItem>
                                 <div className="flex items-center justify-between">
                                     <FormLabel>Senha</FormLabel>
-                                    <a href="/forgot-password" className="text-sm underline-offset-4 hover:underline">
+                                    <a href="/auth/forgot-password" className="text-sm underline-offset-4 hover:underline">
                                         Esqueceu sua senha?
                                     </a>
                                 </div>

@@ -44,7 +44,6 @@ import CookiesPolicy from "@/pages/root/CookiesPolicy";
 import DigitalMenu from "@/pages/root/DigitalMenu";
 import OrderManagement from "@/pages/root/OrdersManagement";
 import DataAnalysis from "@/pages/root/DataAnalysis";
-import {ForgotPassword} from "@/pages/root/ForgotPassword";
 import RestaurantInvitation from "@/pages/dashboard/invitation";
 import OrderCustomizationPage from "@/pages/dashboard/custom-order";
 import TableMonitor from "@/pages/dashboard/table-monitor";
@@ -80,7 +79,6 @@ function App() {
                     <Route path="orders-management" element={<OrderManagement/>}/>
                     <Route path="analytics" element={<DataAnalysis/>}/>
                 </Route>
-                <Route path="forgot-password" element={<ForgotPassword/>}/>
                 <Route path="demo" element={<Demo/>}/>
                 <Route path="contact" element={<ContactPage/>}/>
                 <Route path="about-us" element={<AboutUs/>}/>
