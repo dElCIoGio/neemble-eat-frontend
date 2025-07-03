@@ -231,7 +231,7 @@ export default function CreateItemPage() {
             <div className="mx-auto">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
-                    <Link to="..">
+                    <Link to="../..?tab=items">
                         <Button variant="ghost" size="sm">
                             <ArrowLeft className="h-4 w-4 mr-2" />
                             Voltar para o Cardápio
