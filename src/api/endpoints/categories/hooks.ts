@@ -83,13 +83,14 @@ export function useGetCategoryBySlug(categorySlug: string){
 }
 
 
-export function useGetCategoryItems(categoryId: string){
+export function useGetCategoryItems(categoryId?: string){
 
-    const queryKey = ["category slug", categoryId]
+    const queryKey = ["category items", categoryId]
 
     return useQuery({
         queryKey,
-        queryFn: () => categoryApi.getCategoryItems(categoryId),
+        queryFn: () => categoryApi.getCategoryItems(categoryId!),
+        enabled: !!categoryId,
     })
 
 }
