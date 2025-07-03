@@ -13,7 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Link, useParams } from "react-router"
 import { Category } from "@/types/category"
-import { useGetCategoryBySlug } from "@/api/endpoints/categories/hooks"
+import { useGetCategoryBySlug, useGetCategoryItems } from "@/api/endpoints/categories/hooks"
 import { useQueryClient } from "@tanstack/react-query"
 import { categoryApi } from "@/api/endpoints/categories/requests"
 import { notifications } from "@/lib/notifications"
@@ -22,6 +22,7 @@ export default function CategoryDetailsPage() {
     const { categoryId } = useParams() as unknown as { categoryId: string }
     const queryClient = useQueryClient()
     const { data: category, isLoading } = useGetCategoryBySlug(categoryId)
+    const { data: items, isLoading: itemsLoading } = useGetCategoryItems(category?._id)
 
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({})
     const [editValues, setEditValues] = useState<Partial<Category>>({})
@@ -208,7 +209,7 @@ export default function CategoryDetailsPage() {
         }
     }
 
-    if (isLoading || !category) {
+    if (isLoading || itemsLoading || !category) {
         return <div>Loading...</div>
     }
 
@@ -392,12 +393,12 @@ export default function CategoryDetailsPage() {
                         </Card>
 
                         {/* Items in Category */}
-                        <Card className="hidden">
+                        <Card>
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <CardTitle>Itens na Categoria</CardTitle>
-                                        <CardDescription>{category.itemIds.length} itens nesta categoria</CardDescription>
+                                        <CardDescription>{items?.length || 0} itens nesta categoria</CardDescription>
                                     </div>
                                     <Button size="sm">
                                         <Plus className="h-4 w-4 mr-2" />
@@ -417,45 +418,61 @@ export default function CategoryDetailsPage() {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {category.itemIds.map((itemId) => (
-                                                <TableRow key={itemId}>
-                                                    <TableCell>
-                                                        <div className="flex items-center gap-3">
-                                                            <div>
-                                                                <div className="font-medium">Item {itemId}</div>
-                                                                <div className="text-sm text-gray-500">Carregando detalhes do item...</div>
+                                            {items && items.length > 0 ? (
+                                                items.map((item) => (
+                                                    <TableRow key={item._id}>
+                                                        <TableCell>
+                                                            <div className="flex items-center gap-3">
+                                                                <img
+                                                                    src={item.imageUrl || "/placeholder.svg"}
+                                                                    alt={item.name}
+                                                                    className="w-10 h-10 rounded object-cover"
+                                                                />
+                                                                <div>
+                                                                    <div className="font-medium">{item.name}</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell className="hidden sm:table-cell">Carregando...</TableCell>
-                                                    <TableCell className="hidden md:table-cell">
-                                                        <Badge variant="secondary">Carregando...</Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button variant="ghost" size="sm">
-                                                                    <MoreHorizontal className="h-4 w-4" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end">
-                                                                <DropdownMenuItem>
-                                                                    <Edit2 className="h-4 w-4 mr-2" />
-                                                                    Editar
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem>
-                                                                    <EyeOff className="h-4 w-4 mr-2" />
-                                                                    Marcar como indisponível
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem className="text-red-600">
-                                                                    <Trash2 className="h-4 w-4 mr-2" />
-                                                                    Remover da categoria
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
+                                                        </TableCell>
+                                                        <TableCell className="hidden sm:table-cell">Kz {item.price.toFixed(2)}</TableCell>
+                                                        <TableCell className="hidden md:table-cell">
+                                                            <Badge variant={item.isAvailable ? "default" : "secondary"}>
+                                                                {item.isAvailable ? "Disponível" : "Indisponível"}
+                                                            </Badge>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <Button variant="ghost" size="sm">
+                                                                        <MoreHorizontal className="h-4 w-4" />
+                                                                    </Button>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end">
+                                                                    <DropdownMenuItem asChild>
+                                                                        <Link to={`../../items/${item.slug}`}> 
+                                                                            <Edit2 className="h-4 w-4 mr-2" />
+                                                                            Editar
+                                                                        </Link>
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem>
+                                                                        <EyeOff className="h-4 w-4 mr-2" />
+                                                                        {item.isAvailable ? "Marcar como indisponível" : "Marcar como disponível"}
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem className="text-red-600">
+                                                                        <Trash2 className="h-4 w-4 mr-2" />
+                                                                        Remover da categoria
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))
+                                            ) : (
+                                                <TableRow>
+                                                    <TableCell colSpan={4} className="text-center py-4">
+                                                        Nenhum item nesta categoria.
                                                     </TableCell>
                                                 </TableRow>
-                                            ))}
+                                            )}
                                         </TableBody>
                                     </Table>
                                 </div>

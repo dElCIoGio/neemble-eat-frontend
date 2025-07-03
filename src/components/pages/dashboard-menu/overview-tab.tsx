@@ -159,51 +159,6 @@ export function OverviewTab({ menu, onUpdate, isUpdating = false }: OverviewTabP
                     </div>
                 </CardContent>
             </Card>
-
-            {/* Preferências de Exibição */}
-            <Card className="hidden">
-                <CardHeader>
-                    <CardTitle>Preferências de Exibição</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                            <Label>Destaque os Itens em Destaque</Label>
-                            <p className="text-sm text-gray-500">Mostrar itens em destaque de forma proeminente no cardápio</p>
-                        </div>
-                        <Switch
-                            checked={menu.preferences.highlightFeaturedItems}
-                            onCheckedChange={(checked) => handlePreferenceChange("highlightFeaturedItems", checked)}
-                            disabled={isUpdating}
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                            <Label>Mostrar Preços</Label>
-                            <p className="text-sm text-gray-500">Exibir os preços dos itens para os clientes</p>
-                        </div>
-                        <Switch
-                            checked={menu.preferences.showPrices}
-                            onCheckedChange={(checked) => handlePreferenceChange("showPrices", checked)}
-                            disabled={isUpdating}
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                            <Label>Mostrar Imagens dos Itens</Label>
-                            <p className="text-sm text-gray-500">Exibir imagens para os itens do cardápio</p>
-                        </div>
-                        <Switch
-                            checked={menu.preferences.showItemImages}
-                            onCheckedChange={(checked) => handlePreferenceChange("showItemImages", checked)}
-                            disabled={isUpdating}
-                        />
-                    </div>
-                </CardContent>
-            </Card>
-
             {/* Estatísticas do Cardápio */}
             <Card className="bg-white shadow-sm rounded-xl border border-gray-200">
                 <CardHeader className="border-b border-gray-100">

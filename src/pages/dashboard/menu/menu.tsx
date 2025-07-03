@@ -118,10 +118,6 @@ export default function MenuManagementPage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm">
-                                <Eye className="h-4 w-4 mr-2" />
-                                Visualizar cardápio
-                            </Button>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button size="sm" disabled={isPublishDisabled} onClick={handlePublishMenu}>
