@@ -263,7 +263,7 @@ export default function CategoryDetailsPage() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="space-y-4 items-center gap-4">
-                        <Link to={`../../`}>
+                        <Link to={`../../?tab=categories`}>
                             <Button variant="ghost" size="sm">
                                 <ArrowLeft className="h-4 w-4 mr-2"/>
                                 Voltar para Categorias
