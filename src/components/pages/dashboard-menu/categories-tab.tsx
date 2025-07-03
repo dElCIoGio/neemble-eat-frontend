@@ -239,7 +239,7 @@ function CategoryRow({category, selectedCategories, handleSelectCategory, handle
     const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState<boolean>(false)
 
     const navigate = useNavigate()
-    const [searchParams, setSearchParams] = useSearchParams()
+    const [, setSearchParams] = useSearchParams()
 
     return (
         <TableRow

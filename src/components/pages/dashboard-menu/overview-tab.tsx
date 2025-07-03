@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Edit2, Check, X, Loader2 } from "lucide-react"
 import type { Menu, PartialMenu } from "@/types/menu";
@@ -56,14 +55,14 @@ export function OverviewTab({ menu, onUpdate, isUpdating = false }: OverviewTabP
         }
     }
 
-    const handlePreferenceChange = (key: keyof typeof menu.preferences, value: boolean) => {
-        onUpdate({
-            preferences: {
-                ...menu.preferences,
-                [key]: value,
-            },
-        })
-    }
+    // const handlePreferenceChange = (key: keyof typeof menu.preferences, value: boolean) => {
+    //     onUpdate({
+    //         preferences: {
+    //             ...menu.preferences,
+    //             [key]: value,
+    //         },
+    //     })
+    // }
 
     return (
         <div className="space-y-6 relative">
