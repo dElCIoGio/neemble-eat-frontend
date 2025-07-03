@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { Search, MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {Link, useNavigate, useParams} from "react-router";
+import {Link, useNavigate, useParams, useSearchParams} from "react-router";
 import { useGetMenuItemsBySlug } from "@/api/endpoints/menu/hooks";
 import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks";
 import { showPromiseToast } from "@/utils/notifications/toast";
@@ -37,21 +37,76 @@ export function ItemsTab() {
 
     const queryClient = useQueryClient()
 
-    const [searchTerm, setSearchTerm] = useState("")
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [searchTerm, setSearchTerm] = useState(() => searchParams.get("itemsSearch") || "")
     const [selectedItems, setSelectedItems] = useState<string[]>([])
-    const [categoryFilter, setCategoryFilter] = useState<string>("all")
+    const [categoryFilter, setCategoryFilter] = useState<string>(() => searchParams.get("itemCategory") || "all")
+    const [statusFilter, setStatusFilter] = useState<string>(() => searchParams.get("itemStatus") || "all")
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [itemToDelete, setItemToDelete] = useState<Item | null>(null)
+
+    useEffect(() => {
+        const s = searchParams.get("itemsSearch") || ""
+        const c = searchParams.get("itemCategory") || "all"
+        const st = searchParams.get("itemStatus") || "all"
+        if (s !== searchTerm) setSearchTerm(s)
+        if (c !== categoryFilter) setCategoryFilter(c)
+        if (st !== statusFilter) setStatusFilter(st)
+    }, [searchParams])
+
+    const handleSearchChange = (value: string) => {
+        setSearchTerm(value)
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev.toString())
+            if (value) newParams.set("itemsSearch", value)
+            else newParams.delete("itemsSearch")
+            return newParams
+        })
+    }
+
+    const handleCategoryChange = (value: string) => {
+        setCategoryFilter(value)
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev.toString())
+            if (value !== "all") newParams.set("itemCategory", value)
+            else newParams.delete("itemCategory")
+            return newParams
+        })
+    }
+
+    const handleStatusChange = (value: string) => {
+        setStatusFilter(value)
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev.toString())
+            if (value !== "all") newParams.set("itemStatus", value)
+            else newParams.delete("itemStatus")
+            return newParams
+        })
+    }
+
+    const clearFilters = () => {
+        setSearchTerm("")
+        setCategoryFilter("all")
+        setStatusFilter("all")
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev.toString())
+            newParams.delete("itemsSearch")
+            newParams.delete("itemCategory")
+            newParams.delete("itemStatus")
+            return newParams
+        })
+    }
 
     const handleCancelDelete = () => {
         setDeleteDialogOpen(false)
         setItemToDelete(null)
     }
 
-    const filteredItems = items? items.filter((item) => {
+    const filteredItems = items ? items.filter((item) => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
         const matchesCategory = categoryFilter === "all" || item.categoryId === categoryFilter
-        return matchesSearch && matchesCategory
+        const matchesStatus = statusFilter === "all" || (statusFilter === "available" ? item.isAvailable : !item.isAvailable)
+        return matchesSearch && matchesCategory && matchesStatus
     }) : []
 
     const getCategoryName = (categoryId: string) => {
@@ -128,7 +183,7 @@ export function ItemsTab() {
             {/* Filters and Search */}
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                    <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <Select value={categoryFilter} onValueChange={handleCategoryChange}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Todas as categorias" />
                         </SelectTrigger>
@@ -142,7 +197,7 @@ export function ItemsTab() {
                         </SelectContent>
                     </Select>
 
-                    <Select defaultValue="available">
+                    <Select value={statusFilter} onValueChange={handleStatusChange}>
                         <SelectTrigger className="w-[150px]">
                             <SelectValue />
                         </SelectTrigger>
@@ -154,14 +209,15 @@ export function ItemsTab() {
                     </Select>
                 </div>
 
-                <div className="relative w-full sm:w-auto">
+                <div className="relative w-full sm:w-auto flex items-center gap-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                         placeholder="Buscar itens"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => handleSearchChange(e.target.value)}
                         className="pl-10 w-full sm:w-[300px]"
                     />
+                    <Button variant="ghost" onClick={clearFilters} className="whitespace-nowrap">Limpar filtros</Button>
                 </div>
             </div>
 

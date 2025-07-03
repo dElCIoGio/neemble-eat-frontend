@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, MoreHorizontal, Edit, Trash2, Eye } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {useNavigate, useParams} from "react-router";
+import {useNavigate, useParams, useSearchParams} from "react-router";
 import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks";
 import {Loader} from "@/components/ui/loader";
 import {showPromiseToast} from "@/utils/notifications/toast";
@@ -32,14 +32,41 @@ export function CategoriesTab() {
 
     const { data: categories, isLoading, removeCategory, setCategoryActive } = useGetMenuCategoriesBySlug(menuId)
 
-    const [searchTerm, setSearchTerm] = useState("")
+    const [searchParams, setSearchParams] = useSearchParams()
+    const [searchTerm, setSearchTerm] = useState(() => searchParams.get("categoriesSearch") || "")
     const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null)
 
-    const filteredCategories = categories? categories.filter((category) =>
-        category.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    useEffect(() => {
+        const term = searchParams.get("categoriesSearch") || ""
+        if (term !== searchTerm) {
+            setSearchTerm(term)
+        }
+    }, [searchParams])
+
+    const filteredCategories = categories ? categories.filter((category) =>
+        category.name.toLowerCase().includes(searchTerm.toLowerCase())
     ) : []
+
+    const handleSearchChange = (value: string) => {
+        setSearchTerm(value)
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev.toString())
+            if (value) newParams.set("categoriesSearch", value)
+            else newParams.delete("categoriesSearch")
+            return newParams
+        })
+    }
+
+    const clearFilters = () => {
+        setSearchTerm("")
+        setSearchParams(prev => {
+            const newParams = new URLSearchParams(prev.toString())
+            newParams.delete("categoriesSearch")
+            return newParams
+        })
+    }
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
@@ -124,14 +151,15 @@ export function CategoriesTab() {
 
                 </div>
 
-                <div className="relative w-full sm:w-auto">
+                <div className="relative w-full sm:w-auto flex items-center gap-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                         placeholder="Buscar categorias"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => handleSearchChange(e.target.value)}
                         className="pl-10 w-full sm:w-[300px]"
                     />
+                    <Button variant="ghost" onClick={clearFilters} className="whitespace-nowrap">Limpar filtros</Button>
                 </div>
             </div>
 
@@ -211,6 +239,7 @@ function CategoryRow({category, selectedCategories, handleSelectCategory, handle
     const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState<boolean>(false)
 
     const navigate = useNavigate()
+    const [searchParams, setSearchParams] = useSearchParams()
 
     return (
         <TableRow
@@ -260,7 +289,15 @@ function CategoryRow({category, selectedCategories, handleSelectCategory, handle
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => {
+                            setIsDropdownMenuOpen(false)
+                            setSearchParams(prev => {
+                                const newParams = new URLSearchParams(prev.toString())
+                                newParams.set("tab", "items")
+                                newParams.set("itemCategory", category._id)
+                                return newParams
+                            })
+                        }}>
                             <Eye className="h-4 w-4 mr-2" />
                             Ver itens
                         </DropdownMenuItem>
