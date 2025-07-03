@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
@@ -164,6 +164,17 @@ export default function UserProfile() {
                                     Informações Pessoais
                                 </CardTitle>
                                 <CardDescription>Seus dados básicos de conta</CardDescription>
+                                <CardAction>
+                                    {isEditing ? (
+                                        <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                                            Cancelar
+                                        </Button>
+                                    ) : (
+                                        <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                                            Editar
+                                        </Button>
+                                    )}
+                                </CardAction>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex items-start gap-4 mb-6">
@@ -445,15 +456,6 @@ export default function UserProfile() {
                                 <CardTitle>Ações Rápidas</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                {isEditing ? (
-                                    <Button variant="outline" className="w-full justify-start bg-transparent" onClick={handleCancelEdit}>
-                                        Cancelar Edição
-                                    </Button>
-                                ) : (
-                                    <Button variant="outline" className="w-full justify-start bg-transparent" onClick={() => setIsEditing(true)}>
-                                        Editar Perfil
-                                    </Button>
-                                )}
                                 <Button variant="outline" className="w-full justify-start bg-transparent">
                                     Alterar Senha
                                 </Button>
