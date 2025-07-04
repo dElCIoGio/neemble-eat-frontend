@@ -308,7 +308,7 @@ export default function UserProfile() {
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Building2 className="h-5 w-5" />
-                                    Associações de Restaurantes
+                                    Restaurantes
                                 </CardTitle>
                                 <CardDescription>Restaurantes aos quais você está associado e seus papéis</CardDescription>
                             </CardHeader>
