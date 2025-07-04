@@ -20,6 +20,7 @@ export default function SalesChart() {
     const salesData = lastSevenDaysOrdersCount ?? []
     const maxSales = salesData.length > 0 ? Math.max(...salesData.map(d => d.sales)) : 1
 
+
     return (
         <Card className="col-span-full lg:col-span-2">
             <CardHeader>
@@ -27,9 +28,10 @@ export default function SalesChart() {
                 <CardDescription>Vendas diárias dos últimos 7 dias</CardDescription>
             </CardHeader>
             <CardContent>
+
                 {isLastSevenDaysOrdersCountLoading ? (
                     <div className="flex items-center justify-center h-[200px]">
-                        <span className="text-sm text-muted-foreground">A carregar...</span>
+                    <span className="text-sm text-muted-foreground">A carregar...</span>
                     </div>
                 ) : salesData.length === 0 ? (
                     <div className="flex items-center justify-center h-[200px]">

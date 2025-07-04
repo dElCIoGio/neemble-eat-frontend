@@ -232,7 +232,7 @@ export default function CategoryDetailsPage() {
                 old ? old.map((it) => it._id === updated._id ? updated : it) : []
             )
             notifications.success("Item atualizado com sucesso")
-        } catch (error) {
+        } catch  {
             notifications.error("Falha ao atualizar item")
         }
     }
@@ -245,7 +245,7 @@ export default function CategoryDetailsPage() {
                 old ? old.filter((it) => it._id !== itemToDelete._id) : []
             )
             notifications.success("Item removido da categoria")
-        } catch (error) {
+        } catch {
             notifications.error("Falha ao remover item")
         } finally {
             setDeleteDialogOpen(false)

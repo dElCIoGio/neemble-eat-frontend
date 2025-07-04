@@ -38,7 +38,7 @@ export function ForgotPasswordForm({ className, ...props }: ForgotPasswordFormPr
             setIsSubmitted(true)
             setSubmittedEmail(data.email)
             toast.success("Email de recuperação enviado")
-        } catch (e) {
+        } catch {
             toast.error("Não foi possível enviar o email de recuperação")
         } finally {
             setIsLoading(false)
