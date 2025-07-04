@@ -2,7 +2,7 @@ import {Button} from "@/components/ui/button";
 import {Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem} from "@/components/ui/select";
 import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet";
 import {useState} from "react";
-import {SortAscending, SortDescending, ArrowRight} from "@phosphor-icons/react"
+import {SortAscending, SortDescending, ArrowRight, SquaresFour, List as ListIcon} from "@phosphor-icons/react"
 import {FILTERS, Tag} from "@/pages/dashboard/order-tracking";
 import type {OrderPrepStatus} from "@/types/order";
 import {useOrdersTrackingContext} from "@/context/orders-tracking-context";
@@ -17,7 +17,7 @@ export function Header({ customOrderUrl }: HeaderProps) {
 
     const isMobile = useIsMobile()
 
-    const { activeFilters, toggleFilter, clearFilters, orders, handleTableFilterChange, sorting, handleSortingChange} = useOrdersTrackingContext()
+    const { activeFilters, toggleFilter, clearFilters, orders, handleTableFilterChange, sorting, handleSortingChange, viewMode, setViewMode} = useOrdersTrackingContext()
     const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false)
 
 
@@ -124,6 +124,11 @@ export function Header({ customOrderUrl }: HeaderProps) {
                                 </>
 
                             }
+                        </Button>
+                    </div>
+                    <div>
+                        <Button variant="secondary" className="hover:bg-zinc-200" onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}>
+                            {viewMode === 'list' ? <SquaresFour/> : <ListIcon/>}
                         </Button>
                     </div>
                 </div>

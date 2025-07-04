@@ -15,6 +15,8 @@ interface OrdersTrackingContextProps {
     updateOrderStatus: (orderId: string, newStatus: string) => void
     sorting: "asc" | "desc"
     handleSortingChange: (order: "asc" | "desc") => void
+    viewMode: "list" | "grid"
+    setViewMode: (mode: "list" | "grid") => void
 }
 
 export const OrdersTrackingContext = createContext<OrdersTrackingContextProps | undefined>(undefined)
