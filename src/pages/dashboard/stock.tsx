@@ -1940,7 +1940,9 @@ export default function StockManagement() {
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
+                                                    {ingredient.unit && (
+                                                        <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
+                                                    )}
                                                     {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
                                                     {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
                                                 </SelectContent>
