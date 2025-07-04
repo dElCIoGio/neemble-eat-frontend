@@ -181,17 +181,6 @@ export default function TableMonitor() {
         setIsSheetOpen(false)
     }
 
-    const handleStartSession = (tableId: string) => {
-
-        console.log(tableId)
-        showPromiseToast(Promise.resolve(), {
-            loading: "Iniciando sessão...",
-            success: "Funcionalidade não implementada",
-            error: ""
-        })
-        setIsSheetOpen(false)
-    }
-
     const filters = [
         { key: "todas" as const, label: "Todas", count: tables.length },
         {
@@ -229,6 +218,13 @@ export default function TableMonitor() {
         () => sessionOrders.reduce((sum, order) => sum + order.total, 0),
         [sessionOrders]
     )
+
+    const firstOrderTime = useMemo(() => {
+        if (sessionOrders.length === 0) return null
+        return sessionOrders.reduce((earliest, order) =>
+            new Date(order.orderTime).getTime() < new Date(earliest.orderTime).getTime() ? order : earliest
+        ).orderTime
+    }, [sessionOrders])
 
     if (isLoading) {
         return (
@@ -287,7 +283,7 @@ export default function TableMonitor() {
                                 </CardHeader>
                                 <CardContent className="pt-0">
                                     <Badge className={`${statusConfig.color} text-xs font-medium`}>{statusConfig.label}</Badge>
-                                    {session && (
+                                    {session && session.orders.length > 0 && (
                                         <div className="mt-2 space-y-1 text-xs text-gray-600">
                                             <div className="flex items-center gap-1">
                                                 <Clock className="h-3 w-3" />
@@ -325,14 +321,18 @@ export default function TableMonitor() {
                                             <div className="space-y-3">
                                                 <h3 className="font-semibold text-gray-900">Informações da Sessão</h3>
                                                 <div className="space-y-2 text-sm">
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">Início:</span>
-                                                        <span>{new Date(selectedSession.startTime).toLocaleString("pt-BR")}</span>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-gray-600">Duração:</span>
-                                                        <span>{formatDuration(selectedSession.startTime)}</span>
-                                                    </div>
+                                                    {firstOrderTime && (
+                                                        <>
+                                                            <div className="flex justify-between">
+                                                                <span className="text-gray-600">Início:</span>
+                                                                <span>{new Date(firstOrderTime).toLocaleString("pt-BR")}</span>
+                                                            </div>
+                                                            <div className="flex justify-between">
+                                                                <span className="text-gray-600">Duração:</span>
+                                                                <span>{formatDuration(firstOrderTime)}</span>
+                                                            </div>
+                                                        </>
+                                                    )}
                                                     <div className="flex justify-between font-medium">
                                                         <span className="text-gray-600">Total Atual:</span>
                                                         <span>{formatCurrency(sessionTotal)}</span>
@@ -414,10 +414,6 @@ export default function TableMonitor() {
                                                     <p>Mesa disponível</p>
                                                     <p className="text-sm hidden">Nenhuma sessão ativa</p>
                                                 </div>
-                                                <Button onClick={() => handleStartSession(selectedTable._id)} className="w-full hidden" size="lg">
-                                                    <Play className="h-4 w-4 mr-2" />
-                                                    Iniciar Sessão
-                                                </Button>
                                             </div>
                                         </>
                                     )}
