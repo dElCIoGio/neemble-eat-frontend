@@ -53,6 +53,7 @@ export function OrdersTracking() {
     const {state: tableFilter, handleState: handleTableFilterChange} = useSelectedState<string | null>(null)
     const {state: orderSelected, handleState} = useSelectedState<Order | null>(null)
     const {state: sorting, handleState: handleSortingChange} = useSelectedState<"asc" | "desc">("desc")
+    const {state: viewMode, handleState: setViewMode} = useSelectedState<"list" | "grid">("list")
 
     const { data: orders, addOrder, removeOrders, updateOrderStatus, isLoading } = useGetRecentOrders(restaurant._id)
 
@@ -128,7 +129,9 @@ export function OrdersTracking() {
                             handleTableFilterChange,
                             updateOrderStatus: updateOrderAndSelectionStatus,
                             sorting,
-                            handleSortingChange
+                            handleSortingChange,
+                            viewMode,
+                            setViewMode
                         }}>
                             <div className="lg:flex lg:flex-col flex-1">
                                 <div className="flex justify-between">
