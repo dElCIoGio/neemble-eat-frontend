@@ -124,3 +124,23 @@ export function useUpdateRestaurantLogo(restaurantId: string) {
         },
     })
 }
+
+export function useUpdateRestaurantAutomaticStock(restaurantId: string) {
+    const queryClient = useQueryClient()
+    const queryKey = ["restaurant", restaurantId]
+
+    return useMutation({
+        mutationFn: (automaticStockAdjustments: boolean) =>
+            restaurantApi.updateRestaurantAutomaticStock(
+                restaurantId,
+                automaticStockAdjustments,
+            ),
+        onSuccess: (restaurant) => {
+            queryClient.setQueryData(queryKey, restaurant)
+            showSuccessToast("Configura\u00e7\u00e3o de estoque atualizada com sucesso")
+        },
+        onError: () => {
+            showErrorToast("Falha ao atualizar configura\u00e7\u00e3o de estoque")
+        },
+    })
+}
