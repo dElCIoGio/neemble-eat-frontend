@@ -2,7 +2,6 @@ import { useState } from "react"
 import { User } from "@/types/user"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -41,8 +40,6 @@ interface MemberRowProps {
 
 export default function MemberRow({ user }: MemberRowProps) {
     const {
-        selectedMembers,
-        handleSelectMember,
         handleDeleteMember,
         getStatusBadge,
         updateMemberRole,
@@ -67,12 +64,6 @@ export default function MemberRow({ user }: MemberRowProps) {
     return (
         <>
             <TableRow key={user._id}>
-                <TableCell>
-                    <Checkbox
-                        checked={selectedMembers.includes(user._id)}
-                        onCheckedChange={() => handleSelectMember(user._id)}
-                    />
-                </TableCell>
                 <TableCell>
                     <div className="flex items-center gap-3">
                         <Avatar className="w-8 h-8">
