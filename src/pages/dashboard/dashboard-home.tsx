@@ -1,6 +1,7 @@
-import {JSX} from "react"
+import { JSX } from "react"
 
 import { useState, useCallback, useMemo } from "react"
+import type { DateRange } from "react-day-picker"
 import {
     DollarSign,
     Receipt,
@@ -68,7 +69,7 @@ const insights: Insight[] = [
 
 export default function RestaurantDashboard(): JSX.Element {
     const [dateFilter, setDateFilter] = useState<DateFilter>("7days")
-    const [customDateRange, setCustomDateRange] = useState<{ from?: Date; to?: Date }>({})
+    const [customDateRange, setCustomDateRange] = useState<DateRange | undefined>(undefined)
     const [shiftFilter, setShiftFilter] = useState<ShiftFilter>("all")
     const [itemsTimeRange, setItemsTimeRange] = useState<ItemsTimeRange>("today")
     const [isExporting, setIsExporting] = useState<boolean>(false)
@@ -80,7 +81,7 @@ export default function RestaurantDashboard(): JSX.Element {
     // Helper function to get date range from filter
     const getDateRangeFromFilter = (
         filter: DateFilter | ItemsTimeRange,
-        custom?: { from?: Date; to?: Date }
+        custom?: DateRange
     ) => {
         const today = new Date()
         const from = new Date()

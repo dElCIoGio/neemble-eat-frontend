@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react"
 import { DateFilter, ItemsTimeRange, ShiftFilter, Insight } from "@/types/dashboard"
+import type { DateRange } from "react-day-picker"
 import {
     ActiveSessionCount,
     AverageSessionDuration,
@@ -14,8 +15,8 @@ import {
 export interface DashboardHomeContextProps {
     dateFilter: DateFilter
     setDateFilter: (filter: DateFilter) => void
-    customDateRange: { from?: Date; to?: Date }
-    setCustomDateRange: (range: { from?: Date; to?: Date }) => void
+    customDateRange: DateRange | undefined
+    setCustomDateRange: (range: DateRange | undefined) => void
     shiftFilter: ShiftFilter
     setShiftFilter: (filter: ShiftFilter) => void
     itemsTimeRange: ItemsTimeRange
