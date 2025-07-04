@@ -7,15 +7,20 @@ import {DataConfirmationStep} from "@/components/pages/onboarding/data-confirmat
 import { OnboardingLayout } from "@/components/layout/onboarding/onboarding-layout";
 import {User} from "@/types/user";
 import {Navigate, useNavigate} from "react-router";
-import {authApi} from "@/api/endpoints/auth/endpoints";
 import {toast} from "sonner";
 import {OnboardingContext} from "@/context/onboarding-context";
 import {useAuth} from "@/context/auth-context";
+import {userApi} from "@/api/endpoints/user/endpoints";
+import {authApi} from "@/api/endpoints/auth/endpoints";
 
-// Mock function to check if user exists - replace with your actual implementation
+// Check if the authenticated user already has a profile in the backend
 async function userExists(): Promise<{ exists: boolean; userData?: User }> {
-    // This is a mock implementation - replace with your actual API call
-    return { exists: false };
+    const exists = await userApi.userExists()
+    if (exists) {
+        const userData = await authApi.me()
+        return { exists: true, userData }
+    }
+    return { exists: false }
 }
 
 export default function OnboardingPage() {
