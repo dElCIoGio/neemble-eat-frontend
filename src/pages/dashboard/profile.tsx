@@ -319,7 +319,7 @@ export default function UserProfile() {
                                     ) : (
                                         restaurantMemberships.map(({ membership, role, restaurant }) => (
                                             <div key={role!._id} className="border rounded-lg p-4">
-                                                <div className="flex items-start justify-between">
+                                                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-3 mb-2">
                                                             <img
@@ -332,7 +332,7 @@ export default function UserProfile() {
                                                                 <p className="text-sm text-gray-600">{restaurant!.address}</p>
                                                             </div>
                                                         </div>
-                                                        <div className="flex items-center gap-4 text-sm">
+                                                        <div className="flex flex-wrap gap-2 text-sm sm:gap-4">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-gray-500">Função:</span>
                                                                 <Badge variant="outline">{role!.name}</Badge>
@@ -351,7 +351,7 @@ export default function UserProfile() {
                                                         variant="outline"
                                                         size="sm"
                                                         onClick={() => handleRemoveMembership(restaurant!._id)}
-                                                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                        className="self-end text-red-600 hover:text-red-700 hover:bg-red-50 sm:self-auto"
                                                     >
                                                         <Trash2 className="h-4 w-4 mr-1" />
                                                         Remover
