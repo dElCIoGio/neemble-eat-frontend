@@ -103,6 +103,7 @@ export default function MemberRow({ user }: MemberRowProps) {
                         defaultValue={role?.name === "no_role" ? "" : membership?.roleId}
                         value={role?.name === "no_role" ? "" : (membership?.roleId ?? "")}
                         onValueChange={(value) => updateMemberRole(user._id, value)}
+                        disabled={user._id === currentUser._id}
                     >
                         <SelectTrigger className="w-32 h-8">
                             <SelectValue placeholder="Sem função" />
