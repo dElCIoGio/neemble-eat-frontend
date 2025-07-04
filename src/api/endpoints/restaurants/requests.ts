@@ -62,6 +62,11 @@ export const restaurantApi = {
     updateRestaurantOpeningHours: async (restaurantId: string, openingHours: OpeningHours) => {
         const response = await apiClient.put<Restaurant>(`${baseRoute}/${restaurantId}/opening-hours`, openingHours);
         return response.data
+    },
+
+    updateRestaurantAutomaticStock: async (restaurantId: string, automaticStockAdjustments: boolean) => {
+        const response = await apiClient.put(`${baseRoute}/${restaurantId}/automatic-stock-adjustments`, automaticStockAdjustments);
+        return response.data
     }
 
 
