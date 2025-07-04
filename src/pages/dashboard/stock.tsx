@@ -567,6 +567,16 @@ export default function StockManagement() {
             return
         }
 
+        if (newProduct.expiryDate) {
+            const today = new Date()
+            today.setHours(0, 0, 0, 0)
+            const expiry = new Date(newProduct.expiryDate)
+            if (expiry < today) {
+                showErrorToast("Erro", "A data de validade não pode ser anterior à data atual.")
+                return
+            }
+        }
+
         const data = {
             name: newProduct.name,
             unit: newProduct.unit,
@@ -1519,6 +1529,7 @@ export default function StockManagement() {
                                 <Input
                                     id="expiryDate"
                                     type="date"
+                                    min={getCurrentDate().toISOString().split("T")[0]}
                                     value={newProduct.expiryDate}
                                     onChange={(e) => setNewProduct({ ...newProduct, expiryDate: e.target.value })}
                                 />
