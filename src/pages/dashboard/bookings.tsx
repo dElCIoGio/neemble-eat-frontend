@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { format } from "date-fns"
 import { pt } from "date-fns/locale"
-import { Calendar, Clock, Mail, MapPin, Phone, Search, Users } from "lucide-react"
+import { Calendar as CalendarIcon, Clock, Mail, MapPin, Phone, Search, Users } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,10 +10,12 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
 import type { Booking, NewBooking } from "@/types/booking"
 import { NewBookingSheet } from "@/components/pages/dashboard-booking/new-booking-sheet"
 import {useDashboardContext} from "@/context/dashboard-context";
-import {useCreateBooking, useGetRestaurantUpcomingBookings} from "@/api/endpoints/booking/hooks";
+import {useCreateBooking, useGetRestaurantBookingsByDate} from "@/api/endpoints/booking/hooks";
 
 
 
@@ -21,10 +23,12 @@ export default function ReservationsPage() {
 
     const { restaurant } = useDashboardContext()
 
+    const [selectedDate, setSelectedDate] = useState<Date>()
+
     const {
         data: reservations = [],
         addBooking,
-    } = useGetRestaurantUpcomingBookings({ restaurantId: restaurant._id })
+    } = useGetRestaurantBookingsByDate({ restaurantId: restaurant._id, date: selectedDate })
 
     const { mutate: createBooking } = useCreateBooking()
 
@@ -33,6 +37,7 @@ export default function ReservationsPage() {
     const [filterByGuests, setFilterByGuests] = useState<string>("all")
     const [isSheetOpen, setIsSheetOpen] = useState(false)
     const [isNewBookingOpen, setIsNewBookingOpen] = useState(false)
+    const [isDateOpen, setIsDateOpen] = useState(false)
 
     // Filtrar reservas baseado na pesquisa e filtros
     const filteredReservations = reservations.filter((reservation) => {
@@ -109,6 +114,28 @@ export default function ReservationsPage() {
                                 </SelectContent>
                             </Select>
                         </div>
+                        <div className="sm:w-48 space-y-2.5">
+                            <Label>Data</Label>
+                            <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-start text-left font-normal">
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {selectedDate ? format(selectedDate, "dd/MM/yyyy", { locale: pt }) : "Selecionar"}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={4}>
+                                    <div className="p-3 bg-background">
+                                        <Calendar
+                                            mode="single"
+                                            selected={selectedDate}
+                                            onSelect={(date) => setSelectedDate(date)}
+                                            locale={pt}
+                                            className="rounded-md border"
+                                        />
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
@@ -142,7 +169,7 @@ export default function ReservationsPage() {
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-2">
-                                                <Calendar className="h-4 w-4 text-muted-foreground" />
+                                                <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                                                 {format(new Date(reservation.startTime), "dd/MM/yyyy", { locale: pt })}
                                                 <Clock className="h-4 w-4 text-muted-foreground ml-2" />
                                                 {format(new Date(reservation.startTime), "HH:mm", { locale: pt })}
@@ -219,7 +246,7 @@ export default function ReservationsPage() {
                                         <div>
                                             <Label className="text-sm font-medium text-muted-foreground">Data e Hora de Início</Label>
                                             <div className="flex items-center gap-2">
-                                                <Calendar className="text-purple-600 h-4 w-4 " />
+                                                <CalendarIcon className="text-purple-600 h-4 w-4 " />
                                                 <p className="text-sm">
                                                     {format(new Date(selectedReservation.startTime), "dd/MM/yyyy 'às' HH:mm", { locale: pt })}
                                                 </p>

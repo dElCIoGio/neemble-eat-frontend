@@ -32,6 +32,39 @@ export function useGetRestaurantUpcomingBookings(props: RestaurantUpcomingBookin
 
 }
 
+export function useGetRestaurantBookingsByDate(props: { restaurantId: string; date?: Date }){
+
+    const queryClient = useQueryClient();
+    const formatted = props.date ? props.date.toISOString() : undefined;
+    const queryKey = ["bookingsByDate", props.restaurantId, formatted ?? "upcoming"];
+
+    const addBooking = (booking: Booking) => {
+        queryClient.setQueryData<Booking[]>(queryKey, (old = []) => [booking, ...old]);
+    };
+
+    const removeBooking = (bookingId: string) => {
+        queryClient.setQueryData<Booking[]>(queryKey, (old = []) => old.filter(b => b._id !== bookingId));
+    };
+
+    const query = useQuery({
+        queryKey,
+        queryFn: () => {
+            if (formatted){
+                return bookingsApi.getBookingByDate(props.restaurantId, formatted);
+            }
+            return bookingsApi.getRestaurantBookings({ restaurantId: props.restaurantId });
+        },
+        enabled: !!props.restaurantId,
+    });
+
+    return {
+        ...query,
+        addBooking,
+        removeBooking
+    };
+
+}
+
 export function useCreateBooking(){
     const queryClient = useQueryClient();
 
