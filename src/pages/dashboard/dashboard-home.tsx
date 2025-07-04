@@ -174,6 +174,7 @@ export default function RestaurantDashboard(): JSX.Element {
             yesterday: "Ontem",
             "7days": "Últimos 7 dias",
             "30days": "Últimos 30 dias",
+            custom: "Personalizado",
         }
         return labels[filter]
     }, [])
