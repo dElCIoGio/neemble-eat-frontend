@@ -42,7 +42,7 @@ import {
     showPromiseToast,
 } from "@/utils/notifications/toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -70,6 +70,63 @@ import {useRegisterSale} from "@/api/endpoints/sales/hooks";
 import {useGetMovements, useCreateMovement} from "@/api/endpoints/movements/hooks";
 import type {MovementCreate} from "@/types/stock";
 import {formatIsosDate} from "@/lib/helpers/format-isos-date";
+
+interface StockCardProps {
+    item: StockItem
+    onView: (item: StockItem) => void
+    onEdit: (item: StockItem) => void
+    onAdd: (item: StockItem) => void
+    onDelete: (item: StockItem) => void
+}
+
+function StockCard({ item, onView, onEdit, onAdd, onDelete }: StockCardProps) {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{item.name}</CardTitle>
+                <CardDescription>{item.category}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                    <span>Quantidade:</span>
+                    <span>{item.currentQuantity} {item.unit}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span>Estado:</span>
+                    <Badge
+                        variant={
+                            item.status === "OK"
+                                ? "default"
+                                : item.status === "Baixo"
+                                    ? "secondary"
+                                    : "destructive"
+                        }
+                    >
+                        {item.status}
+                    </Badge>
+                </div>
+                <div className="flex justify-between">
+                    <span>Última Entrada:</span>
+                    <span>{formatIsosDate(new Date(item.lastEntry))}</span>
+                </div>
+            </CardContent>
+            <CardFooter className="justify-end gap-2">
+                <Button variant="ghost" size="sm" onClick={() => onView(item)}>
+                    Detalhes
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => onEdit(item)}>
+                    Editar
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => onAdd(item)}>
+                    Adicionar
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => onDelete(item)}>
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                </Button>
+            </CardFooter>
+        </Card>
+    )
+}
 
 export default function StockManagement() {
 
@@ -904,11 +961,12 @@ export default function StockManagement() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <ScrollArea className="">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Nome</TableHead>
+                            <div className="hidden sm:block">
+                                <ScrollArea>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Nome</TableHead>
                                             <TableHead>Categoria</TableHead>
                                             <TableHead>Quantidade</TableHead>
                                             <TableHead>Estado</TableHead>
@@ -992,8 +1050,32 @@ export default function StockManagement() {
                                             ))
                                         )}
                                     </TableBody>
-                                </Table>
-                            </ScrollArea>
+                                    </Table>
+                                </ScrollArea>
+                            </div>
+                            <div className="sm:hidden space-y-2">
+                                {isLoading ? (
+                                    Array.from({ length: 5 }).map((_, i) => (
+                                        <Card key={i} className="p-4">
+                                            <Skeleton className="h-4 w-3/4 mb-2" />
+                                            <Skeleton className="h-4 w-1/2" />
+                                        </Card>
+                                    ))
+                                ) : paginatedItems.length === 0 ? (
+                                    <div className="text-center py-6">Nenhum produto encontrado</div>
+                                ) : (
+                                    paginatedItems.map((item) => (
+                                        <StockCard
+                                            key={item._id}
+                                            item={item}
+                                            onView={handleViewDetails}
+                                            onEdit={handleEditItem}
+                                            onAdd={handleAddStockToItem}
+                                            onDelete={handleDeleteItem}
+                                        />
+                                    ))
+                                )}
+                            </div>
 
                             {/* Pagination */}
                             {!isLoading && totalPages > 1 && (
