@@ -10,7 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {useDashboardContext} from "@/context/dashboard-context";
-import {useUpdateRestaurantOpeningHours} from "@/api/endpoints/restaurants/hooks";
+import {
+    useUpdateRestaurantOpeningHours,
+    useUpdateRestaurantBanner,
+    useUpdateRestaurantLogo,
+} from "@/api/endpoints/restaurants/hooks";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {useQueryClient} from "@tanstack/react-query";
 import {OpeningHours} from "@/types/restaurant";
@@ -21,8 +25,20 @@ export default function Settings() {
     const { restaurant } = useDashboardContext()
     const queryClient = useQueryClient()
     const updateOpeningHoursMutation = useUpdateRestaurantOpeningHours(restaurant._id)
+    const updateBannerMutation = useUpdateRestaurantBanner(restaurant._id)
+    const updateLogoMutation = useUpdateRestaurantLogo(restaurant._id)
 
     const [openingHours, setOpeningHours] = useState<OpeningHours>(restaurant.settings.openingHours || {})
+
+    const weekDayLabels: Record<string, string> = {
+        sunday: "Domingo",
+        monday: "Segunda-feira",
+        tuesday: "Terça-feira",
+        wednesday: "Quarta-feira",
+        thursday: "Quinta-feira",
+        friday: "Sexta-feira",
+        saturday: "Sábado",
+    }
 
     useEffect(() => {
         setOpeningHours(restaurant.settings.openingHours || {})
@@ -42,6 +58,36 @@ export default function Settings() {
         promise.then(() => {
             setSaved(true)
             setTimeout(() => setSaved(false), 2000)
+        })
+    }
+
+    const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        const promise = updateBannerMutation
+            .mutateAsync(file)
+            .then((updated) => {
+                queryClient.setQueryData(["currentRestaurantId"], updated)
+            })
+        showPromiseToast(promise, {
+            loading: "Atualizando banner...",
+            success: "Banner atualizado com sucesso",
+            error: "Erro ao atualizar banner",
+        })
+    }
+
+    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        const promise = updateLogoMutation
+            .mutateAsync(file)
+            .then((updated) => {
+                queryClient.setQueryData(["currentRestaurantId"], updated)
+            })
+        showPromiseToast(promise, {
+            loading: "Atualizando logo...",
+            success: "Logo atualizado com sucesso",
+            error: "Erro ao atualizar logo",
         })
     }
 
@@ -76,12 +122,6 @@ export default function Settings() {
                             className=""
                         >
                             Restaurante
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="pedidos"
-                            className=""
-                        >
-                            Pedidos
                         </TabsTrigger>
                         <TabsTrigger
                             value="notificacoes"
@@ -186,7 +226,8 @@ export default function Settings() {
                                                     "friday",
                                                     "saturday",
                                                 ].map((day) => {
-                                                    const value = openingHours[day as keyof typeof openingHours]
+                                                    const key = day as keyof typeof weekDayLabels
+                                                    const value = openingHours[key as keyof typeof openingHours]
                                                     const [open, close] = value ? value.split("-") : ["10:00", "22:00"]
                                                     return (
                                                         <div key={day} className="flex items-center justify-between border-b pb-2">
@@ -196,10 +237,10 @@ export default function Settings() {
                                                                         onCheckedChange={(checked) => {
                                                                             setOpeningHours(prev => ({
                                                                                 ...prev,
-                                                                                [day]: checked ? `${open}-${close}` : undefined,
+                                                                                [key]: checked ? `${open}-${close}` : undefined,
                                                                             }))
                                                                         }}/>
-                                                                <Label htmlFor={`day-${day}`}>{day}</Label>
+                                                                <Label htmlFor={`day-${day}`}>{weekDayLabels[key]}</Label>
                                                             </div>
                                                             <div className="flex items-center gap-2">
                                                                 <Select value={open}
@@ -251,6 +292,43 @@ export default function Settings() {
                                     </CardContent>
                                 </Card>
 
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Imagens</CardTitle>
+                                        <CardDescription>Atualize o banner e o logo do restaurante.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="banner-upload">Banner</Label>
+                                                <Input id="banner-upload" type="file" accept="image/*" onChange={handleBannerChange} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="logo-upload">Logo</Label>
+                                                <Input id="logo-upload" type="file" accept="image/*" onChange={handleLogoChange} />
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Inventário</CardTitle>
+                                        <CardDescription>Opções relacionadas ao estoque.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <Label htmlFor="auto-reduce-stock" className="text-base">
+                                                    Reduzir Estoque Automaticamente
+                                                </Label>
+                                                <p className="text-sm text-muted-foreground">Descontar itens de estoque ao vender um produto</p>
+                                            </div>
+                                            <Switch id="auto-reduce-stock" defaultChecked={restaurant.settings.automaticStockAdjustments} />
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
                                 <Card className="hidden">
                                     <CardHeader>
                                         <CardTitle>Opções de Serviço</CardTitle>
@@ -295,103 +373,6 @@ export default function Settings() {
                     }
 
 
-                    <TabsContent value="pedidos" className="space-y-6">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Configurações de Pedidos</CardTitle>
-                                <CardDescription>Configure como os pedidos são processados no seu restaurante.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="auto-accept" className="text-base">
-                                                Aceitação Automática
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Aceitar automaticamente novos pedidos</p>
-                                        </div>
-                                        <Switch id="auto-accept" />
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="prep-time" className="text-base">
-                                                Tempo de Preparação Estimado
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Tempo médio para preparar um pedido</p>
-                                        </div>
-                                        <Select defaultValue="20">
-                                            <SelectTrigger className="w-24">
-                                                <SelectValue placeholder="Minutos" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {[10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60].map((minutes) => (
-                                                    <SelectItem key={minutes} value={minutes.toString()}>
-                                                        {minutes} min
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="min-order" className="text-base">
-                                                Valor Mínimo do Pedido
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Valor mínimo para aceitar um pedido</p>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <span className="mr-2">Kz </span>
-                                            <Input id="min-order" type="number" defaultValue="10" className="w-24" />
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="auto-reduce-stock" className="text-base">
-                                                Reduzir Estoque Automaticamente
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Descontar itens de estoque ao vender um produto</p>
-                                        </div>
-                                        <Switch id="auto-reduce-stock" />
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Taxas e Custos</CardTitle>
-                                <CardDescription>Configure taxas adicionais para os pedidos.</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="delivery-fee" className="text-base">
-                                                Taxa de Entrega
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Taxa cobrada por entregas</p>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <span className="mr-2">Kz </span>
-                                            <Input id="delivery-fee" type="number" defaultValue="2.50" className="w-24" />
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <Label htmlFor="service-fee" className="text-base">
-                                                Taxa de Serviço
-                                            </Label>
-                                            <p className="text-sm text-muted-foreground">Taxa de serviço adicional</p>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Input id="service-fee" type="number" defaultValue="5" className="w-16" />
-                                            <span className="ml-2">%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
 
                     <TabsContent value="notificacoes" className="space-y-6">
                         <Card>

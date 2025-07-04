@@ -90,3 +90,37 @@ export function useUpdateRestaurantOpeningHours(restaurantId: string) {
         },
     })
 }
+
+export function useUpdateRestaurantBanner(restaurantId: string) {
+    const queryClient = useQueryClient()
+    const queryKey = ["restaurant", restaurantId]
+
+    return useMutation({
+        mutationFn: (file: File) =>
+            restaurantApi.updateRestaurantBanner(restaurantId, file),
+        onSuccess: (restaurant) => {
+            queryClient.setQueryData(queryKey, restaurant)
+            showSuccessToast("Banner atualizado com sucesso")
+        },
+        onError: () => {
+            showErrorToast("Falha ao atualizar banner")
+        },
+    })
+}
+
+export function useUpdateRestaurantLogo(restaurantId: string) {
+    const queryClient = useQueryClient()
+    const queryKey = ["restaurant", restaurantId]
+
+    return useMutation({
+        mutationFn: (file: File) =>
+            restaurantApi.updateRestaurantLogo(restaurantId, file),
+        onSuccess: (restaurant) => {
+            queryClient.setQueryData(queryKey, restaurant)
+            showSuccessToast("Logo atualizado com sucesso")
+        },
+        onError: () => {
+            showErrorToast("Falha ao atualizar logo")
+        },
+    })
+}
