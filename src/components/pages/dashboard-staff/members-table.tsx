@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ArrowUpDown } from "lucide-react"
 import { useDashboardStaff } from "@/context/dashboard-staff-context"
@@ -11,8 +10,6 @@ export function MembersTable() {
 
     const {
         paginatedMembers,
-        selectedMembers,
-        handleSelectAll,
         handleSort
     } = useDashboardStaff()
 
@@ -20,12 +17,6 @@ export function MembersTable() {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-12">
-                        <Checkbox
-                            checked={selectedMembers.length === paginatedMembers.length && paginatedMembers.length > 0}
-                            onCheckedChange={handleSelectAll}
-                        />
-                    </TableHead>
                     <TableHead>
                         <Button variant="ghost" onClick={() => handleSort("firstName")} className="h-auto p-0 font-medium">
                             Membro

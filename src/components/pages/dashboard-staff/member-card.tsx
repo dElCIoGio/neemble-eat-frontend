@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -34,8 +33,6 @@ interface MemberCardProps {
 
 export function MemberCard({ member }: MemberCardProps) {
     const {
-        selectedMembers,
-        handleSelectMember,
         handleEditMember,
         handleDeleteMember,
         getRoleName,
@@ -61,10 +58,6 @@ export function MemberCard({ member }: MemberCardProps) {
         <Card className="p-4">
             <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                    <Checkbox
-                        checked={selectedMembers.includes(member._id)}
-                        onCheckedChange={() => handleSelectMember(member._id)}
-                    />
                     <Avatar className="w-10 h-10">
                         <AvatarImage src="/placeholder.svg" />
                         <AvatarFallback>
