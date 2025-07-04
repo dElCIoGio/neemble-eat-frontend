@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 import { DateFilter, ShiftFilter } from "@/types/dashboard"
+import type { DateRange } from "react-day-picker"
 
 export default function DashboardHomeHeader() {
     const {
@@ -20,7 +21,7 @@ export default function DashboardHomeHeader() {
     } = useDashboardHomeContext()
     const [isRangeOpen, setIsRangeOpen] = useState(false)
 
-    const rangeLabel = customDateRange.from && customDateRange.to
+    const rangeLabel = customDateRange?.from && customDateRange.to
         ? `${format(customDateRange.from, "dd/MM/yyyy", { locale: pt })} - ${format(customDateRange.to, "dd/MM/yyyy", { locale: pt })}`
         : "Selecionar período"
 
@@ -54,7 +55,7 @@ export default function DashboardHomeHeader() {
                                     mode="range"
                                     numberOfMonths={2}
                                     selected={customDateRange}
-                                    onSelect={(range) => setCustomDateRange(range ?? {})}
+                                    onSelect={(range: DateRange | undefined) => setCustomDateRange(range)}
                                     locale={pt}
                                     className="rounded-md border"
                                 />
