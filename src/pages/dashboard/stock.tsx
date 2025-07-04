@@ -53,6 +53,7 @@ import type {
     StockItem,
     Supplier,
     Recipe,
+    Movement,
 } from "@/types/stock"
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
@@ -124,6 +125,74 @@ function StockCard({ item, onView, onEdit, onAdd, onDelete }: StockCardProps) {
                     <Trash2 className="h-4 w-4 text-red-500" />
                 </Button>
             </CardFooter>
+        </Card>
+    )
+}
+
+interface RecipeCardProps {
+    recipe: Recipe
+    menuItems: Item[]
+    onEdit: (recipe: Recipe) => void
+    onDelete: (id: string) => void
+}
+
+function RecipeCard({ recipe, menuItems, onEdit, onDelete }: RecipeCardProps) {
+    const dishName = menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{dishName}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                    <span>Porções:</span>
+                    <span>{recipe.servings}</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Custo:</span>
+                    <span>Kz {recipe.cost.toFixed(2)}</span>
+                </div>
+            </CardContent>
+            <CardFooter className="justify-end gap-2">
+                <Button variant="ghost" size="sm" onClick={() => onEdit(recipe)}>
+                    Editar
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => onDelete(recipe._id)}>
+                    <Trash2 className="h-4 w-4" />
+                </Button>
+            </CardFooter>
+        </Card>
+    )
+}
+
+interface MovementCardProps {
+    movement: Movement
+}
+
+function MovementCard({ movement }: MovementCardProps) {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{movement.productName}</CardTitle>
+                <CardDescription>{formatIsosDate(new Date(movement.date))}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                    <span>Tipo:</span>
+                    <span className="capitalize">{movement.type}</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Quantidade:</span>
+                    <span>{movement.quantity} {movement.unit}</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Utilizador:</span>
+                    <span>{movement.user}</span>
+                </div>
+                <div>
+                    <span className="font-medium">Razão:</span> {movement.reason}
+                </div>
+            </CardContent>
         </Card>
     )
 }
@@ -1117,14 +1186,15 @@ export default function StockManagement() {
                             <CardDescription>Listagem de receitas cadastradas</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <ScrollArea>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Prato</TableHead>
-                                            <TableHead>Porções</TableHead>
-                                            <TableHead>Custo</TableHead>
-                                            <TableHead className="text-right">Ações</TableHead>
+                            <div className="hidden sm:block">
+                                <ScrollArea>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Prato</TableHead>
+                                                <TableHead>Porções</TableHead>
+                                                <TableHead>Custo</TableHead>
+                                                <TableHead className="text-right">Ações</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -1158,6 +1228,22 @@ export default function StockManagement() {
                                     </TableBody>
                                 </Table>
                             </ScrollArea>
+                            </div>
+                            <div className="sm:hidden space-y-2">
+                                {recipes.length === 0 ? (
+                                    <div className="text-center py-6">Nenhuma receita cadastrada</div>
+                                ) : (
+                                    recipes.map((recipe) => (
+                                        <RecipeCard
+                                            key={recipe._id}
+                                            recipe={recipe}
+                                            menuItems={menuItems}
+                                            onEdit={handleOpenEditRecipe}
+                                            onDelete={handleDeleteRecipe}
+                                        />
+                                    ))
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
@@ -1174,13 +1260,14 @@ export default function StockManagement() {
                             <CardDescription>Lista de movimentos de stock</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <ScrollArea>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Produto</TableHead>
-                                            <TableHead>Tipo</TableHead>
-                                            <TableHead>Quantidade</TableHead>
+                            <div className="hidden sm:block">
+                                <ScrollArea>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Produto</TableHead>
+                                                <TableHead>Tipo</TableHead>
+                                                <TableHead>Quantidade</TableHead>
                                             <TableHead>Data</TableHead>
                                             <TableHead>Utilizador</TableHead>
                                             <TableHead>Razão</TableHead>
@@ -1217,6 +1304,24 @@ export default function StockManagement() {
                                     </TableBody>
                                 </Table>
                             </ScrollArea>
+                            </div>
+                            <div className="sm:hidden space-y-2">
+                                {isMovementsLoading ? (
+                                    Array.from({ length: 5 }).map((_, i) => (
+                                        <Card key={i} className="p-4 space-y-2">
+                                            <Skeleton className="h-4 w-3/4" />
+                                            <Skeleton className="h-4 w-1/2" />
+                                            <Skeleton className="h-4 w-2/3" />
+                                        </Card>
+                                    ))
+                                ) : movements.length === 0 ? (
+                                    <div className="text-center py-6">Nenhum registro encontrado</div>
+                                ) : (
+                                    movements.map((mv) => (
+                                        <MovementCard key={mv._id} movement={mv} />
+                                    ))
+                                )}
+                            </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
