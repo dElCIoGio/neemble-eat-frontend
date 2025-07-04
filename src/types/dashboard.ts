@@ -58,7 +58,7 @@ export interface ExportData {
     shiftFilter: string
 }
 
-export type DateFilter = "today" | "yesterday" | "7days" | "30days"
+export type DateFilter = "today" | "yesterday" | "7days" | "30days" | "custom"
 export type ShiftFilter = "all" | "lunch" | "dinner"
 export type ItemsTimeRange = "today" | "week" | "month"
 export type MetricFormat = "currency" | "number" | "percentage"

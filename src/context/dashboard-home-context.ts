@@ -14,6 +14,8 @@ import {
 export interface DashboardHomeContextProps {
     dateFilter: DateFilter
     setDateFilter: (filter: DateFilter) => void
+    customDateRange: { from?: Date; to?: Date }
+    setCustomDateRange: (range: { from?: Date; to?: Date }) => void
     shiftFilter: ShiftFilter
     setShiftFilter: (filter: ShiftFilter) => void
     itemsTimeRange: ItemsTimeRange

@@ -1,17 +1,35 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, Filter } from "lucide-react"
+import { Calendar as CalendarIcon, Filter } from "lucide-react"
+import { useState } from "react"
+import { format } from "date-fns"
+import { pt } from "date-fns/locale"
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 import { DateFilter, ShiftFilter } from "@/types/dashboard"
 
 export default function DashboardHomeHeader() {
-    const { dateFilter, setDateFilter, shiftFilter, setShiftFilter } = useDashboardHomeContext()
+    const {
+        dateFilter,
+        setDateFilter,
+        customDateRange,
+        setCustomDateRange,
+        shiftFilter,
+        setShiftFilter,
+    } = useDashboardHomeContext()
+    const [isRangeOpen, setIsRangeOpen] = useState(false)
+
+    const rangeLabel = customDateRange.from && customDateRange.to
+        ? `${format(customDateRange.from, "dd/MM/yyyy", { locale: pt })} - ${format(customDateRange.to, "dd/MM/yyyy", { locale: pt })}`
+        : "Selecionar período"
 
     return (
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                 <Select value={dateFilter} onValueChange={(value: DateFilter) => setDateFilter(value)}>
                     <SelectTrigger className="w-full sm:w-48">
-                        <Calendar className="h-4 w-4 mr-2" />
+                        <CalendarIcon className="h-4 w-4 mr-2" />
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -19,8 +37,31 @@ export default function DashboardHomeHeader() {
                         <SelectItem value="yesterday">Ontem</SelectItem>
                         <SelectItem value="7days">Últimos 7 dias</SelectItem>
                         <SelectItem value="30days">Últimos 30 dias</SelectItem>
+                        <SelectItem value="custom">Personalizado</SelectItem>
                     </SelectContent>
                 </Select>
+                {dateFilter === "custom" && (
+                    <Popover open={isRangeOpen} onOpenChange={setIsRangeOpen}>
+                        <PopoverTrigger asChild>
+                            <Button variant="outline" className="w-full sm:w-52 justify-start text-left font-normal">
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {rangeLabel}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={4}>
+                            <div className="p-3 bg-background">
+                                <Calendar
+                                    mode="range"
+                                    numberOfMonths={2}
+                                    selected={customDateRange}
+                                    onSelect={(range) => setCustomDateRange(range ?? {})}
+                                    locale={pt}
+                                    className="rounded-md border"
+                                />
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                )}
                 <Select value={shiftFilter} onValueChange={(value: ShiftFilter) => setShiftFilter(value)}>
                     <SelectTrigger className="w-full sm:w-32">
                         <Filter className="h-4 w-4 mr-2" />
