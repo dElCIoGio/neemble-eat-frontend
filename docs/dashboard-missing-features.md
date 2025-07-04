@@ -15,7 +15,7 @@ This document records UI elements and logic still missing in the dashboard codeb
 - Editing a member (`handleEditMember`) opens a dialog but the form submission to update the user is absent.
 
 ## Onboarding
-- `userExists` in `src/pages/root/onboarding.tsx` is a mock function and does not check the backend.
+<!-- userExists now checks the backend -->
 
 ## Layout
 - `DashboardLayout` falls back to a `dummyRestaurant` object when no restaurant is returned from the API.
