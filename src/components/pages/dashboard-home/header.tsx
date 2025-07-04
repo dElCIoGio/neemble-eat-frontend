@@ -1,5 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar as CalendarIcon, Filter } from "lucide-react"
+import { Calendar as CalendarIcon } from "lucide-react"
 import { useState } from "react"
 import { format } from "date-fns"
 import { pt } from "date-fns/locale"
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
-import { DateFilter, ShiftFilter } from "@/types/dashboard"
+import { DateFilter } from "@/types/dashboard"
 import type { DateRange } from "react-day-picker"
 
 export default function DashboardHomeHeader() {
@@ -16,8 +16,6 @@ export default function DashboardHomeHeader() {
         setDateFilter,
         customDateRange,
         setCustomDateRange,
-        shiftFilter,
-        setShiftFilter,
     } = useDashboardHomeContext()
     const [isRangeOpen, setIsRangeOpen] = useState(false)
 
@@ -63,17 +61,7 @@ export default function DashboardHomeHeader() {
                         </PopoverContent>
                     </Popover>
                 )}
-                <Select value={shiftFilter} onValueChange={(value: ShiftFilter) => setShiftFilter(value)}>
-                    <SelectTrigger className="w-full sm:w-32">
-                        <Filter className="h-4 w-4 mr-2" />
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Todos</SelectItem>
-                        <SelectItem value="lunch">Almoço</SelectItem>
-                        <SelectItem value="dinner">Jantar</SelectItem>
-                    </SelectContent>
-                </Select>
+
             </div>
         </div>
     )
