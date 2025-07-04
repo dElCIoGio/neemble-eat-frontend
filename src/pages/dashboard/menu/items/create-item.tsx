@@ -98,8 +98,8 @@ export default function CreateItemPage() {
     }
 
     const removeCustomization = (index: number) => {
-        const customization: any = formData.customizations[index]
-        const isPersisted = customization && customization._id
+        const customization = formData.customizations[index]
+        const isPersisted = (customization as { _id?: string } | undefined)?._id
 
         if (!isPersisted) {
             setFormData((prev) => ({
