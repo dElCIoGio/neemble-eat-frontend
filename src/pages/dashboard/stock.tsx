@@ -1688,7 +1688,7 @@ export default function StockManagement() {
                                 <Label className="text-sm font-medium">Ingredientes*</Label>
                                 <div className="space-y-2">
                                     {editRecipe.ingredients.map((ingredient, index) => (
-                                        <div key={index} className="grid grid-cols-3 gap-2 items-end">
+                                        <div key={index} className="flex space-x-2 items-start">
                                             <div>
                                                 <Select
                                                     value={ingredient.productId}
