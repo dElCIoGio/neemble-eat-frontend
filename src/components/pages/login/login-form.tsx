@@ -14,7 +14,7 @@ import { useGoogleAuth } from "@/hooks/use-google-auth";
 import {authApi} from "@/api/endpoints/auth/endpoints";
 import {userApi} from "@/api/endpoints/user/endpoints";
 import {toast} from "sonner";
-import {useNavigate} from "react-router";
+import {Link, useNavigate} from "react-router";
 import {Eye, EyeClosed} from "@phosphor-icons/react";
 
 
@@ -133,9 +133,9 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                             <FormItem>
                                 <div className="flex items-center justify-between">
                                     <FormLabel>Senha</FormLabel>
-                                    <a href="/auth/forgot-password" className="text-sm underline-offset-4 hover:underline">
+                                    <Link to="/auth/forgot-password" className="text-sm underline-offset-4 hover:underline">
                                         Esqueceu sua senha?
-                                    </a>
+                                    </Link>
                                 </div>
                                 <FormControl>
                                     <div className="relative">

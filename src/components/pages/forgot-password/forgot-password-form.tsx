@@ -13,6 +13,7 @@ import { ForgotPasswordFormValues, forgotPasswordSchema } from "@/lib/schemas/au
 import { sendPasswordResetEmail } from "firebase/auth"
 import { auth } from "@/firebase/config"
 import { toast } from "sonner"
+import {Link} from "react-router";
 
 interface ForgotPasswordFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string
@@ -64,8 +65,8 @@ export function ForgotPasswordForm({ className, ...props }: ForgotPasswordFormPr
                             Enviamos um link de recuperação de senha para <span className="font-medium">{submittedEmail}</span>
                         </p>
                     </div>
-                    <Button asChild className="mt-2 w-full">
-                        <a href="/login">Voltar para o login</a>
+                    <Button variant="link" asChild className="p-0 mt-2 w-full">
+                        <Link to="/auth/login">Voltar para o login</Link>
                     </Button>
                 </div>
             ) : (
@@ -100,9 +101,9 @@ export function ForgotPasswordForm({ className, ...props }: ForgotPasswordFormPr
             {!isSubmitted && (
                 <div className="text-center text-sm">
                     Lembrou sua senha?{" "}
-                    <a href="/login" className="underline underline-offset-4">
+                    <Link to="/auth/login" className="underline underline-offset-4">
                         Voltar para o login
-                    </a>
+                    </Link>
                 </div>
             )}
         </div>

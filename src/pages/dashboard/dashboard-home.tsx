@@ -118,8 +118,6 @@ export default function RestaurantDashboard(): JSX.Element {
         toDate: dateRange.to
     })
 
-    console.log(salesSummary)
-
     const { data: invoiceSummary, isLoading: isInvoiceSummaryLoading } = useGetInvoiceSummary({
         restaurantId: restaurant._id,
         status: "completed",

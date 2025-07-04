@@ -5,6 +5,7 @@ import { Plus } from "@phosphor-icons/react";
 import { Link } from "react-router";
 import { useDashboardContext } from "@/context/dashboard-context";
 import {Loader} from "@/components/ui/loader";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 function RestaurantSelection() {
     const { data: restaurants, isLoading } = useGetUserRestaurants();
@@ -12,6 +13,7 @@ function RestaurantSelection() {
     const { page, restaurant } = useDashboardContext(); // Make sure your context exposes this!
     const { mutate: setCurrentRestaurant, isPending } = useSetCurrentRestaurant();
 
+    const isMobile = useIsMobile()
 
     if (restaurants == undefined) {
         return <div></div>;
@@ -29,7 +31,9 @@ function RestaurantSelection() {
                 <span>Nenhum restaurante encontrado.</span>
                 <Button variant="outline" size="sm" asChild>
                     <Link to="/dashboard/create-restaurant" className="text-sm flex items-center">
-                        <Plus className="h-3 w-3" /> Novo Restaurante
+                        <Plus className="h-3 w-3" /> <span className={`${isMobile && "hidden"}`}>
+                        Novo Restaurante
+                    </span>
                     </Link>
                 </Button>
             </div>
@@ -64,7 +68,9 @@ function RestaurantSelection() {
                 asChild
             >
                 <Link to="/dashboard/create-restaurant" className="text-sm flex items-center">
-                    <Plus className="h-3 w-3" /> Novo Restaurante
+                    <Plus className="h-3 w-3" /> <span className={`${isMobile && "hidden"}`}>
+                        Novo Restaurante
+                    </span>
                 </Link>
             </Button>
         </div>
