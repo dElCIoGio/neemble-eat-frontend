@@ -14,9 +14,6 @@ This document records UI elements and logic still missing in the dashboard codeb
 - `handleBulkAction` in `dashboard-staff-context.tsx` only shows a toast and clears selections; no server calls are made.
 - Editing a member (`handleEditMember`) opens a dialog but the form submission to update the user is absent.
 
-## Table Monitor
-- `handleStartSession` in `table-monitor.tsx` displays a "Funcionalidade não implementada" message.
-
 ## Onboarding
 - `userExists` in `src/pages/root/onboarding.tsx` is a mock function and does not check the backend.
 
