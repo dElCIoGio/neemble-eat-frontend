@@ -84,7 +84,7 @@ function TableQRCodeDisplay({table, index}: TableQrCodeCardProps) {
                     size="sm"
                     className="w-full bg-zinc-200 text-dark_purple hover:bg-zinc-300"
                     onClick={() => downloadCode(`qrcode-${index + 1}`)}>
-                    <DownloadSimple/>Baixar QR Code
+                    <DownloadSimple/> <span className="truncate">Baixar QR Code</span>
                 </Button>
                 <Button
                     size="sm"
@@ -95,7 +95,7 @@ function TableQRCodeDisplay({table, index}: TableQrCodeCardProps) {
                         }
                         showSuccessToast(`Link para a Mesa: ${table.number} copiado!`)
                     }}>
-                    <Copy/> Copiar link
+                    <Copy/> <span className="truncate">Copiar link</span>
                 </Button>
             </div>
         </div>

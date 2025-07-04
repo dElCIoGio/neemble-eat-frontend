@@ -325,14 +325,14 @@ export default function UserProfile() {
                                                             <img
                                                                 src={restaurant!.logoUrl || "/placeholder.svg?height=40&width=40"}
                                                                 alt={restaurant!.name}
-                                                                className="h-10 w-10 rounded-full object-cover"
+                                                                className="h-10 hidden w-10 rounded-full object-cover"
                                                             />
                                                             <div>
                                                                 <h4 className="font-semibold">{restaurant!.name}</h4>
                                                                 <p className="text-sm text-gray-600">{restaurant!.address}</p>
                                                             </div>
                                                         </div>
-                                                        <div className="flex flex-wrap gap-2 text-sm sm:gap-4">
+                                                        <div className="space-y-2 text-sm sm:gap-4">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-gray-500">Função:</span>
                                                                 <Badge variant="outline">{role!.name}</Badge>
@@ -343,9 +343,8 @@ export default function UserProfile() {
                                                                     {membership.isActive ? "Ativo" : "Inativo"}
                                                                 </Badge>
                                                             </div>
-                                                            {!restaurant!.isActive && <Badge variant="destructive">Restaurante Inativo</Badge>}
                                                         </div>
-                                                        <p className="text-sm text-gray-600 mt-2">{role!.description}</p>
+                                                        <p className="mt-4 text-sm text-gray-600 italic">{role!.description}</p>
                                                     </div>
                                                     <Button
                                                         variant="outline"
@@ -354,7 +353,7 @@ export default function UserProfile() {
                                                         className="self-end text-red-600 hover:text-red-700 hover:bg-red-50 sm:self-auto"
                                                     >
                                                         <Trash2 className="h-4 w-4 mr-1" />
-                                                        Remover
+                                                        Demitir-se
                                                     </Button>
                                                 </div>
                                             </div>

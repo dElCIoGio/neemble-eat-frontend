@@ -56,109 +56,112 @@ function App() {
 
 
     return (
-        <Routes>
-            {/* Root */}
-            <Route path="/" element={<HomeLayout/>}>
-                <Route index element={<HomePage/>}/>
+        <div className="overflow-x-hidden">
+            <Routes>
+                {/* Root */}
+                <Route path="/" element={<HomeLayout/>}>
+                    <Route index element={<HomePage/>}/>
 
-                {/* Blog */}
-                <Route path="blog">
-                    <Route index element={<BlogPage/>}/>
-                    <Route path=":articleId" element={<ArticlePage/>}/>
-                </Route>
-
-                <Route element={<ProtectedRoute/>}>
-                    <Route path="onboarding" element={<OnboardingPage/>}/>
-                </Route>
-
-
-                <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
-                <Route path="cookie-policy" element={<CookiesPolicy/>}/>
-                <Route path="solutions">
-                    <Route path="digital-menu" element={<DigitalMenu/>}/>
-                    <Route path="orders-management" element={<OrderManagement/>}/>
-                    <Route path="analytics" element={<DataAnalysis/>}/>
-                </Route>
-                <Route path="demo" element={<Demo/>}/>
-                <Route path="contact" element={<ContactPage/>}/>
-                <Route path="about-us" element={<AboutUs/>}/>
-                <Route path="price" element={<Pricing/>}/>AboutUs.tsx
-
-
-            </Route>
-
-            {/* Dashboard (Protected) */}
-            <Route element={<ProtectedRoute/>}>
-                <Route path="dashboard" element={<DashboardLayout/>}>
-                    <Route index element={<DashboardHome/>}/>
-                    <Route path="create-restaurant" element={<CreateRestaurantPage/>}/>
-                    <Route path="menu">
-                        <Route index element={<MenuList/>}/>
-                        <Route path="create">
-                            <Route index element={<AddMenuPage/>}/>
-                            <Route path="import" element={<ImportMenuPage/>}/>
-                            <Route path="manual" element={<CreateMenuPage/>}/>
-                        </Route>
-                        <Route path=":menuId">
-                            <Route index element={<MenuManagementPage/>}/>
-                            <Route path="categories">
-                                <Route index element={<Navigate to=".."/>}/>
-                                <Route path=":categoryId" element={<CategoryDetailsPage/>}/>
-                                <Route path="create" element={<CreateCategoryPage/>}/>
-                            </Route>
-
-                            <Route path="items">
-                                <Route index element={<Navigate to=".."/>}/>
-                                <Route path=":itemSlug" element={<ItemDetailsPage/>}/>
-                                <Route path="create" element={<CreateItemPage/>}/>
-                            </Route>
-                        </Route>
+                    {/* Blog */}
+                    <Route path="blog">
+                        <Route index element={<BlogPage/>}/>
+                        <Route path=":articleId" element={<ArticlePage/>}/>
                     </Route>
-                    <Route path="qrcode" element={<QrCodes/>}/>
-                    <Route path="staff" element={<Staff/>}/>
-                    <Route path="subscription" element={<Subscription/>}/>
-                    <Route path="settings" element={<Settings/>}/>
-                    <Route path="support" element={<Support/>}/>
-                    <Route path="bookings" element={<Bookings/>}/>
-                    <Route path="stock" element={<StockManagement/>}/>
-                    <Route path="notifications" element={<NotificationsPage/>}/>
-                    <Route path="orders-tracking" element={<OrdersTracking/>}/>
-                    <Route path="table-monitor" element={<TableMonitor/>}/>
-                    <Route path="profile" element={<UserProfile/>}/>
+
+                    <Route element={<ProtectedRoute/>}>
+                        <Route path="onboarding" element={<OnboardingPage/>}/>
+                    </Route>
+
+
+                    <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
+                    <Route path="cookie-policy" element={<CookiesPolicy/>}/>
+                    <Route path="solutions">
+                        <Route path="digital-menu" element={<DigitalMenu/>}/>
+                        <Route path="orders-management" element={<OrderManagement/>}/>
+                        <Route path="analytics" element={<DataAnalysis/>}/>
+                    </Route>
+                    <Route path="demo" element={<Demo/>}/>
+                    <Route path="contact" element={<ContactPage/>}/>
+                    <Route path="about-us" element={<AboutUs/>}/>
+                    <Route path="price" element={<Pricing/>}/>AboutUs.tsx
+
+
                 </Route>
-            </Route>
 
-            {/* Auth */}
-            <Route path="auth">
-                <Route path="forgot-password" element={<ForgotPasswordPage/>}/>
-                <Route path="login" element={<LoginPage/>}/>
-                <Route path="register" element={<RegisterPage/>}/>
-                <Route path="reset-password" element={<ResetPasswordPage/>}/>
-            </Route>
+                {/* Dashboard (Protected) */}
+                <Route element={<ProtectedRoute/>}>
+                    <Route path="dashboard" element={<DashboardLayout/>}>
+                        <Route index element={<DashboardHome/>}/>
+                        <Route path="create-restaurant" element={<CreateRestaurantPage/>}/>
+                        <Route path="menu">
+                            <Route index element={<MenuList/>}/>
+                            <Route path="create">
+                                <Route index element={<AddMenuPage/>}/>
+                                <Route path="import" element={<ImportMenuPage/>}/>
+                                <Route path="manual" element={<CreateMenuPage/>}/>
+                            </Route>
+                            <Route path=":menuId">
+                                <Route index element={<MenuManagementPage/>}/>
+                                <Route path="categories">
+                                    <Route index element={<Navigate to=".."/>}/>
+                                    <Route path=":categoryId" element={<CategoryDetailsPage/>}/>
+                                    <Route path="create" element={<CreateCategoryPage/>}/>
+                                </Route>
 
-            {/* Restaurant Menu */}
-            <Route path="r/:restaurantSlug/:tableNumber/">
-                <Route element={<RestaurantMenuProvider/>}>
-                    <Route index element={<RestaurantMenu/>}/>
-                    <Route path="cart" element={<Cart/>}/>
-                    <Route path="orders" element={<Orders/>} />
+                                <Route path="items">
+                                    <Route index element={<Navigate to=".."/>}/>
+                                    <Route path=":itemSlug" element={<ItemDetailsPage/>}/>
+                                    <Route path="create" element={<CreateItemPage/>}/>
+                                </Route>
+                            </Route>
+                        </Route>
+                        <Route path="qrcode" element={<QrCodes/>}/>
+                        <Route path="staff" element={<Staff/>}/>
+                        <Route path="subscription" element={<Subscription/>}/>
+                        <Route path="settings" element={<Settings/>}/>
+                        <Route path="support" element={<Support/>}/>
+                        <Route path="bookings" element={<Bookings/>}/>
+                        <Route path="stock" element={<StockManagement/>}/>
+                        <Route path="notifications" element={<NotificationsPage/>}/>
+                        <Route path="orders-tracking" element={<OrdersTracking/>}/>
+                        <Route path="table-monitor" element={<TableMonitor/>}/>
+                        <Route path="profile" element={<UserProfile/>}/>
+                    </Route>
                 </Route>
-            </Route>
 
-            {/* Invitation */}
-            <Route path="invitation">
-                <Route path=":invitationId" element={<RestaurantInvitation/>}/>
-            </Route>
+                {/* Auth */}
+                <Route path="auth">
+                    <Route path="forgot-password" element={<ForgotPasswordPage/>}/>
+                    <Route path="login" element={<LoginPage/>}/>
+                    <Route path="register" element={<RegisterPage/>}/>
+                    <Route path="reset-password" element={<ResetPasswordPage/>}/>
+                </Route>
 
-            <Route path="custom-order/:restaurantSlug" element={<OrderCustomizationPage/>}/>
+                {/* Restaurant Menu */}
+                <Route path="r/:restaurantSlug/:tableNumber/">
+                    <Route element={<RestaurantMenuProvider/>}>
+                        <Route index element={<RestaurantMenu/>}/>
+                        <Route path="cart" element={<Cart/>}/>
+                        <Route path="orders" element={<Orders/>} />
+                    </Route>
+                </Route>
 
-            <Route path="*" element={<NotFound/>}/>
+                {/* Invitation */}
+                <Route path="invitation">
+                    <Route path=":invitationId" element={<RestaurantInvitation/>}/>
+                </Route>
 
-            <Route path="outframe">
-                <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
-                <Route path="terms-of-use" element={<TermsOfUse/>}/>
-            </Route>
-        </Routes>
+                <Route path="custom-order/:restaurantSlug" element={<OrderCustomizationPage/>}/>
+
+                <Route path="*" element={<NotFound/>}/>
+
+                <Route path="outframe">
+                    <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
+                    <Route path="terms-of-use" element={<TermsOfUse/>}/>
+                </Route>
+            </Routes>
+        </div>
+
     );
 }
 

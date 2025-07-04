@@ -84,7 +84,7 @@ export function MemberCard({ member }: MemberCardProps) {
                                 )}
                             </Tooltip>
                         </TooltipProvider>
-                        <div className="text-sm text-gray-500">{member.email}</div>
+                        <div className="text-sm text-gray-500 truncate">{member.email}</div>
                     </div>
                 </div>
                 <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
