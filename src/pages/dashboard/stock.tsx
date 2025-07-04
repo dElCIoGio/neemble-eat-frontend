@@ -199,6 +199,24 @@ function MovementCard({ movement }: MovementCardProps) {
 
 export default function StockManagement() {
 
+    const convertDisplayToBase = (value: string, unit: string, displayUnit: string) => {
+        if (!value) return ""
+        const num = Number.parseFloat(value)
+        if (Number.isNaN(num)) return ""
+        if (unit === "Kg" && displayUnit === "g") return (num / 1000).toString()
+        if (unit === "L" && displayUnit === "ml") return (num / 1000).toString()
+        return value
+    }
+
+    const convertBaseToDisplay = (value: string, unit: string, displayUnit: string) => {
+        if (!value) return ""
+        const num = Number.parseFloat(value)
+        if (Number.isNaN(num)) return value
+        if (unit === "Kg" && displayUnit === "g") return (num * 1000).toString()
+        if (unit === "L" && displayUnit === "ml") return (num * 1000).toString()
+        return value
+    }
+
     // State management
     // const [activeTab, setActiveTab] = useState("stock")
     const [searchTerm, setSearchTerm] = useState("")
@@ -278,7 +296,7 @@ export default function StockManagement() {
         menuItemId: "",
         dishName: "",
         servings: "1",
-        ingredients: [{ productId: "", quantity: "", unit: "" }],
+        ingredients: [{ productId: "", quantity: "", unit: "", displayUnit: "" }],
     })
 
     const [editRecipe, setEditRecipe] = useState<typeof newRecipe & { _id?: string } | null>(null)
@@ -485,7 +503,7 @@ export default function StockManagement() {
                     menuItemId: "",
                     dishName: "",
                     servings: "1",
-                    ingredients: [{ productId: "", quantity: "", unit: "" }],
+                    ingredients: [{ productId: "", quantity: "", unit: "", displayUnit: "" }],
                 })
                 setIsRecipeOpen(false)
             }),
@@ -501,7 +519,7 @@ export default function StockManagement() {
     const addIngredientToRecipe = () => {
         setNewRecipe({
             ...newRecipe,
-            ingredients: [...newRecipe.ingredients, { productId: "", quantity: "", unit: "" }],
+            ingredients: [...newRecipe.ingredients, { productId: "", quantity: "", unit: "", displayUnit: "" }],
         })
     }
 
@@ -843,6 +861,7 @@ export default function StockManagement() {
                 productId: ing.productId,
                 quantity: ing.quantity.toString(),
                 unit: ing.unit,
+                displayUnit: ing.unit,
             }))
         })
         setIsEditRecipeOpen(true)
@@ -852,7 +871,7 @@ export default function StockManagement() {
         if (!editRecipe) return
         setEditRecipe({
             ...editRecipe,
-            ingredients: [...editRecipe.ingredients, { productId: "", quantity: "", unit: "" }]
+            ingredients: [...editRecipe.ingredients, { productId: "", quantity: "", unit: "", displayUnit: "" }]
         })
     }
 
@@ -1695,7 +1714,7 @@ export default function StockManagement() {
                                                     onValueChange={(value) => {
                                                         const updated = [...editRecipe.ingredients]
                                                         const product = stockItems.find((item) => item._id === value)
-                                                        updated[index] = { ...ingredient, productId: value, unit: product?.unit || "" }
+                                                        updated[index] = { ...ingredient, productId: value, unit: product?.unit || "", displayUnit: product?.unit || ingredient.displayUnit }
                                                         setEditRecipe({ ...editRecipe, ingredients: updated })
                                                     }}
                                                 >
@@ -1712,19 +1731,19 @@ export default function StockManagement() {
                                                 </Select>
                                             </div>
                                             <div>
-                                                <Input
-                                                    type="number"
-                                                    step="0.01"
-                                                    placeholder="Quantidade"
-                                                    value={ingredient.quantity}
-                                                    onChange={(e) => {
-                                                        const updated = [...editRecipe.ingredients]
-                                                        updated[index] = { ...ingredient, quantity: e.target.value }
-                                                        setEditRecipe({ ...editRecipe, ingredients: updated })
-                                                    }}
-                                                    className={(() => {
-                                                        const product = stockItems.find((item) => item._id === ingredient.productId)
-                                                        const quantity = Number.parseFloat(ingredient.quantity)
+                                            <Input
+                                                type="number"
+                                                step="0.01"
+                                                placeholder="Quantidade"
+                                                value={convertBaseToDisplay(ingredient.quantity, ingredient.unit, ingredient.displayUnit || ingredient.unit)}
+                                                onChange={(e) => {
+                                                    const updated = [...editRecipe.ingredients]
+                                                    updated[index] = { ...ingredient, quantity: convertDisplayToBase(e.target.value, ingredient.unit, ingredient.displayUnit || ingredient.unit) }
+                                                    setEditRecipe({ ...editRecipe, ingredients: updated })
+                                                }}
+                                                className={(() => {
+                                                    const product = stockItems.find((item) => item._id === ingredient.productId)
+                                                    const quantity = Number.parseFloat(ingredient.quantity)
                                                         return product && quantity > product.currentQuantity ? "border-red-500 bg-red-50" : ""
                                                     })()}
                                                 />
@@ -1749,7 +1768,23 @@ export default function StockManagement() {
                                                 })()}
                                             </div>
                                             <div className="flex gap-1">
-                                                <Input value={ingredient.unit} placeholder="Unidade" disabled className="bg-gray-100" />
+                                                <Select
+                                                    value={ingredient.displayUnit || ingredient.unit}
+                                                    onValueChange={(value) => {
+                                                        const updated = [...editRecipe.ingredients]
+                                                        updated[index] = { ...ingredient, displayUnit: value }
+                                                        setEditRecipe({ ...editRecipe, ingredients: updated })
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
+                                                        {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
+                                                        {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
+                                                    </SelectContent>
+                                                </Select>
                                                 {editRecipe.ingredients.length > 1 && (
                                                     <Button
                                                         type="button"
@@ -1837,6 +1872,7 @@ export default function StockManagement() {
                                                         ...ingredient,
                                                         productId: value,
                                                         unit: product?.unit || "",
+                                                        displayUnit: product?.unit || "",
                                                     }
                                                     setNewRecipe({ ...newRecipe, ingredients: updatedIngredients })
                                                 }}
@@ -1860,10 +1896,10 @@ export default function StockManagement() {
                                                 type="number"
                                                 step="0.01"
                                                 placeholder="Quantidade"
-                                                value={ingredient.quantity}
+                                                value={convertBaseToDisplay(ingredient.quantity, ingredient.unit, ingredient.displayUnit || ingredient.unit)}
                                                 onChange={(e) => {
                                                     const updatedIngredients = [...newRecipe.ingredients]
-                                                    updatedIngredients[index] = { ...ingredient, quantity: e.target.value }
+                                                    updatedIngredients[index] = { ...ingredient, quantity: convertDisplayToBase(e.target.value, ingredient.unit, ingredient.displayUnit || ingredient.unit) }
                                                     setNewRecipe({ ...newRecipe, ingredients: updatedIngredients })
                                                 }}
                                                 className={(() => {
@@ -1893,7 +1929,23 @@ export default function StockManagement() {
                                             })()}
                                         </div>
                                         <div className="flex gap-1">
-                                            <Input value={ingredient.unit} placeholder="Unidade" disabled className="bg-gray-100" />
+                                            <Select
+                                                value={ingredient.displayUnit || ingredient.unit}
+                                                onValueChange={(value) => {
+                                                    const updatedIngredients = [...newRecipe.ingredients]
+                                                    updatedIngredients[index] = { ...ingredient, displayUnit: value }
+                                                    setNewRecipe({ ...newRecipe, ingredients: updatedIngredients })
+                                                }}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
+                                                    {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
+                                                    {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
+                                                </SelectContent>
+                                            </Select>
                                             {newRecipe.ingredients.length > 1 && (
                                                 <Button
                                                     type="button"
