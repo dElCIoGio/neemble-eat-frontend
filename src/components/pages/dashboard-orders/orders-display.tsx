@@ -25,7 +25,7 @@ export function OrdersDisplay() {
         <div className={`p-1 ${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5' : 'space-y-1.5'}`}>
             {
                 filteredOrders.map(order => (
-                    <OrderListing key={order._id} order={order}/>
+                    <OrderListing key={order._id} order={order} viewMode={viewMode}/>
                 ))
             }
         </div>

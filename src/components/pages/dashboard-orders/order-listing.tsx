@@ -11,10 +11,11 @@ import {Cancelled, InProgress, New, Ready} from "@/components/pages/dashboard-or
 
 interface OrderCardProps {
     order: Order
+    viewMode: "list" | "grid"
 }
 
 
-export function OrderListing({order}: OrderCardProps) {
+export function OrderListing({order, viewMode}: OrderCardProps) {
 
     const time = timeAgo(order.orderTime)
     const price = formatCurrency(order.total)
@@ -46,7 +47,7 @@ export function OrderListing({order}: OrderCardProps) {
             </div>
             <Separator className="block lg:hidden my-3"/>
             <div>
-                <div className='hidden lg:flex items-center space-x-2'>
+                <div className={`hidden lg:flex ${viewMode == "list"? "flex-row items-center": "flex-col space-y-2"} space-x-2`}>
                     <OrderBadge icon={QrCode}>
                         Mesa {order.tableNumber}
                     </OrderBadge>

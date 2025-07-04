@@ -293,7 +293,7 @@ export default function StockManagement() {
 
     // Recipe form
     const [newRecipe, setNewRecipe] = useState({
-        menuItemId: "",
+        menuItemId: "new",
         dishName: "",
         servings: "1",
         ingredients: [{ productId: "", quantity: "", unit: "", displayUnit: "" }],
@@ -1675,7 +1675,6 @@ export default function StockManagement() {
                                     <Label>Prato *</Label>
                                     <Select
                                         value={editRecipe.menuItemId}
-                                        defaultValue={editRecipe.menuItemId}
                                         onValueChange={(value) => {
                                             const item = menuItems.find(i => i._id === value)
                                             setEditRecipe({ ...editRecipe, menuItemId: value, dishName: item?.name || "" })

@@ -89,14 +89,14 @@ export function Header({ customOrderUrl }: HeaderProps) {
                 </div>
             </div>
             <div className="space-y-2">
-                <div className="flex sm:flex-col space-y-2 md:items-center md:justify-between md:flex-row md:space-x-4">
+                <div className=" space-y-2">
                     <Select onValueChange={handleTableFilterChange} defaultValue={"All" as Tag}>
                         <SelectTrigger className="w-[180px] focus:ring-0 focus:outline-none ">
                             <SelectValue placeholder={"Selecione uma mesa"}/>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value={"All" as Tag}>Todas</SelectItem>
+                                <SelectItem value={"All" as Tag}>Todas as mesas</SelectItem>
                                 {
                                     [...new Set(orders.map(order => order.tableNumber))].map((tableNumber, index) => (
                                         <SelectItem key={tableNumber} value={index.toString()}>
@@ -107,36 +107,40 @@ export function Header({ customOrderUrl }: HeaderProps) {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <div>
-                        <Button variant="secondary" className="hover:bg-zinc-200" onClick={toggleSorting}>
-                            {sorting == "asc" ?
-                                <>
-                                    <SortDescending/>
-                                    <span className="flex items-center">
+                    <div className="flex justify-between">
+                        <div>
+                            <Button variant="secondary" className="hover:bg-zinc-200" onClick={toggleSorting}>
+                                {sorting == "asc" ?
+                                    <>
+                                        <SortDescending/>
+                                        <span className="flex items-center">
                                     Antigo <ArrowRight className="mx-1.5"/> Recente
                                 </span>
-                                </> :
-                                <>
-                                    <SortAscending/>
-                                    <span className="flex items-center">
+                                    </> :
+                                    <>
+                                        <SortAscending/>
+                                        <span className="flex items-center">
                                     Recente <ArrowRight className="mx-1.5"/> Antigo
                                 </span>
-                                </>
+                                    </>
 
-                            }
-                        </Button>
+                                }
+                            </Button>
+                        </div>
+                        <div>
+                            <Button variant="secondary" className="hidden lg:block hover:bg-zinc-200"
+                                    onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}>
+                                {viewMode === 'list' ? <SquaresFour/> : <ListIcon/>}
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <Button variant="secondary" className="hover:bg-zinc-200" onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}>
-                            {viewMode === 'list' ? <SquaresFour/> : <ListIcon/>}
-                        </Button>
-                    </div>
+
                 </div>
                 <Button variant="outline" asChild>
-                <a href={customOrderUrl} target="_blank" rel="noopener noreferrer">
-                    Registar Pedido
-                </a>
-            </Button>
+                    <a href={customOrderUrl} target="_blank" rel="noopener noreferrer">
+                        Registar Pedido
+                    </a>
+                </Button>
             </div>
 
         </div>
