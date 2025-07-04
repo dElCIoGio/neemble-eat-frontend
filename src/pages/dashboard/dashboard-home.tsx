@@ -68,6 +68,7 @@ const insights: Insight[] = [
 
 export default function RestaurantDashboard(): JSX.Element {
     const [dateFilter, setDateFilter] = useState<DateFilter>("7days")
+    const [customDateRange, setCustomDateRange] = useState<{ from?: Date; to?: Date }>({})
     const [shiftFilter, setShiftFilter] = useState<ShiftFilter>("all")
     const [itemsTimeRange, setItemsTimeRange] = useState<ItemsTimeRange>("today")
     const [isExporting, setIsExporting] = useState<boolean>(false)
@@ -77,7 +78,10 @@ export default function RestaurantDashboard(): JSX.Element {
     } = useDashboardContext()
 
     // Helper function to get date range from filter
-    const getDateRangeFromFilter = (filter: DateFilter | ItemsTimeRange) => {
+    const getDateRangeFromFilter = (
+        filter: DateFilter | ItemsTimeRange,
+        custom?: { from?: Date; to?: Date }
+    ) => {
         const today = new Date()
         const from = new Date()
 
@@ -99,6 +103,10 @@ export default function RestaurantDashboard(): JSX.Element {
             case "month":
                 from.setDate(today.getDate() - 30)
                 break
+            case "custom":
+                if (custom?.from) from.setTime(custom.from.getTime())
+                if (custom?.to) today.setTime(custom.to.getTime())
+                break
         }
 
         return {
@@ -107,7 +115,10 @@ export default function RestaurantDashboard(): JSX.Element {
         }
     }
 
-    const dateRange = useMemo(() => getDateRangeFromFilter(dateFilter), [dateFilter])
+    const dateRange = useMemo(
+        () => getDateRangeFromFilter(dateFilter, customDateRange),
+        [dateFilter, customDateRange]
+    )
     const itemsDateRange = useMemo(() => getDateRangeFromFilter(itemsTimeRange), [itemsTimeRange])
 
 
@@ -268,6 +279,8 @@ export default function RestaurantDashboard(): JSX.Element {
         <DashboardHomeContext.Provider value={{
             dateFilter,
             setDateFilter,
+            customDateRange,
+            setCustomDateRange,
             shiftFilter,
             setShiftFilter,
             itemsTimeRange,
