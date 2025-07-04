@@ -22,11 +22,14 @@ import {useCart} from "@/hooks/use-cart";
 import {showErrorToast, showPromiseToast, showWarningToast} from "@/utils/notifications/toast";
 import {ordersApi} from "@/api/endpoints/orders/requests";
 import {sessionApi} from "@/api/endpoints/sessions/requests";
+import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
 
 
 export default function OrderCustomizationPage() {
 
     const {restaurantSlug} = useParams() as {restaurantSlug: string}
+
+    const { session, menu: restaurantMenu } = useRestaurantMenuContext()
 
     const {data: restaurant} = useGetRestaurantBySlug(restaurantSlug)
     const {data: menu} = useGetCurrentMenu(restaurant?._id)
@@ -39,7 +42,7 @@ export default function OrderCustomizationPage() {
         deleteProduct,
         findCartItemIndexByID,
         setCartEmpty,
-    } = useCart(restaurantSlug)
+    } = useCart(restaurantSlug, session._id, restaurantMenu._id)
 
     const [selectedTable, setSelectedTable] = useState<number | null>(null)
     const [currentItemIndex, setCurrentItemIndex] = useState(0)

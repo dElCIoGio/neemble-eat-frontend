@@ -56,7 +56,7 @@ function App() {
 
 
     return (
-        <div className="overflow-x-hidden">
+        <div className="">
             <Routes>
                 {/* Root */}
                 <Route path="/" element={<HomeLayout/>}>

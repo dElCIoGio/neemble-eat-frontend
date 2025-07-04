@@ -25,6 +25,7 @@ import {CartPopoverContent} from "@/components/pages/restaurant-menu/cart-popove
 import {ProductAdditionalInfo} from "@/components/pages/restaurant-menu-cart/product-additional-note";
 import {ShoppingCart} from "lucide-react";
 import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
+import {useParams} from "react-router";
 
 
 interface props {
@@ -35,11 +36,15 @@ interface props {
 
 export function Product({children, item}: props) {
 
+    const {restaurantSlug} = useParams() as unknown as {
+        tableNumber: string, restaurantSlug: string
+    };
+
     const {
-        restaurant
+        session, menu
     } = useRestaurantMenuContext()
 
-    const {cart, addItem} = useCart(restaurant._id)
+    const {cart, addItem} = useCart(restaurantSlug, session._id, menu._id)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [numberOfItems, setNumberOfItems] = useState(0)
     const [total, setTotal] = useState<number>(0)

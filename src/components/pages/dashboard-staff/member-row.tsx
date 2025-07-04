@@ -76,7 +76,7 @@ export default function MemberRow({ user }: MemberRowProps) {
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <div className="font-medium">
+                                        <div className="font-medium truncate max-w-40">
                                             {user._id === currentUser._id ? "Eu" : `${user.firstName} ${user.lastName}`}
                                         </div>
                                     </TooltipTrigger>
@@ -85,7 +85,6 @@ export default function MemberRow({ user }: MemberRowProps) {
                                     )}
                                 </Tooltip>
                             </TooltipProvider>
-                            <div className="text-sm text-gray-500">{user.email}</div>
                         </div>
                     </div>
                 </TableCell>

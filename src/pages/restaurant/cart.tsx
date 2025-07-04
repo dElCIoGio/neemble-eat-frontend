@@ -18,11 +18,11 @@ export function Cart() {
     document.title = "Carrinho"
 
     const {
-        restaurant
+        restaurant, session: tableSession, menu
     } = useRestaurantMenuContext()
 
-    const {tableNumber} = useParams() as unknown as {
-        tableNumber: string
+    const {tableNumber, restaurantSlug} = useParams() as unknown as {
+        tableNumber: string, restaurantSlug: string
     };
 
 
@@ -41,7 +41,7 @@ export function Cart() {
         incrementProduct,
         deleteProduct,
         decrementProduct,
-    } = useCart(restaurant._id)
+    } = useCart(restaurantSlug, tableSession._id, menu._id)
     const {
         data: session,
         isFetching: iSFetchingSession

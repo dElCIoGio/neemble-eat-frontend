@@ -86,7 +86,7 @@ function DashboardLayout() {
                             <div className="px-4">
                                 {/*<Header/>*/}
                             </div>
-                            <div className="p-4 flex flex-col flex-1">
+                            <div className="p-4 flex flex-col flex-1 overflow-x-hidden">
                                 <Outlet/>
                             </div>
                         </div>

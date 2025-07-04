@@ -15,28 +15,34 @@ export interface CartItem {
     customisations: CartItemCustomisation[]
 }
 
+const getCartKey = (restaurantSlug: string, sessionId: string, menuId: string) => {
+    return `neembleeat_cart_${restaurantSlug}_${sessionId}_${menuId}`
+}
 
-export const initializeCartInLocalStorage = (restaurantSlug: string) => {
+
+export const initializeCartInLocalStorage = (restaurantSlug: string, sessionId: string, menuId: string) => {
     const cart: Array<CartItem> = [];
-    localStorage.setItem(`neembleeat_cart_${restaurantSlug}`, JSON.stringify(cart));
+    const cartKey = getCartKey(restaurantSlug, sessionId, menuId)
+    localStorage.setItem(cartKey, JSON.stringify(cart));
     return cart;
 };
 
-export const getCartFromLocalStorage = (restaurantSlug: string): CartItem[] => {
-    const cart = localStorage.getItem(`neembleeat_cart_${restaurantSlug}`);
+export const getCartFromLocalStorage = (restaurantSlug: string, sessionId: string, menuId: string): CartItem[] => {
+    const cartKey = getCartKey(restaurantSlug, sessionId, menuId)
+    const cart = localStorage.getItem(cartKey);
     return cart ? JSON.parse(cart) : [];
 };
 
-export function getCart(restaurantSlug: string) {
-    const existingCart = getCartFromLocalStorage(restaurantSlug);
+export function getCart(restaurantSlug: string, sessionId: string, menuId: string) {
+    const existingCart = getCartFromLocalStorage(restaurantSlug, sessionId, menuId);
     if (existingCart) {
         return existingCart;
     } else {
-        return initializeCartInLocalStorage(restaurantSlug);
+        return initializeCartInLocalStorage(restaurantSlug, sessionId, menuId);
     }
 }
 
-export const saveCartToLocalStorage = (cart: Array<CartItem>, restaurantSlug: string) => {
-
-    localStorage.setItem(`neembleeat_cart_${restaurantSlug}`, JSON.stringify(cart));
+export const saveCartToLocalStorage = (cart: Array<CartItem>, restaurantSlug: string, sessionId: string, menuId: string) => {
+    const cartKey = getCartKey(restaurantSlug, sessionId, menuId)
+    localStorage.setItem(cartKey, JSON.stringify(cart));
 };
