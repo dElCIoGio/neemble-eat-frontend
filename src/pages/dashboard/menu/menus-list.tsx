@@ -201,7 +201,7 @@ function MenuCard({menu, isCurrentMenu, setMenuToDelete, setDeleteDialogOpen, ha
                     {/* RestaurantMenu Details */}
                     <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-semibold text-gray-900 ">{menu.name}</h3>
-                        <p className="text-gray-500 text-sm">{menu.description}</p>
+                        <p className="text-gray-500 text-sm max-w-full">{menu.description}</p>
                     </div>
 
                     {/* Status Badge */}
