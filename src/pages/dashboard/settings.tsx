@@ -14,6 +14,7 @@ import {
     useUpdateRestaurantOpeningHours,
     useUpdateRestaurantBanner,
     useUpdateRestaurantLogo,
+    useUpdateRestaurantAutomaticStock,
 } from "@/api/endpoints/restaurants/hooks";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {useQueryClient} from "@tanstack/react-query";
@@ -27,8 +28,12 @@ export default function Settings() {
     const updateOpeningHoursMutation = useUpdateRestaurantOpeningHours(restaurant._id)
     const updateBannerMutation = useUpdateRestaurantBanner(restaurant._id)
     const updateLogoMutation = useUpdateRestaurantLogo(restaurant._id)
+    const updateAutomaticStockMutation = useUpdateRestaurantAutomaticStock(restaurant._id)
 
     const [openingHours, setOpeningHours] = useState<OpeningHours>(restaurant.settings.openingHours || {})
+    const [automaticStock, setAutomaticStock] = useState<boolean>(
+        restaurant.settings.automaticStockAdjustments,
+    )
 
     const weekDayLabels: Record<string, string> = {
         sunday: "Domingo",
@@ -42,7 +47,8 @@ export default function Settings() {
 
     useEffect(() => {
         setOpeningHours(restaurant.settings.openingHours || {})
-    }, [restaurant.settings.openingHours])
+        setAutomaticStock(restaurant.settings.automaticStockAdjustments)
+    }, [restaurant.settings.openingHours, restaurant.settings.automaticStockAdjustments])
 
     const handleSave = () => {
         const promise = updateOpeningHoursMutation
@@ -88,6 +94,20 @@ export default function Settings() {
             loading: "Atualizando logo...",
             success: "Logo atualizado com sucesso",
             error: "Erro ao atualizar logo",
+        })
+    }
+
+    const handleAutomaticStockChange = (checked: boolean) => {
+        setAutomaticStock(checked)
+        const promise = updateAutomaticStockMutation
+            .mutateAsync(checked)
+            .then((updated) => {
+                queryClient.setQueryData(["currentRestaurantId"], updated)
+            })
+        showPromiseToast(promise, {
+            loading: "Atualizando configura\u00e7\u00e3o...",
+            success: "Configura\u00e7\u00e3o de estoque atualizada",
+            error: "Erro ao atualizar configura\u00e7\u00e3o",
         })
     }
 
@@ -324,7 +344,11 @@ export default function Settings() {
                                                 </Label>
                                                 <p className="text-sm text-muted-foreground">Descontar itens de estoque ao vender um produto</p>
                                             </div>
-                                            <Switch id="auto-reduce-stock" defaultChecked={restaurant.settings.automaticStockAdjustments} />
+                                            <Switch
+                                                id="auto-reduce-stock"
+                                                checked={automaticStock}
+                                                onCheckedChange={handleAutomaticStockChange}
+                                            />
                                         </div>
                                     </CardContent>
                                 </Card>
