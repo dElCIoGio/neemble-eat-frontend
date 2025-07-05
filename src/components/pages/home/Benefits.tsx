@@ -59,7 +59,7 @@ export default function Benefits() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.3 }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
-                className="pointer-events-none absolute -top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-gradient-to-br from-green-300 via-emerald-200 to-teal-100 blur-3xl"
+                className="pointer-events-none absolute -top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-gradient-to-br from-purple-300 via-purple-500 to-purple-100 blur-3xl"
             />
 
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -84,11 +84,11 @@ export default function Benefits() {
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                                 onClick={() => setActiveIndex(index)}
                                 className={`w-full text-left rounded-xl border p-5 shadow-sm transition hover:shadow-md ${
-                                    activeIndex === index ? "border-green-500 bg-white" : "bg-gray-100"
+                                    activeIndex === index ? "border-purple-500 bg-white" : "bg-gray-100"
                                 }`}
                             >
                                 <h3 className="mb-2 flex items-center gap-2 text-lg font-semibold text-gray-900 md:text-xl">
-                                    <Sparkles className="h-5 w-5 text-green-600" />
+                                    <Sparkles className="h-5 w-5 text-purple-600" />
                                     {group.title}
                                 </h3>
                                 <p className="text-sm text-gray-700">{group.description}</p>

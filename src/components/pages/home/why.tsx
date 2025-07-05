@@ -12,7 +12,7 @@ function WhyNeembleEat() {
                     transition={{ duration: 0.6 }}
                     className="text-center text-3xl font-extrabold tracking-tight text-gray-900 md:text-4xl mb-14"
                 >
-                    Por que restaurantes modernos escolhem a gente?
+                    Porquê a Neemble Eat...?
                 </motion.h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -51,7 +51,7 @@ function WhyNeembleEat() {
                             transition={{ duration: 0.4, ease: "easeOut" }}
                             className="rounded-xl border bg-gray-50 p-6 shadow-sm transition-transform"
                         >
-                            <h3 className="text-xl font-semibold mb-2 text-green-700">{item.title}</h3>
+                            <h3 className="text-xl font-semibold mb-2 text-purple-700">{item.title}</h3>
                             <p className="text-sm text-gray-700">{item.text}</p>
                         </motion.div>
                     ))}
