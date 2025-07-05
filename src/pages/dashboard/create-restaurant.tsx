@@ -27,7 +27,7 @@ const restaurantCreateSchema = z.object({
         .regex(/^[+]?[1-9][\d]{0,15}$/, "Por favor, insira um número de telefone válido"),
     bannerFile: z
         .instanceof(File, { message: "Imagem de banner é obrigatória" })
-        .refine((file) => file.size <= 5 * 1024 * 1024, "Imagem de banner deve ter menos de 5MB")
+        .refine((file) => file.size <= 5 * 1920 * 1080, "Imagem de banner deve ter menos de 5MB")
         .refine(
             (file) => ["image/jpeg", "image/jpg", "image/png"].includes(file.type),
             "Banner deve ser uma imagem PNG ou JPG",

@@ -52,6 +52,7 @@ function DashboardLayout() {
     const route = location.pathname.split("/")[2] || "";
 
     const { data: user } = useMe()
+
     const { data: restaurant } = useGetCurrentRestaurant()
     const { data: restaurants } = useGetUserRestaurants()
     const { mutate: setCurrentRestaurant } = useSetCurrentRestaurant()
