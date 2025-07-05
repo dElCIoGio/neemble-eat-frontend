@@ -5,6 +5,7 @@ import Pricing from "@/components/pages/home/Pricing";
 import {Testimonials} from "@/components/pages/home/Testimonials";
 import {Faq} from "@/components/pages/home/Faq";
 import {Cta} from "@/components/pages/home/CTA";
+import WhyNeembleEat from "@/components/pages/home/why";
 
 
 export function HomePage() {
@@ -29,6 +30,9 @@ export function HomePage() {
 
             {/* Testimonials Section */}
             <Testimonials/>
+
+            {/* Why Us */}
+            <WhyNeembleEat/>
 
             {/* FAQs Section */}
             <Faq/>
