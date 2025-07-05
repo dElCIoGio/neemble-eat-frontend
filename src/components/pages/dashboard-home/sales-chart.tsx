@@ -55,7 +55,7 @@ export default function SalesChart() {
                                         <TooltipTrigger className="w-full">
                                             <div className="flex flex-col items-center space-y-2 flex-1">
                                                 <div
-                                                    className="bg-primary rounded-t transition-all duration-500 hover:bg-primary/80 w-full"
+                                                    className="bg-gradient-to-t from-zinc-900 to-zinc-600 rounded-t transition-all duration-500 hover:bg-primary/80 w-full"
                                                     style={{ height: `${(data.sales / maxSales) * 160}px` }}
                                                 />
                                                 <div className="flex flex-col items-center space-y-1">

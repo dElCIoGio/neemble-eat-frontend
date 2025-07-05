@@ -39,7 +39,7 @@ export function Footer() {
                     <div>
                         <h3 className="font-semibold mb-4">Contato</h3>
                         <ul className="space-y-3 text-sm text-gray-500">
-                            <li>geral@neembleeat.com</li>
+                            <li>geral@neemble-eat.com</li>
                             <li>+244 927 318 912</li>
                             <li>Luanda, Angola</li>
                         </ul>
