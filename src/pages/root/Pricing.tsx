@@ -9,7 +9,7 @@ const plans = [
     {
         name: "Básico",
         description: "Para restaurantes pequenos começando sua jornada digital",
-        price: "20.000",
+        price: "35.000",
         period: "/mês",
         features: [
             "Menu digital via QR Code",
@@ -23,7 +23,7 @@ const plans = [
     {
         name: "Profissional",
         description: "Ideal para restaurantes em crescimento",
-        price: "35.000",
+        price: "45.000",
         period: "/mês",
         popular: true,
         features: [
