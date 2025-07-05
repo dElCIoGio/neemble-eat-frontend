@@ -20,6 +20,7 @@ import { useGoogleAuth } from "@/hooks/use-google-auth";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { authApi } from "@/api/endpoints/auth/endpoints";
+import { LoginForm } from "@/components/pages/login/login-form";
 
 
 interface SignupFormData {
@@ -88,7 +89,7 @@ export default function RestaurantInvitation() {
   const { signInWithGoogle } = useGoogleAuth();
 
 
-  const [currentView, setCurrentView] = useState<"invitation" | "signup">("invitation");
+  const [currentView, setCurrentView] = useState<"invitation" | "choice" | "signup" | "login">("invitation");
   const [signupData, setSignupData] = useState<SignupFormData>({
     firstName: "",
     lastName: "",
@@ -109,8 +110,27 @@ export default function RestaurantInvitation() {
     }
   }, [invitation, invitedEmail]);
 
-  const handleAcceptInvitation = () => setCurrentView("signup");
+  const handleAcceptInvitation = () => setCurrentView("choice");
   const handleDeclineInvitation = () => {};
+
+  const handleExistingLoginSuccess = async () => {
+    if (!invitation) return;
+    const user = await authApi.me();
+    await membershipsApi.addMembership(user._id, invitation.roleId);
+    await membershipsApi.activateMembership(user._id, invitation.restaurantId);
+    await invitationApi.deleteInvitation(invitation._id);
+    navigate("/dashboard");
+  };
+
+  const handleExistingLogin = () => {
+    const promise = handleExistingLoginSuccess();
+    showPromiseToast(promise, {
+      loading: "Aceitando convite...",
+      success: "Convite aceito!",
+      error: "Erro ao aceitar convite.",
+    });
+    return promise;
+  };
 
   const handleGoogleSignup = () => {
     const promise = signInWithGoogle()
@@ -225,6 +245,63 @@ export default function RestaurantInvitation() {
 
   if (managerError || !manager) {
     return renderError("Usuário não encontrado.");
+  }
+
+  if (currentView === "choice") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-6">
+          <Card className="shadow-xl border-0">
+            <CardHeader className="text-center space-y-2">
+              <div className="mx-auto w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                <Building2 className="h-6 w-6 text-orange-600" />
+              </div>
+              <CardTitle className="text-2xl font-bold">Como deseja continuar?</CardTitle>
+              <CardDescription>Escolha usar uma conta existente ou criar uma nova.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button className="w-full h-12 text-base font-medium" onClick={() => setCurrentView('login')}>
+                Entrar na minha conta
+              </Button>
+              <Button variant="outline" className="w-full h-12 text-base font-medium" onClick={() => setCurrentView('signup')}>
+                Criar nova conta
+              </Button>
+              <div className="text-center">
+                <Button variant="ghost" onClick={() => setCurrentView('invitation')} className="text-sm text-muted-foreground hover:text-foreground">
+                  ← Voltar ao convite
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentView === "login") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md space-y-4">
+          <Card className="shadow-xl border-0">
+            <CardHeader className="text-center space-y-2">
+              <div className="mx-auto w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                <Building2 className="h-6 w-6 text-orange-600" />
+              </div>
+              <CardTitle className="text-2xl font-bold">Entre na Sua Conta</CardTitle>
+              <CardDescription>Use uma conta existente para aceitar o convite</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LoginForm onLoggedIn={handleExistingLogin} />
+              <div className="text-center mt-4">
+                <Button variant="ghost" onClick={() => setCurrentView('choice')} className="text-sm text-muted-foreground hover:text-foreground">
+                  ← Voltar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   if (currentView === "signup") {

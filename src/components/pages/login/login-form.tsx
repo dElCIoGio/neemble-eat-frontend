@@ -21,9 +21,10 @@ import {Eye, EyeClosed} from "@phosphor-icons/react";
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string
+    onLoggedIn?: () => Promise<void> | void
 }
 
-export function LoginForm({ className, ...props }: LoginFormProps) {
+export function LoginForm({ className, onLoggedIn, ...props }: LoginFormProps) {
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
@@ -58,7 +59,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 toast.error("Deve completar o onboarding para poder continuar")
                 navigate("/onboarding")
             } else {
-                navigate("/dashboard")
+                if (onLoggedIn) {
+                    await onLoggedIn()
+                } else {
+                    navigate("/dashboard")
+                }
             }
         } catch (e: unknown) {
             const error = e as Error
@@ -85,7 +90,11 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 toast.error("Deve completar o onboarding para poder continuar")
                 navigate("/onboarding")
             } else {
-                navigate("/dashboard")
+                if (onLoggedIn) {
+                    await onLoggedIn()
+                } else {
+                    navigate("/dashboard")
+                }
             }
         } catch (e: unknown) {
             const error = e as Error
