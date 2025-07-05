@@ -1,52 +1,127 @@
-# Dashboard Reports Page UX
+# Neemble Eat Dashboard – Reports Page UX (Revision)
 
-This document outlines the proposed structure, user experience and workflow for the new **Reports** page.
+## 1. Objectives
+- Enable managers to **view, filter, and export** key sales‑related data (sales totals, invoices, items sold, cancelled orders).
+- Maintain visual consistency with the existing dashboard **left‑hand navigation sidebar** without introducing a second permanent sidebar.
+- Provide an experience that scales gracefully from desktop to mobile.
 
-## Goals
-- Allow managers to view and export key sales, invoice and item data
-- Provide filters by date, time and item categories to refine results
-- Support PDF/CSV export for full reports
+---
 
-## Page Layout
-1. **Header**
-   - Page title "Reports"
-   - Quick date range selector (Today, Last 7 days, Last 30 days, Custom)
-   - Export menu with PDF/CSV options for the current view
-2. **Filter Sidebar**
-   - Visible on desktop, collapsible on mobile
-   - Date range picker (start/end date and optional time)
-   - Item category multi‑select
-   - Order status selection (completed, cancelled)
-   - Invoice status selection (paid, pending)
-   - Apply/Reset buttons
-3. **Report Tabs**
-   - Sales Summary
-   - Invoices
-   - Items Sold
-   - Cancelled Items/Orders
-   - Each tab shows a table with sortable columns and pagination
-4. **Results Table**
-   - Displays filtered data for the active tab
-   - Columns adjust per tab (e.g. Items Sold includes quantity)
-   - Download row action for individual invoices/orders when applicable
-5. **Empty State**
-   - Friendly message when no data matches the filters
+## 2. Design Constraint & Solution
 
-## Workflow
-1. User opens the Reports page from the dashboard navigation
-2. Default view shows the Sales Summary tab for the last 7 days
-3. User adjusts filters in the sidebar and clicks **Apply**
-4. Frontend fetches data from the relevant endpoints with the selected filters
-5. Tables update to show results
-6. User can switch tabs without losing the current filter state
-7. Export menu downloads the current table data as PDF or CSV
-8. On mobile, filters open in a dialog for ease of use
+**Constraint:** The dashboard already has a persistent left navigation sidebar.
 
-## Components
-- `ReportsHeader` – contains the title, date presets and export menu
-- `ReportsFilters` – sidebar or dialog with filter controls
-- `ReportsTabs` – manages active tab and renders the correct table
-- `SalesTable`, `InvoicesTable`, `ItemsTable`, `CancelledTable` – table components for each tab
-- `ExportButton` – triggers PDF/CSV generation
-- Reuse existing UI atoms (buttons, inputs, date picker) from the design system
+**Solution:** Replace the planned secondary “Filter Sidebar” with a **contextual Filter Drawer** that slides in from the right on desktop and opens as a full‑screen sheet on mobile. A dedicated **Filter button** in the header toggles the drawer.
+
+- The drawer overlays content (does **not** shrink the page layout), preventing horizontal crowding.
+- A pill‑style badge on the Filter button displays the count of active filters.
+
+---
+
+## 3. Page Layout
+
+### 3.1 Header (Sticky)
+
+| Element | Purpose                                                           |
+|---------|-------------------------------------------------------------------|
+| **Page Title** – “Reports” | Contextual heading                                                |
+| **Quick Date Presets** | Chips: Today · Last 7 days (default) · Last 30 days · Custom      |
+| **Filter Button** | Opens the right drawer. Badge shows active‑filter count.          |
+| **Export Menu** | Dropdown: **Export →** PDF · CSV (applies to current table state) |
+
+### 3.2 Body
+┌───────────────────────────────────────────────┐
+│ Header (sticky) │
+├───────────────────────────────────────────────┤
+│ Report Tabs (horizontal) │
+│ ─ Sales Summary │ Invoices │ Items Sold │ … │
+├───────────────────────────────────────────────┤
+│ Insight Panel (Total Revenue, Top Item…) │
+├───────────────────────────────────────────────┤
+│ Results Table (sortable, paginated) │
+└───────────────────────────────────────────────┘
+
+
+### 3.3 Filter Drawer (Right)
+
+Visible only when invoked.
+
+- **Date Range Picker** (start/end date + optional time)
+- **Item Categories** (multi‑select)
+- **Order Status** (Completed, Cancelled)
+- **Invoice Status** (Paid, Pending)
+- **Action Buttons**: Apply · Reset
+
+#### Mobile Adaptation
+
+- Filter button reveals a **full‑screen modal sheet** with the same controls and sticky action bar (Apply/Reset) at the bottom.
+
+---
+
+## 4. Report Tabs & Tables
+
+| Tab               | Key Columns                                                 | Notes |
+|-------------------|-------------------------------------------------------------|-------|
+| **Sales Summary** | Date · Gross Sales · Net Sales · Orders                     | Default view |
+| **Invoices**      | Invoice # · Customer · Date · Status · Total · **Download** | Download row action (PDF) |
+| **Items Sold**    | Item · Category · Qty · Gross · Net                         | Sortable by Qty/Net |
+| **Cancelled**     | Order # · Item · Reason · Value                             | Combines cancelled items & orders |
+
+- Columns are **sortable**; tables paginate at 25 rows by default.
+- Empty‑state illustrations + helpful copy when no data matches.
+- Option to **customize visible columns** (future-ready feature).
+
+---
+
+## 5. Workflow (Happy Path)
+
+1. User selects **Reports** from the nav sidebar → default view = *Sales Summary/Last 7 days*.
+2. User clicks **Filter** → drawer opens.
+3. User sets filters → **Apply**.
+4. Frontend calls `/reports/{tab}` endpoint with query params (dates, categories, statuses).
+5. Results table refreshes. Active filter badge increments.
+6. User switches tabs; current filters persist (state stored in URL query string & context provider).
+7. User chooses **Export → CSV**; backend streams the filtered dataset.
+
+---
+
+## 6. Components
+
+| Component                                                    | Description |
+|--------------------------------------------------------------|-------------|
+| **ReportsHeader**                                            | Title, date presets, FilterButton (+badge), ExportMenu |
+| **FilterDrawer**                                             | Replaces sidebar; reused as full‑screen sheet on mobile |
+| **ReportsTabs**                                              | Manages active tab & URL syncing |
+| **InsightPanel**                                             | Displays Total Revenue, Top‑Selling Item, Avg. Order Value |
+| **SalesTable / InvoicesTable / ItemsTable / CancelledTable** | Data grids per tab |
+| **ExportButton**                                             | Handles PDF/CSV generation and triggers async export if large |
+| **DownloadCenter**                                           | Modal or section showing status/history of export jobs |
+| **UI Atoms**                                                 | Buttons, inputs, date picker from design system |
+
+---
+
+## 7. Accessibility & UX Notes
+
+- Filter drawer traps focus and returns it to the triggering button on close.
+- Tables provide `aria‑sort` attributes and keyboard navigation.
+- Badge uses `aria‑label` to announce number of active filters.
+- Empty states include actionable tips like "Try widening your filters" and examples.
+
+---
+
+## 8. Technical Considerations
+
+- Persist filter state in URL (`/reports?tab=sales&from=…&cats=…`). Enables deep‑links and browser refresh safety.
+- Lazy‑load table data after drawer **Apply** for performance.
+- Export endpoints stream data in chunks to avoid large payloads.
+- Large reports handled with **asynchronous export jobs** and downloadable links.
+
+---
+
+## 9. Future Enhancements
+
+- **Saved Filter Sets** for quick re‑application.
+- **Chart view toggle** to visualise trends above the table.
+- **Print-Friendly Report View** with simplified layout, logo, and timestamp.
+- **Global Search** across tabs (item name, invoice #, customer, etc.).
 

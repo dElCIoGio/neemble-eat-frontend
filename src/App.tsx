@@ -49,6 +49,7 @@ import OrderCustomizationPage from "@/pages/dashboard/custom-order";
 import TableMonitor from "@/pages/dashboard/table-monitor";
 import UserProfile from "@/pages/dashboard/profile";
 import TermsOfUse from "@/pages/outframe/terms-of-use";
+import ReportsPage from "@/pages/dashboard/reports";
 
 
 
@@ -126,6 +127,7 @@ function App() {
                         <Route path="orders-tracking" element={<OrdersTracking/>}/>
                         <Route path="table-monitor" element={<TableMonitor/>}/>
                         <Route path="profile" element={<UserProfile/>}/>
+                        <Route path="reports" element={<ReportsPage/>}/>
                     </Route>
                 </Route>
 

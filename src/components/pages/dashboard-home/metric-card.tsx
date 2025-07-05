@@ -30,13 +30,12 @@ export default function MetricCard({ title, value, growth, icon: Icon, format = 
 
     return (
         <Card className="bg-zinc-100 py-0 flex flex-col">
-            <Card className="flex-1 my-0 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] shadow-sm">
+            <Card className="border-none border-b flex-1 my-0 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground flex items-center space-x-1">
-                        <span>{title}</span>
+                    <CardTitle className="text-sm flex items-start font-medium text-muted-foreground space-x-1">
                         {info && (
                             <Tooltip>
-                                <TooltipTrigger asChild>
+                                <TooltipTrigger className="mt-1" asChild>
                                     <span className="cursor-default">
                                         <Info className="h-3.5 w-3.5 text-muted-foreground" />
                                     </span>
@@ -44,6 +43,8 @@ export default function MetricCard({ title, value, growth, icon: Icon, format = 
                                 <TooltipContent>{info}</TooltipContent>
                             </Tooltip>
                         )}
+                        <span>{title}</span>
+
                     </CardTitle>
                     <Icon className="h-4 w-4 text-purple-700"/>
                 </CardHeader>

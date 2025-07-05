@@ -4,11 +4,11 @@ import {
     CreditCard,
     Gear,
     House,
-    Icon,
+    type Icon,
     Lifebuoy,
     QrCode,
     UsersThree,
-    Package, CallBell, Chair,
+    Package, CallBell, Chair, ChartDonut,
 } from "@phosphor-icons/react";
 import {useLocation, useNavigate} from "react-router";
 import {
@@ -69,6 +69,11 @@ const navigation: {
         label: "Stock",
         icon: Package,
         href: "stock"
+    },
+    {
+        label: "Relatórios",
+        icon: ChartDonut,
+        href: "reports"
     },
     {
         label: "Subscrição",

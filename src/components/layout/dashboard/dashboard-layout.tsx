@@ -73,7 +73,7 @@ function DashboardLayout() {
     }
 
     return (
-        <DashboardContext value={{
+        <DashboardContext.Provider value={{
             page: route,
             user,
             restaurant: restaurant? restaurant : dummyRestaurant
@@ -95,7 +95,7 @@ function DashboardLayout() {
                     </main>
                 </div>
             </SidebarProvider>
-        </DashboardContext>
+        </DashboardContext.Provider>
     );
 }
 
