@@ -79,6 +79,11 @@ export function Header() {
                                                     Preços
                                                 </Link>
 
+                                                <Link to="about-us"
+                                                      className="block px-2 py-1 text-sm hover:bg-gray-100 rounded-md">
+                                                    Sobre Nós
+                                                </Link>
+
                                                 <div className="space-y-2">
                                                     <div className="text-sm font-medium text-gray-500 px-2">Recursos
                                                     </div>
@@ -182,6 +187,15 @@ export function Header() {
                                         <NavigationMenuLink asChild>
                                             <NavLink to="price" className="block p-2">
                                                 Preços
+                                            </NavLink>
+                                        </NavigationMenuLink>
+                                    </NavigationMenuItem>
+
+                                    {/* About Us */}
+                                    <NavigationMenuItem>
+                                        <NavigationMenuLink asChild>
+                                            <NavLink to="about-us" className="block p-2">
+                                                Sobre Nós
                                             </NavLink>
                                         </NavigationMenuLink>
                                     </NavigationMenuItem>
