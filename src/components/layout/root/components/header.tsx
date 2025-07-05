@@ -84,7 +84,7 @@ export function Header() {
                                                     Sobre Nós
                                                 </Link>
 
-                                                <div className="space-y-2">
+                                                <div className="space-y-2 hidden">
                                                     <div className="text-sm font-medium text-gray-500 px-2">Recursos
                                                     </div>
                                                     <div className="space-y-1">
@@ -201,7 +201,7 @@ export function Header() {
                                     </NavigationMenuItem>
 
                                     {/* Recursos */}
-                                    <NavigationMenuItem className="">
+                                    <NavigationMenuItem className="hidden">
                                         <NavigationMenuTrigger className="bg-none">Recursos</NavigationMenuTrigger>
                                         <NavigationMenuContent>
                                             <ul className="grid w-[300px] gap-2 rounded-md">

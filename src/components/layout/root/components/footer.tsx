@@ -44,7 +44,7 @@ export function Footer() {
                             <li>Luanda, Angola</li>
                         </ul>
                         <div className="mt-6 space-x-4">
-                            <Link to="#" target="_blank" rel="noopener noreferrer"
+                            <Link to="https://www.facebook.com/profile.php?id=61572481735004" target="_blank" rel="noopener noreferrer"
                                   className="text-gray-400 hover:text-gray-500">
                                 Facebook
                             </Link>
@@ -52,7 +52,7 @@ export function Footer() {
                                   className="text-gray-400 hover:text-gray-500">
                                 Instagram
                             </Link>
-                            <Link to="#" className="text-gray-400 hover:text-gray-500">
+                            <Link to="https://www.linkedin.com/company/neemble-ao/" className="text-gray-400 hover:text-gray-500">
                                 LinkedIn
                             </Link>
                         </div>
