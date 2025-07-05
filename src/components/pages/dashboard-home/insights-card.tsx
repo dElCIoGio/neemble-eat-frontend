@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Lightbulb } from "lucide-react"
+import { Lightbulb, Info } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 
 export default function InsightsCard() {
@@ -11,6 +12,14 @@ export default function InsightsCard() {
                 <CardTitle className="flex items-center space-x-2">
                     <Lightbulb className="h-5 w-5" />
                     <span>Insights com IA</span>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-default">
+                                <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>Sugestões automatizadas baseadas nos seus dados</TooltipContent>
+                    </Tooltip>
                 </CardTitle>
                 <CardDescription>Sugestões automatizadas baseadas nos seus dados</CardDescription>
             </CardHeader>

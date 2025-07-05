@@ -319,6 +319,7 @@ export default function RestaurantDashboard(): JSX.Element {
                             icon={DollarSign}
                             format="currency"
                             isLoading={isSalesSummaryLoading}
+                            info="Somatório das vendas no período selecionado"
                         />
                         <MetricCard
                             title="Faturas Emitidas"
@@ -327,6 +328,7 @@ export default function RestaurantDashboard(): JSX.Element {
                             icon={Receipt}
                             format="number"
                             isLoading={isInvoiceSummaryLoading}
+                            info="Número de faturas geradas para os pedidos"
                         />
                         <MetricCard
                             title="Valor Médio por Fatura"
@@ -335,6 +337,7 @@ export default function RestaurantDashboard(): JSX.Element {
                             icon={ShoppingCart}
                             format="currency"
                             isLoading={isSalesSummaryLoading}
+                            info="Média de valor das faturas emitidas"
                         />
                         <MetricCard
                             title="Mesas Servidas"
@@ -343,6 +346,7 @@ export default function RestaurantDashboard(): JSX.Element {
                             icon={Users}
                             format="number"
                             isLoading={isSalesSummaryLoading}
+                            info="Quantidade de mesas atendidas"
                         />
                         <MetricCard
                             title="Receita por Mesa"
@@ -351,6 +355,7 @@ export default function RestaurantDashboard(): JSX.Element {
                             icon={TrendingUp}
                             format="currency"
                             isLoading={isSalesSummaryLoading}
+                            info="Valor médio obtido por mesa servida"
                         />
                     </div>
                     <div className="grid gap-6 lg:grid-cols-3">

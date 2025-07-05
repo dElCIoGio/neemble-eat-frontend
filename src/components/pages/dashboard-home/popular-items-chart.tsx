@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 import { ItemsTimeRange } from "@/types/dashboard"
 
@@ -16,7 +18,17 @@ export default function PopularItemsChart() {
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                    <CardTitle>Itens Mais Populares</CardTitle>
+                    <CardTitle className="flex items-center space-x-1">
+                        <span>Itens Mais Populares</span>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className="cursor-default">
+                                    <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>Pratos mais vendidos</TooltipContent>
+                        </Tooltip>
+                    </CardTitle>
                     <CardDescription>Pratos mais vendidos</CardDescription>
                 </div>
                 <Select value={itemsTimeRange} onValueChange={(v: ItemsTimeRange) => setItemsTimeRange(v)}>

@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 
 export default function OrdersChart() {
@@ -21,7 +23,17 @@ export default function OrdersChart() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Pedidos vs Cancelamentos</CardTitle>
+                <CardTitle className="flex items-center space-x-1">
+                    <span>Pedidos vs Cancelamentos</span>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-default">
+                                <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>Comparação de pedidos realizados e cancelados</TooltipContent>
+                    </Tooltip>
+                </CardTitle>
                 <CardDescription>Comparação de pedidos realizados e cancelados</CardDescription>
             </CardHeader>
             <CardContent>

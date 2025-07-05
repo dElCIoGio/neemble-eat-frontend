@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 import { useIsMobile } from "@/hooks/use-mobile"
 
@@ -24,7 +25,17 @@ export default function SalesChart() {
     return (
         <Card className="col-span-full lg:col-span-2">
             <CardHeader>
-                <CardTitle>Evolução das Vendas</CardTitle>
+                <CardTitle className="flex items-center space-x-1 text-balance">
+                    <span>Evolução das Vendas</span>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-default">
+                                <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>Vendas diárias dos últimos 7 dias</TooltipContent>
+                    </Tooltip>
+                </CardTitle>
                 <CardDescription>Vendas diárias dos últimos 7 dias</CardDescription>
             </CardHeader>
             <CardContent>
