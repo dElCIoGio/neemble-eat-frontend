@@ -24,10 +24,19 @@ export function OrderListing({order, viewMode}: OrderCardProps) {
     return (
         <Card onClick={() => handleOrderSelected(order)}
               className={`p-4 w-full rounded-xl  transition-all duration-150 ${orderSelected?._id === order._id ? 'border-amethyst-400 outline outline-amethyst-800 bg-zinc-50' : "hover:bg-zinc-50"}`}>
-            <div className="flex justify-between w-full">
+            <div className=" w-full">
+
+
+                <div className="p-2 text-sm">
+                    {order.prepStatus === "queued" ? <New/> :
+                        order.prepStatus === "in_progress" ? <InProgress/> :
+                            order.prepStatus === "cancelled" ? <Cancelled/> :
+                                <Ready/>}
+                </div>
                 <div className={"w-full"}>
                     <div className="flex items-end space-x-1.5 font-semibold tracking-tight ">
-                        <h1 className=" w-fit text-base lg:text-lg">{order.orderedItemName}</h1> <span className="hidden text-zinc-600 text-base lg:block">x{order.quantity}</span>
+                        <h1 className="flex items-center space-x-1 w-fit text-base lg:text-lg"><span>{order.orderedItemName}</span> <span
+                            className="hidden text-zinc-600 text-base lg:block">x{order.quantity}</span></h1>
                     </div>
                     <div className="flex lg:hidden space-x-1.5 items-center text-zinc-600 font-poppins-regular w-full">
                         <h3>Quantidade: </h3>
@@ -37,17 +46,11 @@ export function OrderListing({order, viewMode}: OrderCardProps) {
                     </div>
 
                 </div>
-
-                <div className="p-2 text-sm">
-                    {order.prepStatus === "queued" ? <New/> :
-                        order.prepStatus === "in_progress" ? <InProgress/> :
-                            order.prepStatus === "cancelled" ? <Cancelled/> :
-                                <Ready/>}
-                </div>
             </div>
-            <Separator className="block lg:hidden my-3"/>
+            <Separator className="block lg:hidden"/>
             <div>
-                <div className={`hidden lg:flex ${viewMode == "list"? "flex-row items-center": "flex-col space-y-2"} space-x-2`}>
+                <div
+                    className={`hidden lg:flex ${viewMode == "list" ? "flex-row items-center" : "flex-col space-y-2"} space-x-2`}>
                     <OrderBadge icon={QrCode}>
                         Mesa {order.tableNumber}
                     </OrderBadge>
