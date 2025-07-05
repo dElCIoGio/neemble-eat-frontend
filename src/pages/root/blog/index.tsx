@@ -3,13 +3,14 @@ import {Input} from "@/components/ui/input";
 import {Link} from "react-router";
 import {Badge} from "@/components/ui/badge";
 import {useGetPosts} from "@/api/endpoints/blog/hooks";
+import {Skeleton} from "@/components/ui/skeleton";
 
 const topics = ["Todos", "Gestão", "Tecnologia", "Marketing", "Tendências", "Casos de Sucesso", "Dicas"]
 
 export default function BlogPage() {
     document.title = "Blog | Neemble Eat"
 
-    const { data: posts } = useGetPosts()
+    const { data: posts, isLoading } = useGetPosts()
 
     // Get a random read time between 3 and 10 minutes
     const getRandomReadTime = () => `${Math.floor(Math.random() * 8) + 3} min`
@@ -25,6 +26,59 @@ export default function BlogPage() {
 
     const featuredPost = posts?.[0] // Use first post as featured
     const regularPosts = posts?.slice(1) || [] // Rest of the posts
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-white">
+                <section className="bg-gray-50 py-12 md:py-20">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="max-w-2xl">
+                            <h1 className="text-4xl md:text-5xl font-bold mb-6">Blog Neemble Eat</h1>
+                            <p className="text-xl text-gray-600">
+                                Insights, dicas e histórias de sucesso para impulsionar seu restaurante
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="py-8 border-b">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div className="flex flex-wrap gap-2">
+                                {topics.map((topic, index) => (
+                                    <Button
+                                        key={topic}
+                                        variant={index === 0 ? "default" : "outline"}
+                                        size="sm"
+                                        className={index === 0 ? "bg-[#FF6B35] hover:bg-[#FF5722]" : ""}
+                                    >
+                                        {topic}
+                                    </Button>
+                                ))}
+                            </div>
+                            <div className="w-full md:w-auto">
+                                <Input placeholder="Pesquisar artigos..." className="max-w-xs" />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="py-12">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className="space-y-4">
+                                    <Skeleton className="h-48 rounded-xl" />
+                                    <Skeleton className="h-4 w-3/4" />
+                                    <Skeleton className="h-4 w-1/2" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen bg-white">
