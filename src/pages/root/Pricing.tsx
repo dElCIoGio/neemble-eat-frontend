@@ -189,7 +189,7 @@ export default function Pricing() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {features.map((feature) => (
                             <div key={feature.title} className="text-center">
-                                <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                                <div className="w-12 h-12 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
                                     <feature.icon className="w-6 h-6 text-purple-500"/>
                                 </div>
                                 <h3 className="font-semibold mb-2">{feature.title}</h3>
