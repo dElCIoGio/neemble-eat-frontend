@@ -16,7 +16,7 @@ export default function AboutUs() {
                     <div className="text-center max-w-3xl mx-auto mb-16">
                         <h1 className="text-4xl font-poppins md:text-5xl font-bold mb-6">Transformando a Experiência Gastronômica em Angola</h1>
                         <p className="text-xl text-gray-600">
-                            A Neemble Eat é mais do que um software — somos uma revolução digital nos restaurantes angolanos.
+                            A Neemble Eat é mais do que um software, somos uma revolução digital nos restaurantes angolanos.
                             Nosso propósito é modernizar a gestão e o atendimento no setor gastronômico, criando experiências mais rápidas, organizadas e humanas para clientes e estabelecimentos.
                         </p>
                     </div>
@@ -42,10 +42,10 @@ export default function AboutUs() {
                                 A Neemble Eat nasceu em Luanda, da visão partilhada por três amigos que identificaram um grande problema mas pouco resolvido: restaurantes com processos desorganizados, pedidos confusos ou perdidos e uma gestão pouco digitalizada.
                             </p>
                             <p>
-                                Em vez de aceitar o caos como normal, decidimos construir uma solução simples, mas poderosa — que transforma cada mesa num ponto inteligente de pedidos, reduz erros, acelera o atendimento e oferece dados em tempo real para os donos e gestores tomarem melhores decisões.
+                                Em vez de aceitar o caos como normal, decidimos construir uma solução simples, mas poderosa, que transforma cada mesa num ponto inteligente de pedidos, reduz erros, acelera o atendimento e oferece dados em tempo real para os donos e gestores tomarem melhores decisões.
                             </p>
                             <p>
-                                Começamos com um MVP em restaurantes local. Com o grande potencial de sucesso, sonhamos em ajudar inúmeros estabelecimentos a operar com mais agilidade, controle e eficiência — mesmo quando os donos não estão presentes.
+                                Começamos com um MVP em restaurantes local. Com o grande potencial de sucesso, sonhamos em ajudar inúmeros estabelecimentos a operar com mais agilidade, controle e eficiência mesmo quando os donos não estão presentes.
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -107,7 +107,7 @@ export default function AboutUs() {
                             </div>
                             <h3 className="text-xl font-bold mb-4">Excelência Técnica</h3>
                             <p className="text-gray-600">
-                                Somos obcecados pela qualidade do nosso produto. Construímos sistemas escaláveis, rápidos e seguros — prontos para o ritmo acelerado dos melhores restaurantes.                            </p>
+                                Somos obcecados pela qualidade do nosso produto. Construímos sistemas escaláveis, rápidos e seguros, prontos para o ritmo acelerado dos melhores restaurantes.                            </p>
                         </Card>
                     </div>
                 </div>
@@ -136,8 +136,8 @@ export default function AboutUs() {
                             },
                         ].map((member, index) => (
                             <Card key={index} className="p-6">
-                                <div className="relative h-[300px] rounded-lg overflow-hidden mb-6">
-                                    <img src="/placeholder.svg?height=300&width=300" alt={member.name}  className="object-cover" />
+                                <div className="relative hidden h-[300px] rounded-lg overflow-hidden mb-6">
+                                    <img src="/placeholder.svg?height=300&width=300" alt={member.name}  className="object-cover hidden" />
                                 </div>
                                 <div className="space-y-1">
                                     <h3 className="text-xl font-bold">{member.name}</h3>
