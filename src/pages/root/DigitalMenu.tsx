@@ -95,21 +95,21 @@ export default function DigitalMenu() {
 
                     <div className="grid md:grid-cols-3 gap-8">
                         <div className="text-center">
-                            <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
                                 <QrCode className="w-8 h-8 text-purple-500" />
                             </div>
                             <h3 className="font-semibold mb-2">1. Cliente escaneia o QR code</h3>
                             <p className="text-gray-600">Código único em cada mesa leva ao cardápio digital</p>
                         </div>
                         <div className="text-center">
-                            <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
                                 <Smartphone className="w-8 h-8 text-purple-500" />
                             </div>
                             <h3 className="font-semibold mb-2">2. Acessa o menu interativo</h3>
                             <p className="text-gray-600">Visualiza fotos, descrições e preços atualizados</p>
                         </div>
                         <div className="text-center">
-                            <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
                                 <Utensils className="w-8 h-8 text-purple-500" />
                             </div>
                             <h3 className="font-semibold mb-2">3. Faz o pedido</h3>
@@ -130,7 +130,7 @@ export default function DigitalMenu() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {features.map((feature) => (
                             <Card key={feature.title} className="p-6">
-                                <div className="w-12 h-12 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center mb-4">
+                                <div className="w-12 h-12 rounded-lg bg-purple-500/10 bg-opacity-10 flex items-center justify-center mb-4">
                                     <feature.icon className="w-6 h-6 text-purple-500" />
                                 </div>
                                 <h3 className="font-semibold mb-2">{feature.title}</h3>

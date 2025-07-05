@@ -27,35 +27,37 @@ export default function MetricCard({ title, value, growth, icon: Icon, format = 
     const GrowthIcon = isPositive ? TrendingUp : TrendingDown
 
     return (
-        <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-                <Icon className="h-4 w-4 text-purple-700" />
-            </CardHeader>
-            <CardContent>
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-16">
-                        <span className="text-sm text-muted-foreground">A carregar...</span>
-                    </div>
-                ) : value === undefined ? (
-                    <div className="flex items-center justify-center h-16">
-                        <span className="text-sm text-muted-foreground">Sem dados disponíveis</span>
-                    </div>
-                ) : (
-                    <>
-                        <div className="text-lg font-bold">{formatValue(value ?? 0, format)}</div>
-                        <div className="flex items-center space-x-1 text-xs mt-2">
-                            <GrowthIcon className={`h-3 w-3 ${isPositive ? "text-green-500" : "text-red-500"}`} />
-                            <div className="text-xs space-x-1">
-                                <span
-                                    className={isPositive ? "text-green-500" : "text-red-500"}>{Math.abs(growth).toFixed(1)}%</span>
-                                <span className="text-muted-foreground">vs. período anterior</span>
-                            </div>
-
+        <Card className="bg-zinc-100 py-0 flex flex-col">
+            <Card className="flex-1 my-0 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] shadow-sm">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+                    <Icon className="h-4 w-4 text-purple-700"/>
+                </CardHeader>
+                <CardContent>
+                    {isLoading ? (
+                        <div className="flex items-center justify-center h-16">
+                            <span className="text-sm text-muted-foreground">A carregar...</span>
                         </div>
-                    </>
-                )}
-            </CardContent>
+                    ) : value === undefined ? (
+                        <div className="flex items-center justify-center h-16">
+                            <span className="text-sm text-muted-foreground">Sem dados disponíveis</span>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="text-lg font-bold">{formatValue(value ?? 0, format)}</div>
+                        </>
+                    )}
+                </CardContent>
+            </Card>
+            <div className="px-2 mb-2 -mt-4 flex items-center space-x-1 text-xs">
+                <GrowthIcon className={`h-3 w-3 ${growth == 0 && "hidden"} ${isPositive ? "text-green-500" : "text-red-500"}`}/>
+                <div className="text-xs space-x-1">
+                                <span
+                                    className={isPositive ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>{Math.abs(growth).toFixed(1)}%</span>
+                    <span className="text-muted-foreground">vs. período anterior</span>
+                </div>
+            </div>
         </Card>
+
     )
 }

@@ -163,7 +163,7 @@ export default function OrderManagement() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {features.map((feature) => (
                             <Card key={feature.title} className="p-6">
-                                <div className="w-12 h-12 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center mb-4">
+                                <div className="w-12 h-12 rounded-lg bg-purple-500/10 bg-opacity-10 flex items-center justify-center mb-4">
                                     <feature.icon className="w-6 h-6 text-purple-500" />
                                 </div>
                                 <h3 className="font-semibold mb-2">{feature.title}</h3>
@@ -184,28 +184,28 @@ export default function OrderManagement() {
 
                     <div className="grid md:grid-cols-4 gap-8">
                         <div className="text-center">
-                            <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
                                 <Smartphone className="w-8 h-8 text-purple-500" />
                             </div>
                             <h3 className="font-semibold mb-2">1. Recebimento do Pedido</h3>
                             <p className="text-gray-600">Cliente faz o pedido via QR code ou garçom</p>
                         </div>
                         <div className="text-center">
-                            <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
                                 <Bell className="w-8 h-8 text-purple-500" />
                             </div>
                             <h3 className="font-semibold mb-2">2. Notificação Instantânea</h3>
                             <p className="text-gray-600">Cozinha recebe alerta do novo pedido</p>
                         </div>
                         <div className="text-center">
-                            <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
                                 <Utensils className="w-8 h-8 text-purple-500" />
                             </div>
                             <h3 className="font-semibold mb-2">3. Preparo</h3>
                             <p className="text-gray-600">Acompanhamento em tempo real do preparo</p>
                         </div>
                         <div className="text-center">
-                            <div className="w-16 h-16 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mx-auto mb-4">
                                 <Users className="w-8 h-8 text-purple-500" />
                             </div>
                             <h3 className="font-semibold mb-2">4. Entrega</h3>
@@ -257,7 +257,7 @@ export default function OrderManagement() {
             </section>
 
             {/* Testimonials */}
-            <section className="py-24">
+            <section className="py-24 hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid md:grid-cols-2 gap-8">
                         {[
@@ -276,7 +276,7 @@ export default function OrderManagement() {
                                 restaurant: "Café Marina",
                             },
                         ].map((testimonial, index) => (
-                            <Card key={index} className="p-8">
+                            <Card key={index} className="p-8 ">
                                 <blockquote className="text-lg text-gray-600 mb-6">"{testimonial.quote}"</blockquote>
                                 <div className="flex items-center gap-4">
                                     <div className="relative hidden w-12 h-12 rounded-full overflow-hidden">

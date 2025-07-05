@@ -108,7 +108,7 @@ export default function DataAnalysis() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {kpiCategories.map((category) => (
                             <Card key={category.title} className="p-6">
-                                <div className="w-12 h-12 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center mb-4">
+                                <div className="w-12 h-12 rounded-lg bg-purple-500/10 bg-opacity-10 flex items-center justify-center mb-4">
                                     <category.icon className="w-6 h-6 text-purple-500" />
                                 </div>
                                 <h3 className="font-semibold mb-4">{category.title}</h3>
@@ -178,7 +178,7 @@ export default function DataAnalysis() {
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {features.map((feature) => (
                             <Card key={feature.title} className="p-6">
-                                <div className="w-12 h-12 rounded-lg bg-purple-500 bg-opacity-10 flex items-center justify-center mb-4">
+                                <div className="w-12 h-12 rounded-lg bg-purple-500/10 bg-opacity-10 flex items-center justify-center mb-4">
                                     <feature.icon className="w-6 h-6 text-purple-500" />
                                 </div>
                                 <h3 className="font-semibold mb-2">{feature.title}</h3>
@@ -213,9 +213,9 @@ export default function DataAnalysis() {
                                         description: "Padrões de consumo e preferências",
                                     },
                                 ].map((report) => (
-                                    <Card key={report.title} className="p-4">
+                                    <Card key={report.title} className="p-4 hover:shadow-sm hover:-translate-y-1">
                                         <h4 className="font-semibold mb-2">{report.title}</h4>
-                                        <p className="text-sm text-gray-600">{report.description}</p>
+                                        <p className="text-sm text-zinc-600">{report.description}</p>
                                     </Card>
                                 ))}
                             </div>
@@ -233,7 +233,7 @@ export default function DataAnalysis() {
                                     "Insights automáticos baseados em IA",
                                     "Compartilhamento seguro de relatórios",
                                 ].map((item) => (
-                                    <li key={item} className="flex items-start gap-3">
+                                    <li key={item} className="flex items-start gap-3 ">
                                         <div className="mt-1">
                                             <Check className="w-5 h-5 text-green-500" />
                                         </div>
