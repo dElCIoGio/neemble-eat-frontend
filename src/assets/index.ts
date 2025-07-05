@@ -12,6 +12,13 @@ import MacBookDashboard from "./images/macbook-dashboard.png"
 import DesktopOrders from "./images/desktop-orders.png"
 import DesktopAnalytics from "./images/desktop-analytics.png"
 import DesktopMenu from "./images/desktop-menu.png"
+import Founders from "./images/img.png"
+import Demo from "./images/img_1.png"
+import NeembleTeam from "./images/img_3.png"
+import NeembleScreen from "./images/img_4.png"
+import NeembleClose from "./images/img_6.png"
+import NeembleBanner from "./images/img_7.png"
+import NeeembleRoom from "./images/img_8.png"
 
 export {
     BlackChef,
@@ -27,6 +34,12 @@ export {
     MacBookDashboard,
     DesktopOrders,
     DesktopAnalytics,
-    DesktopMenu
-
+    DesktopMenu,
+    Founders,
+    Demo,
+    NeembleTeam,
+    NeembleScreen,
+    NeembleClose,
+    NeembleBanner,
+    NeeembleRoom
 }

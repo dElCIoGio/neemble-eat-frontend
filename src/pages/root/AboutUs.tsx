@@ -2,6 +2,7 @@ import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {NavLink} from "react-router";
 import {Brain, Handshake, RocketLaunch} from "@phosphor-icons/react";
+import {Founders, Demo, NeeembleRoom, NeembleClose, NeembleBanner} from "@/assets";
 
 
 export default function AboutUs() {
@@ -20,9 +21,9 @@ export default function AboutUs() {
                         </p>
                     </div>
 
-                    <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden">
+                    <div className="relative rounded-2xl overflow-hidden">
                         <img
-                            src="/placeholder.svg?height=500&width=1200"
+                            src={NeembleBanner}
                             alt="Equipe Neemble Eat"
 
                             className="object-cover"
@@ -50,24 +51,24 @@ export default function AboutUs() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="relative h-[200px] rounded-lg overflow-hidden">
                                 <img
-                                    src="/placeholder.svg?height=200&width=200"
+                                    src={Founders}
                                     alt="Primeiros dias da Neemble Eat"
                                     className="object-cover"
                                 />
                             </div>
                             <div className="relative h-[200px] rounded-lg overflow-hidden">
-                                <img src="/placeholder.svg?height=200&width=200" alt="Equipe em ação"  className="object-cover" />
+                                <img src={Demo} alt="Equipe em ação"  className="object-cover" />
                             </div>
                             <div className="relative h-[200px] rounded-lg overflow-hidden">
                                 <img
-                                    src="/placeholder.svg?height=200&width=200"
+                                    src={NeeembleRoom}
                                     alt="Treinamento de clientes"
                                     className="object-cover"
                                 />
                             </div>
                             <div className="relative h-[200px] rounded-lg overflow-hidden">
                                 <img
-                                    src="/placeholder.svg?height=200&width=200"
+                                    src={NeembleClose}
                                     alt="Escritório em Luanda"
                                     className="object-cover"
                                 />
