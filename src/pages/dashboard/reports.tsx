@@ -1,70 +1,22 @@
 
-import { useState } from "react"
-import {SalesSummary} from "@/types/analytics";
+import { useState, useMemo } from "react"
 import {Invoice} from "@/types/invoice";
-import {DatePreset, FilterState} from "@/types/report";
+import {DatePreset, FilterState, SalesReportRow} from "@/types/report";
 import {ReportsTabs, ReportTab} from "@/components/pages/dashboard-reports/reports-tabs";
 import {SalesTable} from "@/components/pages/dashboard-reports/sales-tables";
 import {InvoicesTable} from "@/components/pages/dashboard-reports/invoices-table";
 import {ReportsHeader} from "@/components/pages/dashboard-reports/reports-header";
 import {InsightPanel} from "@/components/pages/dashboard-reports/insight-panel";
 import {FilterDrawer} from "@/components/pages/dashboard-reports/filter-drawer";
-
-
-// Mock data
-const mockSalesSummary: SalesSummary = {
-    totalSales: 45231.89,
-    invoiceCount: 234,
-    averageInvoice: 193.29,
-    distinctTables: 12,
-    revenuePerTable: 3769.32,
-    totalSalesGrowth: 12.5,
-    invoiceCountGrowth: 8.3,
-    averageInvoiceGrowth: 4.1,
-    distinctTablesGrowth: 0,
-    revenuePerTableGrowth: 12.5,
-}
-
-const mockSalesData = [
-    { date: "2024-01-15", grossSales: 2450.0, netSales: 2205.0, orders: 18 },
-    { date: "2024-01-14", grossSales: 1890.5, netSales: 1701.45, orders: 14 },
-    { date: "2024-01-13", grossSales: 3200.75, netSales: 2880.68, orders: 22 },
-    { date: "2024-01-12", grossSales: 2100.25, netSales: 1890.23, orders: 16 },
-    { date: "2024-01-11", grossSales: 2750.0, netSales: 2475.0, orders: 19 },
-]
-
-const mockInvoices: Invoice[] = [
-    {
-        id: "inv_001",
-        createdAt: "2024-01-15T10:30:00Z",
-        updatedAt: "2024-01-15T11:00:00Z",
-        restaurantId: "rest_001",
-        sessionId: "sess_001",
-        orders: ["order_001", "order_002"],
-        total: 125.5,
-        tax: 12.55,
-        discount: 0,
-        generatedTime: "2024-01-15T11:00:00Z",
-        status: "paid",
-        isActive: true,
-    },
-    {
-        id: "inv_002",
-        createdAt: "2024-01-15T12:15:00Z",
-        updatedAt: "2024-01-15T12:45:00Z",
-        restaurantId: "rest_001",
-        sessionId: "sess_002",
-        orders: ["order_003"],
-        total: 89.25,
-        tax: 8.93,
-        discount: 5.0,
-        generatedTime: "2024-01-15T12:45:00Z",
-        status: "pending",
-        isActive: true,
-    },
-]
+import {useDashboardContext} from "@/context/dashboard-context";
+import {useGetSalesSummary} from "@/api/endpoints/analytics/hooks";
+import {usePaginatedQuery} from "@/hooks/use-paginate";
+import {salesReportsClient, invoicesReportsClient} from "@/api/reports-client";
+import {apiClient} from "@/api/axios";
 
 export default function ReportsPage() {
+    const { restaurant } = useDashboardContext()
+
     const [activeTab, setActiveTab] = useState<ReportTab>("sales")
     const [selectedPreset, setSelectedPreset] = useState<DatePreset>("last7days")
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false)
@@ -81,14 +33,59 @@ export default function ReportsPage() {
         filters.orderStatus.length +
         filters.invoiceStatus.length
 
+    const dateRange = useMemo(() => {
+        const today = new Date()
+        const from = new Date()
+        switch (selectedPreset) {
+            case "today":
+                from.setHours(0, 0, 0, 0)
+                break
+            case "last7days":
+                from.setDate(today.getDate() - 7)
+                break
+            case "last30days":
+                from.setDate(today.getDate() - 30)
+                break
+            case "custom":
+                if (filters.dateRange.from) from.setTime(filters.dateRange.from.getTime())
+                if (filters.dateRange.to) today.setTime(filters.dateRange.to.getTime())
+                break
+        }
+        return { from: from.toISOString(), to: today.toISOString() }
+    }, [selectedPreset, filters.dateRange])
+
+    const salesParams = {
+        restaurantId: restaurant._id,
+        fromDate: dateRange.from,
+        toDate: dateRange.to,
+        categories: filters.categories.join(','),
+        status: filters.orderStatus.join(',')
+    }
+
+    const invoiceParams = {
+        restaurantId: restaurant._id,
+        fromDate: dateRange.from,
+        toDate: dateRange.to,
+        status: filters.invoiceStatus.join(',')
+    }
+
+    const salesQuery = usePaginatedQuery<SalesReportRow>(salesReportsClient, 25, undefined, salesParams)
+    const invoicesQuery = usePaginatedQuery<Invoice>(invoicesReportsClient, 25, undefined, invoiceParams)
+
+    const { data: salesSummary } = useGetSalesSummary({
+        restaurantId: restaurant._id,
+        fromDate: dateRange.from,
+        toDate: dateRange.to
+    })
+
     const handlePresetChange = (preset: DatePreset) => {
         setSelectedPreset(preset)
-        // In a real app, you'd update the date range based on the preset
     }
 
     const handleFilterApply = () => {
         setFilterDrawerOpen(false)
-        // In a real app, you'd fetch data based on filters
+        salesQuery.resetPagination()
+        invoicesQuery.resetPagination()
     }
 
     const handleFilterReset = () => {
@@ -98,19 +95,54 @@ export default function ReportsPage() {
             orderStatus: [],
             invoiceStatus: [],
         })
+        salesQuery.resetPagination()
+        invoicesQuery.resetPagination()
     }
 
-    const handleExport = (format: "pdf" | "csv") => {
-        // In a real app, you'd trigger the export
-        console.log(`Exporting as ${format}`)
+    const handleExport = async (format: "pdf" | "csv") => {
+        const params = activeTab === "sales" ? salesParams : invoiceParams
+        try {
+            const response = await apiClient.get(`/reports/${activeTab}/export`, {
+                params: { ...params, format },
+                responseType: 'blob'
+            })
+            const blob = new Blob([response.data])
+            const ext = format === 'pdf' ? 'pdf' : 'csv'
+            const link = document.createElement('a')
+            link.href = URL.createObjectURL(blob)
+            link.download = `report-${activeTab}.${ext}`
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+        } catch (e) {
+            console.error('Export failed', e)
+        }
     }
 
     const renderTabContent = () => {
         switch (activeTab) {
             case "sales":
-                return <SalesTable data={mockSalesData} />
+                return (
+                    <SalesTable
+                        data={salesQuery.data}
+                        currentPage={salesQuery.currentPage}
+                        totalPages={Math.ceil(salesQuery.totalCount / 25)}
+                        totalCount={salesQuery.totalCount}
+                        onNextPage={salesQuery.goToNextPage}
+                        onPrevPage={salesQuery.goToPreviousPage}
+                    />
+                )
             case "invoices":
-                return <InvoicesTable data={mockInvoices} />
+                return (
+                    <InvoicesTable
+                        data={invoicesQuery.data}
+                        currentPage={invoicesQuery.currentPage}
+                        totalPages={Math.ceil(invoicesQuery.totalCount / 25)}
+                        totalCount={invoicesQuery.totalCount}
+                        onNextPage={invoicesQuery.goToNextPage}
+                        onPrevPage={invoicesQuery.goToPreviousPage}
+                    />
+                )
             case "items":
                 return (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -143,7 +175,7 @@ export default function ReportsPage() {
             <div className=" mt-4 space-y-6">
                 <ReportsTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-                <InsightPanel data={mockSalesSummary} />
+                {salesSummary && <InsightPanel data={salesSummary} />}
 
                 <div className="bg-card rounded-lg border p-4">{renderTabContent()}</div>
             </div>

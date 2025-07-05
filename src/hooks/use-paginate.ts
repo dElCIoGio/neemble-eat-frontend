@@ -24,17 +24,18 @@ interface UsePaginatedQueryResult<T> {
 export function usePaginatedQuery<T>(
     axiosClient: AxiosInstance,
     limit: number = 10,
-    url?: string
+    url?: string,
+    params: Record<string, unknown> = {}
 ): UsePaginatedQueryResult<T> {
     const [cursor, setCursor] = useState<string | null>(null);
     const [, setCursorHistory] = useState<(string | null)[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['paginated', cursor, limit],
+        queryKey: ['paginated', axiosClient.defaults.baseURL, url, JSON.stringify(params), cursor, limit],
         queryFn: async (): Promise<PaginatedResponse<T>> => {
-            const response = await axiosClient.get<PaginatedResponse<T>>(url? url :'/paginate', {
-                params: { cursor, limit },
+            const response = await axiosClient.get<PaginatedResponse<T>>(url ? url : '/paginate', {
+                params: { cursor, limit, ...params },
             });
             return response.data;
         }
