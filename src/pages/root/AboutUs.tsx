@@ -1,6 +1,7 @@
 import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {NavLink} from "react-router";
+import {Brain, Handshake, RocketLaunch} from "@phosphor-icons/react";
 
 
 export default function AboutUs() {
@@ -12,10 +13,10 @@ export default function AboutUs() {
             <section className="pt-20 pb-16 md:pt-28 md:pb-24 bg-gradient-to-b from-purple-100 to-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-6">Transformando a experiência gastronômica em Angola</h1>
+                        <h1 className="text-4xl font-poppins md:text-5xl font-bold mb-6">Transformando a Experiência Gastronômica em Angola</h1>
                         <p className="text-xl text-gray-600">
-                            Nossa missão é impulsionar a inovação no setor de restaurantes, conectando clientes e estabelecimentos
-                            através da tecnologia.
+                            A Neemble Eat é mais do que um software — somos uma revolução digital nos restaurantes angolanos.
+                            Nosso propósito é modernizar a gestão e o atendimento no setor gastronômico, criando experiências mais rápidas, organizadas e humanas para clientes e estabelecimentos.
                         </p>
                     </div>
 
@@ -36,15 +37,14 @@ export default function AboutUs() {
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div className="space-y-6">
                             <h2 className="text-3xl md:text-4xl font-bold">Nossa História</h2>
-                            <p className="text-gray-600 text-lg">
-                                A Neemble Eat nasceu em 2023 em Luanda, da visão de três amigos apaixonados por tecnologia e
-                                gastronomia. Observando os desafios enfrentados pelos restaurantes locais, identificamos a necessidade
-                                de uma solução que simplificasse a gestão e melhorasse a experiência dos clientes.
+                            <p>
+                                A Neemble Eat nasceu em Luanda, da visão partilhada por três amigos que identificaram um grande problema mas pouco resolvido: restaurantes com processos desorganizados, pedidos confusos ou perdidos e uma gestão pouco digitalizada.
                             </p>
-                            <p className="text-gray-600 text-lg">
-                                Começamos com um projeto piloto em cinco restaurantes em Luanda, e rapidamente percebemos o impacto
-                                positivo que nossa tecnologia estava tendo. Hoje, atendemos dezenas de estabelecimentos em toda Angola,
-                                ajudando-os a prosperar na era digital.
+                            <p>
+                                Em vez de aceitar o caos como normal, decidimos construir uma solução simples, mas poderosa — que transforma cada mesa num ponto inteligente de pedidos, reduz erros, acelera o atendimento e oferece dados em tempo real para os donos e gestores tomarem melhores decisões.
+                            </p>
+                            <p>
+                                Começamos com um MVP em restaurantes local. Com o grande potencial de sucesso, sonhamos em ajudar inúmeros estabelecimentos a operar com mais agilidade, controle e eficiência — mesmo quando os donos não estão presentes.
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
@@ -83,49 +83,30 @@ export default function AboutUs() {
                     <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">Nossos Valores</h2>
                     <div className="grid md:grid-cols-3 gap-8">
                         <Card className="p-6">
-                            <div className="h-12 w-12 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mb-6">
-                                <svg className="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
+                            <div className="h-12 w-12 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mb-6">
+                                <RocketLaunch className="text-purple-900" size={32} />
                             </div>
-                            <h3 className="text-xl font-bold mb-4">Inovação Local</h3>
+                            <h3 className="text-xl font-bold mb-4">Inovação com Propósito</h3>
                             <p className="text-gray-600">
-                                Desenvolvemos soluções pensando nas necessidades específicas do mercado angolano, adaptando a tecnologia
-                                à nossa realidade.
+                                Não seguimos tendências. Criamos soluções que resolvem dores reais do setor gastronômico angolano, com foco na utilidade e impacto.
                             </p>
                         </Card>
                         <Card className="p-6">
-                            <div className="h-12 w-12 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mb-6">
-                                <svg className="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                                    />
-                                </svg>
+                            <div className="h-12 w-12 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mb-6">
+                                <Handshake className="text-purple-900" size={32} />
                             </div>
-                            <h3 className="text-xl font-bold mb-4">Compromisso com Clientes</h3>
+                            <h3 className="text-xl font-bold mb-4">Compromisso com Resultados</h3>
                             <p className="text-gray-600">
-                                Oferecemos suporte dedicado e treinamento contínuo para garantir o sucesso de cada estabelecimento
-                                parceiro.
+                                Estamos ao lado dos nossos parceiros em cada etapa. Medimos nosso sucesso pelos resultados que eles alcançam: mais pedidos, menos erros e clientes mais satisfeitos.
                             </p>
                         </Card>
                         <Card className="p-6">
-                            <div className="h-12 w-12 rounded-full bg-purple-500 bg-opacity-10 flex items-center justify-center mb-6">
-                                <svg className="w-6 h-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                                    />
-                                </svg>
+                            <div className="h-12 w-12 rounded-full bg-purple-500/10 bg-opacity-10 flex items-center justify-center mb-6">
+                                <Brain className="text-purple-900" size={32} />
                             </div>
                             <h3 className="text-xl font-bold mb-4">Excelência Técnica</h3>
                             <p className="text-gray-600">
-                                Mantemos os mais altos padrões de segurança e performance, garantindo um serviço confiável e eficiente.
-                            </p>
+                                Somos obcecados pela qualidade do nosso produto. Construímos sistemas escaláveis, rápidos e seguros — prontos para o ritmo acelerado dos melhores restaurantes.                            </p>
                         </Card>
                     </div>
                 </div>
@@ -140,26 +121,29 @@ export default function AboutUs() {
                             {
                                 name: "Marcio Tavares",
                                 role: "CEO & Co-fundador",
-                                bio: "15 anos de experiência em tecnologia e startups em Angola.",
+                                bio: "Gestor de negócios e finanças.",
                             },
                             {
                                 name: "Delcio Agostinho",
-                                role: "CTO & Co-fundadora",
+                                role: "CTO & Co-fundador",
                                 bio: "Especialista em desenvolvimento de software e sistemas escaláveis.",
                             },
                             {
                                 name: "Evandro Reis",
                                 role: "COO & Co-fundador",
-                                bio: "Experiência em gestão de restaurantes e operações.",
+                                bio: "Experiência em gestão e operações.",
                             },
                         ].map((member, index) => (
                             <Card key={index} className="p-6">
                                 <div className="relative h-[300px] rounded-lg overflow-hidden mb-6">
                                     <img src="/placeholder.svg?height=300&width=300" alt={member.name}  className="object-cover" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-2">{member.name}</h3>
-                                <p className="text-zinc-400 font-medium mb-4">{member.role}</p>
-                                <p className="text-gray-600">{member.bio}</p>
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-bold">{member.name}</h3>
+                                    <p className="text-purple-700 font-medium">{member.role}</p>
+                                    <p className="text-gray-600">{member.bio}</p>
+                                </div>
+
                             </Card>
                         ))}
                     </div>
@@ -167,7 +151,7 @@ export default function AboutUs() {
             </section>
 
             {/* Impact Section */}
-            <section className="py-24 bg-gray-50">
+            <section className="py-24 bg-gray-50 hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">Nosso Impacto</h2>
                     <div className="grid md:grid-cols-4 gap-8 text-center">
@@ -191,8 +175,7 @@ export default function AboutUs() {
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 className="text-3xl md:text-4xl font-bold mb-6">Faça Parte da Revolução Digital</h2>
                     <p className="text-xl text-gray-600 mb-8">
-                        Junte-se a nós na missão de transformar a experiência gastronômica em Angola
-                    </p>
+                        Junte-se à Neemble Eat e transforme o seu restaurante em um exemplo de agilidade, controle e inovação no setor gastronômico angolano.                    </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-6 text-sm">
                             <NavLink to="../demo">
