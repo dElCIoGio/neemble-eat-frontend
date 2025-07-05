@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { TrendingDown, TrendingUp } from "lucide-react"
+import { TrendingDown, TrendingUp, Info } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { MetricFormat } from "@/types/dashboard"
 
 interface MetricCardProps {
@@ -9,6 +10,7 @@ interface MetricCardProps {
     icon: React.ComponentType<{ className?: string }>
     format?: MetricFormat
     isLoading?: boolean
+    info?: string
 }
 
 function formatValue(val: number, format: MetricFormat): string {
@@ -22,7 +24,7 @@ function formatValue(val: number, format: MetricFormat): string {
     }
 }
 
-export default function MetricCard({ title, value, growth, icon: Icon, format = "currency", isLoading = false }: MetricCardProps) {
+export default function MetricCard({ title, value, growth, icon: Icon, format = "currency", isLoading = false, info }: MetricCardProps) {
     const isPositive = growth > 0
     const GrowthIcon = isPositive ? TrendingUp : TrendingDown
 
@@ -30,7 +32,19 @@ export default function MetricCard({ title, value, growth, icon: Icon, format = 
         <Card className="bg-zinc-100 py-0 flex flex-col">
             <Card className="flex-1 my-0 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] shadow-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+                    <CardTitle className="text-sm font-medium text-muted-foreground flex items-center space-x-1">
+                        <span>{title}</span>
+                        {info && (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className="cursor-default">
+                                        <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent>{info}</TooltipContent>
+                            </Tooltip>
+                        )}
+                    </CardTitle>
                     <Icon className="h-4 w-4 text-purple-700"/>
                 </CardHeader>
                 <CardContent>

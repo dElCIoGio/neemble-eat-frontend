@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download, FileText } from "lucide-react"
+import { Download, FileText, Info } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 
 export default function ExportButtons() {
@@ -9,7 +10,17 @@ export default function ExportButtons() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Exportar Dados</CardTitle>
+                <CardTitle className="flex items-center space-x-1">
+                    <span>Exportar Dados</span>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-default">
+                                <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>Descarregue os dados do dashboard em diferentes formatos</TooltipContent>
+                    </Tooltip>
+                </CardTitle>
                 <CardDescription>Descarregue os dados do dashboard em diferentes formatos</CardDescription>
             </CardHeader>
             <CardContent>

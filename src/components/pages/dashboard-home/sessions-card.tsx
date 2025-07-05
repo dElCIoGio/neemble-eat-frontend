@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Clock, TrendingUp, Users } from "lucide-react"
+import { Clock, TrendingUp, Users, Info } from "lucide-react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 
 export default function SessionsCard() {
@@ -15,7 +16,17 @@ export default function SessionsCard() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Sessões de Cliente</CardTitle>
+                <CardTitle className="flex items-center space-x-1">
+                    <span>Sessões de Cliente</span>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-default">
+                                <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
+                        </TooltipTrigger>
+                        <TooltipContent>Duração e atividade das sessões</TooltipContent>
+                    </Tooltip>
+                </CardTitle>
                 <CardDescription>Duração e atividade das sessões</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
