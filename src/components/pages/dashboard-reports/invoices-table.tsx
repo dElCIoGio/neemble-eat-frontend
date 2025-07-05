@@ -8,12 +8,16 @@ import {Invoice} from "@/types/invoice";
 
 interface InvoicesTableProps {
     data: Invoice[]
+    currentPage: number
+    totalPages: number
+    totalCount: number
+    onNextPage: () => void
+    onPrevPage: () => void
 }
 
-export function InvoicesTable({ data }: InvoicesTableProps) {
+export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNextPage, onPrevPage }: InvoicesTableProps) {
     const [sortField, setSortField] = useState<keyof Invoice>("generatedTime")
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
-    const [currentPage, setCurrentPage] = useState(1)
     const itemsPerPage = 25
 
     const handleSort = (field: keyof Invoice) => {
@@ -36,9 +40,8 @@ export function InvoicesTable({ data }: InvoicesTableProps) {
         return sortDirection === "asc" ? (aValue as number) - (bValue as number) : (bValue as number) - (aValue as number)
     })
 
-    const totalPages = Math.ceil(sortedData.length / itemsPerPage)
     const startIndex = (currentPage - 1) * itemsPerPage
-    const paginatedData = sortedData.slice(startIndex, startIndex + itemsPerPage)
+    const paginatedData = sortedData
 
     const getStatusBadge = (status: string) => {
         const variants = {
@@ -118,26 +121,23 @@ export function InvoicesTable({ data }: InvoicesTableProps) {
             {/* Pagination */}
             <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, sortedData.length)} of {sortedData.length}{" "}
-                    results
+                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalCount)} of {totalCount} results
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setCurrentPage(currentPage - 1)}
+                        onClick={onPrevPage}
                         disabled={currentPage === 1}
                     >
                         <ChevronLeft className="h-4 w-4" />
                         Previous
                     </Button>
-                    <div className="text-sm">
-                        Page {currentPage} of {totalPages}
-                    </div>
+                    <div className="text-sm">Page {currentPage} of {totalPages}</div>
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setCurrentPage(currentPage + 1)}
+                        onClick={onNextPage}
                         disabled={currentPage === totalPages}
                     >
                         Next
