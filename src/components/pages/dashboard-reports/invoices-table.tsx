@@ -4,7 +4,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowUpDown, ChevronLeft, ChevronRight, Download } from "lucide-react"
-import {Invoice} from "@/types/invoice";
+import { Invoice } from "@/types/invoice"
+import { invoicesApi } from "@/api/endpoints/invoices/requests"
+import { generateInvoiceTex } from "@/lib/templates/invoice"
+import { compileLatexToPdf } from "@/lib/helpers/compile-latex"
 
 interface InvoicesTableProps {
     data: Invoice[]
@@ -26,6 +29,24 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
         } else {
             setSortField(field)
             setSortDirection("asc")
+        }
+    }
+
+    const handleDownload = async (invoiceId: string) => {
+        try {
+            const data = await invoicesApi.getInvoiceData(invoiceId)
+            const tex = generateInvoiceTex(data)
+            const pdfBlob = await compileLatexToPdf(tex)
+            const url = URL.createObjectURL(pdfBlob)
+            const link = document.createElement("a")
+            link.href = url
+            link.download = `invoice-${invoiceId}.pdf`
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            URL.revokeObjectURL(url)
+        } catch (err) {
+            console.error("Failed to download invoice", err)
         }
     }
 
@@ -108,7 +129,11 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
                                 <TableCell>{getStatusBadge(invoice.status)}</TableCell>
                                 <TableCell className="text-right">${invoice.total?.toFixed(2) || "0.00"}</TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleDownload(invoice._id)}
+                                    >
                                         <Download className="h-4 w-4" />
                                     </Button>
                                 </TableCell>
