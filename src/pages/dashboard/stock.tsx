@@ -244,8 +244,6 @@ export default function StockManagement() {
         status: statusFilter
     }
 
-    console.log(filter)
-
     const paginatedStockItems = usePaginatedQuery<StockItem>(
         stockItemClient,
         10,

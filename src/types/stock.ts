@@ -33,6 +33,10 @@ export type StockItem = {
 } & StockItemCreate
 
 
+type OptionalStockItemFields = Partial<Omit<StockItem, '_id' | 'createdAt' | 'updatedAt'>>;
+
+export type PartialStockItem = OptionalStockItemFields;
+
 export type MovementCreate = {
     productId: string;
     productName: string;
