@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useState, useCallback, useMemo } from 'react';
 import type {AxiosInstance} from 'axios';
 
+
+
 interface PaginatedResponse<T> {
     items: T[];
     nextCursor: string | null;
@@ -9,7 +11,7 @@ interface PaginatedResponse<T> {
     hasMore: boolean;
 }
 
-interface UsePaginatedQueryResult<T> {
+export interface UsePaginatedQueryResult<T> {
     data: T[];
     totalCount: number;
     hasMore: boolean;

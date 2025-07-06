@@ -7,7 +7,7 @@ import { ArrowUpDown, ChevronLeft, ChevronRight, Download } from "lucide-react"
 import { Invoice } from "@/types/invoice"
 import { invoicesApi } from "@/api/endpoints/invoices/requests"
 import { generateInvoiceTex } from "@/lib/templates/invoice"
-import { compileLatexToPdf } from "@/lib/helpers/compile-latex"
+import {handleCompile} from "@/lib/helpers/compile-latex"
 
 interface InvoicesTableProps {
     data: Invoice[]
@@ -35,16 +35,19 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
     const handleDownload = async (invoiceId: string) => {
         try {
             const data = await invoicesApi.getInvoiceData(invoiceId)
+            console.log(data)
             const tex = generateInvoiceTex(data)
-            const pdfBlob = await compileLatexToPdf(tex)
-            const url = URL.createObjectURL(pdfBlob)
-            const link = document.createElement("a")
-            link.href = url
-            link.download = `invoice-${invoiceId}.pdf`
-            document.body.appendChild(link)
-            link.click()
-            link.remove()
-            URL.revokeObjectURL(url)
+            const pdfBlob = await handleCompile(tex)
+            if (pdfBlob) {
+                const url = URL.createObjectURL(pdfBlob)
+                const link = document.createElement("a")
+                link.href = url
+                link.download = `invoice-${invoiceId}.pdf`
+                document.body.appendChild(link)
+                link.click()
+                link.remove()
+                URL.revokeObjectURL(url)
+            }
         } catch (err) {
             console.error("Failed to download invoice", err)
         }
@@ -132,7 +135,9 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => handleDownload(invoice._id)}
+                                        onClick={() => {
+                                            handleDownload(invoice._id)
+                                        }}
                                     >
                                         <Download className="h-4 w-4" />
                                     </Button>

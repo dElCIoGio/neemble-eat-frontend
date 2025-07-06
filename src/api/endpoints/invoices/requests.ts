@@ -51,7 +51,8 @@ export const invoicesApi = {
     },
 
     getInvoiceData: async (invoiceId: string) => {
-        const response = await apiClient.get<InvoiceData>(`${baseRoute}/${invoiceId}`);
+        const response = await apiClient.get<InvoiceData>(`${baseRoute}/${invoiceId}/data`);
+        console.log(response.data)
         return response.data;
     }
 

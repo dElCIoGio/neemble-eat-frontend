@@ -57,7 +57,6 @@ import type {
 } from "@/types/stock"
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
-    useGetStockItems,
     useCreateStockItem,
     useUpdateStockItem,
     useDeleteStockItem,
@@ -71,6 +70,18 @@ import {useRegisterSale} from "@/api/endpoints/sales/hooks";
 import {useGetMovements, useCreateMovement} from "@/api/endpoints/movements/hooks";
 import type {MovementCreate} from "@/types/stock";
 import {formatIsosDate} from "@/lib/helpers/format-isos-date";
+import {usePaginatedQuery, UsePaginatedQueryResult} from "@/hooks/use-paginate";
+import {stockItemClient} from "@/api";
+
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+} from "@/components/ui/pagination"
+import {CaretLeft, CaretRight} from "@phosphor-icons/react";
+
 
 interface StockCardProps {
     item: StockItem
@@ -227,10 +238,24 @@ export default function StockManagement() {
 
     const { restaurant, user } = useDashboardContext()
 
+    const filter = {
+        search: searchTerm,
+        category: categoryFilter,
+        status: statusFilter
+    }
+
+    console.log(filter)
+
+    const paginatedStockItems = usePaginatedQuery<StockItem>(
+        stockItemClient,
+        10,
+        `/restaurant/${restaurant._id}/paginate`,
+        filter)
     const {
-        data: stockItems = [],
+        data: stockItems,
         isLoading: isStockLoading,
-    } = useGetStockItems(restaurant._id)
+    } = paginatedStockItems
+
     const createStockItemMutation = useCreateStockItem(restaurant._id)
     const updateStockItemMutation = useUpdateStockItem(restaurant._id)
     const deleteStockItemMutation = useDeleteStockItem(restaurant._id)
@@ -360,27 +385,6 @@ export default function StockManagement() {
     const getCurrentDate = () => {
         return new Date()
     }
-
-
-
-    // Check for expiring products
-    // const getExpiringProducts = () => {
-    //     const today = new Date()
-    //     const threeDaysFromNow = new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000)
-    //
-    //     return stockItems.filter((item) => {
-    //         if (!item.expiryDate) return false
-    //         const expiryDate = new Date(item.expiryDate.split("/").reverse().join("-"))
-    //         return expiryDate <= threeDaysFromNow
-    //     })
-    // }
-
-    // Auto-reorder suggestions
-    // const getAutoReorderSuggestions = () => {
-    //     return stockItems.filter(
-    //         (item) => item.autoReorder && item.reorderPoint && item.currentQuantity <= item.reorderPoint,
-    //     )
-    // }
 
     // Calculate total stock value
     const getTotalStockValue = () => {
@@ -528,46 +532,6 @@ export default function StockManagement() {
         const updatedIngredients = newRecipe.ingredients.filter((_, i) => i !== index)
         setNewRecipe({ ...newRecipe, ingredients: updatedIngredients })
     }
-
-    // Generate purchase order
-    // const generatePurchaseOrder = () => {
-    //     const orderItems = autoReorderSuggestions.map((item) => ({
-    //         product: item.name,
-    //         currentStock: item.currentQuantity,
-    //         reorderPoint: item.reorderPoint,
-    //         suggestedQuantity: item.reorderQuantity,
-    //         supplier: item.supplier,
-    //         estimatedCost: (item.reorderQuantity || 0) * (item.cost || 0),
-    //     }))
-    //
-    //     const csvContent = [
-    //         ["Produto", "Stock Atual", "Ponto de Reposição", "Quantidade Sugerida", "Fornecedor", "Custo Estimado"],
-    //         ...orderItems.map((item) => [
-    //             item.product,
-    //             item.currentStock.toString(),
-    //             item.reorderPoint?.toString() || "0",
-    //             item.suggestedQuantity?.toString() || "0",
-    //             item.supplier,
-    //             `€${item.estimatedCost.toFixed(2)}`,
-    //         ]),
-    //     ]
-    //         .map((row) => row.join(","))
-    //         .join("\n")
-    //
-    //     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    //     const link = document.createElement("a")
-    //     const url = URL.createObjectURL(blob)
-    //     link.setAttribute("href", url)
-    //     link.setAttribute("download", `ordem_compra_${getCurrentDate().replace(/\//g, "-")}.csv`)
-    //     link.style.visibility = "hidden"
-    //     document.body.appendChild(link)
-    //     link.click()
-    //     document.body.removeChild(link)
-    //
-    //     toast("Ordem de Compra Gerada", {
-    //         description: "Ficheiro CSV com sugestões de compra foi descarregado.",
-    //     })
-    // }
 
 
     // Previous functions (handleAddProduct, handleEditProduct, etc.) remain the same...
@@ -1174,6 +1138,10 @@ export default function StockManagement() {
                                     ))
                                 )}
                             </div>
+                            <div className="w-1/2 mt-6 mx-auto">
+                                <PaginationManager {...paginatedStockItems}/>
+                            </div>
+
 
                             {/* Pagination */}
                             {!isLoading && totalPages > 1 && (
@@ -2459,3 +2427,73 @@ export default function StockManagement() {
 }
 
 
+function PaginationManager(query: UsePaginatedQueryResult<StockItem>) {
+
+    const {
+        currentPage,
+        hasMore,
+        isLoading,
+        resetPagination,
+        goToNextPage,
+        goToPreviousPage
+    } = query
+
+    return (
+        <Pagination>
+            <PaginationContent className="flex justify-between w-full">
+                <PaginationItem>
+                    <Button variant="ghost" className="flex items-center" disabled={isLoading || currentPage == 1} onClick={goToPreviousPage}>
+                        <CaretLeft/> <span>
+                        Anterior
+                    </span>
+                    </Button>
+                </PaginationItem>
+                <div className="flex items-center space-x-0.5">
+                    {
+                        currentPage > 2 && (
+                            <>
+                                <PaginationItem onClick={resetPagination}>
+                                    <PaginationLink>1</PaginationLink>
+                                </PaginationItem>
+                                {
+                                    currentPage > 3 && (
+                                        <PaginationItem>
+                                            <PaginationEllipsis />
+                                        </PaginationItem>
+                                    )
+                                }
+                            </>
+
+                        )
+                    }
+                    {
+                        (currentPage - 1) > 0 && (
+                            <PaginationItem onClick={goToPreviousPage}>
+                                <PaginationLink>{currentPage - 1}</PaginationLink>
+                            </PaginationItem>
+                        )
+                    }
+                    <PaginationItem>
+                        <PaginationLink className="bg-zinc-100">{currentPage}</PaginationLink>
+                    </PaginationItem>
+                    {
+                        hasMore && (
+                            <PaginationItem>
+                                <Button variant="ghost" disabled={isLoading} onClick={goToNextPage}>
+                                    {currentPage + 1}
+                                </Button>
+                            </PaginationItem>
+                        )
+                    }
+                </div>
+                <PaginationItem>
+                    <Button className="flex items-center" variant="ghost" disabled={isLoading || !hasMore} onClick={goToNextPage}>
+                        <span>
+                            Próximo
+                        </span> <CaretRight/>
+                    </Button>
+                </PaginationItem>
+            </PaginationContent>
+        </Pagination>
+    )
+}
