@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {DatePreset} from "@/types/report";
+import {Card} from "@/components/ui/card";
 
 
 interface ReportsHeaderProps {
@@ -28,8 +29,8 @@ export function ReportsHeader({
                                   onExport,
                               }: ReportsHeaderProps) {
     return (
-        <div className="sticky top-0 z-0 bg-background border-b">
-            <div className="flex flex-col gap-4 p-6">
+        <Card className="sticky top-0 z-0 p-4">
+            <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-bold tracking-tight">Reports</h1>
                     <div className="flex items-center gap-2">
@@ -81,6 +82,6 @@ export function ReportsHeader({
                     ))}
                 </div>
             </div>
-        </div>
+        </Card>
     )
 }

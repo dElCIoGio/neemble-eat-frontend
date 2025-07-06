@@ -1,13 +1,6 @@
 import { apiClient } from "@/api/axios";
 import { Invoice, InvoiceCreate, PartialInvoice } from "@/types/invoice";
 
-interface PaginatedResponse<T> {
-    items: T[];
-    nextCursor: string | null;
-    totalCount: number;
-    hasMore: boolean;
-}
-
 const baseRoute = "/invoices";
 
 export const invoicesApi = {
@@ -56,15 +49,5 @@ export const invoicesApi = {
         return response.data;
     },
 
-    downloadInvoice: async (invoiceId: string) => {
-        const response = await apiClient.get<Blob>(`${baseRoute}/${invoiceId}/download`, {
-            responseType: 'blob'
-        });
-        return response.data;
-    },
 
-    paginateInvoices: async (params: Record<string, unknown>) => {
-        const response = await apiClient.get<PaginatedResponse<Invoice>>(`${baseRoute}/paginate`, { params });
-        return response.data;
-    },
 };
