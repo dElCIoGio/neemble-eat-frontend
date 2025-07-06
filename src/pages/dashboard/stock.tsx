@@ -61,6 +61,7 @@ import {
     useUpdateStockItem,
     useDeleteStockItem,
     useAddStock,
+    useRemoveStock,
 } from "@/api/endpoints/stock/hooks";
 import {useGetRecipes, useCreateRecipe, useDeleteRecipe, useUpdateRecipe} from "@/api/endpoints/recipes/hooks";
 import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
@@ -88,10 +89,11 @@ interface StockCardProps {
     onView: (item: StockItem) => void
     onEdit: (item: StockItem) => void
     onAdd: (item: StockItem) => void
+    onRemove: (item: StockItem) => void
     onDelete: (item: StockItem) => void
 }
 
-function StockCard({ item, onView, onEdit, onAdd, onDelete }: StockCardProps) {
+function StockCard({ item, onView, onEdit, onAdd, onRemove, onDelete }: StockCardProps) {
     return (
         <Card>
             <CardHeader>
@@ -131,6 +133,9 @@ function StockCard({ item, onView, onEdit, onAdd, onDelete }: StockCardProps) {
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => onAdd(item)}>
                     Adicionar
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => onRemove(item)}>
+                    Remover
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => onDelete(item)}>
                     <Trash2 className="h-4 w-4 text-red-500" />
@@ -260,6 +265,7 @@ export default function StockManagement() {
     const updateStockItemMutation = useUpdateStockItem(restaurant._id)
     const deleteStockItemMutation = useDeleteStockItem(restaurant._id)
     const addStockMutation = useAddStock(restaurant._id)
+    const removeStockMutation = useRemoveStock(restaurant._id)
 
     // Recipes data
     const {
@@ -282,6 +288,7 @@ export default function StockManagement() {
     const [isEditProductOpen, setIsEditProductOpen] = useState(false)
     const [isViewDetailsOpen, setIsViewDetailsOpen] = useState(false)
     const [isAddStockOpen, setIsAddStockOpen] = useState(false)
+    const [isRemoveStockOpen, setIsRemoveStockOpen] = useState(false)
     const [isReplenishOpen, setIsReplenishOpen] = useState(false)
     const [isRecipeOpen, setIsRecipeOpen] = useState(false)
     const [isSaleSimulatorOpen, setIsSaleSimulatorOpen] = useState(false)
@@ -314,6 +321,7 @@ export default function StockManagement() {
 
     const [editProduct, setEditProduct] = useState<StockItem | null>(null)
     const [addStockQuantity, setAddStockQuantity] = useState("")
+    const [removeStockQuantity, setRemoveStockQuantity] = useState("")
     const [replenishQuantity, setReplenishQuantity] = useState("")
 
     // Recipe form
@@ -650,6 +658,29 @@ export default function StockManagement() {
         )
     }
 
+    const handleRemoveStock = () => {
+        if (!selectedItem || !removeStockQuantity) return
+
+        const quantity = Number.parseFloat(removeStockQuantity)
+        if (quantity <= 0) {
+            showErrorToast("Erro", "A quantidade deve ser maior que zero.")
+            return
+        }
+
+        showPromiseToast(
+            removeStockMutation.mutateAsync({ id: selectedItem._id, data: { quantity, reason: "Redução manual" } }).then(() => {
+                setIsRemoveStockOpen(false)
+                setRemoveStockQuantity("")
+                setSelectedItem(null)
+            }),
+            {
+                loading: "Removendo stock...",
+                success: "Stock removido",
+                error: "Erro ao remover stock",
+            }
+        )
+    }
+
     // Export data
     const handleExportData = () => {
         const csvContent = [
@@ -708,6 +739,11 @@ export default function StockManagement() {
     const handleAddStockToItem = (item: StockItem) => {
         setSelectedItem(item)
         setIsAddStockOpen(true)
+    }
+
+    const handleRemoveStockFromItem = (item: StockItem) => {
+        setSelectedItem(item)
+        setIsRemoveStockOpen(true)
     }
 
     // Delete item
@@ -1102,6 +1138,13 @@ export default function StockManagement() {
                                                             <Button
                                                                 variant="ghost"
                                                                 size="sm"
+                                                                onClick={() => handleRemoveStockFromItem(item)}
+                                                            >
+                                                                Remover
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
                                                                 onClick={() => handleDeleteItem(item)}
                                                             >
                                                                 <Trash2 className="h-4 w-4 text-red-500" />
@@ -1133,6 +1176,7 @@ export default function StockManagement() {
                                             onView={handleViewDetails}
                                             onEdit={handleEditItem}
                                             onAdd={handleAddStockToItem}
+                                            onRemove={handleRemoveStockFromItem}
                                             onDelete={handleDeleteItem}
                                         />
                                     ))
@@ -2054,6 +2098,37 @@ export default function StockManagement() {
                         </Button>
                         <Button onClick={handleAddStock} className="flex-1">
                             Adicionar
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Remove Stock Modal */}
+            <Dialog open={isRemoveStockOpen} onOpenChange={setIsRemoveStockOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Remover Stock</DialogTitle>
+                        <DialogDescription>Remova quantidade do produto "{selectedItem?.name}".</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div>
+                            <Label htmlFor="removeStockQuantity">Quantidade a Remover</Label>
+                            <Input
+                                id="removeStockQuantity"
+                                type="number"
+                                placeholder="0"
+                                value={removeStockQuantity}
+                                onChange={(e) => setRemoveStockQuantity(e.target.value)}
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Unidade: {selectedItem?.unit}</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2 pt-4">
+                        <Button onClick={() => setIsRemoveStockOpen(false)} variant="outline" className="flex-1">
+                            Cancelar
+                        </Button>
+                        <Button onClick={handleRemoveStock} className="flex-1">
+                            Remover
                         </Button>
                     </div>
                 </DialogContent>
