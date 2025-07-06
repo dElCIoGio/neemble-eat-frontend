@@ -14,3 +14,16 @@ export type Invoice = {
     status: InvoiceStatus;
     isActive: boolean;
 };
+
+export type InvoiceCreate = {
+    restaurantId: string;
+    sessionId: string;
+    orders: string[];
+    total?: number | null;
+    tax?: number | null;
+    discount?: number | null;
+    generatedTime: string;
+    status: InvoiceStatus;
+};
+
+export type PartialInvoice = Partial<Omit<Invoice, "id" | "createdAt" | "updatedAt">>;
