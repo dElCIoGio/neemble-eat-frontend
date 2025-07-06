@@ -1,5 +1,6 @@
 import { apiClient } from "@/api/axios";
 import { Invoice, InvoiceCreate, PartialInvoice } from "@/types/invoice";
+import {InvoiceData} from "@/lib/templates/invoice";
 
 const baseRoute = "/invoices";
 
@@ -48,6 +49,11 @@ export const invoicesApi = {
         const response = await apiClient.post<Invoice>(`${baseRoute}/${invoiceId}/cancel`);
         return response.data;
     },
+
+    getInvoiceData: async (invoiceId: string) => {
+        const response = await apiClient.get<InvoiceData>(`${baseRoute}/${invoiceId}`);
+        return response.data;
+    }
 
 
 };
