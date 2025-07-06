@@ -16,6 +16,6 @@ export type DatePreset = "today" | "last7days" | "last30days" | "custom"
 export interface SalesReportRow {
     date: string
     grossSales: number
-    netSales: number
+    // netSales: number
     orders: number
 }

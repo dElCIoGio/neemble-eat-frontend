@@ -7,7 +7,6 @@ import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react"
 interface SalesData {
     date: string
     grossSales: number
-    netSales: number
     orders: number
 }
 

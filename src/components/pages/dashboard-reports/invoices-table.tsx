@@ -73,7 +73,7 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
                     <TableHeader>
                         <TableRow>
                             <TableHead>
-                                <Button variant="ghost" onClick={() => handleSort("id")} className="h-auto p-0 font-semibold">
+                                <Button variant="ghost" onClick={() => handleSort("_id")} className="h-auto p-0 font-semibold">
                                     Invoice #
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                 </Button>
@@ -101,8 +101,8 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
                     </TableHeader>
                     <TableBody>
                         {paginatedData.map((invoice) => (
-                            <TableRow key={invoice.id}>
-                                <TableCell className="font-medium">#{invoice.id.slice(-8)}</TableCell>
+                            <TableRow key={invoice._id}>
+                                <TableCell className="font-medium">#{invoice._id.slice(-8)}</TableCell>
                                 <TableCell>Table {invoice.sessionId.slice(-4)}</TableCell>
                                 <TableCell>{new Date(invoice.generatedTime).toLocaleDateString()}</TableCell>
                                 <TableCell>{getStatusBadge(invoice.status)}</TableCell>

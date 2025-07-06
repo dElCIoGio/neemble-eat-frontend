@@ -8,5 +8,5 @@ export const salesReportsClient = axios.create({
 
 export const invoicesReportsClient = axios.create({
     ...apiClient.defaults,
-    baseURL: `${apiClient.defaults.baseURL}/reports/invoices`,
+    baseURL: `${apiClient.defaults.baseURL}/invoices`,
 });

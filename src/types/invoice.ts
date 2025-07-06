@@ -1,7 +1,7 @@
 export type InvoiceStatus = "pending" | "paid" | "cancelled";
 
 export type Invoice = {
-    id: string;
+    _id: string;
     createdAt: string;
     updatedAt: string;
     restaurantId: string;

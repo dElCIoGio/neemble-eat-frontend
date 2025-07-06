@@ -23,7 +23,7 @@ export function InsightPanel({ data }: InsightPanelProps) {
         },
         {
             title: "Average Order",
-            value: `$${data.averageInvoice.toFixed(2)}`,
+            value: `$${data.averageInvoice? data.averageInvoice.toFixed(2): 0}`,
             growth: data.averageInvoiceGrowth,
             icon: BarChart3,
         },
@@ -54,7 +54,7 @@ export function InsightPanel({ data }: InsightPanelProps) {
                                 <TrendIcon className={`mr-1 h-3 w-3 ${isPositive ? "text-green-500" : "text-red-500"}`} />
                                 <span className={isPositive ? "text-green-500" : "text-red-500"}>
                   {isPositive ? "+" : ""}
-                                    {insight.growth.toFixed(1)}%
+                                    {insight.growth? insight.growth.toFixed(1): 0}%
                 </span>
                                 <span className="ml-1">from last period</span>
                             </div>
