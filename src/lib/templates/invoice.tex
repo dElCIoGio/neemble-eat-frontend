@@ -21,46 +21,26 @@
 
 \thispagestyle{empty}
 
-% Header, for company, invoice info
+% Header, restaurant and invoice info
 \begin{tabularx}{\textwidth}{l X l}
-   \hspace{-8pt} \multirow{5}{*}{\includegraphics[height=1.98cm]{src/assets/images/n.png}} & \textbf{{{companyName}}} & \hskip12pt\multirow{5}{*}{\begin{tabular}{r}\footnotesize\bf INVOICE \\[-0.8ex] \footnotesize {{{invoiceNumber}}} \\[-0.4ex] \footnotesize\bf DATE \\[-0.8ex] \footnotesize {{{invoiceDate}}} \\[-0.4ex] \footnotesize\bf DUE \\[-0.8ex] \footnotesize {{{dueDate}}} \end{tabular}}\hspace{-6pt} \\
-   & {{{contactName}}} & \\
-   & {{{website}}} & \\
-   & {{{phone}}} & \\
-   & {{{email}}} & \\
+   \hspace{-8pt} \multirow{4}{*}{\includegraphics[height=1.98cm]{src/assets/images/n.png}} & \textbf{{{restaurantName}}} & \hskip12pt\multirow{4}{*}{\begin{tabular}{r}\footnotesize\bf INVOICE \\[-0.8ex] \footnotesize {{{invoiceNumber}}} \\[-0.4ex] \footnotesize {{{invoiceDate}}} \end{tabular}}\hspace{-6pt} \\
+   & {{{restaurantAddress}}} & \\
+   & {{{restaurantPhoneNumber}}} & \\
+   & Table {{{tableNumber}}} & \\
 \end{tabularx}
 
 \vspace{1 cm}
 
-BILL TO
-
-% Recipient name
-\Large\textbf{{{billTo}}}\normalsize
-
-% Table of fees
-\begin{tabularx}{\linewidth}{c X X X c}
+\begin{tabularx}{\linewidth}{c X X c}
     \hline
-    & & & &\\[0.25ex]
-    \centering{\bf{Service}} & \centering{\bf{Rate}} & \centering{\bf{Quantity}} & \centering{\bf{Discount}} & \bf Payment due\\[2.5ex]\hline
-    & & & &\\
+    & & &\\[0.25ex]
+    \centering{\bf{Item}} & \centering{\bf{Unit Price}} & \centering{\bf{Quantity}} & \bf Total\\[2.5ex]\hline
+    & & &\\
 {{{items}}}
-    & & & \bf Total & \${{{total}}}\\[2.5ex]\hhline{~~~--}
-    & & & & \\
-    & & & \bf Payment received & \${{{paymentReceived}}}\\[2.5ex]\hhline{~~~--}
-    & & & & \\
-    & & & \bf Balance due & \${{{balanceDue}}}\\[2.5ex]\hhline{~~~==}
+    & & & \bf Subtotal & \${{{subtotal}}}\\[2.5ex]\hhline{~~--}
+    & & & \bf Tax & \${{{tax}}}\\[2.5ex]\hhline{~~--}
+    & & & \bf Discount & \${{{discount}}}\\[2.5ex]\hhline{~~--}
+    & & & \bf Total & \${{{total}}}\\[2.5ex]\hhline{~~==}
 \end{tabularx}
-
-\vspace{1 cm}
-
-\Large\textbf{Payment instructions}\normalsize
-
-\vspace{0.1 cm}
-
-\textbf{E-transfer}\\
-{{{etransfer}}}
-
-\textbf{Paypal}\\
-\href{{{paypalUrl}}}{{{paypalUrl}}}
 
 \end{document}

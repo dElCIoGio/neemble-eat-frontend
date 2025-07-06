@@ -1,35 +1,30 @@
 export interface InvoiceItem {
-    service: string
-    rate: number
+    name: string
+    unitPrice: number
     quantity: number
-    discount: number
-    due: number
+    total: number
 }
 
 export interface InvoiceData {
-    companyName: string
-    contactName: string
-    website: string
-    phone: string
-    email: string
+    restaurantName: string
+    restaurantAddress: string
+    restaurantPhoneNumber: string
+    tableNumber: number
     invoiceNumber: string
     invoiceDate: string
-    dueDate: string
-    billTo: string
     items: InvoiceItem[]
+    tax?: number | null
+    discount?: number | null
     total: number
-    paymentReceived: number
-    etransfer: string
-    paypalUrl: string
 }
 
 export const generateInvoiceTex = (data: InvoiceData): string => {
     const itemRows = data.items
         .map(item =>
-            `    \\centering ${item.service} & \\centering\\$${item.rate.toFixed(2)} & \\centering ${item.quantity} & \\centering\\$${item.discount.toFixed(2)} & \\$${item.due.toFixed(2)}\\\\[2.5ex]\\hline\n    & & & &\\`)
+            `    \\centering ${item.name} & \\centering\\$${item.unitPrice.toFixed(2)} & \\centering ${item.quantity} & \\$${item.total.toFixed(2)}\\\\[2.5ex]\\hline\n    & & &\\`)
         .join("\n")
 
-    const balanceDue = data.total - data.paymentReceived
+    const subtotal = data.items.reduce((sum, item) => sum + item.total, 0)
 
     return `\\documentclass{letter}
 \\usepackage[utf8]{inputenc}
@@ -54,43 +49,25 @@ export const generateInvoiceTex = (data: InvoiceData): string => {
 
 % Header
 \\begin{tabularx}{\\textwidth}{l X l}
-   \\hspace{-8pt} \\multirow{5}{*}{\\includegraphics[height=1.98cm]{src/assets/images/n.png}} & \\textbf{${data.companyName}} & \\hskip12pt\\multirow{5}{*}{\\begin{tabular}{r}\\footnotesize\\bf INVOICE \\[-0.8ex] \\footnotesize ${data.invoiceNumber} \\[-0.4ex] \\footnotesize\\bf DATE \\[-0.8ex] \\footnotesize ${data.invoiceDate} \\[-0.4ex] \\footnotesize\\bf DUE \\[-0.8ex] \\footnotesize ${data.dueDate} \\end{tabular}}\\hspace{-6pt} \\ 
-   & ${data.contactName} & \\ 
-   & ${data.website} & \\ 
-   & ${data.phone} & \\ 
-   & ${data.email} & \\ 
+   \\hspace{-8pt} \\multirow{4}{*}{\\includegraphics[height=1.98cm]{src/assets/images/n.png}} & \\textbf{${data.restaurantName}} & \\hskip12pt\\multirow{4}{*}{\\begin{tabular}{r}\\footnotesize\\bf INVOICE \\[-0.8ex] \\footnotesize ${data.invoiceNumber} \\[-0.4ex] \\footnotesize ${data.invoiceDate} \\end{tabular}}\\hspace{-6pt} \\
+   & ${data.restaurantAddress} & \\
+   & ${data.restaurantPhoneNumber} & \\
+   & Table ${data.tableNumber} & \\
 \\end{tabularx}
 
 \\vspace{1 cm}
 
-BILL TO
-
-\\Large\\textbf{${data.billTo}}\\normalsize
-
-\\begin{tabularx}{\\linewidth}{c X X X c}
+\\begin{tabularx}{\\linewidth}{c X X c}
     \\hline
-    & & & &\\[0.25ex]
-    \\centering{\\bf{Service}} & \\centering{\\bf{Rate}} & \\centering{\\bf{Quantity}} & \\centering{\\bf{Discount}} & \\bf Payment due\\[2.5ex]\\hline
-    & & & &\\
+    & & &\\[0.25ex]
+    \\centering{\\bf{Item}} & \\centering{\\bf{Unit Price}} & \\centering{\\bf{Quantity}} & \\bf Total\\[2.5ex]\\hline
+    & & &\\
 ${itemRows}
-    & & & \\bf Total & \\$${data.total.toFixed(2)}\\[2.5ex]\\hhline{~~~--}
-    & & & & \\ 
-    & & & \\bf Payment received & \\$${data.paymentReceived.toFixed(2)}\\[2.5ex]\\hhline{~~~--}
-    & & & & \\ 
-    & & & \\bf Balance due & \\$${balanceDue.toFixed(2)}\\[2.5ex]\\hhline{~~~==}
+    & & & \\bf Subtotal & \\$${subtotal.toFixed(2)}\\[2.5ex]\\hhline{~~--}
+    & & & \\bf Tax & \\$${(data.tax ?? 0).toFixed(2)}\\[2.5ex]\\hhline{~~--}
+    & & & \\bf Discount & \\$${(data.discount ?? 0).toFixed(2)}\\[2.5ex]\\hhline{~~--}
+    & & & \\bf Total & \\$${data.total.toFixed(2)}\\[2.5ex]\\hhline{~~==}
 \\end{tabularx}
-
-\\vspace{1 cm}
-
-\\Large\\textbf{Payment instructions}\\normalsize
-
-\\vspace{0.1 cm}
-
-\\textbf{E-transfer}\\
-${data.etransfer}
-
-\\textbf{Paypal}\\
-\\href{${data.paypalUrl}}{${data.paypalUrl}}
 
 \\end{document}`
 }
