@@ -80,8 +80,16 @@ import {
     PaginationItem,
     PaginationLink,
 } from "@/components/ui/pagination"
+import { useQueryClient } from "@tanstack/react-query"
 import {CaretLeft, CaretRight} from "@phosphor-icons/react";
 
+
+interface PaginatedStockResponse {
+    items: StockItem[]
+    nextCursor: string | null
+    totalCount: number
+    hasMore: boolean
+}
 
 interface StockCardProps {
     item: StockItem
@@ -255,6 +263,13 @@ export default function StockManagement() {
         data: stockItems,
         isLoading: isStockLoading,
     } = paginatedStockItems
+
+    const queryClient = useQueryClient()
+    const paginatedQueryKey = [
+        'paginated',
+        stockItemClient.defaults.baseURL,
+        `/restaurant/${restaurant._id}/paginate`
+    ] as const
 
     const createStockItemMutation = useCreateStockItem(restaurant._id)
     const updateStockItemMutation = useUpdateStockItem(restaurant._id)
@@ -720,10 +735,19 @@ export default function StockManagement() {
         if (!editProduct) return
 
         showPromiseToast(
-            updateStockItemMutation.mutateAsync({ id: editProduct._id, data: editProduct }).then(() => {
-                setIsEditProductOpen(false)
-                setEditProduct(null)
-            }),
+            updateStockItemMutation
+                .mutateAsync({ id: editProduct._id, data: editProduct })
+                .then((updated) => {
+                    queryClient.setQueriesData<PaginatedStockResponse>(
+                        { queryKey: paginatedQueryKey },
+                        (old) =>
+                            old
+                                ? { ...old, items: old.items.map(i => i._id === updated._id ? updated : i) }
+                                : old
+                    )
+                    setIsEditProductOpen(false)
+                    setEditProduct(null)
+                }),
             {
                 loading: "Atualizando produto...",
                 success: "Produto atualizado com sucesso",
