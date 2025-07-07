@@ -30,7 +30,7 @@ export default function MetricCard({ title, value, growth, icon: Icon, format = 
 
     return (
         <Card className="bg-zinc-100 py-0 flex flex-col">
-            <Card className="border-none border-b flex-1 my-0 shadow-sm">
+            <Card className="border-none border-b flex-1 my-0 shadow-sm space-x-1">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm flex items-start font-medium text-muted-foreground space-x-1">
                         {info && (

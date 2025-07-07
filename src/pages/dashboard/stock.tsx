@@ -1305,8 +1305,8 @@ export default function StockManagement() {
                                             movements.map((mv) => (
                                                 <TableRow key={mv._id}>
                                                     <TableCell>{mv.productName}</TableCell>
-                                                    <TableCell className="capitalize">{mv.type}</TableCell>
-                                                    <TableCell>{mv.quantity} {mv.unit}</TableCell>
+                                                    <TableCell className={`capitalize font-semibold ${mv.type == "entrada"? "text-green-600": mv.type == "saida"? "text-red-600": ""}`}>{mv.type}</TableCell>
+                                                    <TableCell>{mv.quantity} <span className="italic text-zinc-600 font-semibold">{mv.unit}</span></TableCell>
                                                     <TableCell>{formatIsosDate(new Date(mv.date))}</TableCell>
                                                     <TableCell>{mv.user}</TableCell>
                                                     <TableCell>{mv.reason}</TableCell>

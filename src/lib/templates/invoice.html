@@ -15,6 +15,15 @@
             align-items: flex-start;
         }
 
+        .space-between {
+            :where(& > :not(:last-child)) {         --tw-space-x-reverse: 0;         margin-inline-start: calc(calc(var(--spacing) * 1) /* 0.25rem = 4px */ * var(--tw-space-x-reverse));         margin-inline-end: calc(calc(var(--spacing) * 1) /* 0.25rem = 4px */ * calc(1 - var(--tw-space-x-reverse)));     } } @property --tw-space-x-reverse {     syntax: "*";     inherits: false;     initial-value: 0
+        }
+
+        .restaurant-info-container {
+            display: flex;
+            align-items: center;
+        }
+
         .logo {
             height: 80px;
         }
@@ -26,6 +35,7 @@
 
         .restaurant-info {
             margin-top: 10px;
+            margin-left: 20px;
         }
 
         table {
@@ -57,17 +67,20 @@
 <body>
 
 <div class="header">
-    <img src="src/assets/images/n.png" alt="Logo" class="logo" />
+    <div class="restaurant-info-container">
+        <img src="src/assets/images/n.png" alt="Logo" class="logo" />
 
-    <div class="restaurant-info">
-        <strong>{{restaurantName}}</strong><br />
-        {{restaurantAddress}}<br />
-        {{restaurantPhoneNumber}}<br />
-        Table {{tableNumber}}
+        <div class="restaurant-info">
+            <strong>{{restaurantName}}</strong><br />
+            {{restaurantAddress}}<br />
+            {{restaurantPhoneNumber}}<br />
+            Mesa {{tableNumber}}
+        </div>
     </div>
 
+
     <div class="invoice-info">
-        <strong>INVOICE</strong><br />
+        <strong>FATURA</strong><br />
         {{invoiceNumber}}<br />
         {{invoiceDate}}
     </div>
@@ -77,8 +90,8 @@
     <thead>
     <tr>
         <th>Item</th>
-        <th>Unit Price</th>
-        <th>Quantity</th>
+        <th>Preço por unidade</th>
+        <th>Quantidade</th>
         <th>Total</th>
     </tr>
     </thead>
@@ -88,19 +101,19 @@
     <tfoot>
     <tr class="totals">
         <td colspan="3" class="label">Subtotal</td>
-        <td>${{subtotal}}</td>
+        <td>{{subtotal}} Kz</td>
     </tr>
     <tr class="totals">
-        <td colspan="3" class="label">Tax</td>
-        <td>${{tax}}</td>
+        <td colspan="3" class="label">Taxa</td>
+        <td>{{tax}} Kz</td>
     </tr>
     <tr class="totals">
-        <td colspan="3" class="label">Discount</td>
-        <td>${{discount}}</td>
+        <td colspan="3" class="label">Desconto</td>
+        <td>{{discount}} Kz</td>
     </tr>
     <tr class="totals">
         <td colspan="3" class="label">Total</td>
-        <td>${{total}}</td>
+        <td>{{total}} Kz</td>
     </tr>
     </tfoot>
 </table>

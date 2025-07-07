@@ -24,11 +24,12 @@ export const generateInvoiceHtml = (data: InvoiceData): string => {
     const itemRows = data.items
         .map(
             (item) =>
-                `<tr><td>${item.name}</td><td>$${item.unitPrice.toFixed(2)}</td><td>${item.quantity}</td><td>$${item.total.toFixed(2)}</td></tr>`
+                `<tr><td>${item.name}</td><td>${item.unitPrice.toFixed(2)} Kz</td><td>${item.quantity}</td><td>${item.total.toFixed(2)} Kz</td></tr>`
         )
         .join("\n");
 
     const subtotal = data.items.reduce((sum, item) => sum + item.total, 0);
+
 
     return invoiceTemplate
         .replace(/{{restaurantName}}/g, data.restaurantName)
@@ -41,5 +42,6 @@ export const generateInvoiceHtml = (data: InvoiceData): string => {
         .replace(/{{subtotal}}/g, subtotal.toFixed(2))
         .replace(/{{tax}}/g, (data.tax ?? 0).toFixed(2))
         .replace(/{{discount}}/g, (data.discount ?? 0).toFixed(2))
-        .replace(/{{total}}/g, data.total.toFixed(2));
+        .replace(/{{total}}/g, data.total.toFixed(2))
+        // .replace(/{{restaurantLogo}}/g, );
 };
