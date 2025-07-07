@@ -6,8 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowUpDown, ChevronLeft, ChevronRight, Download } from "lucide-react"
 import { Invoice } from "@/types/invoice"
 import { invoicesApi } from "@/api/endpoints/invoices/requests"
-import { generateInvoiceTex } from "@/lib/templates/invoice"
-import {handleCompile} from "@/lib/helpers/compile-latex"
+import { generateInvoiceHtml } from "@/lib/templates/invoice"
 
 interface InvoicesTableProps {
     data: Invoice[]
@@ -35,19 +34,16 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
     const handleDownload = async (invoiceId: string) => {
         try {
             const data = await invoicesApi.getInvoiceData(invoiceId)
-            console.log(data)
-            const tex = generateInvoiceTex(data)
-            const pdfBlob = await handleCompile(tex)
-            if (pdfBlob) {
-                const url = URL.createObjectURL(pdfBlob)
-                const link = document.createElement("a")
-                link.href = url
-                link.download = `invoice-${invoiceId}.pdf`
-                document.body.appendChild(link)
-                link.click()
-                link.remove()
-                URL.revokeObjectURL(url)
-            }
+            const html = generateInvoiceHtml(data)
+            const blob = new Blob([html], { type: "text/html;charset=utf-8;" })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = url
+            link.download = `invoice-${invoiceId}.html`
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            URL.revokeObjectURL(url)
         } catch (err) {
             console.error("Failed to download invoice", err)
         }
