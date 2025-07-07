@@ -318,14 +318,44 @@ export default function Settings() {
                                         <CardDescription>Atualize o banner e o logo do restaurante.</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="space-y-4">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="banner-upload">Banner</Label>
-                                                <Input id="banner-upload" type="file" accept="image/*" onChange={handleBannerChange} />
+                                        <div className="space-y-6">
+                                            <div className="grid items-center gap-4 md:grid-cols-2">
+                                                <div className="space-y-2">
+                                                    <Label>Banner atual</Label>
+                                                    <img
+                                                        src={restaurant.bannerUrl || "/placeholder.svg"}
+                                                        alt="Banner atual"
+                                                        className="h-24 w-full rounded-md border object-cover"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="banner-upload">Novo banner</Label>
+                                                    <Input
+                                                        id="banner-upload"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleBannerChange}
+                                                    />
+                                                </div>
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="logo-upload">Logo</Label>
-                                                <Input id="logo-upload" type="file" accept="image/*" onChange={handleLogoChange} />
+                                            <div className="grid items-center gap-4 md:grid-cols-2">
+                                                <div className="space-y-2">
+                                                    <Label>Logo atual</Label>
+                                                    <img
+                                                        src={restaurant.logoUrl || "/placeholder.svg"}
+                                                        alt="Logo atual"
+                                                        className="h-20 w-20 rounded-md border object-cover"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="logo-upload">Novo logo</Label>
+                                                    <Input
+                                                        id="logo-upload"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleLogoChange}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </CardContent>
