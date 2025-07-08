@@ -53,7 +53,7 @@ export default function OrderCustomizationPage() {
         isTablesLoading ||
         (selectedTable !== null && isSessionLoading)
 
-    if (isLoading || !restaurant || !menu || (selectedTable !== null && !session)) {
+    if (isLoading || !restaurant || !menu) {
         return (
             <div className="flex-1 flex items-center justify-center p-4">
                 <Loader />
@@ -81,7 +81,7 @@ interface ContentProps {
     menu: Menu
     items: Item[]
     tables: Table[]
-    session: TableSession
+    session: TableSession | undefined
     selectedTable: number | null
     setSelectedTable: (n: number | null) => void
 }
@@ -103,7 +103,7 @@ function OrderCustomizationContent({
         deleteProduct,
         findCartItemIndexByID,
         setCartEmpty,
-    } = useCart(restaurantSlug, session._id, menu._id)
+    } = useCart(restaurantSlug, session?._id ?? "", menu._id)
 
     const [currentItemIndex, setCurrentItemIndex] = useState(0)
     const [isCartOpen, setIsCartOpen] = useState(false)
@@ -361,6 +361,11 @@ function OrderCustomizationContent({
             return
         }
 
+        if (!session) {
+            showErrorToast("No active session found for the selected table")
+            return
+        }
+
         const orders = cart.map((cartItem) => ({
             sessionId: session._id,
             itemId: cartItem.id,
@@ -481,14 +486,14 @@ function OrderCustomizationContent({
                                         <span className="text-lg font-bold">Total</span>
                                         <span className="text-xl font-bold text-green-600">Kz {getTotalCartValue().toFixed(2)}</span>
                                     </div>
-                                    <Button className="w-full" onClick={handleSubmitOrder} disabled={!selectedTable}>
+                                    <Button className="w-full" onClick={handleSubmitOrder} disabled={!selectedTable || !session}>
                                         Submit Order
                                     </Button>
                                     <Button variant="destructive" className="w-full mt-2" onClick={setCartEmpty}>
                                         Clear Cart
                                     </Button>
-                                    {!selectedTable && (
-                                        <p className="text-sm text-red-500 text-center mt-2">Please select a table first</p>
+                                    {(!selectedTable || !session) && (
+                                        <p className="text-sm text-red-500 text-center mt-2">Please select a table and ensure a session is active</p>
                                     )}
                                 </div>
                             )}
@@ -564,6 +569,9 @@ function OrderCustomizationContent({
                                     <span className="text-sm font-medium text-green-800">Table {selectedTable} selected</span>
                                 </div>
                             </div>
+                        )}
+                        {selectedTable && !session && (
+                            <p className="text-sm text-red-500 mt-2">No active session found for this table</p>
                         )}
                     </CardContent>
                 </Card>
@@ -841,7 +849,7 @@ function OrderCustomizationContent({
                     <Button
                         className="w-full h-14 text-lg font-semibold"
                         onClick={handleAddToCart}
-                        disabled={!allRequiredRulesSatisfied()}
+                        disabled={!allRequiredRulesSatisfied() || !session || !selectedTable}
                     >
                         <ShoppingCart className="mr-2 h-5 w-5" />
                         {editingCartItemId ? "Update Item" : "Add to Cart"} • Kz {totalPrice.toFixed(2)}
@@ -849,6 +857,9 @@ function OrderCustomizationContent({
 
                     {!allRequiredRulesSatisfied() && (
                         <p className="text-sm text-red-500 text-center mt-2">Please complete all required selections</p>
+                    )}
+                    {(!session || !selectedTable) && (
+                        <p className="text-sm text-red-500 text-center mt-2">Select a table to start your order</p>
                     )}
                 </div>
             </div>
