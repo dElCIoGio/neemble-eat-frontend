@@ -41,11 +41,13 @@ export function useCart(restaurantSlug: string, sessionId: string, menuId: strin
     const total = useTotalCartValue(cart);
     const cartRef = useRef(cart);
     const instanceIdRef = useRef<string>(Math.random().toString(36).slice(2));
+    const updatingFromEventRef = useRef(false);
 
     useEffect(() => {
         function handleCartUpdated(e: Event) {
             const custom = e as CustomEvent<{source: string}>;
             if (custom.detail && custom.detail.source === instanceIdRef.current) return;
+            updatingFromEventRef.current = true;
             setCart(getCart(restaurantSlug, sessionId, menuId));
         }
         window.addEventListener('cartUpdated', handleCartUpdated);
@@ -55,7 +57,13 @@ export function useCart(restaurantSlug: string, sessionId: string, menuId: strin
 
     useEffect(() => {
         saveCartToLocalStorage(cart, restaurantSlug, sessionId, menuId);
-        window.dispatchEvent(new CustomEvent('cartUpdated', {detail: {source: instanceIdRef.current}}));
+        if (updatingFromEventRef.current) {
+            updatingFromEventRef.current = false;
+            return;
+        }
+        window.dispatchEvent(
+            new CustomEvent('cartUpdated', {detail: {source: instanceIdRef.current}}),
+        );
     }, [cart, restaurantSlug, sessionId, menuId]);
 
 
