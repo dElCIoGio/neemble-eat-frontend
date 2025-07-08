@@ -70,9 +70,15 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
             cancelled: "destructive",
         } as const
 
+        const labels: Record<string, string> = {
+            paid: "Pago",
+            pending: "Pendente",
+            cancelled: "Cancelado",
+        }
+
         return (
             <Badge variant={variants[status as keyof typeof variants] || "secondary"}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {labels[status] ?? status}
             </Badge>
         )
     }
@@ -80,8 +86,8 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
     if (data.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="text-muted-foreground mb-2">No invoices found</div>
-                <div className="text-sm text-muted-foreground">Try adjusting your filters or date range</div>
+                <div className="text-muted-foreground mb-2">Nenhuma fatura encontrada</div>
+                <div className="text-sm text-muted-foreground">Tente ajustar seus filtros ou intervalo de datas</div>
             </div>
         )
     }
@@ -94,18 +100,18 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
                         <TableRow>
                             <TableHead>
                                 <Button variant="ghost" onClick={() => handleSort("_id")} className="h-auto p-0 font-semibold">
-                                    Invoice #
+                                    Fatura #
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </TableHead>
-                            <TableHead>Customer</TableHead>
+                            <TableHead>Cliente</TableHead>
                             <TableHead>
                                 <Button
                                     variant="ghost"
                                     onClick={() => handleSort("generatedTime")}
                                     className="h-auto p-0 font-semibold"
                                 >
-                                    Date
+                                    Data
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </TableHead>
@@ -116,7 +122,7 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead className="text-right">Ações</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -147,7 +153,7 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
             {/* Pagination */}
             <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalCount)} of {totalCount} results
+                    Exibindo {startIndex + 1} a {Math.min(startIndex + itemsPerPage, totalCount)} de {totalCount} resultados
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button
@@ -157,16 +163,16 @@ export function InvoicesTable({ data, currentPage, totalPages, totalCount, onNex
                         disabled={currentPage === 1}
                     >
                         <ChevronLeft className="h-4 w-4" />
-                        Previous
+                        Anterior
                     </Button>
-                    <div className="text-sm">Page {currentPage} of {totalPages}</div>
+                    <div className="text-sm">Página {currentPage} de {totalPages}</div>
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={onNextPage}
                         disabled={currentPage === totalPages}
                     >
-                        Next
+                        Próximo
                         <ChevronRight className="h-4 w-4" />
                     </Button>
                 </div>

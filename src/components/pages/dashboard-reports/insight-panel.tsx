@@ -10,25 +10,25 @@ interface InsightPanelProps {
 export function InsightPanel({ data }: InsightPanelProps) {
     const insights = [
         {
-            title: "Total Revenue",
+            title: "Receita Total",
             value: `$${data.totalSales.toLocaleString()}`,
             growth: data.totalSalesGrowth,
             icon: DollarSign,
         },
         {
-            title: "Total Orders",
+            title: "Total de Pedidos",
             value: data.invoiceCount.toLocaleString(),
             growth: data.invoiceCountGrowth,
             icon: ShoppingCart,
         },
         {
-            title: "Average Order",
+            title: "Média por Pedido",
             value: `$${data.averageInvoice? data.averageInvoice.toFixed(2): 0}`,
             growth: data.averageInvoiceGrowth,
             icon: BarChart3,
         },
         {
-            title: "Active Tables",
+            title: "Mesas Ativas",
             value: data.distinctTables.toString(),
             growth: data.distinctTablesGrowth,
             icon: Users,
@@ -56,7 +56,7 @@ export function InsightPanel({ data }: InsightPanelProps) {
                   {isPositive ? "+" : ""}
                                     {insight.growth? insight.growth.toFixed(1): 0}%
                 </span>
-                                <span className="ml-1">from last period</span>
+                                <span className="ml-1">em relação ao período anterior</span>
                             </div>
                         </CardContent>
                     </Card>

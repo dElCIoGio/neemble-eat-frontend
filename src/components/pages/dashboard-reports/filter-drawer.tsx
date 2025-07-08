@@ -24,20 +24,20 @@ interface FilterDrawerProps {
     onReset: () => void
 }
 
-const categories = ["Appetizers", "Main Courses", "Desserts", "Beverages", "Sides"]
+const categories = ["Entradas", "Pratos Principais", "Sobremesas", "Bebidas", "Acompanhamentos"]
 
 const orderStatuses: { value: OrderPrepStatus; label: string }[] = [
-    { value: "queued", label: "Queued" },
-    { value: "in_progress", label: "In Progress" },
-    { value: "ready", label: "Ready" },
-    { value: "served", label: "Served" },
-    { value: "cancelled", label: "Cancelled" },
+    { value: "queued", label: "Na fila" },
+    { value: "in_progress", label: "Em preparo" },
+    { value: "ready", label: "Pronto" },
+    { value: "served", label: "Servido" },
+    { value: "cancelled", label: "Cancelado" },
 ]
 
 const invoiceStatuses: { value: InvoiceStatus; label: string }[] = [
-    { value: "pending", label: "Pending" },
-    { value: "paid", label: "Paid" },
-    { value: "cancelled", label: "Cancelled" },
+    { value: "pending", label: "Pendente" },
+    { value: "paid", label: "Pago" },
+    { value: "cancelled", label: "Cancelado" },
 ]
 
 function FilterContent({
@@ -96,7 +96,7 @@ function FilterContent({
             <div className="flex-1 space-y-6 p-6">
                 {/* Date Range */}
                 <div className="space-y-3">
-                    <Label className="text-sm font-medium">Date Range</Label>
+                    <Label className="text-sm font-medium">Período</Label>
                     <div className="grid gap-2">
                         <Popover>
                             <PopoverTrigger asChild>
@@ -114,7 +114,7 @@ function FilterContent({
                                             format(dateRange.from, "LLL dd, y")
                                         )
                                     ) : (
-                                        <span>Pick a date range</span>
+                                        <span>Escolha um período</span>
                                     )}
                                 </Button>
                             </PopoverTrigger>
@@ -140,7 +140,7 @@ function FilterContent({
 
                 {/* Categories */}
                 <div className="space-y-3">
-                    <Label className="text-sm font-medium">Item Categories</Label>
+                    <Label className="text-sm font-medium">Categorias de Itens</Label>
                     <div className="space-y-2">
                         {categories.map((category) => (
                             <div key={category} className="flex items-center space-x-2">
@@ -159,7 +159,7 @@ function FilterContent({
 
                 {/* Order Status */}
                 <div className="space-y-3">
-                    <Label className="text-sm font-medium">Order Status</Label>
+                    <Label className="text-sm font-medium">Status do Pedido</Label>
                     <div className="space-y-2">
                         {orderStatuses.map((status) => (
                             <div key={status.value} className="flex items-center space-x-2">
@@ -178,7 +178,7 @@ function FilterContent({
 
                 {/* Invoice Status */}
                 <div className="space-y-3">
-                    <Label className="text-sm font-medium">Invoice Status</Label>
+                    <Label className="text-sm font-medium">Status da Fatura</Label>
                     <div className="space-y-2">
                         {invoiceStatuses.map((status) => (
                             <div key={status.value} className="flex items-center space-x-2">
@@ -200,10 +200,10 @@ function FilterContent({
             <div className="border-t p-6">
                 <div className="flex gap-2">
                     <Button onClick={onApply} className="flex-1">
-                        Apply Filters
+                        Aplicar Filtros
                     </Button>
                     <Button variant="outline" onClick={onReset}>
-                        Reset
+                        Limpar
                     </Button>
                 </div>
             </div>
@@ -219,8 +219,8 @@ export function FilterDrawer(props: FilterDrawerProps) {
             <Drawer open={props.open} onOpenChange={props.onOpenChange}>
                 <DrawerContent className="h-[90vh]">
                     <DrawerHeader>
-                        <DrawerTitle>Filter Reports</DrawerTitle>
-                        <DrawerDescription>Customize your report data with these filters</DrawerDescription>
+                        <DrawerTitle>Filtrar Relatórios</DrawerTitle>
+                        <DrawerDescription>Personalize os dados do relatório com esses filtros</DrawerDescription>
                     </DrawerHeader>
                     <FilterContent {...props} />
                 </DrawerContent>
@@ -232,8 +232,8 @@ export function FilterDrawer(props: FilterDrawerProps) {
         <Sheet open={props.open} onOpenChange={props.onOpenChange}>
             <SheetContent side="right" className="w-[400px] sm:w-[540px]">
                 <SheetHeader>
-                    <SheetTitle>Filter Reports</SheetTitle>
-                    <SheetDescription>Customize your report data with these filters</SheetDescription>
+                    <SheetTitle>Filtrar Relatórios</SheetTitle>
+                    <SheetDescription>Personalize os dados do relatório com esses filtros</SheetDescription>
                 </SheetHeader>
                 <FilterContent {...props} />
             </SheetContent>
