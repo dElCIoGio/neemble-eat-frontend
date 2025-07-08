@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState, useRef} from "react";
-import {CartItem, getCart, saveCartToLocalStorage} from "@/lib/helpers/cart";
+import {CartItem, CartItemCustomisation, getCart, saveCartToLocalStorage} from "@/lib/helpers/cart";
 
 
 function useCountCartItems(cart: CartItem[] = []) {
