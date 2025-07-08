@@ -7,20 +7,22 @@ import {useCart} from "@/hooks/use-cart";
 function Navbar() {
 
     const {session, menu} = useRestaurantMenuContext()
-    const {restaurantSlug} = useParams() as unknown as {restaurantSlug: string, tableNumber: string}
+    const {restaurantSlug, tableNumber} = useParams() as unknown as {restaurantSlug: string, tableNumber: string}
     const {numberOfItems} = useCart(restaurantSlug, session._id, menu._id)
+
+    const baseUrl = `/r/${restaurantSlug}/${tableNumber}`
 
     return (
         <div className={"flex space-x-4 justify-end p-4"}>
             <Button asChild size="sm" variant="secondary"
                     className={"text-zinc-600 hover:text-zinc-900"}>
-                    <Link to={`orders`}>
+                    <Link to={`${baseUrl}/orders`}>
                         Seus Pedidos
                     </Link>
             </Button>
             <Button asChild size="sm" variant="secondary"
                     className={"text-zinc-600 hover:text-zinc-900"}>
-                <Link to={`cart`}
+                <Link to={`${baseUrl}/cart`}
                       className={"relative flex items-center space-x-2"}>
                     {numberOfItems > 0 &&
                         <span

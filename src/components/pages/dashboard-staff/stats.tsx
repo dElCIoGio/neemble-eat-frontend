@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle, Clock, Users, XCircle } from "lucide-react"
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
+import {CheckCircle, Clock, Users, XCircle} from "lucide-react"
 import { useDashboardStaff } from "@/context/dashboard-staff-context"
 
 export function Stats() {
@@ -8,47 +8,51 @@ export function Stats() {
     return (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <Card>
-                <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Total</p>
-                            <p className="text-2xl font-bold">{stats.total}</p>
-                        </div>
-                        <Users className="w-8 h-8 text-blue-500" />
-                    </div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total</CardTitle>
+                    <Users className="h-4 w-4 text-blue-500" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{stats.total}</div>
+                    <p className="text-xs text-muted-foreground">
+                        Número de functionários no restaurante
+                    </p>
                 </CardContent>
             </Card>
             <Card>
-                <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Ativos</p>
-                            <p className="text-2xl font-bold text-green-600">{stats.active}</p>
-                        </div>
-                        <CheckCircle className="w-8 h-8 text-green-500" />
-                    </div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Ativos</CardTitle>
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{stats.active}</div>
+                    <p className="text-xs text-muted-foreground">
+                        Número de funcionários ativos
+                    </p>
                 </CardContent>
             </Card>
             <Card>
-                <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Pendentes</p>
-                            <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
-                        </div>
-                        <Clock className="w-8 h-8 text-yellow-500" />
-                    </div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
+                    <Clock className="h-4 w-4 text-yellow-500" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{stats.pending}</div>
+                    <p className="text-xs text-muted-foreground">
+                        Número de funcionários inativos
+                    </p>
                 </CardContent>
             </Card>
             <Card>
-                <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-sm text-gray-600">Inativos</p>
-                            <p className="text-2xl font-bold text-red-600">{stats.inactive}</p>
-                        </div>
-                        <XCircle className="w-8 h-8 text-red-500" />
-                    </div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
+                    <XCircle className="h-4 w-4 text-red-500" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{stats.pending}</div>
+                    <p className="text-xs text-muted-foreground">
+                        Convites pendentes
+                    </p>
                 </CardContent>
             </Card>
         </div>

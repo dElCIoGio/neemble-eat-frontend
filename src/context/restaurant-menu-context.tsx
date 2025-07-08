@@ -53,9 +53,13 @@ export function RestaurantMenuProvider(){
         tableNumber: tableNumber
     })
 
+
+
     if (!menu || !restaurant || !session) return <div>
         <Loader/>
     </div>
+
+
 
     return(
         <RestaurantMenuContext.Provider value={{
