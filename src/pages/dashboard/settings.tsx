@@ -284,8 +284,12 @@ export default function Settings() {
                                         </div>
                                     </CardContent>
                                 </Card>
+                                <Card>
+                                    <CardHeader>
                                         <CardTitle>Horário de Funcionamento</CardTitle>
-                                        <CardDescription>Configure os horários de funcionamento do seu restaurante.</CardDescription>
+                                        <CardDescription>
+                                            Configure os horários de funcionamento do seu restaurante.
+                                        </CardDescription>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-4">
