@@ -265,7 +265,7 @@ function OrderCustomizationContent({
     const handleAddToCart = () => {
         if (!currentItem) return
         if (!allRequiredRulesSatisfied()) {
-            showWarningToast("Please complete all required selections")
+            showWarningToast("Por favor, complete todas as seleções obrigatórias")
             return
         }
 
@@ -347,22 +347,22 @@ function OrderCustomizationContent({
 
     const handleSubmitOrder = () => {
         if (!selectedTable) {
-            showErrorToast("Please select a table first")
+            showErrorToast("Por favor, selecione uma mesa primeiro")
             return
         }
 
         if (cart.length === 0) {
-            showWarningToast("Please add items to your cart first")
+            showWarningToast("Por favor, adicione itens ao carrinho primeiro")
             return
         }
 
         if (!restaurant){
-            showErrorToast("Please select a restaurant first")
+            showErrorToast("Por favor, selecione um restaurante primeiro")
             return
         }
 
         if (!session) {
-            showErrorToast("No active session found for the selected table")
+            showErrorToast("Nenhuma sessão ativa encontrada para a mesa selecionada")
             return
         }
 
@@ -382,9 +382,9 @@ function OrderCustomizationContent({
         const promise = ordersApi.addOrdersGroup(orders, session._id)
 
         showPromiseToast(promise, {
-            loading: "Submitting order...",
-            success: "Order submitted!",
-            error: "Failed to submit order",
+            loading: "Enviando pedido...",
+            success: "Pedido enviado!",
+            error: "Falha ao enviar pedido",
         })
 
         promise.then(() => {
@@ -394,7 +394,7 @@ function OrderCustomizationContent({
     }
 
     if (!currentItem) {
-        return <div className="p-4">Loading...</div>
+        return <div className="p-4">Carregando...</div>
     }
 
     return (
@@ -405,12 +405,12 @@ function OrderCustomizationContent({
                     <Button variant="ghost" size="icon" className="md:hidden">
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
-                    <h1 className="text-lg font-semibold truncate">{editingCartItemId ? "Edit Item" : "Customize Order"}</h1>
+                    <h1 className="text-lg font-semibold truncate">{editingCartItemId ? "Editar Item" : "Personalizar Pedido"}</h1>
                     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
                         <SheetTrigger asChild className="p-4">
                             <Button variant="outline" size="sm" className="relative">
                                 <ShoppingCart className="h-4 w-4 mr-2" />
-                                Cart
+                                Carrinho
                                 {cart.length > 0 && (
                                     <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
                                         {getTotalCartItems()}
@@ -420,13 +420,13 @@ function OrderCustomizationContent({
                         </SheetTrigger>
                         <SheetContent className="w-full sm:max-w-lg">
                             <SheetHeader>
-                                <SheetTitle>Your Order</SheetTitle>
+                                <SheetTitle>Seu Pedido</SheetTitle>
                             </SheetHeader>
                             <ScrollArea className="h-[calc(100vh-200px)] mt-4 p-4">
                                 {cart.length === 0 ? (
                                     <div className="text-center py-8 text-gray-500">
                                         <ShoppingCart className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                                        <p>Your cart is empty</p>
+                                        <p>O carrinho está vazio</p>
                                     </div>
                                 ) : (
                                     <div className="space-y-4">
@@ -455,7 +455,7 @@ function OrderCustomizationContent({
                                                         </div>
                                                     </div>
                                                     <div className="text-sm text-gray-600 space-y-1">
-                                                        <p>Quantity: {cartItem.quantity}</p>
+                                                        <p>Quantidade: {cartItem.quantity}</p>
                                                         {cartItem.customisations.map((customization) => (
                                                             <div key={customization.ruleName}>
                                                                 <span className="font-medium">{customization.ruleName}: </span>
@@ -466,7 +466,7 @@ function OrderCustomizationContent({
                                                         ))}
                                                         {cartItem.additionalNotes && (
                                                             <p>
-                                                                <span className="font-medium">Notes: </span>
+                                                                <span className="font-medium">Notas: </span>
                                                                 {cartItem.additionalNotes}
                                                             </p>
                                                         )}
@@ -487,13 +487,13 @@ function OrderCustomizationContent({
                                         <span className="text-xl font-bold text-green-600">Kz {getTotalCartValue().toFixed(2)}</span>
                                     </div>
                                     <Button className="w-full" onClick={handleSubmitOrder} disabled={!selectedTable || !session}>
-                                        Submit Order
+                                        Enviar Pedido
                                     </Button>
                                     <Button variant="destructive" className="w-full mt-2" onClick={setCartEmpty}>
-                                        Clear Cart
+                                        Limpar Carrinho
                                     </Button>
                                     {(!selectedTable || !session) && (
-                                        <p className="text-sm text-red-500 text-center mt-2">Please select a table and ensure a session is active</p>
+                                        <p className="text-sm text-red-500 text-center mt-2">Selecione uma mesa e certifique-se de que há uma sessão ativa</p>
                                     )}
                                 </div>
                             )}
@@ -508,7 +508,7 @@ function OrderCustomizationContent({
                     <CardHeader className="">
                         <CardTitle className="flex items-center gap-2">
                             <MapPin className="h-5 w-5" />
-                            Table Selection
+                            Seleção de Mesa
                             <span className="text-red-500">*</span>
                         </CardTitle>
                     </CardHeader>
@@ -518,7 +518,7 @@ function OrderCustomizationContent({
                             onValueChange={(value) => setSelectedTable(Number.parseInt(value))}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select your table" />
+                                <SelectValue placeholder="Selecione a sua mesa" />
                             </SelectTrigger>
                             <SelectContent>
                                 {tables
@@ -532,8 +532,8 @@ function OrderCustomizationContent({
                                                             <Users className="h-4 w-4 text-gray-400" />
                                                         </div>
                                                         <div>
-                                                            <span className="font-medium">Table {table.number}</span>
-                                                            <span className="text-sm text-gray-500 ml-2">{!table.isActive ? "Closed" : "Occupied"}</span>
+                                                            <span className="font-medium">Mesa {table.number}</span>
+                                                            <span className="text-sm text-gray-500 ml-2">{!table.isActive ? "Fechada" : "Ocupada"}</span>
                                                         </div>
                                                     </div>
                                                 </SelectItem>
@@ -549,8 +549,8 @@ function OrderCustomizationContent({
                                                         <Users className="h-4 w-4 text-green-600" />
                                                     </div>
                                                     <div>
-                                                        <span className="font-medium">Table {table.number}</span>
-                                                        <span className="text-sm text-green-600 ml-2">Available</span>
+                                                        <span className="font-medium">Mesa {table.number}</span>
+                                                        <span className="text-sm text-green-600 ml-2">Disponível</span>
                                                     </div>
                                                 </div>
                                             </SelectItem>
@@ -566,12 +566,12 @@ function OrderCustomizationContent({
                                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
                                         <Users className="h-3 w-3 text-green-600" />
                                     </div>
-                                    <span className="text-sm font-medium text-green-800">Table {selectedTable} selected</span>
+                                    <span className="text-sm font-medium text-green-800">Mesa {selectedTable} selecionada</span>
                                 </div>
                             </div>
                         )}
                         {selectedTable && !session && (
-                            <p className="text-sm text-red-500 mt-2">No active session found for this table</p>
+                            <p className="text-sm text-red-500 mt-2">Nenhuma sessão ativa encontrada para esta mesa</p>
                         )}
                     </CardContent>
                 </Card>
@@ -579,7 +579,7 @@ function OrderCustomizationContent({
                 {/* Item Selection */}
                 <Card className="mb-6">
                     <CardHeader className="pb-3">
-                        <CardTitle>Select Item</CardTitle>
+                        <CardTitle>Selecione o Item</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Select
@@ -592,7 +592,7 @@ function OrderCustomizationContent({
                             }}
                         >
                             <SelectTrigger className="w-full h-12">
-                                <SelectValue placeholder="Choose an item to customize" />
+                                <SelectValue placeholder="Escolha um item para personalizar" />
                             </SelectTrigger>
                             <SelectContent>
                                 {items.map((item) => (
@@ -634,10 +634,10 @@ function OrderCustomizationContent({
                             {editingCartItemId && (
                                 <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-sm font-medium text-blue-800">Editing cart item</span>
+                                        <span className="text-sm font-medium text-blue-800">Editando item do carrinho</span>
                                         <Button variant="ghost" size="sm" onClick={cancelEdit}>
                                             <X className="h-4 w-4 mr-1" />
-                                            Cancel
+                                            Cancelar
                                         </Button>
                                     </div>
                                 </div>
@@ -657,10 +657,10 @@ function OrderCustomizationContent({
                                         {rule.isRequired && <span className="text-red-500 ml-1">*</span>}
                                     </CardTitle>
                                     <Badge variant={isRequiredRuleSatisfied(rule) ? "default" : "destructive"} className="text-xs">
-                                        {rule.limitType === "EXACTLY" && `Choose ${rule.limit}`}
-                                        {rule.limitType === "UP_TO" && `Up to ${rule.limit}`}
-                                        {rule.limitType === "AT_LEAST" && `At least ${rule.limit}`}
-                                        {rule.limitType === "ALL" && "Choose all"}
+                                        {rule.limitType === "EXACTLY" && `Escolha ${rule.limit}`}
+                                        {rule.limitType === "UP_TO" && `Até ${rule.limit}`}
+                                        {rule.limitType === "AT_LEAST" && `Pelo menos ${rule.limit}`}
+                                        {rule.limitType === "ALL" && "Escolha todos"}
                                     </Badge>
                                 </div>
                                 {rule.description && <p className="text-sm text-gray-600">{rule.description}</p>}
@@ -693,7 +693,7 @@ function OrderCustomizationContent({
                                                     <div className="text-sm font-medium">
                                                         {option.priceModifier > 0 && `+$${option.priceModifier.toFixed(2)}`}
                                                         {option.priceModifier < 0 && `-$${Math.abs(option.priceModifier).toFixed(2)}`}
-                                                        {option.priceModifier === 0 && "Included"}
+                                                        {option.priceModifier === 0 && "Incluído"}
                                                     </div>
                                                 </div>
                                             ))}
@@ -732,7 +732,7 @@ function OrderCustomizationContent({
                                                             <div className="text-sm text-gray-600">
                                                                 {option.priceModifier > 0 && `+$${option.priceModifier.toFixed(2)}`}
                                                                 {option.priceModifier < 0 && `-$${Math.abs(option.priceModifier).toFixed(2)}`}
-                                                                {option.priceModifier === 0 && "Included"}
+                                                                {option.priceModifier === 0 && "Incluído"}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -800,11 +800,11 @@ function OrderCustomizationContent({
                 {/* Additional Notes */}
                 <Card className="mt-6">
                     <CardHeader>
-                        <CardTitle className="text-lg">Special Instructions</CardTitle>
+                        <CardTitle className="text-lg">Instruções Especiais</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Textarea
-                            placeholder="Any special requests or dietary restrictions?"
+                            placeholder="Algum pedido especial ou restrição alimentar?"
                             value={additionalNotes}
                             onChange={(e) => setAdditionalNotes(e.target.value)}
                             className="min-h-[80px] resize-none"
@@ -816,7 +816,7 @@ function OrderCustomizationContent({
                 <Card className="mt-6">
                     <CardContent className="">
                         <div className="flex items-center justify-between">
-                            <Label className="text-lg font-medium">Quantity</Label>
+                            <Label className="text-lg font-medium">Quantidade</Label>
                             <div className="flex items-center space-x-3">
                                 <Button
                                     variant="outline"
@@ -836,7 +836,7 @@ function OrderCustomizationContent({
                         <Separator className="my-4" />
 
                         <div className="flex items-center justify-between">
-                            <span className="text-lg font-bold">Item Total</span>
+                            <span className="text-lg font-bold">Total do Item</span>
                             <span className="text-base font-bold text-green-600">Kz {totalPrice.toFixed(2)}</span>
                         </div>
                     </CardContent>
@@ -852,14 +852,14 @@ function OrderCustomizationContent({
                         disabled={!allRequiredRulesSatisfied() || !session || !selectedTable}
                     >
                         <ShoppingCart className="mr-2 h-5 w-5" />
-                        {editingCartItemId ? "Update Item" : "Add to Cart"} • Kz {totalPrice.toFixed(2)}
+                        {editingCartItemId ? "Atualizar Item" : "Adicionar ao Carrinho"} • Kz {totalPrice.toFixed(2)}
                     </Button>
 
                     {!allRequiredRulesSatisfied() && (
-                        <p className="text-sm text-red-500 text-center mt-2">Please complete all required selections</p>
+                        <p className="text-sm text-red-500 text-center mt-2">Por favor, complete todas as seleções obrigatórias</p>
                     )}
                     {(!session || !selectedTable) && (
-                        <p className="text-sm text-red-500 text-center mt-2">Select a table to start your order</p>
+                        <p className="text-sm text-red-500 text-center mt-2">Selecione uma mesa para iniciar o pedido</p>
                     )}
                 </div>
             </div>
