@@ -40,6 +40,8 @@ function RestaurantMenu() {
         data: categories = []
     } = useGetMenuCategories(menu?._id)
 
+    console.log(restaurant)
+
     function selectItem(item: Item) {
         setSelectedItem(item)
         if (item._id) {
@@ -75,7 +77,7 @@ function RestaurantMenu() {
 
     return (
         <div className="font-poppins h-dvh flex flex-1 flex-col">
-            {menu && restaurant ?
+            {menu && restaurant &&
                 <MenuContext.Provider
                     value={{
                         menu,
@@ -87,20 +89,20 @@ function RestaurantMenu() {
                         unselectItem,
                         categories
                     }}>
-                    <Navbar/>
-                    <Banner/>
-                    <div className="flex-1">
-                        <div className={"px-4"}>
-                            <RestaurantInfo/>
-                            <TableInfo/>
+                    <div>
+                        <Navbar/>
+                        <Banner/>
+                        <div className="flex-1">
+                            <div className={"px-4"}>
+                                <RestaurantInfo/>
+                                <TableInfo/>
+                            </div>
+                            <Categories/>
                         </div>
-                        <Categories/>
+                        <Footer/>
+                        <FloatingCartButton/>
                     </div>
-                    <Footer/>
-                    <FloatingCartButton/>
-                </MenuContext.Provider> :
-                <div>
-                </div>
+                </MenuContext.Provider>
             }
         </div>
     );

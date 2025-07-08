@@ -53,6 +53,7 @@ function DashboardLayout() {
 
     const { data: user } = useMe()
 
+
     const { data: restaurant } = useGetCurrentRestaurant()
     const { data: restaurants } = useGetUserRestaurants()
     const { mutate: setCurrentRestaurant } = useSetCurrentRestaurant()

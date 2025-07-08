@@ -80,7 +80,7 @@ export function Orders() {
     }
 
     return (
-        <OrdersContext value={{
+        <OrdersContext.Provider value={{
             refreshOrders: refreshOrders,
             orders: orders,
             isFetchingOrders: isFetchingOrders,
@@ -114,7 +114,7 @@ export function Orders() {
                 <BillsAlert open={isPopupOpen} onOpenChange={(isOpen) => setIsPopupOpen(isOpen)}/>
             </div>
 
-        </OrdersContext>
+        </OrdersContext.Provider>
     );
 }
 

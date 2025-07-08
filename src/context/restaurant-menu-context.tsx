@@ -58,13 +58,13 @@ export function RestaurantMenuProvider(){
     </div>
 
     return(
-        <RestaurantMenuContext value={{
+        <RestaurantMenuContext.Provider value={{
             menu,
             restaurant,
             session
         }}>
             <Outlet/>
-        </RestaurantMenuContext>
+        </RestaurantMenuContext.Provider>
     )
 
 }

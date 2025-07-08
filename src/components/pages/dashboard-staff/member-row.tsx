@@ -49,11 +49,17 @@ export default function MemberRow({ user }: MemberRowProps) {
     const { data: roles } = useListRestaurantRoles(restaurant._id)
     const filteredRoles = (roles ?? []).filter(r => r.name !== "no_role")
 
+    console.log("ALL ROLES: ", roles)
+
     const membership = user.memberships[0]
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isSheetOpen, setIsSheetOpen] = useState(false)
 
     const role = roles.find((r) => r._id === membership?.roleId)
+
+    console.log("USER:", user)
+    console.log("ROLE:", role)
+
     const roleName = role?.name === "no_role" || !role ? "Sem função" : role.name
 
     function handleViewPermissions() {
@@ -96,7 +102,7 @@ export default function MemberRow({ user }: MemberRowProps) {
                         disabled={user._id === currentUser._id}
                     >
                         <SelectTrigger className="w-32 h-8">
-                            <SelectValue placeholder="Sem função" />
+                            <SelectValue placeholder="Sem função"/>
                         </SelectTrigger>
                         <SelectContent>
                             {filteredRoles.map((role) => (
