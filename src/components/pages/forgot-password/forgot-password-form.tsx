@@ -13,7 +13,7 @@ import { ForgotPasswordFormValues, forgotPasswordSchema } from "@/lib/schemas/au
 import { sendPasswordResetEmail } from "firebase/auth"
 import { auth } from "@/firebase/config"
 import { toast } from "sonner"
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 
 interface ForgotPasswordFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string

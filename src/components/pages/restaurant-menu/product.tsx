@@ -25,7 +25,7 @@ import {CartPopoverContent} from "@/components/pages/restaurant-menu/cart-popove
 import {ProductAdditionalInfo} from "@/components/pages/restaurant-menu-cart/product-additional-note";
 import {ShoppingCart} from "lucide-react";
 import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
-import {useParams} from "react-router";
+import {useParams} from "react-router-dom";
 
 
 interface props {

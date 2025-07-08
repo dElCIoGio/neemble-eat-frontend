@@ -14,7 +14,7 @@ import { ChevronLeft, ChevronRight, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {toast} from "sonner";
 import {restaurantApi} from "@/api/endpoints/restaurants/requests";
-import {useNavigate} from "react-router";
+import {useNavigate} from "react-router-dom";
 
 // Zod schema for validation
 const restaurantCreateSchema = z.object({

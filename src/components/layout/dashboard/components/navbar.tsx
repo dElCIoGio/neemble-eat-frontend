@@ -11,7 +11,7 @@ import {
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {useDashboardContext} from "@/context/dashboard-context";
 import RestaurantSelection from "@/components/layout/dashboard/components/restaurant-selection";
-import {Link, useNavigate} from "react-router";
+import {Link, useNavigate} from "react-router-dom";
 import {useAuth} from "@/context/auth-context";
 import { useUnreadCount } from "@/api/endpoints/notifications/hooks";
 

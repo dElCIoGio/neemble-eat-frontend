@@ -1,4 +1,4 @@
-import {Navigate, Route, Routes} from "react-router";
+import {Navigate, Route, Routes} from "react-router-dom";
 import HomeLayout from "@/components/layout/root/root-layout";
 import {HomePage} from "@/pages/root/home";
 import DashboardLayout from "@/components/layout/dashboard/dashboard-layout";

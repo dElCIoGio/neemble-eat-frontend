@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Check, BarChart2, DollarSign, Users, Clock, LineChart, Target, Zap, Share2 } from "lucide-react"
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import {DesktopAnalytics, DesktopMenu} from "@/assets";
 
 

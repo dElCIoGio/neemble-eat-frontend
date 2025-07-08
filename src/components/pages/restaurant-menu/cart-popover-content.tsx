@@ -1,5 +1,5 @@
 import {Button} from "@/components/ui/button";
-import {useNavigate} from "react-router";
+import {useNavigate} from "react-router-dom";
 import {useMenuContext} from "@/context/menu-context";
 import {CartItem} from "@/lib/helpers/cart";
 

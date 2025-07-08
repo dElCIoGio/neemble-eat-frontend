@@ -1,6 +1,6 @@
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import {Badge} from "@/components/ui/badge";
 import {useGetPosts} from "@/api/endpoints/blog/hooks";
 import {Skeleton} from "@/components/ui/skeleton";

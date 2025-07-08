@@ -1,4 +1,4 @@
-import {Link, Outlet} from "react-router";
+import {Link, Outlet} from "react-router-dom";
 import {Utensils} from "lucide-react";
 
 function AuthLayout() {

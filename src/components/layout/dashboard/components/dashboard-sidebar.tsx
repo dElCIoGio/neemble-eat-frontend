@@ -10,7 +10,7 @@ import {
     UsersThree,
     Package, CallBell, Chair, ChartDonut,
 } from "@phosphor-icons/react";
-import {useLocation, useNavigate} from "react-router";
+import {useLocation, useNavigate} from "react-router-dom";
 import {
     SidebarContent,
     SidebarFooter,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {useNavigate} from "react-router";
+import {useNavigate} from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 

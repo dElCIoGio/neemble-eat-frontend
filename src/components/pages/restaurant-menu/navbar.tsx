@@ -1,5 +1,5 @@
 import {Button} from "@/components/ui/button";
-import {Link, useParams} from "react-router";
+import {Link, useParams} from "react-router-dom";
 import {ShoppingCart} from "lucide-react";
 import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
 import {useCart} from "@/hooks/use-cart";

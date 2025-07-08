@@ -14,7 +14,7 @@ import { useGoogleAuth } from "@/hooks/use-google-auth";
 import {authApi} from "@/api/endpoints/auth/endpoints";
 import {userApi} from "@/api/endpoints/user/endpoints";
 import {toast} from "sonner";
-import {Link, useNavigate} from "react-router";
+import {Link, useNavigate} from "react-router-dom";
 import {Eye, EyeClosed} from "@phosphor-icons/react";
 
 

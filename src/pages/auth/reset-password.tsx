@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"
 import { resetPasswordSchema } from "@/lib/schemas/auth"
-import {Link, useNavigate, useSearchParams} from "react-router";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
 
 type FormData = z.infer<typeof resetPasswordSchema>
 

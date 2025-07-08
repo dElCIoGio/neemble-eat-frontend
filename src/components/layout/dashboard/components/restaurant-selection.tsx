@@ -2,7 +2,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {useGetUserRestaurants, useSetCurrentRestaurant} from "@/api/endpoints/user/hooks";
 import { Button } from "@/components/ui/button";
 import { Plus } from "@phosphor-icons/react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { useDashboardContext } from "@/context/dashboard-context";
 import {Loader} from "@/components/ui/loader";
 import {useIsMobile} from "@/hooks/use-mobile";

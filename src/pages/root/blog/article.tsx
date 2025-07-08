@@ -1,5 +1,5 @@
 import {Button} from "@/components/ui/button";
-import {Link, useParams} from "react-router";
+import {Link, useParams} from "react-router-dom";
 import {ChevronLeft} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
 import {useGetPostBySlug} from "@/api/endpoints/blog/hooks";

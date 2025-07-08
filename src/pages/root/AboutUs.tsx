@@ -1,6 +1,6 @@
 import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {NavLink} from "react-router";
+import {NavLink} from "react-router-dom";
 import {Brain, Handshake, RocketLaunch} from "@phosphor-icons/react";
 import {Founders, Demo, NeeembleRoom, NeembleClose, NeembleBanner} from "@/assets";
 

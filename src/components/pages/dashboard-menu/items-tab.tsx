@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {Link, useNavigate, useParams, useSearchParams} from "react-router";
+import {Link, useNavigate, useParams, useSearchParams} from "react-router-dom";
 import { useGetMenuItemsBySlug } from "@/api/endpoints/menu/hooks";
 import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks";
 import { showPromiseToast } from "@/utils/notifications/toast";

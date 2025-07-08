@@ -9,7 +9,7 @@ import {
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { Badge } from "@/components/ui/badge"
-import {Link, NavLink, useLocation} from "react-router";
+import {Link, NavLink, useLocation} from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Menu } from "lucide-react"
 import {useEffect, useState} from "react";

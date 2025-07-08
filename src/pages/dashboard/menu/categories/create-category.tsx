@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
-import {Link, useNavigate} from "react-router";
+import {Link, useNavigate} from "react-router-dom";
 import {CategoryCreate} from "@/types/category";
 import {useDashboardContext} from "@/context/dashboard-context";
 import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
