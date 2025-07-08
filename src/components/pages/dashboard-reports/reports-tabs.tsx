@@ -12,10 +12,10 @@ export function ReportsTabs({ activeTab, onTabChange }: ReportsTabsProps) {
     return (
         <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as ReportTab)}>
             <TabsList className="">
-                <TabsTrigger value="sales">Sales Summary</TabsTrigger>
-                <TabsTrigger value="invoices">Invoices</TabsTrigger>
-                <TabsTrigger value="items">Items Sold</TabsTrigger>
-                <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+                <TabsTrigger value="sales">Resumo de Vendas</TabsTrigger>
+                <TabsTrigger value="invoices">Faturas</TabsTrigger>
+                <TabsTrigger value="items">Itens Vendidos</TabsTrigger>
+                <TabsTrigger value="cancelled">Cancelados</TabsTrigger>
             </TabsList>
         </Tabs>
     )

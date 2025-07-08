@@ -50,8 +50,8 @@ export function SalesTable({ data, currentPage, totalPages, totalCount, onNextPa
     if (data.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="text-muted-foreground mb-2">No sales data found</div>
-                <div className="text-sm text-muted-foreground">Try adjusting your filters or date range</div>
+                <div className="text-muted-foreground mb-2">Nenhum dado de venda encontrado</div>
+                <div className="text-sm text-muted-foreground">Tente ajustar seus filtros ou intervalo de datas</div>
             </div>
         )
     }
@@ -64,19 +64,19 @@ export function SalesTable({ data, currentPage, totalPages, totalCount, onNextPa
                         <TableRow>
                             <TableHead>
                                 <Button variant="ghost" onClick={() => handleSort("date")} className="h-auto p-0 font-semibold">
-                                    Date
+                                    Data
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </TableHead>
                             <TableHead className="text-right">
                                 <Button variant="ghost" onClick={() => handleSort("grossSales")} className="h-auto p-0 font-semibold">
-                                    Gross Sales
+                                    Vendas Brutas
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </TableHead>
                             <TableHead className="text-right">
                                 <Button variant="ghost" onClick={() => handleSort("orders")} className="h-auto p-0 font-semibold">
-                                    Orders
+                                    Pedidos
                                     <ArrowUpDown className="ml-2 h-4 w-4" />
                                 </Button>
                             </TableHead>
@@ -97,7 +97,7 @@ export function SalesTable({ data, currentPage, totalPages, totalCount, onNextPa
             {/* Pagination */}
             <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, totalCount)} of {totalCount} results
+                    Exibindo {startIndex + 1} a {Math.min(startIndex + itemsPerPage, totalCount)} de {totalCount} resultados
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button
@@ -107,16 +107,16 @@ export function SalesTable({ data, currentPage, totalPages, totalCount, onNextPa
                         disabled={currentPage === 1}
                     >
                         <ChevronLeft className="h-4 w-4" />
-                        Previous
+                        Anterior
                     </Button>
-                    <div className="text-sm">Page {currentPage} of {totalPages}</div>
+                    <div className="text-sm">Página {currentPage} de {totalPages}</div>
                     <Button
                         variant="outline"
                         size="sm"
                         onClick={onNextPage}
                         disabled={currentPage === totalPages}
                     >
-                        Next
+                        Próximo
                         <ChevronRight className="h-4 w-4" />
                     </Button>
                 </div>
