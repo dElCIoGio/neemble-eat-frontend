@@ -22,6 +22,8 @@ type ProductContextProps = {
     canSelectMore: (rule: CustomizationRule) => boolean;
     isOptionSelected: (ruleName: string, optionName: string) => boolean;
     allRequiredRulesSatisfied: () => boolean;
+    isRequiredRuleSatisfied: (rule: CustomizationRule) => boolean;
+    getMissingRequiredRules: () => string[];
 }
 
 export const ProductContext = createContext<ProductContextProps | undefined>(undefined)

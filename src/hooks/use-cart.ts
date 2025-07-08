@@ -61,16 +61,39 @@ export function useCart(restaurantSlug: string, sessionId: string, menuId: strin
     };
 
 
+    // Function to compare customisations
+    const areCustomisationsEqual = (
+        a: CartItemCustomisation[],
+        b: CartItemCustomisation[],
+    ): boolean => {
+        if (a.length !== b.length) return false;
+        return a.every(ruleA => {
+            const ruleB = b.find(r => r.ruleName === ruleA.ruleName);
+            if (!ruleB) return false;
+            if (ruleA.selectedOptions.length !== ruleB.selectedOptions.length) return false;
+            return ruleA.selectedOptions.every(optA => {
+                const optB = ruleB.selectedOptions.find(o => o.optionName === optA.optionName);
+                return !!optB &&
+                    optB.quantity === optA.quantity &&
+                    optB.priceModifier === optA.priceModifier;
+            });
+        });
+    };
+
     // Function to add an item to the cart
     const addItem = (newItem: CartItem) => {
         setCart(() => {
             const prevCart = getCart(restaurantSlug, sessionId, menuId);
 
-            // Check if the item already exists in the cart by its id
-            const existingItemIndex = prevCart.findIndex(item => item.id === newItem.id);
+            // Check if the item already exists in the cart with same customisations
+            const existingItemIndex = prevCart.findIndex(
+                item =>
+                    item.id === newItem.id &&
+                    item.additionalNotes === newItem.additionalNotes &&
+                    areCustomisationsEqual(item.customisations, newItem.customisations),
+            );
 
             if (existingItemIndex !== -1) {
-
                 // Item found: update its quantity
                 const updatedCart = [...prevCart];
                 updatedCart[existingItemIndex] = {
@@ -82,7 +105,6 @@ export function useCart(restaurantSlug: string, sessionId: string, menuId: strin
             }
 
             // Item not found: add it to the cart
-
             const newCart = [...prevCart, newItem];
             return newCart;
         });

@@ -23,7 +23,7 @@ export function ProductAdditionalInfo() {
     })
 
 
-    const {total, onSubmit} = useProductContext()
+    const {total, onSubmit, allRequiredRulesSatisfied, getMissingRequiredRules} = useProductContext()
 
 
     return (
@@ -49,12 +49,17 @@ export function ProductAdditionalInfo() {
 
                     </div>
                     <ProductQuantity/>
-                    <div className='flex justify-center w-full mt-8 '>
-                        <Button type={total === 0 ? "button" : "submit"}
-                                disabled={total === 0}
+                    <div className='flex justify-center w-full mt-8 flex-col items-center'>
+                        <Button type={total === 0 || !allRequiredRulesSatisfied() ? "button" : "submit"}
+                                disabled={total === 0 || !allRequiredRulesSatisfied()}
                                 className={`self-center mx-auto prevent-select w-full`}>
                             {total === 0 ? "Confirmar" : `Confirmar - ${total}.00 Kz`}
                         </Button>
+                        {!allRequiredRulesSatisfied() && (
+                            <p className='text-xs text-red-600 mt-2 text-center'>
+                                Escolha: {getMissingRequiredRules().join(', ')}
+                            </p>
+                        )}
                     </div>
 
                 </form>

@@ -194,6 +194,12 @@ export function Product({children, item}: props) {
         return item.customizations.every(rule => isRequiredRuleSatisfied(rule))
     }
 
+    const getMissingRequiredRules = () => {
+        return item.customizations
+            .filter(rule => rule.isRequired && !isRequiredRuleSatisfied(rule))
+            .map(rule => rule.name)
+    }
+
 
     function handleSubmit(data: z.infer<typeof AdditionalNoteSchema>) {
         const note = data.note
@@ -233,7 +239,9 @@ export function Product({children, item}: props) {
             getOptionQuantity,
             canSelectMore,
             isOptionSelected,
-            allRequiredRulesSatisfied
+            allRequiredRulesSatisfied,
+            isRequiredRuleSatisfied,
+            getMissingRequiredRules
         }}>
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger>
@@ -283,7 +291,8 @@ export function ProductContent() {
         handleCustomizationChange,
         getOptionQuantity,
         isOptionSelected,
-        canSelectMore
+        canSelectMore,
+        isRequiredRuleSatisfied
     } = useProductContext()
 
 
@@ -317,7 +326,7 @@ export function ProductContent() {
             {item.customizations.map((rule, ruleIndex) => (
                 <div key={ruleIndex} className='space-y-3 border p-3 rounded-lg'>
                     <div className='flex items-center justify-between'>
-                        <h2 className='font-medium'>
+                        <h2 className={`font-medium ${rule.isRequired && !isRequiredRuleSatisfied(rule) ? 'text-red-600' : ''}`}>
                             {rule.name}{rule.isRequired && <span className='text-red-500 ml-1'>*</span>}
                         </h2>
                         <span className='text-xs'>
@@ -327,6 +336,9 @@ export function ProductContent() {
                             {rule.limitType === "ALL" && "Choose all"}
                         </span>
                     </div>
+                    {rule.isRequired && !isRequiredRuleSatisfied(rule) && (
+                        <p className='text-xs text-red-600'>Seleção obrigatória</p>
+                    )}
                     {rule.options.map((option, optionIndex) => {
                         const selected = isOptionSelected(rule.name, option.name)
                         const qty = getOptionQuantity(rule.name, option.name)
