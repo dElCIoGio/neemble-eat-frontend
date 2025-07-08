@@ -146,15 +146,15 @@ export default function ReportsPage() {
             case "items":
                 return (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
-                        <div className="text-muted-foreground mb-2">Items Sold data coming soon</div>
-                        <div className="text-sm text-muted-foreground">This feature is under development</div>
+                        <div className="text-muted-foreground mb-2">Dados de Itens Vendidos em breve</div>
+                        <div className="text-sm text-muted-foreground">Esta funcionalidade está em desenvolvimento</div>
                     </div>
                 )
             case "cancelled":
                 return (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
-                        <div className="text-muted-foreground mb-2">Cancelled Orders data coming soon</div>
-                        <div className="text-sm text-muted-foreground">This feature is under development</div>
+                        <div className="text-muted-foreground mb-2">Dados de Pedidos Cancelados em breve</div>
+                        <div className="text-sm text-muted-foreground">Esta funcionalidade está em desenvolvimento</div>
                     </div>
                 )
             default:

@@ -15,10 +15,10 @@ interface ReportsHeaderProps {
 }
 
 const datePresets = [
-    { value: "today" as DatePreset, label: "Today" },
-    { value: "last7days" as DatePreset, label: "Last 7 days" },
-    { value: "last30days" as DatePreset, label: "Last 30 days" },
-    { value: "custom" as DatePreset, label: "Custom" },
+    { value: "today" as DatePreset, label: "Hoje" },
+    { value: "last7days" as DatePreset, label: "Últimos 7 dias" },
+    { value: "last30days" as DatePreset, label: "Últimos 30 dias" },
+    { value: "custom" as DatePreset, label: "Personalizado" },
 ]
 
 export function ReportsHeader({
@@ -32,11 +32,11 @@ export function ReportsHeader({
         <Card className="sticky top-0 z-0 p-4">
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold tracking-tight">Reports</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Relatórios</h1>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" onClick={onFilterClick} className="relative bg-transparent">
                             <Filter className="h-4 w-4 mr-2" />
-                            Filter
+                            Filtrar
                             {activeFilters > 0 && (
                                 <Badge
                                     variant="secondary"
@@ -50,17 +50,17 @@ export function ReportsHeader({
                             <DropdownMenuTrigger asChild>
                                 <Button variant="outline">
                                     <Download className="h-4 w-4 mr-2" />
-                                    Export
+                                    Exportar
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => onExport("pdf")}>
                                     <FileText className="h-4 w-4 mr-2" />
-                                    Export as PDF
+                                    Exportar como PDF
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => onExport("csv")}>
                                     <FileSpreadsheet className="h-4 w-4 mr-2" />
-                                    Export as CSV
+                                    Exportar como CSV
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
