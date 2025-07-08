@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Link, useNavigate } from "react-router"
+import { Link, useNavigate } from "react-router-dom"
 import { useDashboardContext } from "@/context/dashboard-context"
 import { menuApi } from "@/api/endpoints/menu/requests"
 import { useGetMenuBySlug } from "@/api/endpoints/menu/hooks"

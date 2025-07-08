@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CustomizationOption, CustomizationRule, Item, LimitType, PartialItem } from "@/types/item"
-import { Link, useParams } from "react-router"
+import { Link, useParams } from "react-router-dom"
 import { useGetMenuCategoriesBySlug } from "@/api/endpoints/categories/hooks"
 import {
     useGetItemBySlug,

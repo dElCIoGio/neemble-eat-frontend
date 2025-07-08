@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {Menu} from "@/types/menu";
-import {Link, useParams, useSearchParams} from "react-router";
+import {Link, useParams, useSearchParams} from "react-router-dom";
 import {OverviewTab} from "@/components/pages/dashboard-menu/overview-tab";
 import {CategoriesTab} from "@/components/pages/dashboard-menu/categories-tab";
 import {ItemsTab} from "@/components/pages/dashboard-menu/items-tab";

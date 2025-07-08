@@ -1,5 +1,5 @@
 // src/features/auth/ProtectedRoute.tsx
-import { Navigate, Outlet, useLocation } from 'react-router';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Loader } from '@/components/ui/loader';
 import {useAuth} from "@/context/auth-context"; // Optional: your own loading spinner
 

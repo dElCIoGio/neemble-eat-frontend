@@ -21,7 +21,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Link, useParams } from "react-router"
+import { Link, useParams } from "react-router-dom"
 import { Category } from "@/types/category"
 import type { Item } from "@/types/item"
 import { useGetCategoryBySlug, useGetCategoryItems } from "@/api/endpoints/categories/hooks"

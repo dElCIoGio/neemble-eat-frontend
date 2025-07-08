@@ -6,7 +6,7 @@ import {WelcomeStep} from "@/components/pages/onboarding/welcome-step";
 import {DataConfirmationStep} from "@/components/pages/onboarding/data-confirmation-step";
 import { OnboardingLayout } from "@/components/layout/onboarding/onboarding-layout";
 import {User} from "@/types/user";
-import {Navigate, useNavigate} from "react-router";
+import {Navigate, useNavigate} from "react-router-dom";
 import {toast} from "sonner";
 import {OnboardingContext} from "@/context/onboarding-context";
 import {useAuth} from "@/context/auth-context";

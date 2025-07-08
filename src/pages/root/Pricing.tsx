@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Check } from "lucide-react"
 import { QrCode, BowlFood, ChartLine, MapPin } from "@phosphor-icons/react"
-import {NavLink} from "react-router";
+import {NavLink} from "react-router-dom";
 
 
 const plans = [

@@ -1,5 +1,5 @@
 import {Button} from "@/components/ui/button";
-import {NavLink} from "react-router";
+import {NavLink} from "react-router-dom";
 import {motion} from "framer-motion";
 import img from "@/../public/chef-hero.png"
 

@@ -1,6 +1,6 @@
 import { MenuContext } from "@/context/menu-context";
 import {useGetCurrentMenu, useGetRestaurantBySlug} from "@/api/endpoints/restaurants/hooks";
-import {useParams, useSearchParams} from "react-router";
+import {useParams, useSearchParams} from "react-router-dom";
 import Navbar from "@/components/pages/restaurant-menu/navbar";
 import {Banner} from "@/components/pages/restaurant-menu/banner";
 import {RestaurantInfo} from "@/components/pages/restaurant-menu/restaurant-info";

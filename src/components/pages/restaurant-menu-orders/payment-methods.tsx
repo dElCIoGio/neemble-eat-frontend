@@ -5,7 +5,7 @@ import {Banknote, CreditCard} from "lucide-react";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
 import {useMarkSessionNeedsBill} from "@/api/endpoints/sessions/hooks";
-import {useParams} from "react-router";
+import {useParams} from "react-router-dom";
 
 
 

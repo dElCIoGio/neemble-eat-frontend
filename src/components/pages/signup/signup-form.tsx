@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import {SignupFormValues, signupSchema} from "@/lib/schemas/auth";
-import {useNavigate} from "react-router";
+import {useNavigate} from "react-router-dom";
 import {createUserWithEmailAndPassword} from "firebase/auth";
 import {auth} from "@/firebase/config";
 import {useGoogleAuth} from "@/hooks/use-google-auth";

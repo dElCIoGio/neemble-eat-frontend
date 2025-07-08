@@ -1,7 +1,7 @@
 import {Restaurant} from "@/types/restaurant";
 import {Menu} from "@/types/menu";
 import {createContext, useContext} from "react";
-import {Outlet, useParams} from "react-router";
+import {Outlet, useParams} from "react-router-dom";
 import {useGetCurrentMenu, useGetRestaurantBySlug} from "@/api/endpoints/restaurants/hooks";
 import {Loader} from "@/components/ui/loader";
 import {useGetActiveSessionByTableNumber} from "@/api/endpoints/sessions/hooks";

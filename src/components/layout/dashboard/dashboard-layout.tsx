@@ -1,4 +1,4 @@
-import {Outlet, useLocation} from "react-router";
+import {Outlet, useLocation} from "react-router-dom";
 import {useEffect} from "react";
 import DashboardNavbar from "@/components/layout/dashboard/components/navbar";
 import {SidebarProvider} from "@/components/ui/sidebar";

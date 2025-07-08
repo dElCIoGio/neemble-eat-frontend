@@ -13,7 +13,7 @@ import {
     Settings,
     History,
 } from "lucide-react"
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import {DesktopAnalytics, DesktopOrders} from "@/assets";
 
 

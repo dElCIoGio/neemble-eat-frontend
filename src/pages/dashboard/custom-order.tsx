@@ -14,7 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {CustomizationRule} from "@/types/item";
 import {CartItem, CartItemCustomisation} from "@/lib/helpers/cart";
-import {useParams} from "react-router";
+import {useParams} from "react-router-dom";
 import {useGetRestaurantBySlug, useGetCurrentMenu} from "@/api/endpoints/restaurants/hooks";
 import {useGetMenuItemsBySlug} from "@/api/endpoints/menu/hooks";
 import {useListRestaurantTables} from "@/api/endpoints/tables/hooks";

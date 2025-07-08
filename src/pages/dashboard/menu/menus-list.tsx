@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import {useDashboardContext} from "@/context/dashboard-context";
 import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
 import {Loader} from "@/components/ui/loader";

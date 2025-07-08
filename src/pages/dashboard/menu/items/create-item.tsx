@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CustomizationOption, CustomizationRule, ItemCreate, LimitType} from "@/types/item";
-import { Link, useNavigate, useParams} from "react-router";
+import { Link, useNavigate, useParams} from "react-router-dom";
 import { itemsApi} from "@/api/endpoints/item/requests";
 import { useDashboardContext} from "@/context/dashboard-context";
 import { showPromiseToast, showWarningToast} from "@/utils/notifications/toast";

@@ -1,5 +1,5 @@
 import {useState, useEffect} from "react";
-import {useParams} from "react-router";
+import {useParams} from "react-router-dom";
 import {useQueryClient} from "@tanstack/react-query";
 import {useCart} from "@/hooks/use-cart";
 import {useGetActiveSessionByTableNumber} from "@/api/endpoints/sessions/hooks";

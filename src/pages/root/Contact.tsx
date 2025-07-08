@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Mail, Phone, MapPin, Clock, MessagesSquare } from "lucide-react"
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import { FacebookLogo, LinkedinLogo, InstagramLogo } from "@phosphor-icons/react"
 import {  } from "lucide-react"
 

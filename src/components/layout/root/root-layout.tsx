@@ -1,4 +1,4 @@
-import {Outlet, useLocation} from "react-router";
+import {Outlet, useLocation} from "react-router-dom";
 
 import {useEffect} from "react";
 import {Footer} from "@/components/layout/root/components/footer";

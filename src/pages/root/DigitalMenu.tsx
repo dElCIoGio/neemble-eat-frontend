@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Check, Smartphone, QrCode, Utensils, ImageIcon, Languages, Wifi, Clock } from "lucide-react"
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import {IphoneDarkBackground, MacBookDashboard, NeembleEatMenu} from "@/assets";
 
 const features = [
