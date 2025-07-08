@@ -24,6 +24,7 @@ import type {
     ItemsTimeRange,
 } from "@/types/dashboard"
 import {downloadCSV, downloadPDF} from "@/lib/helpers/export";
+import { toLocalISOString } from "@/lib/helpers/to-local-iso-string";
 import {toast} from "sonner";
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
@@ -91,8 +92,10 @@ export default function RestaurantDashboard(): JSX.Element {
                 from.setHours(0, 0, 0, 0)
                 break
             case "yesterday":
-                from.setDate(from.getDate() - 2)
+                from.setDate(from.getDate() - 1)
                 from.setHours(0, 0, 0, 0)
+                to = new Date(from)
+                to.setHours(23, 59, 59, 999)
                 break
             case "7days":
             case "week":
@@ -111,8 +114,8 @@ export default function RestaurantDashboard(): JSX.Element {
         }
 
         return {
-            from: from.toISOString(),
-            to: to ? to.toISOString() : undefined
+            from: toLocalISOString(from),
+            to: to ? toLocalISOString(to) : undefined
         }
     }
 
