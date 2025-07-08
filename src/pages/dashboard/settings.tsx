@@ -16,7 +16,8 @@ import {
     useUpdateRestaurantLogo,
     useUpdateRestaurantAutomaticStock,
 } from "@/api/endpoints/restaurants/hooks";
-import {showPromiseToast} from "@/utils/notifications/toast";
+import {showPromiseToast, showErrorToast} from "@/utils/notifications/toast";
+import { MAX_IMAGE_SIZE } from "@/utils/image/image-handler";
 import {useQueryClient} from "@tanstack/react-query";
 import {OpeningHours} from "@/types/restaurant";
 
@@ -70,6 +71,10 @@ export default function Settings() {
     const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
+        if (file.size > MAX_IMAGE_SIZE) {
+            showErrorToast(`Banner deve ter no máximo ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`)
+            return
+        }
         const promise = updateBannerMutation
             .mutateAsync(file)
             .then((updated) => {
@@ -85,6 +90,10 @@ export default function Settings() {
     const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
+        if (file.size > MAX_IMAGE_SIZE) {
+            showErrorToast(`Logo deve ter no máximo ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`)
+            return
+        }
         const promise = updateLogoMutation
             .mutateAsync(file)
             .then((updated) => {
@@ -229,6 +238,52 @@ export default function Settings() {
                             <TabsContent value="restaurante" className="space-y-6">
                                 <Card>
                                     <CardHeader>
+                                        <CardTitle>Imagens</CardTitle>
+                                        <CardDescription>Atualize o banner e o logo do restaurante.</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-6">
+                                            <div className="grid items-center gap-4 md:grid-cols-2">
+                                                <div className="space-y-2">
+                                                    <Label>Banner atual</Label>
+                                                    <img
+                                                        src={restaurant.bannerUrl || "/placeholder.svg"}
+                                                        alt="Banner atual"
+                                                        className="h-24 w-full rounded-md border object-cover"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="banner-upload">Novo banner</Label>
+                                                    <Input
+                                                        id="banner-upload"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleBannerChange}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="grid items-center gap-4 md:grid-cols-2">
+                                                <div className="space-y-2">
+                                                    <Label>Logo atual</Label>
+                                                    <img
+                                                        src={restaurant.logoUrl || "/placeholder.svg"}
+                                                        alt="Logo atual"
+                                                        className="h-20 w-20 rounded-md border object-cover"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="logo-upload">Novo logo</Label>
+                                                    <Input
+                                                        id="logo-upload"
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleLogoChange}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                                         <CardTitle>Horário de Funcionamento</CardTitle>
                                         <CardDescription>Configure os horários de funcionamento do seu restaurante.</CardDescription>
                                     </CardHeader>
@@ -312,54 +367,6 @@ export default function Settings() {
                                     </CardContent>
                                 </Card>
 
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Imagens</CardTitle>
-                                        <CardDescription>Atualize o banner e o logo do restaurante.</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="space-y-6">
-                                            <div className="grid items-center gap-4 md:grid-cols-2">
-                                                <div className="space-y-2">
-                                                    <Label>Banner atual</Label>
-                                                    <img
-                                                        src={restaurant.bannerUrl || "/placeholder.svg"}
-                                                        alt="Banner atual"
-                                                        className="h-24 w-full rounded-md border object-cover"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="banner-upload">Novo banner</Label>
-                                                    <Input
-                                                        id="banner-upload"
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={handleBannerChange}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="grid items-center gap-4 md:grid-cols-2">
-                                                <div className="space-y-2">
-                                                    <Label>Logo atual</Label>
-                                                    <img
-                                                        src={restaurant.logoUrl || "/placeholder.svg"}
-                                                        alt="Logo atual"
-                                                        className="h-20 w-20 rounded-md border object-cover"
-                                                    />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="logo-upload">Novo logo</Label>
-                                                    <Input
-                                                        id="logo-upload"
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={handleLogoChange}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
 
                                 <Card>
                                     <CardHeader>
