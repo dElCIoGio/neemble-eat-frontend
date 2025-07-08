@@ -18,23 +18,88 @@ import {useParams} from "react-router";
 import {useGetRestaurantBySlug, useGetCurrentMenu} from "@/api/endpoints/restaurants/hooks";
 import {useGetMenuItemsBySlug} from "@/api/endpoints/menu/hooks";
 import {useListRestaurantTables} from "@/api/endpoints/tables/hooks";
+import {useGetActiveSessionByTableNumber} from "@/api/endpoints/sessions/hooks";
 import {useCart} from "@/hooks/use-cart";
 import {showErrorToast, showPromiseToast, showWarningToast} from "@/utils/notifications/toast";
 import {ordersApi} from "@/api/endpoints/orders/requests";
-import {sessionApi} from "@/api/endpoints/sessions/requests";
-import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
+import {Loader} from "@/components/ui/loader";
+import {Restaurant} from "@/types/restaurant";
+import {Menu} from "@/types/menu";
+import {Item} from "@/types/item";
+import {Table} from "@/types/table";
+import {TableSession} from "@/types/table-session";
 
 
 export default function OrderCustomizationPage() {
 
     const {restaurantSlug} = useParams() as {restaurantSlug: string}
 
-    const { session, menu: restaurantMenu } = useRestaurantMenuContext()
+    const [selectedTable, setSelectedTable] = useState<number | null>(null)
 
-    const {data: restaurant} = useGetRestaurantBySlug(restaurantSlug)
-    const {data: menu} = useGetCurrentMenu(restaurant?._id)
-    const {data: items = []} = useGetMenuItemsBySlug(menu?.slug ?? "")
-    const {data: tables = []} = useListRestaurantTables(restaurant?._id ?? "")
+    const {data: restaurant, isLoading: isRestaurantLoading} = useGetRestaurantBySlug(restaurantSlug)
+    const {data: menu, isLoading: isMenuLoading} = useGetCurrentMenu(restaurant?._id)
+    const {data: items = [], isLoading: isItemsLoading} = useGetMenuItemsBySlug(menu?.slug ?? "")
+    const {data: tables = [], isLoading: isTablesLoading} = useListRestaurantTables(restaurant?._id ?? "")
+
+    const {data: session, isLoading: isSessionLoading} = useGetActiveSessionByTableNumber({
+        restaurantId: selectedTable !== null ? restaurant?._id : undefined,
+        tableNumber: selectedTable ?? 0,
+    })
+
+    const isLoading =
+        isRestaurantLoading ||
+        isMenuLoading ||
+        isItemsLoading ||
+        isTablesLoading
+
+    if (isLoading || !restaurant || !menu) {
+        return (
+            <div className="flex-1 flex items-center justify-center p-4">
+                <Loader />
+            </div>
+        )
+    }
+
+    return (
+        <OrderCustomizationContent
+            restaurantSlug={restaurantSlug}
+            restaurant={restaurant}
+            menu={menu}
+            items={items}
+            tables={tables}
+            session={session}
+            selectedTable={selectedTable}
+            setSelectedTable={setSelectedTable}
+            isSessionLoading={isSessionLoading}
+        />
+    )
+}
+
+interface ContentProps {
+    restaurantSlug: string
+    restaurant: Restaurant
+    menu: Menu
+    items: Item[]
+    tables: Table[]
+    session?: TableSession
+    selectedTable: number | null
+    setSelectedTable: (n: number | null) => void
+    isSessionLoading: boolean
+}
+
+function OrderCustomizationContent({
+    restaurantSlug,
+    restaurant,
+    menu,
+    items,
+    tables,
+    session,
+    selectedTable,
+    setSelectedTable,
+    isSessionLoading,
+}: ContentProps) {
+
+    const sessionIdForCart = session?._id ?? `pending-${selectedTable ?? 'none'}`
 
     const {
         cart,
@@ -42,9 +107,8 @@ export default function OrderCustomizationPage() {
         deleteProduct,
         findCartItemIndexByID,
         setCartEmpty,
-    } = useCart(restaurantSlug, session._id, restaurantMenu._id)
+    } = useCart(restaurantSlug, sessionIdForCart, menu._id)
 
-    const [selectedTable, setSelectedTable] = useState<number | null>(null)
     const [currentItemIndex, setCurrentItemIndex] = useState(0)
     const [isCartOpen, setIsCartOpen] = useState(false)
     const [editingCartItemId, setEditingCartItemId] = useState<string | null>(null)
@@ -291,6 +355,11 @@ export default function OrderCustomizationPage() {
             return
         }
 
+        if (!session) {
+            showErrorToast("No active session found for this table")
+            return
+        }
+
         if (cart.length === 0) {
             showWarningToast("Please add items to your cart first")
             return
@@ -301,23 +370,20 @@ export default function OrderCustomizationPage() {
             return
         }
 
-        const promise = sessionApi.getActiveSessionByTableNumber(selectedTable, restaurant._id)
-            .then((session) => {
-                const orders = cart.map((cartItem) => ({
-                    sessionId: session._id,
-                    itemId: cartItem.id,
-                    quantity: cartItem.quantity,
-                    additionalNote: cartItem.additionalNotes,
-                    customisations: cartItem.customisations,
-                    orderedItemName: cartItem.name,
-                    restaurantId: restaurant._id,
-                    unitPrice: cartItem.price,
-                    total: cartItem.price * cartItem.quantity,
-                    tableNumber: selectedTable,
-                }))
+        const orders = cart.map((cartItem) => ({
+            sessionId: session._id,
+            itemId: cartItem.id,
+            quantity: cartItem.quantity,
+            additionalNote: cartItem.additionalNotes,
+            customisations: cartItem.customisations,
+            orderedItemName: cartItem.name,
+            restaurantId: restaurant._id,
+            unitPrice: cartItem.price,
+            total: cartItem.price * cartItem.quantity,
+            tableNumber: selectedTable,
+        }))
 
-                return ordersApi.addOrdersGroup(orders, session._id)
-            })
+        const promise = ordersApi.addOrdersGroup(orders, session._id)
 
         showPromiseToast(promise, {
             loading: "Submitting order...",
@@ -424,7 +490,11 @@ export default function OrderCustomizationPage() {
                                         <span className="text-lg font-bold">Total</span>
                                         <span className="text-xl font-bold text-green-600">Kz {getTotalCartValue().toFixed(2)}</span>
                                     </div>
-                                    <Button className="w-full" onClick={handleSubmitOrder} disabled={!selectedTable}>
+                                    <Button
+                                        className="w-full"
+                                        onClick={handleSubmitOrder}
+                                        disabled={!selectedTable || !session || isSessionLoading}
+                                    >
                                         Submit Order
                                     </Button>
                                     <Button variant="destructive" className="w-full mt-2" onClick={setCartEmpty}>
@@ -432,6 +502,12 @@ export default function OrderCustomizationPage() {
                                     </Button>
                                     {!selectedTable && (
                                         <p className="text-sm text-red-500 text-center mt-2">Please select a table first</p>
+                                    )}
+                                    {selectedTable && !session && !isSessionLoading && (
+                                        <p className="text-sm text-red-500 text-center mt-2">No active session found</p>
+                                    )}
+                                    {isSessionLoading && selectedTable && (
+                                        <p className="text-sm text-gray-500 text-center mt-2">Fetching session...</p>
                                     )}
                                 </div>
                             )}
