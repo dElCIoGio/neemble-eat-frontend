@@ -42,9 +42,19 @@ export function OrderSingleItem({order}: Props) {
                 <div className='mt-1 text-xs text-gray-600 space-y-1'>
                     <p>Mesa: {order.tableNumber}</p>
                     {order.additionalNote && <p>Nota: {order.additionalNote}</p>}
+                    {order.customisations && order.customisations.length > 0 && (
+                        <div className='space-y-0.5'>
+                            <p className='font-medium'>Personalizações:</p>
+                            {order.customisations.map((c) => (
+                                <p key={c.ruleName}>
+                                    <span className='font-medium'>{c.ruleName}: </span>
+                                    {c.selectedOptions.map(o => `${o.optionName} (${o.quantity})`).join(', ')}
+                                </p>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
         </div>
 
-    );
-}
+    );}
