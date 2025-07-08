@@ -52,6 +52,7 @@ export default function DashboardHomeHeader() {
                                 <Calendar
                                     mode="range"
                                     numberOfMonths={2}
+                                    showOutsideDays={false}
                                     selected={customDateRange}
                                     onSelect={(range: DateRange | undefined) => setCustomDateRange(range)}
                                     locale={pt}

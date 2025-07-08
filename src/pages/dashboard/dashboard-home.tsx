@@ -83,36 +83,36 @@ export default function RestaurantDashboard(): JSX.Element {
         filter: DateFilter | ItemsTimeRange,
         custom?: DateRange
     ) => {
-        const today = new Date()
         const from = new Date()
+        let to: Date | undefined
 
         switch (filter) {
             case "today":
                 from.setHours(0, 0, 0, 0)
                 break
             case "yesterday":
-                from.setDate(today.getDate() - 2)
+                from.setDate(from.getDate() - 2)
                 from.setHours(0, 0, 0, 0)
-                today.setDate(today.getDate() - 2)
-                today.setHours(23, 59, 59, 999)
                 break
             case "7days":
             case "week":
-                from.setDate(today.getDate() - 7)
+                from.setDate(from.getDate() - 7)
                 break
             case "30days":
             case "month":
-                from.setDate(today.getDate() - 30)
+                from.setDate(from.getDate() - 30)
                 break
             case "custom":
                 if (custom?.from) from.setTime(custom.from.getTime())
-                if (custom?.to) today.setTime(custom.to.getTime())
+                if (custom?.to) {
+                    to = new Date(custom.to)
+                }
                 break
         }
 
         return {
             from: from.toISOString(),
-            to: today.toISOString()
+            to: to ? to.toISOString() : undefined
         }
     }
 
