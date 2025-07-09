@@ -1,6 +1,6 @@
 import {createContext, useContext, useState, ReactNode, JSX, useEffect} from "react"
 import { User } from "@/types/user"
-import { Role, RoleCreate, SectionPermission } from "@/types/role"
+
 import { InvitationCreate } from "@/types/invitation"
 import { useDashboardContext } from "@/context/dashboard-context"
 import { useGetAllMembers } from "@/hooks/use-get-all-members"
@@ -21,8 +21,6 @@ interface DashboardStaffContextType {
     setStatusFilter: (status: string) => void
     isInviteDialogOpen: boolean
     setIsInviteDialogOpen: (open: boolean) => void
-    isRoleDialogOpen: boolean
-    setIsRoleDialogOpen: (open: boolean) => void
     selectedMember: User | null
     setSelectedMember: (member: User | null) => void
     isEditDialogOpen: boolean
@@ -38,14 +36,8 @@ interface DashboardStaffContextType {
     itemsPerPage: number
     viewMode: "table" | "cards"
     setViewMode: (mode: "table" | "cards") => void
-    editingRole: Role | null
-    setEditingRole: (role: Role | null) => void
-    isEditRoleDialogOpen: boolean
-    setIsEditRoleDialogOpen: (open: boolean) => void
     inviteForm: InvitationCreate
     setInviteForm: (form: InvitationCreate) => void
-    roleForm: RoleCreate
-    setRoleForm: React.Dispatch<React.SetStateAction<RoleCreate>>
     // Computed values
     stats: {
         total: number
@@ -75,7 +67,6 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("todos")
     const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false)
-    const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false)
     const [selectedMember, setSelectedMember] = useState<User | null>(null)
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const [selectedMembers, setSelectedMembers] = useState<string[]>([])
@@ -88,8 +79,6 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         if (isMobile) setViewMode("cards")
     }, [isMobile])
-    const [editingRole, setEditingRole] = useState<Role | null>(null)
-    const [isEditRoleDialogOpen, setIsEditRoleDialogOpen] = useState(false)
 
     const { user, restaurant } = useDashboardContext()
 
@@ -100,13 +89,6 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
         restaurantId: restaurant._id
     })
 
-    const [roleForm, setRoleForm] = useState<RoleCreate>({
-        name: "",
-        description: "",
-        permissions: [] as SectionPermission[],
-        restaurantId: restaurant._id,
-        level: 0,
-    })
 
     const { data: roles } = useListRestaurantRoles(restaurant._id)
     const updateMemberRoleMutation = useUpdateMemberRole()
@@ -223,8 +205,6 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
             setStatusFilter,
             isInviteDialogOpen,
             setIsInviteDialogOpen,
-            isRoleDialogOpen,
-            setIsRoleDialogOpen,
             selectedMember,
             setSelectedMember,
             isEditDialogOpen,
@@ -240,14 +220,8 @@ export function DashboardStaffProvider({ children }: { children: ReactNode }) {
             itemsPerPage,
             viewMode,
             setViewMode,
-            editingRole,
-            setEditingRole,
-            isEditRoleDialogOpen,
-            setIsEditRoleDialogOpen,
             inviteForm,
             setInviteForm,
-            roleForm,
-            setRoleForm,
             stats,
             sortedMembers,
             paginatedMembers,

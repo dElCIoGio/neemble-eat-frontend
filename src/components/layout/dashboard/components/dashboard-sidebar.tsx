@@ -83,6 +83,12 @@ const navigation: {
         ]
     },
     {
+        label: "Funções",
+        icon: UsersThree,
+        href: "roles",
+        section: [Sections.ROLES]
+    },
+    {
         label: "Pedidos",
         icon: CallBell,
         href: "orders-tracking",

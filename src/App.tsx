@@ -10,6 +10,7 @@ import ResetPasswordPage from "@/pages/auth/reset-password";
 import MenuList from "@/pages/dashboard/menu/menus-list";
 import QrCodes from "@/pages/dashboard/qr-codes";
 import Staff from "@/pages/dashboard/staff";
+import RolesPage from "@/pages/dashboard/roles";
 import Subscription from "@/pages/dashboard/subscription";
 import Settings from "@/pages/dashboard/settings";
 import Support from "@/pages/dashboard/support";
@@ -118,6 +119,7 @@ function App() {
                         </Route>
                         <Route path="qrcode" element={<QrCodes/>}/>
                         <Route path="staff" element={<Staff/>}/>
+                        <Route path="roles" element={<RolesPage/>}/>
                         <Route path="subscription" element={<Subscription/>}/>
                         <Route path="settings" element={<Settings/>}/>
                         <Route path="support" element={<Support/>}/>
