@@ -197,8 +197,9 @@ export default function DashboardSidebar() {
                                         </button>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
+                                )
                             )
-                        })}
+                        }
                     </SidebarMenu>
                 </SidebarGroup>
             </SidebarContent>

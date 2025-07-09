@@ -40,7 +40,6 @@ export enum Sections {
     STOCK_ITEMS = "stock_items",
     STOCK_RECIPES = "stock_recipes",
     STOCK_MOVEMENTS = "stock_movements",
-    STOCK_SUPPLIERS = "stock_suppliers",
 
     // ⚙️ Settings & Config
     RESTAURANT_SETTINGS = "restaurant_settings",

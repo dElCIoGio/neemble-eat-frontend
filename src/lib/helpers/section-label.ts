@@ -1,4 +1,6 @@
-export const sectionLabels: Record<string, string> = {
+import {Sections} from "@/types/role";
+
+export const sectionLabels: Record<Sections, string> = {
     menus: 'Cardápios',
     categories: 'Categorias',
     items: 'Itens',
@@ -28,6 +30,10 @@ export const sectionLabels: Record<string, string> = {
     revenue_trends: 'Tendências de Receita',
     customer_feedback: 'Feedback dos Clientes',
 
+    stock_items: "Itens no stock",
+    stock_movements: "Movimentos no stock",
+    stock_recipes: "Receitas",
+
     restaurant_settings: 'Configurações do Restaurante',
     opening_hours: 'Horário de Funcionamento',
     printer_setup: 'Configuração da Impressora',
@@ -42,6 +48,6 @@ export const sectionLabels: Record<string, string> = {
     help_requests: 'Pedidos de Ajuda',
 };
 
-export function getSectionLabel(section: string): string {
+export function getSectionLabel(section: Sections): string {
     return sectionLabels[section] ?? section.replace(/_/g, ' ');
 }

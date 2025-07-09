@@ -64,8 +64,8 @@ export default function MetricCard({ title, value, growth, icon: Icon, format = 
                     )}
                 </CardContent>
             </Card>
-            <div className="px-2 mb-2 -mt-4 flex items-center space-x-1 text-xs">
-                <GrowthIcon className={`h-3 w-3 ${growth == 0 && "hidden"} ${isPositive ? "text-green-500" : "text-red-500"}`}/>
+            <div className="px-2 mb-2 -mt-4 flex items-start space-x-1 text-xs">
+                <GrowthIcon className={`mt-0.5 h-3 w-3 ${growth == 0 && "hidden"} ${isPositive ? "text-green-500" : "text-red-500"}`}/>
                 <div className="text-xs space-x-1">
                                 <span
                                     className={isPositive ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>{Math.abs(growth).toFixed(1)}%</span>
