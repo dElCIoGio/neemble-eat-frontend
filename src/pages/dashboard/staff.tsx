@@ -47,6 +47,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
+import {PermissionGate} from "@/components/ui/permission-gate";
 
 
 const defaultSectionPermissions: SectionPermission[] = [
@@ -500,7 +501,7 @@ function StaffContent() {
                                                                                     htmlFor={`role-${permission.section}`}
                                                                                     className="text-sm font-medium leading-none"
                                                                                 >
-    {getSectionLabel(permission.section)}
+                                                                                    {getSectionLabel(permission.section as Sections)}
                                                                                 </Label>
                                                                                 <p className="text-xs text-muted-foreground">
                                                                                     Permissões:
@@ -554,7 +555,7 @@ function StaffContent() {
                                                     <div key={perm.section} className="border p-3 rounded-lg space-y-2">
                                                         <div className="flex items-center justify-between">
                                                             <Label className="capitalize">
-                                                                {getSectionLabel(perm.section)}
+                                                                {getSectionLabel(perm.section as Sections)}
                                                             </Label>
                                                             <Button
                                                                 variant="ghost"
@@ -701,53 +702,58 @@ function StaffContent() {
                         <p className="text-gray-600">Gerir membros da equipa, permissões e acessos do restaurante.</p>
                     </div>
 
-                    <Filters />
 
-                    <Card>
-                        <CardHeader>
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div>
-                                    <CardTitle className="text-lg">Lista de Membros</CardTitle>
-                                    <CardDescription>{sortedMembers.length} membro(s) encontrado(s)</CardDescription>
+                    <PermissionGate section={Sections.USERS} operation={"view"} mode={"hide"}>
+                        <Filters />
+                        <Card>
+                            <CardHeader>
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div>
+                                        <CardTitle className="text-lg">Lista de Membros</CardTitle>
+                                        <CardDescription>{sortedMembers.length} membro(s) encontrado(s)</CardDescription>
+                                    </div>
                                 </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            {viewMode === "table" && !isMobile ? (
-                                <MembersTable />
-                            ) : (
-                                <div className="space-y-4">
-                                    {paginatedMembers.map((member: User) => (
-                                        <MemberCard key={member._id} member={member} />
-                                    ))}
-                                </div>
-                            )}
+                            </CardHeader>
+                            <CardContent>
+                                    {viewMode === "table" && !isMobile ? (
+                                        <MembersTable />
+                                    ) : (
+                                        <div className="space-y-4">
+                                            {paginatedMembers.map((member: User) => (
+                                                <MemberCard key={member._id} member={member} />
+                                            ))}
+                                        </div>
+                                    )}
 
-                            <Pagination />
-                        </CardContent>
-                    </Card>
+                                    <Pagination />
+                                </CardContent>
+                        </Card>
+                    </PermissionGate>
+                    <PermissionGate section={Sections.USERS} operation={"view"} mode={"hide"}>
+                        <Card className="mt-6">
+                            <CardHeader>
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div>
+                                        <CardTitle className="text-lg">Convites Pendentes</CardTitle>
+                                        <CardDescription>{invitations.length} convite(s) pendente(s)</CardDescription>
+                                    </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                {viewMode === "table" && !isMobile ? (
+                                    <InvitationsTable invitations={invitations} />
+                                ) : (
+                                    <div className="space-y-4">
+                                        {invitations.map((inv) => (
+                                            <InvitationCard key={inv._id} invitation={inv} />
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </PermissionGate>
 
-                    <Card className="mt-6">
-                        <CardHeader>
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div>
-                                    <CardTitle className="text-lg">Convites Pendentes</CardTitle>
-                                    <CardDescription>{invitations.length} convite(s) pendente(s)</CardDescription>
-                                </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            {viewMode === "table" && !isMobile ? (
-                                <InvitationsTable invitations={invitations} />
-                            ) : (
-                                <div className="space-y-4">
-                                    {invitations.map((inv) => (
-                                        <InvitationCard key={inv._id} invitation={inv} />
-                                    ))}
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+
                 </div>
             </div>
         </div>

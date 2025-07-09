@@ -10,6 +10,8 @@ import {Button} from "@/components/ui/button";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {cn} from "@/lib/utils";
 import {Table} from "@/types/table";
+import {PermissionGate} from "@/components/ui/permission-gate";
+import {Sections} from "@/types/role";
 
 const MAXIMUM_TABLES = 20;
 
@@ -82,38 +84,44 @@ export default function QrTables() {
                 </div>
             </div>
             <div className="flex items-center laptop:flex-row gap-2 mb-4">
-                <Button 
-                    disabled={isReducing || tables.length == 0 || isAdding || isLoading}
-                    variant="secondary" 
-                    className="hover:bg-zinc-200 w-fit border border-zinc-200"
-                    onClick={() => {
-                        const last = tables.at(-1);
-                        if (last != undefined)
-                            handleRemoveTable(last._id);
-                    }}
-                >
-                    {isReducing ? (
-                        <div className="bg-zinc-600 dark:bg-white">
+                <PermissionGate section={Sections.TABLE_QR_ACCESS_CONTROL} operation={"update"} mode={"disable"}>
+                    <Button
+                        disabled={isReducing || tables.length == 0 || isAdding || isLoading}
+                        variant="secondary"
+                        className="hover:bg-zinc-200 w-fit border border-zinc-200"
+                        onClick={() => {
+                            const last = tables.at(-1);
+                            if (last != undefined)
+                                handleRemoveTable(last._id);
+                        }}
+                    >
+                        {isReducing ? (
+                            <div className="bg-zinc-600 dark:bg-white">
+                                <Loader />
+                            </div>
+                        ) : (
+                            <Minus className="w-4 h-4" />
+                        )}
+                        Remover uma mesa
+                    </Button>
+                </PermissionGate>
+
+                <PermissionGate section={Sections.TABLE_QR_ACCESS_CONTROL} operation={"update"} mode={"disable"}>
+                    <Button
+                        disabled={isAdding || isReducing || tables.length == MAXIMUM_TABLES || isLoading}
+                        variant="secondary"
+                        className="hover:bg-zinc-200 w-fit border border-zinc-200"
+                        onClick={handleAddTable}
+                    >
+                        {isAdding ? (
                             <Loader />
-                        </div>
-                    ) : (
-                        <Minus className="w-4 h-4" />
-                    )}
-                    Remover uma mesa
-                </Button>
-                <Button 
-                    disabled={isAdding || isReducing || tables.length == MAXIMUM_TABLES || isLoading}
-                    variant="secondary" 
-                    className="hover:bg-zinc-200 w-fit border border-zinc-200"
-                    onClick={handleAddTable}
-                >
-                    {isAdding ? (
-                        <Loader />
-                    ) : (
-                        <Plus className="w-4 h-4" />
-                    )}
-                    Adicionar uma mesa
-                </Button>
+                        ) : (
+                            <Plus className="w-4 h-4" />
+                        )}
+                        Adicionar uma mesa
+                    </Button>
+                </PermissionGate>
+
                 <div className="border-l-2 h-6 border-zinc-200 pl-4 ml-4 flex items-center">
                     <p className="font-poppins-semibold text-sm text-zinc-600">
                         <span>

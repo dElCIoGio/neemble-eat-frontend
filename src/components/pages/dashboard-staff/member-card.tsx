@@ -26,6 +26,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {Sections} from "@/types/role";
 
 interface MemberCardProps {
     member: User
@@ -145,7 +146,7 @@ export function MemberCard({ member }: MemberCardProps) {
                     <div className="space-y-2">
                         {role?.permissions.map((perm) => (
                             <div key={perm.section} className="flex items-start justify-between">
-                                <span className="capitalize">{getSectionLabel(perm.section)}</span>
+                                <span className="capitalize">{getSectionLabel(perm.section as Sections)}</span>
                                 <div className="flex gap-1">
                                     {perm.permissions.canView && <Badge variant="secondary">ver</Badge>}
                                     {perm.permissions.canEdit && <Badge variant="secondary">editar</Badge>}

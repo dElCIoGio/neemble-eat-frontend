@@ -63,19 +63,21 @@ import {
     useDeleteStockItem,
     useAddStock,
 } from "@/api/endpoints/stock/hooks";
-import {useGetRecipes, useCreateRecipe, useDeleteRecipe, useUpdateRecipe} from "@/api/endpoints/recipes/hooks";
+import { useCreateRecipe, useDeleteRecipe, useUpdateRecipe} from "@/api/endpoints/recipes/hooks";
 import {useGetRestaurantMenus} from "@/api/endpoints/menu/hooks";
 import {menuApi} from "@/api/endpoints/menu/requests";
 import type {Item} from "@/types/item";
 import {useRegisterSale} from "@/api/endpoints/sales/hooks";
-import {useGetMovements, useCreateMovement} from "@/api/endpoints/movements/hooks";
+import {useCreateMovement} from "@/api/endpoints/movements/hooks";
 import type {MovementCreate} from "@/types/stock";
 import {formatIsosDate} from "@/lib/helpers/format-isos-date";
 import {usePaginatedQuery} from "@/hooks/use-paginate";
-import {stockItemClient} from "@/api";
+import {recipesClient, stockItemClient, stockMovementClient} from "@/api";
 
 import { useQueryClient } from "@tanstack/react-query"
 import PaginationManager from "@/components/ui/pagination-manager";
+import {PermissionGate} from "@/components/ui/permission-gate";
+import {Sections} from "@/types/role";
 
 
 interface PaginatedStockResponse {
@@ -269,9 +271,9 @@ export default function StockManagement() {
     const addStockMutation = useAddStock(restaurant._id)
 
     // Recipes data
-    const {
-        data: recipes = [],
-    } = useGetRecipes(restaurant._id)
+
+    const recipesPagination = usePaginatedQuery<Recipe>(recipesClient, 10, undefined, {restaurantId: restaurant._id})
+    const { data: recipes = [] } = recipesPagination
     const createRecipeMutation = useCreateRecipe(restaurant._id)
     const updateRecipeMutation = useUpdateRecipe(restaurant._id)
     const deleteRecipeMutation = useDeleteRecipe(restaurant._id)
@@ -281,7 +283,11 @@ export default function StockManagement() {
 
     // Sales data
     const registerSaleMutation = useRegisterSale(restaurant._id)
-    const { data: movements = [], isLoading: isMovementsLoading } = useGetMovements(restaurant._id)
+    // const { } = useGetMovements(restaurant._id)
+    const movementsPagination = usePaginatedQuery<Movement>(
+        stockMovementClient, 10, undefined, {restaurantId: restaurant._id}
+    )
+    const { data: movements = [], isLoading: isMovementsLoading  } = movementsPagination;
     const createMovementMutation = useCreateMovement(restaurant._id)
 
     // Modal states
@@ -980,9 +986,15 @@ export default function StockManagement() {
             {/* Main Content */}
             <Tabs defaultValue="stock" className="space-y-4">
                 <TabsList className="w-full">
-                    <TabsTrigger value="stock">Stock</TabsTrigger>
-                    <TabsTrigger value="recipes">Receitas</TabsTrigger>
-                    <TabsTrigger value="movements">Registros</TabsTrigger>
+                    <PermissionGate section={Sections.STOCK_ITEMS} operation={"view"} mode={"hide"}>
+                        <TabsTrigger value="stock">Stock</TabsTrigger>
+                    </PermissionGate>
+                    <PermissionGate section={Sections.STOCK_RECIPES} operation={"view"} mode={"hide"}>
+                        <TabsTrigger value="recipes">Receitas</TabsTrigger>
+                    </PermissionGate>
+                    <PermissionGate section={Sections.STOCK_MOVEMENTS} operation={"view"} mode={"hide"}>
+                        <TabsTrigger value="movements">Registros</TabsTrigger>
+                    </PermissionGate>
                     <TabsTrigger className="hidden" value="suppliers">Fornecedores</TabsTrigger>
                 </TabsList>
 
@@ -1049,7 +1061,7 @@ export default function StockManagement() {
                                             <TableHead>Quantidade</TableHead>
                                             <TableHead>Estado</TableHead>
                                             <TableHead>Última Entrada</TableHead>
-                                            <TableHead className="text-right">Ações</TableHead>
+                                            <TableHead className="text-right pr-8">Ações</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -1101,27 +1113,33 @@ export default function StockManagement() {
                                                             >
                                                                 Detalhes
                                                             </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleEditItem(item)}
-                                                            >
-                                                                Editar
-                                                            </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleAddStockToItem(item)}
-                                                            >
-                                                                Adicionar
-                                                            </Button>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleDeleteItem(item)}
-                                                            >
-                                                                <Trash2 className="h-4 w-4 text-red-500" />
-                                                            </Button>
+
+                                                            <PermissionGate section={Sections.STOCK_ITEMS} operation="update" mode="hide">
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    onClick={() => handleEditItem(item)}
+                                                                >
+                                                                    Editar
+                                                                </Button>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    onClick={() => handleAddStockToItem(item)}
+                                                                >
+                                                                    Adicionar
+                                                                </Button>
+                                                            </PermissionGate>
+                                                            <PermissionGate section={Sections.STOCK_ITEMS} operation="delete" mode={"hide"}>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    onClick={() => handleDeleteItem(item)}
+                                                                >
+                                                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                                                </Button>
+                                                            </PermissionGate>
+
                                                         </div>
                                                     </TableCell>
                                                 </TableRow>
@@ -1189,9 +1207,12 @@ export default function StockManagement() {
 
                 <TabsContent value="recipes" className="space-y-4">
                     <div className="flex justify-end">
-                        <Button onClick={() => setIsRecipeOpen(true)}>
-                            <Plus className="w-4 h-4 mr-2" /> Nova Receita
-                        </Button>
+                        <PermissionGate section={Sections.STOCK_RECIPES} operation="update" mode="hide">
+                            <Button onClick={() => setIsRecipeOpen(true)}>
+                                <Plus className="w-4 h-4 mr-2" /> Nova Receita
+                            </Button>
+                        </PermissionGate>
+
                     </div>
                     <Card>
                         <CardHeader>
@@ -1207,7 +1228,10 @@ export default function StockManagement() {
                                                 <TableHead>Prato</TableHead>
                                                 <TableHead>Porções</TableHead>
                                                 <TableHead>Custo</TableHead>
-                                                <TableHead className="text-right">Ações</TableHead>
+                                                <PermissionGate section={Sections.STOCK_RECIPES} operation="update" mode="hide">
+                                                    <TableHead className="text-right">Ações</TableHead>
+                                                </PermissionGate>
+
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -1221,20 +1245,23 @@ export default function StockManagement() {
                                                     <TableCell>{menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName}</TableCell>
                                                     <TableCell>{recipe.servings}</TableCell>
                                                     <TableCell>Kz {recipe.cost.toFixed(2)}</TableCell>
-                                                    <TableCell className="text-right">
-                                                        <div className="flex justify-end gap-2">
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleOpenEditRecipe(recipe)}
-                                                            >
-                                                                Editar
-                                                            </Button>
-                                                            <Button variant="ghost" size="sm" onClick={() => handleDeleteRecipe(recipe._id)}>
-                                                                <Trash2 className="h-4 w-4" />
-                                                            </Button>
-                                                        </div>
-                                                    </TableCell>
+                                                    <PermissionGate section={Sections.STOCK_RECIPES} operation="update" mode="hide">
+                                                        <TableCell className="text-right">
+                                                            <div className="flex justify-end gap-2">
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                    onClick={() => handleOpenEditRecipe(recipe)}
+                                                                >
+                                                                    Editar
+                                                                </Button>
+                                                                <Button variant="ghost" size="sm" onClick={() => handleDeleteRecipe(recipe._id)}>
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </TableCell>
+                                                    </PermissionGate>
+
                                                 </TableRow>
                                             ))
                                         )}
@@ -1259,13 +1286,17 @@ export default function StockManagement() {
                             </div>
                         </CardContent>
                     </Card>
+                    <PaginationManager {...recipesPagination}/>
                 </TabsContent>
 
                 <TabsContent value="movements" className="space-y-4">
                     <div className="flex justify-end">
-                        <Button onClick={() => setIsAddMovementOpen(true)}>
-                            <Plus className="w-4 h-4 mr-2" /> Novo Registro
-                        </Button>
+                        <PermissionGate section={Sections.STOCK_MOVEMENTS} operation={"update"} mode={"disable"}>
+                            <Button onClick={() => setIsAddMovementOpen(true)}>
+                                <Plus className="w-4 h-4 mr-2" /> Novo Registro
+                            </Button>
+                        </PermissionGate>
+
                     </div>
                     <Card>
                         <CardHeader>
@@ -1337,6 +1368,7 @@ export default function StockManagement() {
                             </div>
                         </CardContent>
                     </Card>
+                    <PaginationManager {...movementsPagination}/>
                 </TabsContent>
 
                 {/* Other tabs content would go here */}

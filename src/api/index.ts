@@ -9,3 +9,14 @@ export const stockItemClient = axios.create({
     ...apiClient.defaults,
     baseURL: `${apiClient.defaults.baseURL}/stock`,
 })
+
+
+export const stockMovementClient = axios.create({
+    ...apiClient.defaults,
+    baseURL: `${apiClient.defaults.baseURL}/movements`,
+})
+
+export const recipesClient = axios.create({
+    ...apiClient.defaults,
+    baseURL: `${apiClient.defaults.baseURL}/recipes`,
+})

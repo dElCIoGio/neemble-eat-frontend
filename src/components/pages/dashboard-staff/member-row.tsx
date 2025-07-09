@@ -33,6 +33,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {Sections} from "@/types/role";
+import {usePermissions} from "@/context/permissions-context";
 
 interface MemberRowProps {
     user: User
@@ -45,20 +47,19 @@ export default function MemberRow({ user }: MemberRowProps) {
         updateMemberRole,
     } = useDashboardStaff()
 
+    const { hasPermission } = usePermissions()
+
+    const canEdit = hasPermission(Sections.USERS, "update")
+
     const { restaurant, user: currentUser } = useDashboardContext()
     const { data: roles } = useListRestaurantRoles(restaurant._id)
     const filteredRoles = (roles ?? []).filter(r => r.name !== "no_role")
-
-    console.log("ALL ROLES: ", roles)
 
     const membership = user.memberships[0]
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isSheetOpen, setIsSheetOpen] = useState(false)
 
     const role = roles.find((r) => r._id === membership?.roleId)
-
-    console.log("USER:", user)
-    console.log("ROLE:", role)
 
     const roleName = role?.name === "no_role" || !role ? "Sem função" : role.name
 
@@ -95,23 +96,32 @@ export default function MemberRow({ user }: MemberRowProps) {
                     </div>
                 </TableCell>
                 <TableCell>
-                    <Select
-                        defaultValue={role?.name === "no_role" ? "" : membership?.roleId}
-                        value={role?.name === "no_role" ? "" : (membership?.roleId ?? "")}
-                        onValueChange={(value) => updateMemberRole(user._id, value)}
-                        disabled={user._id === currentUser._id}
-                    >
-                        <SelectTrigger className="w-32 h-8">
-                            <SelectValue placeholder="Sem função"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {filteredRoles.map((role) => (
-                                <SelectItem key={role._id} value={role._id}>
-                                    {role.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                    {
+                        canEdit? (
+                            <Select
+                                defaultValue={role?.name === "no_role" ? "" : membership?.roleId}
+                                value={role?.name === "no_role" ? "" : (membership?.roleId ?? "")}
+                                onValueChange={(value) => updateMemberRole(user._id, value)}
+                                disabled={user._id === currentUser._id}
+                            >
+                                <SelectTrigger className="w-32 h-8">
+                                    <SelectValue placeholder="Sem função"/>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {filteredRoles.map((role) => (
+                                        <SelectItem key={role._id} value={role._id}>
+                                            {role.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        ) : (
+                            <p>
+                                {role?.name ?? "Sem função"}
+                            </p>
+                        )
+                    }
+
                 </TableCell>
                 <TableCell>
                     <div className="space-y-1">
@@ -171,7 +181,7 @@ export default function MemberRow({ user }: MemberRowProps) {
                         <div className="space-y-2">
                             {role?.permissions.map((perm) => (
                                 <div key={perm.section} className="flex items-start justify-between">
-                                    <span className="capitalize">{getSectionLabel(perm.section)}</span>
+                                    <span className="capitalize">{getSectionLabel(perm.section as Sections)}</span>
                                     <div className="flex gap-1">
                                         {perm.permissions.canView && <Badge variant="secondary">ver</Badge>}
                                         {perm.permissions.canEdit && <Badge variant="secondary">editar</Badge>}

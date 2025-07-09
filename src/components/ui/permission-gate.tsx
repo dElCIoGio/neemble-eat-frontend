@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import { Permissions } from '@/types/role'
 import { usePermissions } from '@/context/permissions-context'
 import { cn } from '@/lib/utils'
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 
 interface PermissionGateProps {
     section: string
@@ -22,7 +23,16 @@ export function PermissionGate({ section, operation, mode = 'hide', className, c
     }
 
     if (mode === 'disable') {
-        return <div className={cn('pointer-events-none opacity-60', className)}>{children}</div>
+        return (
+            <Tooltip>
+                <TooltipTrigger>
+                    <div className={cn('pointer-events-none opacity-60', className)}>{children}</div>
+                </TooltipTrigger>
+                <TooltipContent>
+                    Sem permissão
+                </TooltipContent>
+            </Tooltip>
+        )
     }
 
     return null
