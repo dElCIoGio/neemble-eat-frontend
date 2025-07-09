@@ -36,6 +36,12 @@ export enum Sections {
     REVENUE_TRENDS = "revenue_trends",
     CUSTOMER_FEEDBACK = "customer_feedback",
 
+    // Stock Management
+    STOCK_ITEMS = "stock_items",
+    STOCK_RECIPES = "stock_recipes",
+    STOCK_MOVEMENTS = "stock_movements",
+    STOCK_SUPPLIERS = "stock_suppliers",
+
     // ⚙️ Settings & Config
     RESTAURANT_SETTINGS = "restaurant_settings",
     OPENING_HOURS = "opening_hours",

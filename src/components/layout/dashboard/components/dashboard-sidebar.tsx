@@ -1,79 +1,116 @@
 import {
     Book,
     BookmarkSimple,
+    CallBell,
+    Chair,
+    ChartDonut,
     CreditCard,
     Gear,
     House,
     type Icon,
     Lifebuoy,
+    Package,
     QrCode,
     UsersThree,
-    Package, CallBell, Chair, ChartDonut,
 } from "@phosphor-icons/react";
 import {useLocation, useNavigate} from "react-router";
 import {
+    Sidebar,
     SidebarContent,
     SidebarFooter,
-    Sidebar,
     SidebarGroup,
     SidebarGroupLabel,
-    SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
     SidebarTrigger,
     useSidebar
 } from "@/components/ui/sidebar";
 import {useIsMobile} from "@/hooks/use-mobile";
 import {Button} from "@/components/ui/button";
 import {useDashboardContext} from "@/context/dashboard-context";
+import {Sections} from "@/types/role";
 
 const navigation: {
     label: string,
     icon: Icon,
     href: string,
+    section?: Sections[]
 }[] = [
     {
         label: "Geral",
         icon: House,
         href: "",
+        section: [
+            Sections.SALES_DASHBOARD,
+            Sections.PERFORMANCE_INSIGHTS,
+            Sections.PRODUCT_POPULARITY,
+            Sections.REVENUE_TRENDS
+        ]
     },
     {
         label: "Menu",
         icon: Book,
         href: "menu",
+        section: [
+            Sections.MENUS,
+            Sections.CATEGORIES,
+            Sections.ITEMS
+        ]
     },
     {
         label: "QR Codes",
         icon: QrCode,
         href: "qrcode",
+        section: [Sections.TABLE_QR_ACCESS_CONTROL]
     },
     {
         label: "Reservas",
         icon: BookmarkSimple,
         href: "bookings",
+        section: [Sections.RESERVATIONS]
     },
     {
         label: "Equipe",
         icon: UsersThree,
         href: "staff",
+        section: [
+            Sections.USERS,
+            Sections.ROLES,
+            Sections.PERMISSIONS
+        ]
     },
     {
         label: "Pedidos",
         icon: CallBell,
-        href: "orders-tracking"
+        href: "orders-tracking",
+        section: [Sections.ORDERS]
     },
     {
         label: "Mesas",
         icon: Chair,
-        href: "table-monitor"
+        href: "table-monitor",
+        section: [Sections.TABLES]
     },
     {
         label: "Stock",
         icon: Package,
-        href: "stock"
+        href: "stock",
+        section: [
+            Sections.STOCK_ITEMS,
+            Sections.STOCK_MOVEMENTS,
+            Sections.STOCK_RECIPES
+        ]
     },
     {
         label: "Relatórios",
         icon: ChartDonut,
-        href: "reports"
+        href: "reports",
+        section: [
+            Sections.REPORTS,
+            Sections.INVOICES
+        ]
     },
     {
         label: "Subscrição",
@@ -84,6 +121,10 @@ const navigation: {
         label: "Definições",
         icon: Gear,
         href: "settings",
+        section: [
+            Sections.RESTAURANT_SETTINGS,
+            Sections.OPENING_HOURS,
+        ]
     },
     {
         label: "Suporte",

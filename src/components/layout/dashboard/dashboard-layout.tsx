@@ -64,9 +64,6 @@ function DashboardLayout() {
         }
     }, [restaurant, restaurants, setCurrentRestaurant])
 
-
-
-
     if (!user) {
         return <div className={ "flex h-dvh items-center justify-center"}>
             <Loader/>
