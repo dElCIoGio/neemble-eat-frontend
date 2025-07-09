@@ -195,7 +195,7 @@ export default function RolesPage() {
                 </TabsList>
 
                 <TabsContent value="existing" className="space-y-4">
-                    <div className="space-y-3 max-h-64 overflow-y-auto">
+                    <div className="space-y-3  overflow-y-auto">
                         {roles?.filter(r => r.name !== "no_role").map(role => (
                             <div key={role._id} className="flex items-center justify-between p-3 border rounded-lg">
                                 <div className="flex-1">
@@ -207,10 +207,11 @@ export default function RolesPage() {
                                     <p className="text-xs text-gray-500 mt-1">{role.permissions.length} permissões</p>
                                 </div>
                                 <div className="flex gap-2">
+                                    <Button variant="ghost" size="sm" onClick={() => handleEditRole(role)}>
+                                        Editar
+                                    </Button>
                                     <PermissionGate section={Sections.ROLES} operation="update" mode="disable">
-                                        <Button variant="ghost" size="sm" onClick={() => handleEditRole(role)}>
-                                            Editar
-                                        </Button>
+                                        <div></div>
                                     </PermissionGate>
                                     <PermissionGate section={Sections.ROLES} operation="delete" mode="disable">
                                         <Button variant="ghost" size="sm" onClick={() => handleDeleteRole(role._id)} className="text-red-600">
@@ -240,7 +241,7 @@ export default function RolesPage() {
                     </div>
                     <div>
                         <Label>Permissões</Label>
-                        <div className="mt-2 space-y-4 max-h-48 overflow-y-auto">
+                        <div className="mt-2 space-y-4 overflow-y-auto">
                             {Object.entries(groupedPermissions).map(([category, permissions]) => (
                                 <div key={category}>
                                     <h4 className="font-medium text-sm text-gray-700 mb-2">{category}</h4>

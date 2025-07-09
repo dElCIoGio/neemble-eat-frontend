@@ -1,10 +1,8 @@
 import { useState } from "react"
 import { User } from "@/types/user"
-import { Sections } from "@/types/role"
-import { getSectionLabel } from "@/lib/helpers/section-label"
+import { Sections} from "@/types/role"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Invitation, InvitationCreate } from "@/types/invitation"
 
 import {
@@ -36,15 +34,23 @@ import {
     DialogHeader,
     DialogTitle, DialogTrigger
 } from "@/components/ui/dialog";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Label} from "@/components/ui/label";
-import {Textarea} from "@/components/ui/textarea";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import {Checkbox} from "@/components/ui/checkbox";
 import {PermissionGate} from "@/components/ui/permission-gate";
 
 
+
+
+
+function StaffContent() {
+    const {
+        searchTerm,
+        statusFilter,
+        sortField,
+        sortDirection,
+        currentPage,
+        itemsPerPage,
         viewMode,
         inviteForm,
         setInviteForm,
@@ -60,9 +66,6 @@ import {PermissionGate} from "@/components/ui/permission-gate";
 
     const {
         data: roles,
-        addRole,
-        removeRole,
-        updateRole
     } = useListRestaurantRoles(restaurant._id)
 
     const filteredRoles = (roles ?? []).filter(r => r.name !== "no_role")
@@ -75,28 +78,6 @@ import {PermissionGate} from "@/components/ui/permission-gate";
 
     const queryClient = useQueryClient()
     const [newInvitation, setNewInvitation] = useState<Invitation | null>(null)
-
-    const handleInviteMember = () => {
-        const invitationData: InvitationCreate = {
-            name: inviteForm.name,
-            roleId: inviteForm.roleId,
-            managerId: user._id,
-            restaurantId: restaurant._id
-        }
-
-        showPromiseToast(
-            invitationApi.createInvitation(invitationData).then((invitation) => {
-                setNewInvitation(invitation)
-                queryClient.invalidateQueries({ queryKey: ["invitations", restaurant._id] })
-                return invitation
-            }),
-            {
-                loading: `Criando convite...`,
-                success: `Convite enviado com sucesso!`,
-                error: "Falha ao criar o convite. Tente novamente."
-            }
-        )
-    }
 
 
     const filteredMembers = users.filter((member) => {
@@ -133,6 +114,30 @@ import {PermissionGate} from "@/components/ui/permission-gate";
         }
     }
 
+
+    const handleInviteMember = () => {
+        const invitationData: InvitationCreate = {
+            name: inviteForm.name,
+            roleId: inviteForm.roleId,
+            managerId: user._id,
+            restaurantId: restaurant._id
+        }
+
+        showPromiseToast(
+            invitationApi.createInvitation(invitationData).then((invitation) => {
+                setNewInvitation(invitation)
+                queryClient.invalidateQueries({ queryKey: ["invitations", restaurant._id] })
+                return invitation
+            }),
+            {
+                loading: `Criando convite...`,
+                success: `Convite enviado com sucesso!`,
+                error: "Falha ao criar o convite. Tente novamente."
+            }
+        )
+    }
+
+
     return (
         <div className="">
             <div className="">
@@ -142,7 +147,8 @@ import {PermissionGate} from "@/components/ui/permission-gate";
                     <div className="mb-6">
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-2">
                             <h1 className="text-2xl font-bold text-gray-900">Equipa do Restaurante</h1>
-                            <div className="flex flex-col sm:flex-row gap-2">                                                                <Dialog
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <Dialog
                                     open={isInviteDialogOpen}
                                     onOpenChange={(open) => {
                                         setIsInviteDialogOpen(open)
