@@ -31,6 +31,7 @@ import {useIsMobile} from "@/hooks/use-mobile";
 import {Button} from "@/components/ui/button";
 import {useDashboardContext} from "@/context/dashboard-context";
 import {Sections} from "@/types/role";
+import { usePermissions } from "@/context/permissions-context";
 
 const navigation: {
     label: string,
@@ -139,6 +140,8 @@ export default function DashboardSidebar() {
 
     const location = useLocation();
 
+    const { hasPermission } = usePermissions()
+
     const { restaurant } = useDashboardContext()
 
     const {open, toggleSidebar} = useSidebar()
@@ -177,10 +180,12 @@ export default function DashboardSidebar() {
                 <SidebarGroup>
                     <SidebarGroupLabel className="text-primary">Menu</SidebarGroupLabel>
                     <SidebarMenu>
-                        {navigation.map((item) => {
-
-
-                            return (
+                        {navigation
+                            .filter((item) => {
+                                if (!item.section || item.section.length === 0) return true;
+                                return item.section.some((section) => hasPermission(section, "view"));
+                            })
+                            .map((item) => (
                                 !hiddenRoutes.includes(item.href) &&
                                 <SidebarMenuItem className={`${item.href == route? "bg-purple-50 flex rounded-full " : "rounded-full text-zinc-400 hover"} transition-all duration-150 ease-in-out`} key={item.label}>
                                     <SidebarMenuButton disabled={restaurant._id == "notfound"} className={`rounded-full flex mx-auto ${item.href == route? "hover:bg-purple-100":""} transition-all duration-150 ease-in-out`} asChild>
