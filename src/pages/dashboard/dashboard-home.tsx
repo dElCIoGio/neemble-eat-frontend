@@ -314,8 +314,9 @@ export default function RestaurantDashboard(): JSX.Element {
         }}>
             <div className="">
                 <div className="mx-auto space-y-6">
-                    <DashboardHomeHeader />
                     <WelcomeBanner />
+                    <DashboardHomeHeader />
+
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                         <MetricCard
                             title="Total de Vendas"
