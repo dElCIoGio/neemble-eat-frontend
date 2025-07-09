@@ -39,6 +39,7 @@ import {
 import WelcomePage from "@/components/layout/dashboard/components/welcome";
 import {DashboardHomeContext} from "@/context/dashboard-home-context";
 import DashboardHomeHeader from "@/components/pages/dashboard-home/header";
+import WelcomeBanner from "@/components/pages/dashboard-home/welcome-banner";
 import MetricCard from "@/components/pages/dashboard-home/metric-card";
 import SalesChart from "@/components/pages/dashboard-home/sales-chart";
 import OrdersChart from "@/components/pages/dashboard-home/orders-chart";
@@ -314,6 +315,7 @@ export default function RestaurantDashboard(): JSX.Element {
             <div className="">
                 <div className="mx-auto space-y-6">
                     <DashboardHomeHeader />
+                    <WelcomeBanner />
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
                         <MetricCard
                             title="Total de Vendas"
