@@ -1,4 +1,4 @@
-import {useState} from "react"
+import {useState, useEffect, useRef} from "react"
 import {Sections, RoleCreate, Role, SectionPermission, PartialRole} from "@/types/role"
 import {getSectionLabel} from "@/lib/helpers/section-label"
 import {useDashboardContext} from "@/context/dashboard-context"
@@ -70,6 +70,14 @@ export default function RolesPage() {
     const { restaurant } = useDashboardContext()
     const { data: roles, addRole, removeRole, updateRole } = useListRestaurantRoles(restaurant._id)
 
+    const [orderedRoles, setOrderedRoles] = useState<Role[]>([])
+    const dragIndex = useRef<number | null>(null)
+
+    useEffect(() => {
+        const sorted = [...(roles ?? [])].sort((a, b) => a.level - b.level)
+        setOrderedRoles(sorted)
+    }, [roles])
+
     const [roleForm, setRoleForm] = useState<RoleCreate>({
         name: "",
         description: "",
@@ -101,8 +109,10 @@ export default function RolesPage() {
     }
 
     const handleCreateRole = () => {
+        const nextLevel = Math.max(0, ...(roles ?? []).map(r => r.level)) + 1
         createRole.mutate({
             ...roleForm,
+            level: nextLevel,
             restaurantId: restaurant._id
         }, {
             onSuccess: (newRole) => {
@@ -156,6 +166,37 @@ export default function RolesPage() {
         setNewPermission({ section: "", permissions: { canView: false, canEdit: false, canDelete: false } })
     }
 
+    const handleDragStart = (index: number) => {
+        dragIndex.current = index
+    }
+
+    const handleDragOver = (index: number, e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        if (dragIndex.current === null || dragIndex.current === index) return
+        const updated = [...orderedRoles]
+        const [moved] = updated.splice(dragIndex.current, 1)
+        updated.splice(index, 0, moved)
+        dragIndex.current = index
+        setOrderedRoles(updated)
+    }
+
+    const persistOrder = (newOrder: Role[]) => {
+        newOrder.forEach((role, idx) => {
+            const newLevel = idx + 1
+            if (role.level !== newLevel) {
+                roleApi.updateRole(role._id, { level: newLevel }).then(updateRole)
+            }
+        })
+    }
+
+    const handleDragEnd = () => {
+        if (dragIndex.current === null) return
+        const newOrder = orderedRoles.map((r, idx) => ({ ...r, level: idx + 1 }))
+        setOrderedRoles(newOrder)
+        persistOrder(newOrder)
+        dragIndex.current = null
+    }
+
     const handleSaveRole = () => {
         if (!editingRole) return
         const data: PartialRole = {
@@ -196,8 +237,15 @@ export default function RolesPage() {
 
                 <TabsContent value="existing" className="space-y-4">
                     <div className="space-y-3  overflow-y-auto">
-                        {roles?.filter(r => r.name !== "no_role").map(role => (
-                            <div key={role._id} className="flex items-center justify-between p-3 border rounded-lg">
+                        {orderedRoles.filter(r => r.name !== "no_role").map((role, idx) => (
+                            <div
+                                key={role._id}
+                                className="flex items-center justify-between p-3 border rounded-lg"
+                                draggable
+                                onDragStart={() => handleDragStart(idx)}
+                                onDragOver={(e) => handleDragOver(idx, e)}
+                                onDragEnd={handleDragEnd}
+                            >
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2">
                                         <Badge>{role.name}</Badge>
@@ -225,14 +273,10 @@ export default function RolesPage() {
                 </TabsContent>
 
                 <TabsContent value="create" className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                         <div>
                             <Label htmlFor="roleName">Nome da Função</Label>
                             <Input id="roleName" value={roleForm.name} onChange={(e) => setRoleForm({ ...roleForm, name: e.target.value })} placeholder="Ex: Supervisor de Turno" />
-                        </div>
-                        <div>
-                            <Label htmlFor="roleLevel">Nível</Label>
-                            <Input id="roleLevel" type="number" value={roleForm.level} onChange={(e) => setRoleForm({ ...roleForm, level: Number(e.target.value) })} />
                         </div>
                     </div>
                     <div>
@@ -281,17 +325,13 @@ export default function RolesPage() {
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Editar Função</DialogTitle>
-                        <DialogDescription>Atualize nível e permissões desta função.</DialogDescription>
+                        <DialogDescription>Atualize permissões desta função.</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4">
                             <div>
                                 <Label htmlFor="edit-role-name">Nome</Label>
                                 <Input id="edit-role-name" value={roleForm.name} onChange={(e) => setRoleForm({ ...roleForm, name: e.target.value })} />
-                            </div>
-                            <div>
-                                <Label htmlFor="edit-role-level">Nível</Label>
-                                <Input id="edit-role-level" type="number" value={roleForm.level} onChange={(e) => setRoleForm({ ...roleForm, level: Number(e.target.value) })} />
                             </div>
                         </div>
                         <div>
