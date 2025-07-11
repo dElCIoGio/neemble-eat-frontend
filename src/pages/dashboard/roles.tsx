@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from "react"
+import {useState, useEffect} from "react"
 import {Sections, RoleCreate, Role, SectionPermission, PartialRole} from "@/types/role"
 import {getSectionLabel} from "@/lib/helpers/section-label"
 import {useDashboardContext} from "@/context/dashboard-context"
@@ -17,6 +17,66 @@ import {roleApi} from "@/api/endpoints/role/requests"
 import {useUpdateRole} from "@/api/endpoints/role/hook"
 import {showSuccessToast, showErrorToast} from "@/utils/notifications/toast"
 import {PermissionGate} from "@/components/ui/permission-gate"
+import {
+    DndContext,
+    closestCenter,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from "@dnd-kit/core"
+import {
+    SortableContext,
+    verticalListSortingStrategy,
+    arrayMove,
+    useSortable,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import { DotsSixVertical } from "lucide-react"
+
+function SortableRoleCard({
+    role,
+    onEdit,
+    onDelete,
+}: {
+    role: Role
+    onEdit: (role: Role) => void
+    onDelete: (id: string) => void
+}) {
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({ id: role._id })
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    }
+    return (
+        <div ref={setNodeRef} style={style} className="flex items-center justify-between p-3 border rounded-lg bg-background">
+            <button className="mr-2 cursor-grab" {...attributes} {...listeners}>
+                <DotsSixVertical className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <div className="flex-1">
+                <div className="flex items-center gap-2">
+                    <Badge>{role.name}</Badge>
+                    <Badge variant="outline">Personalizada</Badge>
+                </div>
+                <p className="text-sm text-gray-600 mt-1">{role.description}</p>
+                <p className="text-xs text-gray-500 mt-1">{role.permissions.length} permissões</p>
+            </div>
+            <div className="flex gap-2">
+                <Button variant="ghost" size="sm" onClick={() => onEdit(role)}>
+                    Editar
+                </Button>
+                <PermissionGate section={Sections.ROLES} operation="update" mode="disable">
+                    <div></div>
+                </PermissionGate>
+                <PermissionGate section={Sections.ROLES} operation="delete" mode="disable">
+                    <Button variant="ghost" size="sm" onClick={() => onDelete(role._id)} className="text-red-600">
+                        Remover
+                    </Button>
+                </PermissionGate>
+            </div>
+        </div>
+    )
+}
 
 const defaultSectionPermissions: SectionPermission[] = [
     { section: Sections.MENUS, permissions: { canView: true, canEdit: true, canDelete: true } },
@@ -71,7 +131,7 @@ export default function RolesPage() {
     const { data: roles, addRole, removeRole, updateRole } = useListRestaurantRoles(restaurant._id)
 
     const [orderedRoles, setOrderedRoles] = useState<Role[]>([])
-    const dragIndex = useRef<number | null>(null)
+    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
 
     useEffect(() => {
         const sorted = [...(roles ?? [])].sort((a, b) => a.level - b.level)
@@ -166,20 +226,6 @@ export default function RolesPage() {
         setNewPermission({ section: "", permissions: { canView: false, canEdit: false, canDelete: false } })
     }
 
-    const handleDragStart = (index: number) => {
-        dragIndex.current = index
-    }
-
-    const handleDragOver = (index: number, e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault()
-        if (dragIndex.current === null || dragIndex.current === index) return
-        const updated = [...orderedRoles]
-        const [moved] = updated.splice(dragIndex.current, 1)
-        updated.splice(index, 0, moved)
-        dragIndex.current = index
-        setOrderedRoles(updated)
-    }
-
     const persistOrder = (newOrder: Role[]) => {
         newOrder.forEach((role, idx) => {
             const newLevel = idx + 1
@@ -189,12 +235,14 @@ export default function RolesPage() {
         })
     }
 
-    const handleDragEnd = () => {
-        if (dragIndex.current === null) return
-        const newOrder = orderedRoles.map((r, idx) => ({ ...r, level: idx + 1 }))
+    const handleDragEnd = ({active, over}: DragEndEvent) => {
+        if (!over || active.id === over.id) return
+        const oldIndex = orderedRoles.findIndex(r => r._id === active.id)
+        const newIndex = orderedRoles.findIndex(r => r._id === over.id)
+        if (oldIndex === -1 || newIndex === -1) return
+        const newOrder = arrayMove(orderedRoles, oldIndex, newIndex).map((r, idx) => ({ ...r, level: idx + 1 }))
         setOrderedRoles(newOrder)
         persistOrder(newOrder)
-        dragIndex.current = null
     }
 
     const handleSaveRole = () => {
@@ -236,40 +284,15 @@ export default function RolesPage() {
                 </TabsList>
 
                 <TabsContent value="existing" className="space-y-4">
-                    <div className="space-y-3  overflow-y-auto">
-                        {orderedRoles.filter(r => r.name !== "no_role").map((role, idx) => (
-                            <div
-                                key={role._id}
-                                className="flex items-center justify-between p-3 border rounded-lg"
-                                draggable
-                                onDragStart={() => handleDragStart(idx)}
-                                onDragOver={(e) => handleDragOver(idx, e)}
-                                onDragEnd={handleDragEnd}
-                            >
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                        <Badge>{role.name}</Badge>
-                                        <Badge variant="outline">Personalizada</Badge>
-                                    </div>
-                                    <p className="text-sm text-gray-600 mt-1">{role.description}</p>
-                                    <p className="text-xs text-gray-500 mt-1">{role.permissions.length} permissões</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <Button variant="ghost" size="sm" onClick={() => handleEditRole(role)}>
-                                        Editar
-                                    </Button>
-                                    <PermissionGate section={Sections.ROLES} operation="update" mode="disable">
-                                        <div></div>
-                                    </PermissionGate>
-                                    <PermissionGate section={Sections.ROLES} operation="delete" mode="disable">
-                                        <Button variant="ghost" size="sm" onClick={() => handleDeleteRole(role._id)} className="text-red-600">
-                                            Remover
-                                        </Button>
-                                    </PermissionGate>
-                                </div>
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                        <SortableContext items={orderedRoles.filter(r => r.name !== "no_role").map(r => r._id)} strategy={verticalListSortingStrategy}>
+                            <div className="space-y-3 overflow-y-auto">
+                                {orderedRoles.filter(r => r.name !== "no_role").map((role) => (
+                                    <SortableRoleCard key={role._id} role={role} onEdit={handleEditRole} onDelete={handleDeleteRole} />
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </SortableContext>
+                    </DndContext>
                 </TabsContent>
 
                 <TabsContent value="create" className="space-y-4">
