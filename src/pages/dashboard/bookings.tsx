@@ -215,7 +215,7 @@ export default function ReservationsPage() {
             {/* Sheet com Detalhes da Reserva */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
 
-                    <SheetHeader className="px-4">
+                    <SheetHeader className={`px-4 ${!isSheetOpen && "hidden"}`}>
                         <SheetTitle>Detalhes da Reserva</SheetTitle>
                         <SheetDescription>Informações completas sobre a reserva selecionada.</SheetDescription>
                     </SheetHeader>

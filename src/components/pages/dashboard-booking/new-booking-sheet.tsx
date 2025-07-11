@@ -194,7 +194,7 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit, restaurantId }: 
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-                <SheetHeader>
+                <SheetHeader className={`${!open && "hidden"}`}>
                     <SheetTitle>Nova Reserva</SheetTitle>
                     <SheetDescription>Preencha os dados para criar uma nova reserva no restaurante.</SheetDescription>
                 </SheetHeader>

@@ -82,13 +82,13 @@ export function EditBookingSheet({ open, onOpenChange, onSubmit, booking }: Edit
     const validateForm = (): boolean => {
         const newErrors: Partial<Record<keyof BookingUpdate, string>> = {}
 
-        if (!formData.firstName.trim()) newErrors.firstName = "Nome é obrigatório"
-        if (!formData.lastName.trim()) newErrors.lastName = "Apelido é obrigatório"
-        if (!formData.email.trim()) newErrors.email = "Email é obrigatório"
-        if (!formData.phoneNumber.trim()) newErrors.phoneNumber = "Telefone é obrigatório"
+        if (!formData.firstName?.trim()) newErrors.firstName = "Nome é obrigatório"
+        if (!formData.lastName?.trim()) newErrors.lastName = "Apelido é obrigatório"
+        if (!formData.email?.trim()) newErrors.email = "Email é obrigatório"
+        if (!formData.phoneNumber?.trim()) newErrors.phoneNumber = "Telefone é obrigatório"
         if (!formData.tableId) newErrors.tableId = "Mesa é obrigatória"
         if (!formData.occasion) newErrors.occasion = "Ocasião é obrigatória"
-        if (formData.numberOfGuest < 1) newErrors.numberOfGuest = "Número de pessoas deve ser pelo menos 1"
+        if (formData.numberOfGuest && formData.numberOfGuest < 1) newErrors.numberOfGuest = "Número de pessoas deve ser pelo menos 1"
         if (!startDate || !startTime) newErrors.startTime = "Data e hora de início são obrigatórias"
 
         // Validar email
@@ -191,7 +191,7 @@ export function EditBookingSheet({ open, onOpenChange, onSubmit, booking }: Edit
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-                <SheetHeader>
+                <SheetHeader className={`${!open && "hidden"}`}>
                     <SheetTitle>Editar Reserva</SheetTitle>
                     <SheetDescription>Altere as informações da reserva selecionada.</SheetDescription>
                 </SheetHeader>

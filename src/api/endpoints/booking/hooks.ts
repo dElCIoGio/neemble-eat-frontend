@@ -6,7 +6,7 @@ import {BookingUpdate} from "@/types/update-types";
 import {showErrorToast, showSuccessToast} from "@/utils/notifications/toast";
 
 
-export function useGetRestaurantUpcomingBookings(props: RestaurantUpcomingBookings){
+export function useGetRestaurantUpcomingBookings(props: RestaurantUpcomingBookings) {
 
     const queryClient = useQueryClient();
     const queryKey = ["upcoming", props.restaurantId];
@@ -21,6 +21,7 @@ export function useGetRestaurantUpcomingBookings(props: RestaurantUpcomingBookin
 
     const updateBooking = (updated: Booking) => {
         queryClient.setQueryData<Booking[]>(queryKey, (old = []) => old.map(b => b._id === updated._id ? updated : b));
+    }
 
     const query = useQuery({
         queryKey,
@@ -34,8 +35,9 @@ export function useGetRestaurantUpcomingBookings(props: RestaurantUpcomingBookin
         removeBooking,
         updateBooking
     };
-
 }
+
+
 
 export function useGetRestaurantBookingsByDate(props: { restaurantId: string; date?: Date }){
 
