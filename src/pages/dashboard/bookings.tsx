@@ -13,9 +13,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import type { Booking, NewBooking } from "@/types/booking"
+import type { BookingUpdate } from "@/types/update-types"
 import { NewBookingSheet } from "@/components/pages/dashboard-booking/new-booking-sheet"
+import { EditBookingSheet } from "@/components/pages/dashboard-booking/edit-booking-sheet"
 import {useDashboardContext} from "@/context/dashboard-context";
-import {useCreateBooking, useGetRestaurantBookingsByDate} from "@/api/endpoints/booking/hooks";
+import {useCreateBooking, useGetRestaurantBookingsByDate, useUpdateBooking} from "@/api/endpoints/booking/hooks";
 
 
 
@@ -28,15 +30,18 @@ export default function ReservationsPage() {
     const {
         data: reservations = [],
         addBooking,
+        updateBooking: updateBookingCache,
     } = useGetRestaurantBookingsByDate({ restaurantId: restaurant._id, date: selectedDate })
 
     const { mutate: createBooking } = useCreateBooking()
+    const { mutate: updateBooking } = useUpdateBooking()
 
     const [selectedReservation, setSelectedReservation] = useState<Booking | null>(null)
     const [searchTerm, setSearchTerm] = useState("")
     const [filterByGuests, setFilterByGuests] = useState<string>("all")
     const [isSheetOpen, setIsSheetOpen] = useState(false)
     const [isNewBookingOpen, setIsNewBookingOpen] = useState(false)
+    const [isEditBookingOpen, setIsEditBookingOpen] = useState(false)
     const [isDateOpen, setIsDateOpen] = useState(false)
 
     // Filtrar reservas baseado na pesquisa e filtros
@@ -66,6 +71,16 @@ export default function ReservationsPage() {
             onSuccess: (booking) => {
                 addBooking(booking)
                 setIsNewBookingOpen(false)
+            }
+        })
+    }
+
+    const handleEditBooking = (data: BookingUpdate) => {
+        if (!selectedReservation) return
+        updateBooking({ bookingId: selectedReservation._id, data }, {
+            onSuccess: (updated) => {
+                updateBookingCache(updated)
+                setIsEditBookingOpen(false)
             }
         })
     }
@@ -293,7 +308,7 @@ export default function ReservationsPage() {
 
                                 {/* Botões de Ação */}
                                 <div className="space-y-3 pt-4 border-t">
-                                    <Button className="w-full" variant="default">
+                                    <Button className="w-full" variant="default" onClick={() => { setIsSheetOpen(false); setIsEditBookingOpen(true); }}>
                                         Editar Reserva
                                     </Button>
                                     <Button className="w-full" variant="destructive">
@@ -308,12 +323,20 @@ export default function ReservationsPage() {
             </Sheet>
 
             {/* Nova Reserva Sheet */}
-            <NewBookingSheet 
-                open={isNewBookingOpen} 
-                onOpenChange={setIsNewBookingOpen} 
+            <NewBookingSheet
+                open={isNewBookingOpen}
+                onOpenChange={setIsNewBookingOpen}
                 onSubmit={handleNewBooking}
                 restaurantId={restaurant._id}
             />
+            {selectedReservation && (
+                <EditBookingSheet
+                    open={isEditBookingOpen}
+                    onOpenChange={setIsEditBookingOpen}
+                    onSubmit={handleEditBooking}
+                    booking={selectedReservation}
+                />
+            )}
         </div>
     )
 }
