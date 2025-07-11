@@ -12,6 +12,7 @@ import {
     Package,
     QrCode,
     UsersThree,
+    Knife
 } from "@phosphor-icons/react";
 import {useLocation, useNavigate} from "react-router";
 import {
@@ -84,7 +85,7 @@ const navigation: {
     },
     {
         label: "Funções",
-        icon: UsersThree,
+        icon: Knife,
         href: "roles",
         section: [Sections.ROLES]
     },

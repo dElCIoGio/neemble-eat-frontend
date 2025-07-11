@@ -32,7 +32,7 @@ import {
     useSortable,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { DotsSixVertical } from "lucide-react"
+import { DotsSixVertical } from "@phosphor-icons/react"
 
 function SortableRoleCard({
     role,
@@ -62,11 +62,10 @@ function SortableRoleCard({
                 <p className="text-xs text-gray-500 mt-1">{role.permissions.length} permissões</p>
             </div>
             <div className="flex gap-2">
-                <Button variant="ghost" size="sm" onClick={() => onEdit(role)}>
-                    Editar
-                </Button>
                 <PermissionGate section={Sections.ROLES} operation="update" mode="disable">
-                    <div></div>
+                    <Button variant="ghost" size="sm" onClick={() => onEdit(role)}>
+                        Editar
+                    </Button>
                 </PermissionGate>
                 <PermissionGate section={Sections.ROLES} operation="delete" mode="disable">
                     <Button variant="ghost" size="sm" onClick={() => onDelete(role._id)} className="text-red-600">
