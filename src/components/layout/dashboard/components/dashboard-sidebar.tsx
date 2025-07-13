@@ -3,7 +3,6 @@ import {
     BookmarkSimple,
     CallBell,
     Chair,
-    ChartDonut,
     CreditCard,
     Gear,
     House,
@@ -48,7 +47,7 @@ type NavigationGroup = {
 
 const navigation: NavigationGroup[] = [
     {
-        label: 'Painel',
+        label: "",
         items: [
             {
                 label: 'Geral',
@@ -61,38 +60,12 @@ const navigation: NavigationGroup[] = [
                     Sections.REVENUE_TRENDS,
                 ],
             },
-            {
-                label: 'Relatórios',
-                icon: ChartDonut,
-                href: 'reports',
-                section: [Sections.REPORTS, Sections.INVOICES],
-            },
-        ],
+        ]
     },
     {
-        label: 'Menu',
+        label: 'Painel',
         items: [
-            {
-                label: 'Menu',
-                icon: Book,
-                href: 'menu',
-                section: [Sections.MENUS, Sections.CATEGORIES, Sections.ITEMS],
-            },
-            {
-                label: 'Stock',
-                icon: Package,
-                href: 'stock',
-                section: [
-                    Sections.STOCK_ITEMS,
-                    Sections.STOCK_MOVEMENTS,
-                    Sections.STOCK_RECIPES,
-                ],
-            },
-        ],
-    },
-    {
-        label: 'Operações',
-        items: [
+
             {
                 label: 'Pedidos',
                 icon: CallBell,
@@ -117,8 +90,36 @@ const navigation: NavigationGroup[] = [
                 href: 'qrcode',
                 section: [Sections.TABLE_QR_ACCESS_CONTROL],
             },
+            // {
+            //     label: 'Relatórios',
+            //     icon: ChartDonut,
+            //     href: 'reports',
+            //     section: [Sections.REPORTS, Sections.INVOICES],
+            // },
         ],
     },
+    {
+        label: 'Menu',
+        items: [
+            {
+                label: 'Menu',
+                icon: Book,
+                href: 'menu',
+                section: [Sections.MENUS, Sections.CATEGORIES, Sections.ITEMS],
+            },
+            {
+                label: 'Stock',
+                icon: Package,
+                href: 'stock',
+                section: [
+                    Sections.STOCK_ITEMS,
+                    Sections.STOCK_MOVEMENTS,
+                    Sections.STOCK_RECIPES,
+                ],
+            },
+        ],
+    },
+
     {
         label: 'Equipe',
         items: [
