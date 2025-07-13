@@ -15,8 +15,9 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {useMutation} from "@tanstack/react-query"
 import {roleApi} from "@/api/endpoints/role/requests"
 import {useUpdateRole} from "@/api/endpoints/role/hook"
-import {showSuccessToast, showErrorToast} from "@/utils/notifications/toast"
+import {showSuccessToast, showErrorToast, showPromiseToast} from "@/utils/notifications/toast"
 import {PermissionGate} from "@/components/ui/permission-gate"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
     DndContext,
     closestCenter,
@@ -57,6 +58,7 @@ function SortableRoleCard({
                 <div className="flex items-center gap-2">
                     <Badge>{role.name}</Badge>
                     <Badge variant="outline">Personalizada</Badge>
+                    <Badge variant="secondary">Nível {role.level}</Badge>
                 </div>
                 <p className="text-sm text-gray-600 mt-1">{role.description}</p>
                 <p className="text-xs text-gray-500 mt-1">{role.permissions.length} permissões</p>
@@ -226,12 +228,23 @@ export default function RolesPage() {
     }
 
     const persistOrder = (newOrder: Role[]) => {
-        newOrder.forEach((role, idx) => {
+        const promises = newOrder.map((role, idx) => {
             const newLevel = idx + 1
             if (role.level !== newLevel) {
-                roleApi.updateRole(role._id, { level: newLevel }).then(updateRole)
+                return roleApi.updateRole(role._id, { level: newLevel }).then(updated => {
+                    updateRole(updated)
+                })
             }
-        })
+            return null
+        }).filter(Boolean) as Promise<unknown>[]
+
+        if (promises.length > 0) {
+            showPromiseToast(Promise.all(promises), {
+                loading: "Atualizando níveis...",
+                success: "Hierarquia atualizada!",
+                error: "Erro ao atualizar níveis",
+            })
+        }
     }
 
     const handleDragEnd = ({active, over}: DragEndEvent) => {
@@ -283,6 +296,12 @@ export default function RolesPage() {
                 </TabsList>
 
                 <TabsContent value="existing" className="space-y-4">
+                    <Alert>
+                        <AlertDescription>
+                            Arraste as funções para cima ou para baixo para alterar a ordem hierárquica. A função com nível
+                            menor fica acima das demais.
+                        </AlertDescription>
+                    </Alert>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                         <SortableContext items={orderedRoles.filter(r => r.name !== "no_role").map(r => r._id)} strategy={verticalListSortingStrategy}>
                             <div className="space-y-3 overflow-y-auto">
