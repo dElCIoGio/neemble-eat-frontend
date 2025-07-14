@@ -88,6 +88,7 @@ export default function TableMonitor() {
 
     useEffect(() => {
         sessionApi.listActiveSessions(restaurant._id).then((data) => {
+
             if (!data) return
             const list = Array.isArray(data) ? data : []
             const mapping: Record<string, TableSession> = {}
@@ -96,7 +97,7 @@ export default function TableMonitor() {
             })
             setSessions(mapping)
         })
-    }, [restaurant._id])
+    }, [restaurant._id, tables])
 
     const handleSessionUpdate = useCallback((event: MessageEvent) => {
         try {

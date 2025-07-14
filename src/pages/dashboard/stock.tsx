@@ -50,11 +50,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Skeleton } from "@/components/ui/skeleton"
 
 // Types
-import type {
+import {
     StockItem,
     Supplier,
     Recipe,
-    Movement,
+    Movement, movementSerializer,
 } from "@/types/stock"
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
@@ -78,6 +78,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import PaginationManager from "@/components/ui/pagination-manager";
 import {PermissionGate} from "@/components/ui/permission-gate";
 import {Sections} from "@/types/role";
+import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 
 
 interface PaginatedStockResponse {
@@ -110,6 +111,7 @@ function StockCard({ item, onView, onEdit, onAdd, onDelete }: StockCardProps) {
                 <div className="flex justify-between items-center">
                     <span>Estado:</span>
                     <Badge
+                        className={`${item.status === "Baixo" && "bg-yellow-600"}`}
                         variant={
                             item.status === "OK"
                                 ? "default"
@@ -283,11 +285,12 @@ export default function StockManagement() {
 
     // Sales data
     const registerSaleMutation = useRegisterSale(restaurant._id)
-    // const { } = useGetMovements(restaurant._id)
-    const movementsPagination = usePaginatedQuery<Movement>(
-        stockMovementClient, 10, undefined, {restaurantId: restaurant._id}
+
+    const movementsPagination = usePaginatedQuery<Movement, Movement>(
+        stockMovementClient, 10, undefined, {restaurantId: restaurant._id}, movementSerializer
     )
     const { data: movements = [], isLoading: isMovementsLoading  } = movementsPagination;
+
     const createMovementMutation = useCreateMovement(restaurant._id)
 
     // Modal states
@@ -1103,7 +1106,18 @@ export default function StockManagement() {
                                                             {item.status}
                                                         </Badge>
                                                     </TableCell>
-                                                    <TableCell>{formatIsosDate(new Date(item.lastEntry))}</TableCell>
+                                                    <TableCell>
+                                                        <Tooltip>
+                                                            <TooltipTrigger>
+                                                                {formatIsosDate(new Date(item.lastEntry))}
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                {`${new Date(item.lastEntry).getHours() < 10 ? "0": ""}`}{new Date(item.lastEntry).getHours()}:{`${new Date(item.lastEntry).getMinutes() < 10 ? "0": ""}`}{new Date(item.lastEntry).getMinutes()}
+                                                            </TooltipContent>
+                                                        </Tooltip>
+
+
+                                                    </TableCell>
                                                     <TableCell className="text-right">
                                                         <div className="flex justify-end gap-2">
                                                             <Button
@@ -1228,46 +1242,50 @@ export default function StockManagement() {
                                                 <TableHead>Prato</TableHead>
                                                 <TableHead>Porções</TableHead>
                                                 <TableHead>Custo</TableHead>
-                                                <PermissionGate section={Sections.STOCK_RECIPES} operation="update" mode="hide">
+                                                <PermissionGate section={Sections.STOCK_RECIPES} operation="update"
+                                                                mode="hide">
                                                     <TableHead className="text-right">Ações</TableHead>
                                                 </PermissionGate>
 
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {recipes.length === 0 ? (
-                                            <TableRow>
-                                                <TableCell colSpan={4} className="text-center py-6">Nenhuma receita cadastrada</TableCell>
                                             </TableRow>
-                                        ) : (
-                                            recipes.map((recipe) => (
-                                                <TableRow key={recipe._id}>
-                                                    <TableCell>{menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName}</TableCell>
-                                                    <TableCell>{recipe.servings}</TableCell>
-                                                    <TableCell>Kz {recipe.cost.toFixed(2)}</TableCell>
-                                                    <PermissionGate section={Sections.STOCK_RECIPES} operation="update" mode="hide">
-                                                        <TableCell className="text-right">
-                                                            <div className="flex justify-end gap-2">
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    onClick={() => handleOpenEditRecipe(recipe)}
-                                                                >
-                                                                    Editar
-                                                                </Button>
-                                                                <Button variant="ghost" size="sm" onClick={() => handleDeleteRecipe(recipe._id)}>
-                                                                    <Trash2 className="h-4 w-4" />
-                                                                </Button>
-                                                            </div>
-                                                        </TableCell>
-                                                    </PermissionGate>
-
+                                        </TableHeader>
+                                        <TableBody>
+                                            {recipes.length === 0 ? (
+                                                <TableRow>
+                                                    <TableCell colSpan={4} className="text-center py-6">Nenhuma receita
+                                                        cadastrada</TableCell>
                                                 </TableRow>
-                                            ))
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </ScrollArea>
+                                            ) : (
+                                                recipes.map((recipe) => (
+                                                    <TableRow key={recipe._id}>
+                                                        <TableCell>{menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName}</TableCell>
+                                                        <TableCell>{recipe.servings}</TableCell>
+                                                        <TableCell>Kz {recipe.cost.toFixed(2)}</TableCell>
+                                                        <PermissionGate section={Sections.STOCK_RECIPES}
+                                                                        operation="update" mode="hide">
+                                                            <TableCell className="text-right">
+                                                                <div className="flex justify-end gap-2">
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        onClick={() => handleOpenEditRecipe(recipe)}
+                                                                    >
+                                                                        Editar
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="sm"
+                                                                            onClick={() => handleDeleteRecipe(recipe._id)}>
+                                                                        <Trash2 className="h-4 w-4"/>
+                                                                    </Button>
+                                                                </div>
+                                                            </TableCell>
+                                                        </PermissionGate>
+
+                                                    </TableRow>
+                                                ))
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </ScrollArea>
                             </div>
                             <div className="sm:hidden space-y-2">
                                 {recipes.length === 0 ? (
@@ -1284,9 +1302,13 @@ export default function StockManagement() {
                                     ))
                                 )}
                             </div>
+
                         </CardContent>
+                        <div className="w-1/2 mt-6 mx-auto">
+                            <PaginationManager {...recipesPagination}/>
+                        </div>
                     </Card>
-                    <PaginationManager {...recipesPagination}/>
+
                 </TabsContent>
 
                 <TabsContent value="movements" className="space-y-4">
@@ -1312,63 +1334,79 @@ export default function StockManagement() {
                                                 <TableHead>Produto</TableHead>
                                                 <TableHead>Tipo</TableHead>
                                                 <TableHead>Quantidade</TableHead>
-                                            <TableHead>Data</TableHead>
-                                            <TableHead>Utilizador</TableHead>
-                                            <TableHead>Razão</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {isMovementsLoading ? (
-                                            Array.from({ length: 5 }).map((_, i) => (
-                                                <TableRow key={i}>
-                                                    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                                                    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-                                                    <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-                                                    <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                                                    <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
-                                                    <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                                                </TableRow>
-                                            ))
-                                        ) : movements.length === 0 ? (
-                                            <TableRow>
-                                                <TableCell colSpan={6} className="text-center py-6">Nenhum registro encontrado</TableCell>
+                                                <TableHead>Data</TableHead>
+                                                <TableHead>Utilizador</TableHead>
+                                                <TableHead>Razão</TableHead>
                                             </TableRow>
-                                        ) : (
-                                            movements.map((mv) => (
-                                                <TableRow key={mv._id}>
-                                                    <TableCell>{mv.productName}</TableCell>
-                                                    <TableCell className={`capitalize font-semibold ${mv.type == "entrada"? "text-green-600": mv.type == "saida"? "text-red-600": ""}`}>{mv.type}</TableCell>
-                                                    <TableCell>{mv.quantity} <span className="italic text-zinc-600 font-semibold">{mv.unit}</span></TableCell>
-                                                    <TableCell>{formatIsosDate(new Date(mv.date))}</TableCell>
-                                                    <TableCell>{mv.user}</TableCell>
-                                                    <TableCell>{mv.reason}</TableCell>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {isMovementsLoading ? (
+                                                Array.from({length: 5}).map((_, i) => (
+                                                    <TableRow key={i}>
+                                                        <TableCell><Skeleton className="h-4 w-[150px]"/></TableCell>
+                                                        <TableCell><Skeleton className="h-4 w-[80px]"/></TableCell>
+                                                        <TableCell><Skeleton className="h-4 w-[80px]"/></TableCell>
+                                                        <TableCell><Skeleton className="h-4 w-[100px]"/></TableCell>
+                                                        <TableCell><Skeleton className="h-4 w-[120px]"/></TableCell>
+                                                        <TableCell><Skeleton className="h-4 w-[150px]"/></TableCell>
+                                                    </TableRow>
+                                                ))
+                                            ) : movements.length === 0 ? (
+                                                <TableRow>
+                                                    <TableCell colSpan={6} className="text-center py-6">Nenhum registro
+                                                        encontrado</TableCell>
                                                 </TableRow>
-                                            ))
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </ScrollArea>
+                                            ) : (
+                                                movements.map((mv) => (
+                                                    <TableRow key={mv._id}>
+                                                        <TableCell>{mv.productName}</TableCell>
+                                                        <TableCell
+                                                            className={`capitalize font-semibold ${mv.type == "entrada" ? "text-green-600" : mv.type == "saida" ? "text-red-600" : ""}`}>{mv.type}</TableCell>
+                                                        <TableCell>{mv.quantity} <span
+                                                            className="italic text-zinc-600 font-semibold">{mv.unit}</span></TableCell>
+                                                        <TableCell>
+                                                            <Tooltip>
+                                                                <TooltipTrigger>
+                                                                    {formatIsosDate(mv.createdAt)}
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    {`${mv.createdAt.getHours() < 10 ? "0" : ""}`}{mv.createdAt.getHours()}:{`${mv.createdAt.getMinutes() < 10 ? "0" : ""}`}{mv.createdAt.getMinutes()}
+                                                                </TooltipContent>
+
+                                                            </Tooltip>
+
+                                                        </TableCell>
+                                                        <TableCell>{mv.user}</TableCell>
+                                                        <TableCell>{mv.reason}</TableCell>
+                                                    </TableRow>
+                                                ))
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </ScrollArea>
                             </div>
                             <div className="sm:hidden space-y-2">
                                 {isMovementsLoading ? (
-                                    Array.from({ length: 5 }).map((_, i) => (
+                                    Array.from({length: 5}).map((_, i) => (
                                         <Card key={i} className="p-4 space-y-2">
-                                            <Skeleton className="h-4 w-3/4" />
-                                            <Skeleton className="h-4 w-1/2" />
-                                            <Skeleton className="h-4 w-2/3" />
+                                            <Skeleton className="h-4 w-3/4"/>
+                                            <Skeleton className="h-4 w-1/2"/>
+                                            <Skeleton className="h-4 w-2/3"/>
                                         </Card>
                                     ))
                                 ) : movements.length === 0 ? (
                                     <div className="text-center py-6">Nenhum registro encontrado</div>
                                 ) : (
                                     movements.map((mv) => (
-                                        <MovementCard key={mv._id} movement={mv} />
+                                        <MovementCard key={mv._id} movement={mv}/>
                                     ))
                                 )}
                             </div>
                         </CardContent>
+                        <div className="w-1/2 mt-6 mx-auto">
+                            <PaginationManager {...movementsPagination}/>
+                        </div>
                     </Card>
-                    <PaginationManager {...movementsPagination}/>
                 </TabsContent>
 
                 {/* Other tabs content would go here */}

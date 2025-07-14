@@ -5,14 +5,14 @@ import type {AxiosInstance} from 'axios';
 
 
 interface PaginatedResponse<T> {
-    items: T[];
+    items:  T[];
     nextCursor: string | null;
     totalCount: number;
     hasMore: boolean;
 }
 
-export interface UsePaginatedQueryResult<T> {
-    data: T[];
+export interface UsePaginatedQueryResult<T, R = T> {
+    data: T[] | R[];
     totalCount: number;
     hasMore: boolean;
     isLoading: boolean;
@@ -23,12 +23,14 @@ export interface UsePaginatedQueryResult<T> {
     resetPagination: () => void;
 }
 
-export function usePaginatedQuery<T>(
+export function usePaginatedQuery<T, R = T>(
     axiosClient: AxiosInstance,
     limit: number = 10,
     url?: string,
-    params: Record<string, unknown> = {}
-): UsePaginatedQueryResult<T> {
+    params: Record<string, unknown> = {},
+    serialize?: (item: T) => R
+
+): UsePaginatedQueryResult<T, R> {
     const [cursor, setCursor] = useState<string | null>(null);
     const [, setCursorHistory] = useState<(string | null)[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -68,7 +70,10 @@ export function usePaginatedQuery<T>(
         setCurrentPage(1);
     }, []);
 
-    const items = useMemo(() => data?.items ?? [], [data]);
+    const items = useMemo(() => {
+        if (!data?.items) return [];
+        return serialize ? data.items.map(serialize) : data.items;
+    }, [data, serialize]);
 
     return {
         data: items,

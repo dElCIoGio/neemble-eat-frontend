@@ -65,7 +65,6 @@ const navigation: NavigationGroup[] = [
     {
         label: 'Painel',
         items: [
-
             {
                 label: 'Pedidos',
                 icon: CallBell,

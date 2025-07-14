@@ -33,6 +33,8 @@ export type StockItem = {
 } & StockItemCreate
 
 
+
+
 type OptionalStockItemFields = Partial<Omit<StockItem, '_id' | 'createdAt' | 'updatedAt'>>;
 
 export type PartialStockItem = OptionalStockItemFields;
@@ -57,6 +59,10 @@ export type Movement = {
     updatedAt: Date
 } & MovementCreate
 
+
+export function movementSerializer(movement: Movement): Movement {
+    return {...movement, date: new Date(movement.date), createdAt: new Date(movement.createdAt)};
+}
 
 export type RecipeIngredient = {
     productId: string;
