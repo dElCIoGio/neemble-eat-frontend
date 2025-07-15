@@ -16,6 +16,16 @@ export interface CurrentPlan {
     features: string[]
 }
 
+export type RecurringInterval = "daily" | "weekly" | "monthly" | "yearly"
+export type Currency = "USD" | "GBP" | "Kz"
+
+export interface PlanLimits {
+    restaurants: number
+    tables: number
+    reservations: number
+    staff: number
+}
+
 export interface Plan {
     id: string
     name: string
@@ -23,13 +33,34 @@ export interface Plan {
     priceValue: number
     popular?: boolean
     features: string[]
-    limits: {
-        restaurants: number
-        tables: number
-        reservations: number
-        staff: number
-    }
+    limits: PlanLimits
 }
+
+export interface SubscriptionPlanCreate {
+    name: string
+    price: number
+    currency: Currency
+    interval: RecurringInterval
+    features: string[]
+    description: string
+    trialDays: number
+    isActive: boolean
+    limits: PlanLimits
+    popular?: boolean
+}
+
+export interface SubscriptionPlan extends SubscriptionPlanCreate {
+    _id: string
+    createdAt: Date
+    updatedAt: Date
+}
+
+export type PartialSubscriptionPlan =
+    Partial<Omit<SubscriptionPlan, "_id" | "createdAt" | "updatedAt">> & {
+        _id: string
+        createdAt: string
+        updatedAt: string
+    }
 
 export interface UsageMetrics {
     restaurants: { used: number; limit: number }
