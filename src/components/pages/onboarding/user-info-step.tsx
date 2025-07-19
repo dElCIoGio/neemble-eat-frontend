@@ -16,9 +16,6 @@ const userInfoSchema = z.object({
     lastName: z.string().min(2, {
         message: "O sobrenome deve ter pelo menos 2 caracteres",
     }),
-    email: z.string().email({
-        message: "Por favor, digite um email válido",
-    }),
     phoneNumber: z.string().min(10, {
         message: "Por favor, digite um número de telefone válido",
     }),
@@ -38,7 +35,6 @@ export function UserInfoStep({ userData, updateUserData, onNext }: UserInfoStepP
         defaultValues: {
             firstName: userData.firstName,
             lastName: userData.lastName,
-            email: userData.email,
             phoneNumber: userData.phoneNumber,
         },
     })
