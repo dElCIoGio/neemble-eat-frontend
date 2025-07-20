@@ -21,14 +21,4 @@ This document outlines the backend APIs required to fully implement the Subscrip
 - **POST `/subscriptions/resume`** – resume a paused subscription.
 - **POST `/subscriptions/backup`** – generate and download a JSON backup of account data.
 
-## Support and Referrals (Standby)
-- **POST `/support/tickets`** – open a priority support ticket. Returns ticket number.
-- **GET `/referrals/code`** – retrieve the user’s referral code.
-- **POST `/referrals/invite`** – send an invitation using the referral program. Body: `emails[]`.
-- **GET `/support/chat-token`** – obtain token/URL for the live chat service.
-
-## Notification & Renewal Settings (Standby)
-- **GET `/subscriptions/settings`** – fetch current notification and auto‑renewal preferences.
-- **PATCH `/subscriptions/settings`** – update `autoRenewal` or notification channels (`email`, `sms`, `whatsapp`).
-
 These endpoints cover all dynamic interactions on the Subscription page, allowing the UI components to fetch data and perform actions efficiently.
