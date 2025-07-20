@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { toast, Toaster } from "sonner"
 import {
     Calendar,
@@ -46,13 +46,25 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {
+    useGetCurrentSubscription,
+    useGetUsageMetrics,
+    useGetPaymentHistory,
+    useGetPlans,
+    useUploadPaymentProof,
+    useChangePlan,
+    useDownloadInvoice,
+    useGetLatestInvoice,
+    usePauseSubscription,
+    useBackupAccountData,
+} from "@/api/endpoints/subscriptions/hooks"
+import { showPromiseToast } from "@/utils/notifications/toast"
 import type {
     PaymentHistory,
     Subscription,
     Plan,
     UsageMetrics,
     PaymentForm,
-    LoadingStates,
     NotificationSettings,
 } from "@/types/subscription"
 
@@ -66,15 +78,10 @@ export default function Subscription() {
         notes: "",
     })
 
-    // Loading states for different actions
-    const [loadingStates, setLoadingStates] = useState<LoadingStates>({
-        submitPayment: false,
-        upgrade: false,
-        invoice: false,
+    // Loading states for local actions
+    const [loadingStates, setLoadingStates] = useState({
         support: false,
         invite: false,
-        pause: false,
-        backup: false,
         chat: false,
     })
 
@@ -92,115 +99,29 @@ export default function Subscription() {
     const [copiedCode, setCopiedCode] = useState(false)
     const [activeTab, setActiveTab] = useState("overview")
 
-    const availablePlans: Plan[] = [
-        {
-            _id: "basic",
-            name: "Plano Básico",
-            price: 15000,
-            features: [
-                "1 Restaurante",
-                "Até 20 mesas",
-                "Até 100 reservas/mês",
-                "Até 3 membros da equipe",
-                "Suporte por email",
-            ],
-            limits: { restaurants: 1, tables: 20, reservations: 100, staff: 3, menuItems: 25 },
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        },
-        {
-            _id: "professional",
-            name: "Plano Profissional",
-            price: 28000,
-            popular: true,
-            features: [
-                "Até 3 Restaurantes",
-                "Mesas ilimitadas",
-                "Reservas ilimitadas",
-                "Até 10 membros da equipe",
-                "Suporte prioritário",
-            ],
-            limits: { restaurants: 3, tables: -1, reservations: -1, staff: 10, menuItems: 25 },
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        },
-        {
-            _id: "enterprise",
-            name: "Plano Empresarial",
-            price: 45000,
-            features: [
-                "Restaurantes ilimitados",
-                "Mesas ilimitadas",
-                "Reservas ilimitadas",
-                "Equipe ilimitada",
-                "Suporte 24/7",
-                "Gestor dedicado",
-            ],
-            limits: { restaurants: -1, tables: -1, reservations: -1, staff: -1, menuItems: 25 },
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        },
-    ]
+    const { data: availablePlans } = useGetPlans()
+    const { data: currentSubscription } = useGetCurrentSubscription()
+    const { data: usageMetrics } = useGetUsageMetrics()
+    const { data: paymentHistory } = useGetPaymentHistory()
+    const { refetch: fetchLatestInvoice } = useGetLatestInvoice()
 
-    const currentSubscription: Subscription = {
-        _id: "sub_1",
-        planId: availablePlans[1]._id,
-        startDate: "01/07/2025",
-        endDate: "31/07/2025",
-        status: "ativa",
-        autoRenew: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    }
+    const uploadPaymentProof = useUploadPaymentProof()
+    const changePlanMutation = useChangePlan()
+    const downloadInvoiceMutation = useDownloadInvoice()
+    const pauseSubscriptionMutation = usePauseSubscription()
+    const backupAccountMutation = useBackupAccountData()
 
-    const currentPlan = availablePlans.find((p) => p._id === currentSubscription.planId)!
+    useEffect(() => {
+        if (currentSubscription?.autoRenew !== undefined) {
+            setAutoRenewal(!!currentSubscription.autoRenew)
+        }
+    }, [currentSubscription])
 
-    const usageMetrics: UsageMetrics = {
-        restaurants: { used: 2, limit: 3 },
-        tables: { used: 45, limit: -1 },
-        reservations: { used: 234, limit: -1 },
-        staff: { used: 7, limit: 10 },
-    }
+    const currentPlan = availablePlans?.find((p) => p._id === currentSubscription?.planId)
 
-    const [paymentHistory, setPaymentHistory] = useState<PaymentHistory[]>([
-        {
-            _id: "1",
-            subscriptionId: currentSubscription._id,
-            period: "Junho 2025",
-            amount: "Kz 28.000",
-            status: "pago",
-            paymentDate: "01/06/2025",
-            receiptUrl: "#",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        },
-        {
-            _id: "2",
-            subscriptionId: currentSubscription._id,
-            period: "Maio 2025",
-            amount: "Kz 28.000",
-            status: "pago",
-            paymentDate: "28/04/2025",
-            receiptUrl: "#",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        },
-        {
-            _id: "3",
-            subscriptionId: currentSubscription._id,
-            period: "Abril 2025",
-            amount: "Kz 28.000",
-            status: "em_analise",
-            paymentDate: "30/03/2025",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        },
-    ])
 
-    // Helper function to update loading state
-    const setLoading = (action: keyof LoadingStates, loading: boolean) => {
-        setLoadingStates((prev) => ({ ...prev, [action]: loading }))
-    }
+
+
 
     // 1. Submeter Comprovativo
     const handleSubmitPayment = async () => {
@@ -216,89 +137,69 @@ export default function Subscription() {
             return
         }
 
-        setLoading("submitPayment", true)
+        const formData = new FormData()
+        formData.append("holderName", paymentForm.holderName)
+        formData.append("paymentReference", paymentForm.paymentReference)
+        formData.append("paymentDate", paymentForm.paymentDate)
+        formData.append("amountPaid", paymentForm.amountPaid)
+        formData.append("notes", paymentForm.notes)
+        formData.append("file", uploadedFile)
 
-        try {
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-
-            // Add to payment history
-            const newPayment: PaymentHistory = {
-                _id: (paymentHistory.length + 1).toString(),
-                subscriptionId: currentSubscription._id,
-                period: "Julho 2025",
-                amount: paymentForm.amountPaid,
-                status: "em_analise",
-                paymentDate: new Date().toLocaleDateString("pt-BR"),
-                createdAt: new Date(),
-                updatedAt: new Date(),
+        showPromiseToast(
+            uploadPaymentProof.mutateAsync(formData).then(() => {
+                setPaymentForm({
+                    holderName: "",
+                    paymentReference: "",
+                    paymentDate: "",
+                    amountPaid: "",
+                    notes: "",
+                })
+                setUploadedFile(null)
+                setShowUploadDialog(false)
+            }),
+            {
+                loading: "Enviando comprovativo...",
+                success: "Comprovativo enviado com sucesso!",
+                error: "Erro ao enviar comprovativo.",
             }
-
-            setPaymentHistory((prev) => [newPayment, ...prev])
-
-            // Reset form
-            setPaymentForm({
-                holderName: "",
-                paymentReference: "",
-                paymentDate: "",
-                amountPaid: "",
-                notes: "",
-            })
-            setUploadedFile(null)
-            setShowUploadDialog(false)
-
-            toast.success("Comprovativo enviado com sucesso! Será analisado em até 24 horas.")
-        } catch {
-            toast.error("Erro ao enviar comprovativo. Tente novamente.")
-        } finally {
-            setLoading("submitPayment", false)
-        }
+        )
     }
 
     // 2. Fazer Upgrade
-    const handleUpgrade = async () => {
-        setLoading("upgrade", true)
-
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 1500))
-            setActiveTab("plans")
-            toast.info("Escolha o plano desejado para fazer o upgrade.")
-        } catch {
-            toast.error("Erro ao carregar planos.")
-        } finally {
-            setLoading("upgrade", false)
-        }
+    const handleUpgrade = () => {
+        setActiveTab("plans")
+        toast.info("Escolha o plano desejado para fazer o upgrade.")
     }
 
     // 3. Solicitar Fatura
     const handleRequestInvoice = async () => {
-        setLoading("invoice", true)
-
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-
-            // Simulate PDF generation and download
-            const blob = new Blob(["Fatura PDF simulada"], { type: "application/pdf" })
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement("a")
-            a.href = url
-            a.download = `fatura-neemble-${new Date().getMonth() + 1}-2025.pdf`
-            document.body.appendChild(a)
-            a.click()
-            document.body.removeChild(a)
-            URL.revokeObjectURL(url)
-
-            toast.success("Fatura gerada e baixada com sucesso!")
-        } catch {
-            toast.error("Erro ao gerar fatura. Tente novamente.")
-        } finally {
-            setLoading("invoice", false)
-        }
+        showPromiseToast(
+            fetchLatestInvoice().then(({ data }) => {
+                if (!data) throw new Error("Sem fatura disponível")
+                return downloadInvoiceMutation
+                    .mutateAsync(data._id)
+                    .then((blob) => {
+                        const url = URL.createObjectURL(blob)
+                        const a = document.createElement("a")
+                        a.href = url
+                        a.download = `fatura-${data._id}.pdf`
+                        document.body.appendChild(a)
+                        a.click()
+                        document.body.removeChild(a)
+                        URL.revokeObjectURL(url)
+                    })
+            }),
+            {
+                loading: "Gerando fatura...",
+                success: "Fatura baixada com sucesso!",
+                error: "Erro ao gerar fatura.",
+            }
+        )
     }
 
     // 4. Suporte Prioritário
     const handlePrioritySupport = async () => {
-        setLoading("support", true)
+        setLoadingStates((s) => ({ ...s, support: true }))
 
         try {
             await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -314,13 +215,13 @@ export default function Subscription() {
         } catch {
             toast.error("Erro ao abrir suporte. Tente novamente.")
         } finally {
-            setLoading("support", false)
+            setLoadingStates((s) => ({ ...s, support: false }))
         }
     }
 
     // 5. Convidar Amigos
     const handleInviteFriends = async () => {
-        setLoading("invite", true)
+        setLoadingStates((s) => ({ ...s, invite: true }))
 
         try {
             await new Promise((resolve) => setTimeout(resolve, 800))
@@ -329,7 +230,7 @@ export default function Subscription() {
         } catch {
             toast.error("Erro ao carregar programa de indicação.")
         } finally {
-            setLoading("invite", false)
+            setLoadingStates((s) => ({ ...s, invite: false }))
         }
     }
 
@@ -347,57 +248,42 @@ export default function Subscription() {
 
     // 6. Pausar Conta Temporariamente
     const handlePauseAccount = async () => {
-        setLoading("pause", true)
-
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-            setShowPauseDialog(false)
-            toast.success("Solicitação de pausa enviada. Sua conta será pausada em 24 horas.")
-        } catch {
-            toast.error("Erro ao pausar conta. Tente novamente.")
-        } finally {
-            setLoading("pause", false)
-        }
+        showPromiseToast(
+            pauseSubscriptionMutation.mutateAsync().then(() => {
+                setShowPauseDialog(false)
+            }),
+            {
+                loading: "Enviando solicitação...",
+                success: "Subscrição pausada",
+                error: "Erro ao pausar conta.",
+            }
+        )
     }
 
     // 7. Backup de Dados
     const handleBackupData = async () => {
-        setLoading("backup", true)
-
-        try {
-            // Simulate backup process with progress
-            await new Promise((resolve) => setTimeout(resolve, 3000))
-
-            // Simulate backup file download
-            const backupData = {
-                restaurants: 2,
-                tables: 45,
-                reservations: 234,
-                staff: 7,
-                exportDate: new Date().toISOString(),
+        showPromiseToast(
+            backupAccountMutation.mutateAsync().then((blob) => {
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement("a")
+                a.href = url
+                a.download = `backup-${new Date().toISOString().split("T")[0]}.json`
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+                URL.revokeObjectURL(url)
+            }),
+            {
+                loading: "Gerando backup...",
+                success: "Backup baixado com sucesso!",
+                error: "Erro ao realizar backup.",
             }
-
-            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" })
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement("a")
-            a.href = url
-            a.download = `backup-neemble-${new Date().toISOString().split("T")[0]}.json`
-            document.body.appendChild(a)
-            a.click()
-            document.body.removeChild(a)
-            URL.revokeObjectURL(url)
-
-            toast.success("Backup realizado com sucesso! Arquivo baixado.")
-        } catch {
-            toast.error("Erro ao realizar backup. Tente novamente.")
-        } finally {
-            setLoading("backup", false)
-        }
+        )
     }
 
     // 8. Chat ao Vivo
     const handleLiveChat = async () => {
-        setLoading("chat", true)
+        setLoadingStates((s) => ({ ...s, chat: true }))
 
         try {
             await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -412,7 +298,7 @@ export default function Subscription() {
         } catch {
             toast.error("Erro ao conectar com chat. Tente novamente.")
         } finally {
-            setLoading("chat", false)
+            setLoadingStates((s) => ({ ...s, chat: false }))
         }
     }
 
@@ -424,12 +310,18 @@ export default function Subscription() {
     }
 
     const handlePlanChange = async () => {
-        setLoading("submitPayment", true)
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        setLoading("submitPayment", false)
-        setShowPlanChangeDialog(false)
-        setSelectedPlan(null)
-        toast.success("Solicitação de mudança de plano enviada!")
+        if (!selectedPlan) return
+        showPromiseToast(
+            changePlanMutation.mutateAsync({ planId: selectedPlan }).then(() => {
+                setShowPlanChangeDialog(false)
+                setSelectedPlan(null)
+            }),
+            {
+                loading: "Solicitando mudança...",
+                success: "Plano alterado com sucesso!",
+                error: "Falha ao alterar plano.",
+            }
+        )
     }
 
     const getStatusBadge = (status: string) => {
@@ -497,22 +389,22 @@ export default function Subscription() {
                                         <CardContent className="space-y-4">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <h3 className="font-semibold text-lg">{currentPlan.name}</h3>
+                                                    <h3 className="font-semibold text-lg">{currentPlan?.name}</h3>
                                                     <p className="text-2xl font-bold text-gray-900">
-                                                        Kz {currentPlan.price}
+                                                        Kz {currentPlan?.price}
                                                         <span className="text-sm font-normal text-gray-500">/mês</span>
                                                     </p>
                                                 </div>
-                                                {getStatusBadge(currentSubscription.status)}
+                                                {currentSubscription && getStatusBadge(currentSubscription.status)}
                                             </div>
                                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                                 <Calendar className="h-4 w-4" />
-                                                Período de vigência: {currentSubscription.startDate} a {currentSubscription.endDate}
+                                                Período de vigência: {currentSubscription?.startDate} a {currentSubscription?.endDate}
                                             </div>
                                             <div className="space-y-2">
                                                 <h4 className="font-medium text-sm">Funcionalidades incluídas:</h4>
                                                 <ul className="text-sm text-gray-600 space-y-1">
-                                                    {currentPlan.features.map((feature, index) => (
+                                                    {(currentPlan?.features || []).map((feature, index) => (
                                                         <li key={index} className="flex items-center gap-2">
                                                             <Check className="h-3 w-3 text-green-600" />
                                                             {feature}
@@ -538,40 +430,40 @@ export default function Subscription() {
                                                     <div className="flex justify-between text-sm">
                                                         <span>Restaurantes</span>
                                                         <span>
-                              {usageMetrics.restaurants.used}/{formatLimit(usageMetrics.restaurants.limit)}
+                              {usageMetrics?.restaurants.used}/{formatLimit(usageMetrics?.restaurants.limit ?? 0)}
                             </span>
                                                     </div>
                                                     <Progress
-                                                        value={getUsagePercentage(usageMetrics.restaurants.used, usageMetrics.restaurants.limit)}
+                                                        value={getUsagePercentage(usageMetrics?.restaurants.used ?? 0, usageMetrics?.restaurants.limit ?? 0)}
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-sm">
                                                         <span>Membros da Equipe</span>
                                                         <span>
-                              {usageMetrics.staff.used}/{formatLimit(usageMetrics.staff.limit)}
+                              {usageMetrics?.staff.used}/{formatLimit(usageMetrics?.staff.limit ?? 0)}
                             </span>
                                                     </div>
-                                                    <Progress value={getUsagePercentage(usageMetrics.staff.used, usageMetrics.staff.limit)} />
+                                                    <Progress value={getUsagePercentage(usageMetrics?.staff.used ?? 0, usageMetrics?.staff.limit ?? 0)} />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-sm">
                                                         <span>Mesas</span>
                                                         <span>
-                              {usageMetrics.tables.used}/{formatLimit(usageMetrics.tables.limit)}
+                              {usageMetrics?.tables.used}/{formatLimit(usageMetrics?.tables.limit ?? 0)}
                             </span>
                                                     </div>
-                                                    <Progress value={getUsagePercentage(usageMetrics.tables.used, usageMetrics.tables.limit)} />
+                                                    <Progress value={getUsagePercentage(usageMetrics?.tables.used ?? 0, usageMetrics?.tables.limit ?? 0)} />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-sm">
                                                         <span>Reservas (este mês)</span>
                                                         <span>
-                              {usageMetrics.reservations.used}/{formatLimit(usageMetrics.reservations.limit)}
+                              {usageMetrics?.reservations.used}/{formatLimit(usageMetrics?.reservations.limit ?? 0)}
                             </span>
                                                     </div>
                                                     <Progress
-                                                        value={getUsagePercentage(usageMetrics.reservations.used, usageMetrics.reservations.limit)}
+                                                        value={getUsagePercentage(usageMetrics?.reservations.used ?? 0, usageMetrics?.reservations.limit ?? 0)}
                                                     />
                                                 </div>
                                             </div>
@@ -590,8 +482,8 @@ export default function Subscription() {
                                             {/* 1. Submeter Comprovativo */}
                                             <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
                                                 <DialogTrigger asChild>
-                                                    <Button className="w-full" disabled={loadingStates.submitPayment}>
-                                                        {loadingStates.submitPayment ? (
+                                                    <Button className="w-full" disabled={uploadPaymentProof.isPending}>
+                                                        {uploadPaymentProof.isPending ? (
                                                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                                         ) : (
                                                             <Upload className="h-4 w-4 mr-2" />
@@ -672,10 +564,10 @@ export default function Subscription() {
                                                         </div>
                                                         <Button
                                                             onClick={handleSubmitPayment}
-                                                            disabled={loadingStates.submitPayment}
+                                                            disabled={uploadPaymentProof.isPending}
                                                             className="w-full"
                                                         >
-                                                            {loadingStates.submitPayment ? (
+                                                            {uploadPaymentProof.isPending ? (
                                                                 <>
                                                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                                                     Enviando...
@@ -693,13 +585,8 @@ export default function Subscription() {
                                                 variant="outline"
                                                 className="w-full"
                                                 onClick={handleUpgrade}
-                                                disabled={loadingStates.upgrade}
                                             >
-                                                {loadingStates.upgrade ? (
-                                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                                ) : (
-                                                    <ArrowUpCircle className="h-4 w-4 mr-2" />
-                                                )}
+                                                <ArrowUpCircle className="h-4 w-4 mr-2" />
                                                 Fazer Upgrade
                                             </Button>
 
@@ -708,9 +595,9 @@ export default function Subscription() {
                                                 variant="outline"
                                                 className="w-full"
                                                 onClick={handleRequestInvoice}
-                                                disabled={loadingStates.invoice}
+                                                disabled={downloadInvoiceMutation.isPending}
                                             >
-                                                {loadingStates.invoice ? (
+                                                {downloadInvoiceMutation.isPending ? (
                                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                                 ) : (
                                                     <FileText className="h-4 w-4 mr-2" />
@@ -873,18 +760,18 @@ export default function Subscription() {
                                                         <DialogTitle>Solicitar Mudança de Plano</DialogTitle>
                                                         <DialogDescription>
                                                             Você está solicitando mudança para o{" "}
-                                                            {availablePlans.find((p) => p._id === selectedPlan)?.name}.
+                                                            {availablePlans?.find((p) => p._id === selectedPlan)?.name}.
                                                         </DialogDescription>
                                                     </DialogHeader>
                                                     <div className="space-y-4">
                                                         <div className="p-4 bg-gray-50 rounded-lg">
                                                             <h4 className="font-medium mb-2">Detalhes da mudança:</h4>
                                                             <p className="text-sm text-gray-600">
-                                                                Plano atual: {currentPlan.name} (Kz {currentPlan.price}/mês)
+                                                                Plano atual: {currentPlan?.name} (Kz {currentPlan?.price}/mês)
                                                             </p>
                                                             <p className="text-sm text-gray-600">
-                                                                Novo plano: {availablePlans.find((p) => p._id === selectedPlan)?.name} (
-                                                                {availablePlans.find((p) => p._id === selectedPlan)?.price}/mês)
+                                                                Novo plano: {availablePlans?.find((p) => p._id === selectedPlan)?.name} (
+                                                                {availablePlans?.find((p) => p._id === selectedPlan)?.price}/mês)
                                                             </p>
                                                         </div>
                                                         <div>
@@ -898,10 +785,10 @@ export default function Subscription() {
                                                         <div className="flex gap-2">
                                                             <Button
                                                                 onClick={handlePlanChange}
-                                                                disabled={loadingStates.submitPayment}
+                                                                disabled={changePlanMutation.isPending}
                                                                 className="flex-1"
                                                             >
-                                                                {loadingStates.submitPayment ? (
+                                                                {changePlanMutation.isPending ? (
                                                                     <>
                                                                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                                                         Processando...
@@ -945,7 +832,7 @@ export default function Subscription() {
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            {paymentHistory.map((payment) => (
+                                            {(paymentHistory || []).map((payment) => (
                                                 <TableRow key={payment._id}>
                                                     <TableCell className="font-medium">{payment.period}</TableCell>
                                                     <TableCell>{payment.amount}</TableCell>
@@ -991,8 +878,8 @@ export default function Subscription() {
                                             {/* 6. Pausar Conta Temporariamente */}
                                             <Dialog open={showPauseDialog} onOpenChange={setShowPauseDialog}>
                                                 <DialogTrigger asChild>
-                                                    <Button variant="outline" className="w-full justify-start" disabled={loadingStates.pause}>
-                                                        {loadingStates.pause ? (
+                                                    <Button variant="outline" className="w-full justify-start" disabled={pauseSubscriptionMutation.isPending}>
+                                                        {pauseSubscriptionMutation.isPending ? (
                                                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                                         ) : (
                                                             <Pause className="h-4 w-4 mr-2" />
@@ -1022,11 +909,11 @@ export default function Subscription() {
                                                         <div className="flex gap-2">
                                                             <Button
                                                                 onClick={handlePauseAccount}
-                                                                disabled={loadingStates.pause}
+                                                                disabled={pauseSubscriptionMutation.isPending}
                                                                 className="flex-1"
                                                                 variant="destructive"
                                                             >
-                                                                {loadingStates.pause ? (
+                                                                {pauseSubscriptionMutation.isPending ? (
                                                                     <>
                                                                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                                                         Pausando...
@@ -1048,9 +935,9 @@ export default function Subscription() {
                                                 variant="outline"
                                                 className="w-full justify-start"
                                                 onClick={handleBackupData}
-                                                disabled={loadingStates.backup}
+                                                disabled={backupAccountMutation.isPending}
                                             >
-                                                {loadingStates.backup ? (
+                                                {backupAccountMutation.isPending ? (
                                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                                 ) : (
                                                     <Shield className="h-4 w-4 mr-2" />
