@@ -144,7 +144,7 @@ export default function Subscription() {
 
     const currentSubscription: Subscription = {
         _id: "sub_1",
-        plan: availablePlans[1],
+        planId: availablePlans[1]._id,
         startDate: "01/07/2025",
         endDate: "31/07/2025",
         status: "ativa",
@@ -152,6 +152,8 @@ export default function Subscription() {
         createdAt: new Date(),
         updatedAt: new Date(),
     }
+
+    const currentPlan = availablePlans.find((p) => p._id === currentSubscription.planId)!
 
     const usageMetrics: UsageMetrics = {
         restaurants: { used: 2, limit: 3 },
@@ -495,9 +497,9 @@ export default function Subscription() {
                                         <CardContent className="space-y-4">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <h3 className="font-semibold text-lg">{currentSubscription.plan.name}</h3>
+                                                    <h3 className="font-semibold text-lg">{currentPlan.name}</h3>
                                                     <p className="text-2xl font-bold text-gray-900">
-                                                        Kz {currentSubscription.plan.price}
+                                                        Kz {currentPlan.price}
                                                         <span className="text-sm font-normal text-gray-500">/mês</span>
                                                     </p>
                                                 </div>
@@ -510,7 +512,7 @@ export default function Subscription() {
                                             <div className="space-y-2">
                                                 <h4 className="font-medium text-sm">Funcionalidades incluídas:</h4>
                                                 <ul className="text-sm text-gray-600 space-y-1">
-                                                    {currentSubscription.plan.features.map((feature, index) => (
+                                                    {currentPlan.features.map((feature, index) => (
                                                         <li key={index} className="flex items-center gap-2">
                                                             <Check className="h-3 w-3 text-green-600" />
                                                             {feature}
@@ -878,7 +880,7 @@ export default function Subscription() {
                                                         <div className="p-4 bg-gray-50 rounded-lg">
                                                             <h4 className="font-medium mb-2">Detalhes da mudança:</h4>
                                                             <p className="text-sm text-gray-600">
-                                                                Plano atual: {currentSubscription.plan.name} (Kz {currentSubscription.plan.price}/mês)
+                                                                Plano atual: {currentPlan.name} (Kz {currentPlan.price}/mês)
                                                             </p>
                                                             <p className="text-sm text-gray-600">
                                                                 Novo plano: {availablePlans.find((p) => p._id === selectedPlan)?.name} (
