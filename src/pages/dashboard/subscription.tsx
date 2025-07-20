@@ -48,7 +48,7 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type {
     PaymentHistory,
-    CurrentPlan,
+    Subscription,
     Plan,
     UsageMetrics,
     PaymentForm,
@@ -91,21 +91,6 @@ export default function Subscription() {
     })
     const [copiedCode, setCopiedCode] = useState(false)
     const [activeTab, setActiveTab] = useState("overview")
-
-    const currentPlan: CurrentPlan = {
-        name: "Plano Completo Neemble",
-        monthlyPrice: "Kz 28.000",
-        status: "ativa",
-        validFrom: "01/07/2025",
-        validTo: "31/07/2025",
-        features: [
-            "Restaurantes ilimitados",
-            "Mesas ilimitadas",
-            "Reservas ilimitadas",
-            "Equipe até 10 membros",
-            "Suporte prioritário",
-        ],
-    }
 
     const availablePlans: Plan[] = [
         {
@@ -151,6 +136,15 @@ export default function Subscription() {
         },
     ]
 
+    const currentSubscription: Subscription = {
+        id: "sub_1",
+        plan: availablePlans[1],
+        startDate: "01/07/2025",
+        endDate: "31/07/2025",
+        status: "ativa",
+        autoRenew: true,
+    }
+
     const usageMetrics: UsageMetrics = {
         restaurants: { used: 2, limit: 3 },
         tables: { used: 45, limit: -1 },
@@ -161,26 +155,29 @@ export default function Subscription() {
     const [paymentHistory, setPaymentHistory] = useState<PaymentHistory[]>([
         {
             id: "1",
+            subscriptionId: currentSubscription.id,
             period: "Junho 2025",
             amount: "Kz 28.000",
             status: "pago",
-            submissionDate: "01/06/2025",
+            paymentDate: "01/06/2025",
             receiptUrl: "#",
         },
         {
             id: "2",
+            subscriptionId: currentSubscription.id,
             period: "Maio 2025",
             amount: "Kz 28.000",
             status: "pago",
-            submissionDate: "28/04/2025",
+            paymentDate: "28/04/2025",
             receiptUrl: "#",
         },
         {
             id: "3",
+            subscriptionId: currentSubscription.id,
             period: "Abril 2025",
             amount: "Kz 28.000",
             status: "em_analise",
-            submissionDate: "30/03/2025",
+            paymentDate: "30/03/2025",
         },
     ])
 
@@ -212,10 +209,11 @@ export default function Subscription() {
             // Add to payment history
             const newPayment: PaymentHistory = {
                 id: (paymentHistory.length + 1).toString(),
+                subscriptionId: currentSubscription.id,
                 period: "Julho 2025",
                 amount: paymentForm.amountPaid,
                 status: "em_analise",
-                submissionDate: new Date().toLocaleDateString("pt-BR"),
+                paymentDate: new Date().toLocaleDateString("pt-BR"),
             }
 
             setPaymentHistory((prev) => [newPayment, ...prev])
@@ -481,22 +479,22 @@ export default function Subscription() {
                                         <CardContent className="space-y-4">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <h3 className="font-semibold text-lg">{currentPlan.name}</h3>
+                                                    <h3 className="font-semibold text-lg">{currentSubscription.plan.name}</h3>
                                                     <p className="text-2xl font-bold text-gray-900">
-                                                        {currentPlan.monthlyPrice}
+                                                        Kz {currentSubscription.plan.price}
                                                         <span className="text-sm font-normal text-gray-500">/mês</span>
                                                     </p>
                                                 </div>
-                                                {getStatusBadge(currentPlan.status)}
+                                                {getStatusBadge(currentSubscription.status)}
                                             </div>
                                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                                 <Calendar className="h-4 w-4" />
-                                                Período de vigência: {currentPlan.validFrom} a {currentPlan.validTo}
+                                                Período de vigência: {currentSubscription.startDate} a {currentSubscription.endDate}
                                             </div>
                                             <div className="space-y-2">
                                                 <h4 className="font-medium text-sm">Funcionalidades incluídas:</h4>
                                                 <ul className="text-sm text-gray-600 space-y-1">
-                                                    {currentPlan.features.map((feature, index) => (
+                                                    {currentSubscription.plan.features.map((feature, index) => (
                                                         <li key={index} className="flex items-center gap-2">
                                                             <Check className="h-3 w-3 text-green-600" />
                                                             {feature}
@@ -864,7 +862,7 @@ export default function Subscription() {
                                                         <div className="p-4 bg-gray-50 rounded-lg">
                                                             <h4 className="font-medium mb-2">Detalhes da mudança:</h4>
                                                             <p className="text-sm text-gray-600">
-                                                                Plano atual: {currentPlan.name} ({currentPlan.monthlyPrice}/mês)
+                                                                Plano atual: {currentSubscription.plan.name} (Kz {currentSubscription.plan.price}/mês)
                                                             </p>
                                                             <p className="text-sm text-gray-600">
                                                                 Novo plano: {availablePlans.find((p) => p.id === selectedPlan)?.name} (
@@ -924,7 +922,7 @@ export default function Subscription() {
                                                 <TableHead>Mês/Período</TableHead>
                                                 <TableHead>Valor</TableHead>
                                                 <TableHead>Estado</TableHead>
-                                                <TableHead>Data de Submissão</TableHead>
+                                                <TableHead>Data de Pagamento</TableHead>
                                                 <TableHead>Comprovativo</TableHead>
                                             </TableRow>
                                         </TableHeader>
@@ -934,7 +932,7 @@ export default function Subscription() {
                                                     <TableCell className="font-medium">{payment.period}</TableCell>
                                                     <TableCell>{payment.amount}</TableCell>
                                                     <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                                                    <TableCell>{payment.submissionDate}</TableCell>
+                                                    <TableCell>{payment.paymentDate}</TableCell>
                                                     <TableCell>
                                                         {payment.receiptUrl ? (
                                                             <Button variant="ghost" size="sm">

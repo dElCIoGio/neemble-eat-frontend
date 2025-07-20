@@ -1,21 +1,3 @@
-export interface PaymentHistory {
-    id: string
-    period: string
-    amount: string
-    status: "pago" | "em_falta" | "em_analise"
-    submissionDate: string
-    receiptUrl?: string
-}
-
-export interface CurrentPlan {
-    name: string
-    monthlyPrice: string
-    status: "ativa" | "pendente" | "suspensa"
-    validFrom: string
-    validTo: string
-    features: string[]
-}
-
 export type RecurringInterval = "daily" | "weekly" | "monthly" | "yearly"
 export type Currency = "USD" | "GBP" | "Kz"
 
@@ -31,36 +13,33 @@ export interface Plan {
     id: string
     name: string
     price: number
+    currency?: Currency
+    interval?: RecurringInterval
+    description?: string
     popular?: boolean
     features: string[]
     limits: PlanLimits
 }
 
-export interface SubscriptionPlanCreate {
-    name: string
-    price: number
-    currency: Currency
-    interval: RecurringInterval
-    features: string[]
-    description: string
-    trialDays: number
-    isActive: boolean
-    limits: PlanLimits
-    popular?: boolean
+export interface Subscription {
+    id: string
+    userId?: string
+    plan: Plan
+    startDate: string
+    endDate?: string
+    status: "ativa" | "pendente" | "suspensa" | "cancelada"
+    autoRenew?: boolean
 }
 
-export interface SubscriptionPlan extends SubscriptionPlanCreate {
-    _id: string
-    createdAt: Date
-    updatedAt: Date
+export interface PaymentHistory {
+    id: string
+    subscriptionId: string
+    period: string
+    amount: string
+    status: "pago" | "em_falta" | "em_analise"
+    paymentDate: string
+    receiptUrl?: string
 }
-
-export type PartialSubscriptionPlan =
-    Partial<Omit<SubscriptionPlan, "_id" | "createdAt" | "updatedAt">> & {
-        _id: string
-        createdAt: string
-        updatedAt: string
-    }
 
 export interface UsageMetrics {
     restaurants: { used: number; limit: number }
