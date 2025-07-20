@@ -23,14 +23,14 @@ export interface PlanLimits {
     restaurants: number
     tables: number
     reservations: number
+    menuItems: number
     staff: number
 }
 
 export interface Plan {
     id: string
     name: string
-    price: string
-    priceValue: number
+    price: number
     popular?: boolean
     features: string[]
     limits: PlanLimits

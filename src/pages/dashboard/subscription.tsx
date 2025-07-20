@@ -111,8 +111,7 @@ export default function Subscription() {
         {
             id: "basic",
             name: "Plano Básico",
-            price: "Kz 15.000",
-            priceValue: 15000,
+            price: 15000,
             features: [
                 "1 Restaurante",
                 "Até 20 mesas",
@@ -120,13 +119,12 @@ export default function Subscription() {
                 "Até 3 membros da equipe",
                 "Suporte por email",
             ],
-            limits: { restaurants: 1, tables: 20, reservations: 100, staff: 3 },
+            limits: { restaurants: 1, tables: 20, reservations: 100, staff: 3, menuItems: 25 },
         },
         {
             id: "professional",
             name: "Plano Profissional",
-            price: "Kz 28.000",
-            priceValue: 28000,
+            price: 28000,
             popular: true,
             features: [
                 "Até 3 Restaurantes",
@@ -135,13 +133,12 @@ export default function Subscription() {
                 "Até 10 membros da equipe",
                 "Suporte prioritário",
             ],
-            limits: { restaurants: 3, tables: -1, reservations: -1, staff: 10 },
+            limits: { restaurants: 3, tables: -1, reservations: -1, staff: 10, menuItems: 25 },
         },
         {
             id: "enterprise",
             name: "Plano Empresarial",
-            price: "Kz 45.000",
-            priceValue: 45000,
+            price: 45000,
             features: [
                 "Restaurantes ilimitados",
                 "Mesas ilimitadas",
@@ -150,7 +147,7 @@ export default function Subscription() {
                 "Suporte 24/7",
                 "Gestor dedicado",
             ],
-            limits: { restaurants: -1, tables: -1, reservations: -1, staff: -1 },
+            limits: { restaurants: -1, tables: -1, reservations: -1, staff: -1, menuItems: 25 },
         },
     ]
 
