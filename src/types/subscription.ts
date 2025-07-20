@@ -33,6 +33,7 @@ export interface Subscription {
     autoRenew?: boolean
     createdAt: Date
     updatedAt: Date
+    pauseReason?: string
 }
 
 export interface PaymentHistory {
