@@ -26,7 +26,7 @@ export interface Plan {
 export interface Subscription {
     _id: string
     userId?: string
-    plan: Plan
+    planId: string
     startDate: string
     endDate?: string
     status: "ativa" | "pendente" | "suspensa" | "cancelada"
