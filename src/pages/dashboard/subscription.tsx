@@ -94,7 +94,7 @@ export default function Subscription() {
 
     const availablePlans: Plan[] = [
         {
-            id: "basic",
+            _id: "basic",
             name: "Plano Básico",
             price: 15000,
             features: [
@@ -105,9 +105,11 @@ export default function Subscription() {
                 "Suporte por email",
             ],
             limits: { restaurants: 1, tables: 20, reservations: 100, staff: 3, menuItems: 25 },
+            createdAt: new Date(),
+            updatedAt: new Date(),
         },
         {
-            id: "professional",
+            _id: "professional",
             name: "Plano Profissional",
             price: 28000,
             popular: true,
@@ -119,9 +121,11 @@ export default function Subscription() {
                 "Suporte prioritário",
             ],
             limits: { restaurants: 3, tables: -1, reservations: -1, staff: 10, menuItems: 25 },
+            createdAt: new Date(),
+            updatedAt: new Date(),
         },
         {
-            id: "enterprise",
+            _id: "enterprise",
             name: "Plano Empresarial",
             price: 45000,
             features: [
@@ -133,16 +137,20 @@ export default function Subscription() {
                 "Gestor dedicado",
             ],
             limits: { restaurants: -1, tables: -1, reservations: -1, staff: -1, menuItems: 25 },
+            createdAt: new Date(),
+            updatedAt: new Date(),
         },
     ]
 
     const currentSubscription: Subscription = {
-        id: "sub_1",
+        _id: "sub_1",
         plan: availablePlans[1],
         startDate: "01/07/2025",
         endDate: "31/07/2025",
         status: "ativa",
         autoRenew: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
     }
 
     const usageMetrics: UsageMetrics = {
@@ -154,30 +162,36 @@ export default function Subscription() {
 
     const [paymentHistory, setPaymentHistory] = useState<PaymentHistory[]>([
         {
-            id: "1",
-            subscriptionId: currentSubscription.id,
+            _id: "1",
+            subscriptionId: currentSubscription._id,
             period: "Junho 2025",
             amount: "Kz 28.000",
             status: "pago",
             paymentDate: "01/06/2025",
             receiptUrl: "#",
+            createdAt: new Date(),
+            updatedAt: new Date(),
         },
         {
-            id: "2",
-            subscriptionId: currentSubscription.id,
+            _id: "2",
+            subscriptionId: currentSubscription._id,
             period: "Maio 2025",
             amount: "Kz 28.000",
             status: "pago",
             paymentDate: "28/04/2025",
             receiptUrl: "#",
+            createdAt: new Date(),
+            updatedAt: new Date(),
         },
         {
-            id: "3",
-            subscriptionId: currentSubscription.id,
+            _id: "3",
+            subscriptionId: currentSubscription._id,
             period: "Abril 2025",
             amount: "Kz 28.000",
             status: "em_analise",
             paymentDate: "30/03/2025",
+            createdAt: new Date(),
+            updatedAt: new Date(),
         },
     ])
 
@@ -208,12 +222,14 @@ export default function Subscription() {
 
             // Add to payment history
             const newPayment: PaymentHistory = {
-                id: (paymentHistory.length + 1).toString(),
-                subscriptionId: currentSubscription.id,
+                _id: (paymentHistory.length + 1).toString(),
+                subscriptionId: currentSubscription._id,
                 period: "Julho 2025",
                 amount: paymentForm.amountPaid,
                 status: "em_analise",
                 paymentDate: new Date().toLocaleDateString("pt-BR"),
+                createdAt: new Date(),
+                updatedAt: new Date(),
             }
 
             setPaymentHistory((prev) => [newPayment, ...prev])
@@ -812,7 +828,7 @@ export default function Subscription() {
                         <TabsContent value="plans" className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {availablePlans.map((plan) => (
-                                    <Card key={plan.id} className={`relative ${plan.popular ? "border-blue-500 shadow-lg" : ""}`}>
+                                    <Card key={plan._id} className={`relative ${plan.popular ? "border-blue-500 shadow-lg" : ""}`}>
                                         {plan.popular && (
                                             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                                                 <Badge className="bg-blue-500 text-white">Mais Popular</Badge>
@@ -820,9 +836,9 @@ export default function Subscription() {
                                         )}
                                         <CardHeader>
                                             <CardTitle className="flex items-center gap-2">
-                                                {plan.id === "enterprise" && <Crown className="h-5 w-5 text-yellow-600" />}
-                                                {plan.id === "professional" && <Star className="h-5 w-5 text-blue-600" />}
-                                                {plan.id === "basic" && <Zap className="h-5 w-5 text-green-600" />}
+                                                {plan._id === "enterprise" && <Crown className="h-5 w-5 text-yellow-600" />}
+                                                {plan._id === "professional" && <Star className="h-5 w-5 text-blue-600" />}
+                                                {plan._id === "basic" && <Zap className="h-5 w-5 text-green-600" />}
                                                 {plan.name}
                                             </CardTitle>
                                             <div className="text-2xl font-bold">
@@ -843,11 +859,11 @@ export default function Subscription() {
                                                 <DialogTrigger asChild>
                                                     <Button
                                                         className="w-full"
-                                                        variant={plan.id === "professional" ? "default" : "outline"}
-                                                        onClick={() => setSelectedPlan(plan.id)}
-                                                        disabled={plan.id === "professional"}
+                                                        variant={plan._id === "professional" ? "default" : "outline"}
+                                                        onClick={() => setSelectedPlan(plan._id)}
+                                                        disabled={plan._id === "professional"}
                                                     >
-                                                        {plan.id === "professional" ? "Plano Atual" : "Solicitar Mudança"}
+                                                        {plan._id === "professional" ? "Plano Atual" : "Solicitar Mudança"}
                                                     </Button>
                                                 </DialogTrigger>
                                                 <DialogContent>
@@ -855,7 +871,7 @@ export default function Subscription() {
                                                         <DialogTitle>Solicitar Mudança de Plano</DialogTitle>
                                                         <DialogDescription>
                                                             Você está solicitando mudança para o{" "}
-                                                            {availablePlans.find((p) => p.id === selectedPlan)?.name}.
+                                                            {availablePlans.find((p) => p._id === selectedPlan)?.name}.
                                                         </DialogDescription>
                                                     </DialogHeader>
                                                     <div className="space-y-4">
@@ -865,8 +881,8 @@ export default function Subscription() {
                                                                 Plano atual: {currentSubscription.plan.name} (Kz {currentSubscription.plan.price}/mês)
                                                             </p>
                                                             <p className="text-sm text-gray-600">
-                                                                Novo plano: {availablePlans.find((p) => p.id === selectedPlan)?.name} (
-                                                                {availablePlans.find((p) => p.id === selectedPlan)?.price}/mês)
+                                                                Novo plano: {availablePlans.find((p) => p._id === selectedPlan)?.name} (
+                                                                {availablePlans.find((p) => p._id === selectedPlan)?.price}/mês)
                                                             </p>
                                                         </div>
                                                         <div>
@@ -928,7 +944,7 @@ export default function Subscription() {
                                         </TableHeader>
                                         <TableBody>
                                             {paymentHistory.map((payment) => (
-                                                <TableRow key={payment.id}>
+                                                <TableRow key={payment._id}>
                                                     <TableCell className="font-medium">{payment.period}</TableCell>
                                                     <TableCell>{payment.amount}</TableCell>
                                                     <TableCell>{getStatusBadge(payment.status)}</TableCell>

@@ -10,7 +10,7 @@ export interface PlanLimits {
 }
 
 export interface Plan {
-    id: string
+    _id: string
     name: string
     price: number
     currency?: Currency
@@ -19,26 +19,32 @@ export interface Plan {
     popular?: boolean
     features: string[]
     limits: PlanLimits
+    createdAt: Date
+    updatedAt: Date
 }
 
 export interface Subscription {
-    id: string
+    _id: string
     userId?: string
     plan: Plan
     startDate: string
     endDate?: string
     status: "ativa" | "pendente" | "suspensa" | "cancelada"
     autoRenew?: boolean
+    createdAt: Date
+    updatedAt: Date
 }
 
 export interface PaymentHistory {
-    id: string
+    _id: string
     subscriptionId: string
     period: string
     amount: string
     status: "pago" | "em_falta" | "em_analise"
     paymentDate: string
     receiptUrl?: string
+    createdAt: Date
+    updatedAt: Date
 }
 
 export interface UsageMetrics {
