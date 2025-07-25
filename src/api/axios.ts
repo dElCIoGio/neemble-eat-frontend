@@ -25,7 +25,7 @@ apiClient.interceptors.response.use(
     async (error) => {
         if (error.response?.status === 401) {
             await auth.signOut();
-            //window.location.href = "/auth/login";
+            window.location.href = "/auth/login";
         }
         return Promise.reject(error);
     }

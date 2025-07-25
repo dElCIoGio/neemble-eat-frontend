@@ -60,10 +60,6 @@ import {
 } from "@/api/endpoints/subscriptions/hooks"
 import { showPromiseToast } from "@/utils/notifications/toast"
 import type {
-    PaymentHistory,
-    Subscription,
-    Plan,
-    UsageMetrics,
     PaymentForm,
     NotificationSettings,
 } from "@/types/subscription"
@@ -249,7 +245,7 @@ export default function Subscription() {
     // 6. Pausar Conta Temporariamente
     const handlePauseAccount = async () => {
         showPromiseToast(
-            pauseSubscriptionMutation.mutateAsync().then(() => {
+            pauseSubscriptionMutation.mutateAsync({}).then(() => {
                 setShowPauseDialog(false)
             }),
             {
@@ -354,7 +350,7 @@ export default function Subscription() {
 
     return (
         <div className="">
-            <Toaster position="top-right" />
+            <Toaster position="top-right"/>
             {/* Main Content */}
             <div className="">
                 <div className=" mx-auto">
@@ -716,7 +712,7 @@ export default function Subscription() {
 
                         <TabsContent value="plans" className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {availablePlans.map((plan) => (
+                                {availablePlans?.map((plan) => (
                                     <Card key={plan._id} className={`relative ${plan.popular ? "border-blue-500 shadow-lg" : ""}`}>
                                         {plan.popular && (
                                             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
