@@ -16,6 +16,7 @@ import {userApi} from "@/api/endpoints/user/endpoints";
 import {toast} from "sonner";
 import {Link, useNavigate} from "react-router";
 import {Eye, EyeClosed} from "@phosphor-icons/react";
+import {showSuccessToast} from "@/utils/notifications/toast";
 
 
 
@@ -52,7 +53,7 @@ export function LoginForm({ className, onLoggedIn, ...props }: LoginFormProps) {
             const token = await credential.user.getIdToken()
             
             await authApi.login({ idToken: token })
-            toast.success("Login realizado com sucesso")
+            showSuccessToast("Login realizado com sucesso")
 
             const exists = await userApi.userExists()
             if (!exists) {
@@ -83,7 +84,7 @@ export function LoginForm({ className, onLoggedIn, ...props }: LoginFormProps) {
         try {
             const { token } = await signInWithGoogle()
             await authApi.login({ idToken: token })
-            toast.success("Login realizado com sucesso")
+            showSuccessToast("Login realizado com sucesso")
 
             const exists = await userApi.userExists()
             if (!exists) {

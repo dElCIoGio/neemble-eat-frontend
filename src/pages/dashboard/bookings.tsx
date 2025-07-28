@@ -105,7 +105,7 @@ export default function ReservationsPage() {
                         <div className="flex-1 space-y-2.5">
                             <Label htmlFor="search">Pesquisar por nome ou email</Label>
                             <div className="relative my-1">
-                                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="search"
                                     placeholder="Digite o nome ou email do cliente..."

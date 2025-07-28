@@ -12,7 +12,6 @@ import {auth} from "@/firebase/config";
 import {authApi} from "@/api/endpoints/auth/endpoints";
 
 
-
 interface AuthContextType {
     user: User | null;
     loading: boolean;
@@ -30,6 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
             setUser(firebaseUser);
@@ -37,6 +37,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
         return () => unsubscribe();
     }, []);
+
+
+
 
     const login = async (email: string, password: string) => {
         await signInWithEmailAndPassword(auth, email, password);

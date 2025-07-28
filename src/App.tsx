@@ -135,6 +135,7 @@ function App() {
 
                 {/* Auth */}
                 <Route path="auth">
+                    <Route index element={<Navigate to={"login"}/>}/>
                     <Route path="forgot-password" element={<ForgotPasswordPage/>}/>
                     <Route path="login" element={<LoginPage/>}/>
                     <Route path="register" element={<RegisterPage/>}/>

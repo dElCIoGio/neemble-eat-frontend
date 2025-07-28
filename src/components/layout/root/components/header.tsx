@@ -148,7 +148,7 @@ export function Header() {
                                 </NavLink>
                             </div>
 
-                            <NavigationMenu className="md:flex">
+                            <NavigationMenu className="hidden md:flex">
                                 <NavigationMenuList>
                                     <NavigationMenuItem>
                                         <NavigationMenuTrigger className="bg-none">Soluções</NavigationMenuTrigger>
