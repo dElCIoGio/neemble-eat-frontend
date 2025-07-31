@@ -1,9 +1,16 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Check, PlayCircle } from "lucide-react"
-import {IphoneZoomOut} from "@/assets";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Check, PlayCircle } from "lucide-react";
+import { IphoneZoomOut } from "@/assets";
+import { useRef, useState, forwardRef } from "react";
 
 
 
@@ -28,7 +35,18 @@ const benefits = [
 
 export default function Demo() {
 
-    document.title = "Demonstração | Neemble Eat"
+    document.title = "Demonstração | Neemble Eat";
+
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const handlePlay = () => {
+        const video = videoRef.current;
+        if (video) {
+            video.play();
+            setIsPlaying(true);
+        }
+    };
 
     return (
         <div>
@@ -176,13 +194,19 @@ export default function Demo() {
                     <div className="max-w-lg mx-auto">
                         {/* Video Preview */}
                         <div className="relative aspect-video mb-12 rounded-xl overflow-hidden bg-gray-100">
-                            <BackgroundVideo/>
-                            <img src="/placeholder.svg?height=400&width=600" alt="Demo Preview" className="object-cover hidden" />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <Button variant="ghost" size="icon" className="w-16 h-16 rounded-full">
-                                    <PlayCircle className="w-16 h-16 text-white" />
-                                </Button>
-                            </div>
+                            <BackgroundVideo ref={videoRef} />
+                            {!isPlaying && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="w-16 h-16 rounded-full"
+                                        onClick={handlePlay}
+                                    >
+                                        <PlayCircle className="w-16 h-16 text-white" />
+                                    </Button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Benefits */}
@@ -244,18 +268,15 @@ export default function Demo() {
 }
 
 
-const BackgroundVideo = () => {
-    return (
-        <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover pointer-events-none select-none"
-        >
-            <source src={IphoneZoomOut} type="video/mp4" />
-            Your browser does not support the video tag.
-        </video>
-    );
-};
+const BackgroundVideo = React.forwardRef<HTMLVideoElement>((_props, ref) => (
+    <video
+        ref={ref}
+        loop
+        playsInline
+        preload="auto"
+        className="w-full h-full object-cover"
+    >
+        <source src={IphoneZoomOut} type="video/mp4" />
+        Your browser does not support the video tag.
+    </video>
+));
