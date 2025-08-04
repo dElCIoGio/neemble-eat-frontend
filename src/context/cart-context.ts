@@ -3,14 +3,10 @@ import {CartItem} from "@/lib/helpers/cart";
 
 interface CartContextProps {
     customerName: string;
-    alertMessage: string;
-    orderStatus: "Success" | "Error" | "Idle";
     setCustomerName: React.Dispatch<React.SetStateAction<string>>;
     cart: CartItem[];
     numberOfItems: number;
     totalValue: number;
-    orderConfirmed: boolean;
-    setOrderConfirmed: React.Dispatch<React.SetStateAction<boolean>>;
     iSFetchingSession: boolean;
 
     findCartItemIndexByID: (id: string) => number;
