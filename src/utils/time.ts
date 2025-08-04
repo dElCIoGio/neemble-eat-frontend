@@ -5,7 +5,7 @@ export const WAT_ZONE = 'Africa/Lagos';
 
 export type DateInput = DateTime | string | Date | number;
 
-const toDateTime = (value: DateInput): DateTime => {
+export const toDateTime = (value: DateInput): DateTime => {
     if (DateTime.isDateTime(value)) return value.setZone(WAT_ZONE);
     if (typeof value === 'string') return DateTime.fromISO(value, { zone: WAT_ZONE });
     if (value instanceof Date) return DateTime.fromJSDate(value, { zone: WAT_ZONE });

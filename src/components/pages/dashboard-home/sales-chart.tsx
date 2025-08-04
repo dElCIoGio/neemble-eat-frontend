@@ -3,7 +3,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Info } from "lucide-react"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { formatDate } from "@/utils/time"
+import {formatDate, toDateTime} from "@/utils/time"
 
 export default function SalesChart() {
     const { lastSevenDaysOrdersCount, isLastSevenDaysOrdersCountLoading } = useDashboardHomeContext()
@@ -61,27 +61,35 @@ export default function SalesChart() {
                         </ul>
                     ) : (
                         <div className="h-[200px] flex items-end justify-between space-x-2">
-                            {salesData.map(data => (
-                                <TooltipProvider key={data.date}>
-                                    <Tooltip>
-                                        <TooltipTrigger className="w-full">
-                                            <div className="flex flex-col items-center space-y-2 flex-1">
-                                                <div
-                                                    className="bg-gradient-to-t from-zinc-900 to-zinc-600 rounded-t transition-all duration-500 hover:bg-primary/80 w-full"
-                                                    style={{ height: `${(data.sales / maxSales) * 160}px` }}
-                                                />
-                                                <div className="flex flex-col items-center space-y-1">
-                                                    <span className="text-xs text-muted-foreground">{dayMap[data.day] ?? data.day}</span>
-                                                    <span className="text-xs text-muted-foreground">{formatDate(data.date, "dd/LL/yyyy")}</span>
+                            {salesData.map(data => {
+
+
+                                const date = toDateTime(data.date)
+                                const dayOfTheWeek = dayMap[date.weekdayLong? date.weekdayLong.toLowerCase(): "monday"]
+                                const formattedDate = date.toFormat("dd/LL/yyyy")
+
+                                return (
+                                    <TooltipProvider key={data.date}>
+                                        <Tooltip>
+                                            <TooltipTrigger className="w-full">
+                                                <div className="flex flex-col items-center space-y-2 flex-1">
+                                                    <div
+                                                        className="bg-gradient-to-t from-zinc-900 to-zinc-600 rounded-t transition-all duration-500 hover:bg-primary/80 w-full"
+                                                        style={{ height: `${(data.sales / maxSales) * 160}px` }}
+                                                    />
+                                                    <div className="flex flex-col items-center space-y-1">
+                                                        <span className="text-xs text-muted-foreground">{dayOfTheWeek}</span>
+                                                        <span className="text-xs text-muted-foreground">{formattedDate}</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <span>{data.sales} pedidos</span>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            ))}
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <span>{data.sales} pedidos</span>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                )
+                            })}
                         </div>
                     )
                 )}

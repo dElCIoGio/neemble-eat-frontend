@@ -18,7 +18,7 @@ export function TableInfo() {
 
     const needsAssistance = session.needsAssistance ?? false;
 
-    const { mutate: toggleAssistance, isLoading } = useMutation({
+    const { mutate: toggleAssistance, isPending } = useMutation({
         mutationFn: () =>
             needsAssistance
                 ? sessionApi.cancelAssistanceRequest(session._id)
@@ -36,16 +36,19 @@ export function TableInfo() {
             <Badge className="font-jost text-zinc-500 rounded-full bg-gray-100 px-2" variant="secondary">
                 Mesa {tableNumber}
             </Badge>
+
             <Button
                 variant={needsAssistance ? "destructive" : "secondary"}
                 size="sm"
-                icon={Bell}
-                iconPlacement="left"
-                className="px-3"
-                disabled={isLoading}
+                className="px-3 text-xs rounded-lg text-zinc-600"
+                disabled={isPending}
                 onClick={() => toggleAssistance()}
             >
-                {needsAssistance ? "Cancelar chamado" : "Chamar Garçon"}
+                <Bell/>
+                <p>
+                    {needsAssistance ? "Cancelar chamado" : "Chamar Garçon"}
+                </p>
+
             </Button>
         </div>
     );
