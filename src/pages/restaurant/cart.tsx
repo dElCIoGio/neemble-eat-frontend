@@ -1,5 +1,5 @@
 import {useState, useEffect} from "react";
-import {useParams} from "react-router";
+import {useParams, useNavigate} from "react-router";
 import {useQueryClient} from "@tanstack/react-query";
 import {useCart} from "@/hooks/use-cart";
 import {useGetActiveSessionByTableNumber} from "@/api/endpoints/sessions/hooks";
@@ -11,7 +11,7 @@ import {NumberOfItems} from "@/components/pages/restaurant-menu-cart/number-of-i
 import {Checkout} from "@/components/pages/restaurant-menu-cart/checkout";
 import {ItemsSection} from "@/components/pages/restaurant-menu-cart/items-section";
 import {ordersApi} from "@/api/endpoints/orders/requests";
-import {showWarningToast} from "@/utils/notifications/toast";
+import {showWarningToast, showSuccessToast, showErrorToast} from "@/utils/notifications/toast";
 
 export function Cart() {
 
@@ -27,9 +27,7 @@ export function Cart() {
 
 
 
-    const [orderConfirmed, setOrderConfirmed] = useState<boolean>(false)
-    const [orderStatus, setOrderStatus] = useState<"Success" | "Error" | "Idle">("Idle");
-    const [alertMessage, setAlertMessage] = useState<string>('')
+    const navigate = useNavigate()
     const queryClient = useQueryClient()
     const [customerName, setCustomerName] = useState<string>('');
     const {
@@ -65,7 +63,7 @@ export function Cart() {
         }).then()
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
         if (session?.status === "needs bill") {
             showWarningToast("A conta já foi solicitada. Não é possível fazer novos pedidos.")
             return
@@ -73,7 +71,7 @@ export function Cart() {
 
         const items = cart.map((item) => item)
 
-        if (session && session?._id) {
+        if (session && session._id) {
             const orders = items.map(item => ({
                 sessionId: session._id,
                 itemId: item.id,
@@ -87,30 +85,22 @@ export function Cart() {
                 tableNumber: Number(tableNumber)
             }))
 
-            ordersApi.addOrdersGroup(orders, session._id).catch(() => {
-                setOrderStatus("Error")
-                setAlertMessage("Houve um erro com o seu pedido, um garçon irá confirmar o seu pedido em breve.")
-            }).then(() => {
-                setOrderStatus("Success")
-                setAlertMessage(`O seu pedido será levado á sua mesa em breve!`)
+            try {
+                await ordersApi.addOrdersGroup(orders, session._id)
                 setCartEmpty()
-                setOrderConfirmed(true)
-            })
-
-            if (session && session._id)
                 invalidateOrdersKey()
+                showSuccessToast("Pedido realizado com sucesso!")
+                navigate(`/r/${restaurantSlug}/${tableNumber}/orders`)
+            } catch {
+                showErrorToast("Houve um erro com o seu pedido, um garçon irá confirmar o seu pedido em breve.")
+            }
         }
-        setCartEmpty()
     }
 
     return (
         <CartContext.Provider value={{
-            orderConfirmed,
-            setOrderConfirmed,
             customerName,
-            alertMessage,
             setCustomerName,
-            orderStatus,
             cart,
             numberOfItems,
             totalValue,

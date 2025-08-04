@@ -1,6 +1,6 @@
 import React from "react";
 import {useCartContext} from "@/context/cart-context";
-import {OrderAlert} from "@/components/pages/restaurant-menu-cart/order-alert";
+import {Button} from "@/components/ui/button";
 
 interface Props {
     onSubmit: () => void,
@@ -9,14 +9,18 @@ interface Props {
 
 export function Checkout({onSubmit, disabled = false}: Props) {
 
-    const {setCustomerName, totalValue, orderConfirmed, setOrderConfirmed} = useCartContext()
+    const {setCustomerName, totalValue, iSFetchingSession} = useCartContext()
+
+    const isDisabled = iSFetchingSession || disabled || totalValue === 0
 
     const handleCustomerName = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (isDisabled) return;
         const formData = new FormData(event.currentTarget);
         const name = formData.get("name") as string;
         setCustomerName(name);
         sessionStorage.setItem('CustomerName', name);
+        onSubmit();
     };
 
     return (
@@ -36,18 +40,19 @@ export function Checkout({onSubmit, disabled = false}: Props) {
                         </div>
                     </div>
                     <div className='flex justify-center mt-4'>
-                        <form className='w-full' action="" onSubmit={handleCustomerName}>
-                                <textarea name="name" id="name" cols={30} rows={1}
-                                          placeholder='Nome (opcional)'
-                                          className="peer w-full text-base resize-none rounded-b-none border-b border-gray-300 bg-transparent pb-1.5 text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50 duration-200">
+                        <form className='w-full' onSubmit={handleCustomerName}>
+                            <textarea name="name" id="name" cols={30} rows={1}
+                                      placeholder='Nome (opcional)'
+                                      className="peer w-full text-base resize-none rounded-b-none border-b border-gray-300 bg-transparent pb-1.5 text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:resize-none disabled:border-0 disabled:bg-blue-gray-50 duration-200">
 
-                                </textarea>
-                            <OrderAlert
-                                disabled={disabled}
-                                open={orderConfirmed}
-                                onOpenChange={setOrderConfirmed}
-                                onConfirm={!disabled ? onSubmit : () => {}}
-                            />
+                            </textarea>
+                            <Button
+                                disabled={isDisabled}
+                                className="w-full pt-2"
+                                type="submit"
+                            >
+                                Confirmar
+                            </Button>
                             {disabled && (
                                 <p className="text-center text-xs text-red-600 mt-2">
                                     A conta foi solicitada. Novos pedidos não são permitidos.
