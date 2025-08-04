@@ -1,6 +1,6 @@
 import {useOrdersContext} from "@/context/order-context";
 import {OrderSingleItem} from "@/components/pages/restaurant-menu-orders/order-single-item";
-import {Cancelled, InProgress, Ready} from "@/components/pages/restaurant-menu-orders/order-status";
+import {Cancelled, InProgress, Ready, Queued} from "@/components/pages/restaurant-menu-orders/order-status";
 
 
 export function OrdersDisplay() {
@@ -21,6 +21,7 @@ export function OrdersDisplay() {
                                     <Ready/> :
                                     order.prepStatus == "cancelled" ?
                                         <Cancelled/> :
+                                        order.prepStatus == "queued" ? <Queued/> :
                                         <InProgress/>
                             }
                         </div>

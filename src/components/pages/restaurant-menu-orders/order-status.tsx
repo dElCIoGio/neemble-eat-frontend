@@ -19,3 +19,10 @@ export function InProgress() {
         A ser preparado
     </p>
 }
+
+export function Queued() {
+    return <p
+        className='bg-amber-100 border border-amber-600 font-semibold text-amber-600 w-fit text-sm px-2 py-0.5 rounded-lg flex justify-center items-center'>
+        Na fila
+    </p>
+}
