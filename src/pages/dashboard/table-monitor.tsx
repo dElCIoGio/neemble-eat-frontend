@@ -17,6 +17,7 @@ import { tableApi } from "@/api/endpoints/tables/requests"
 import useWebSocket from "@/hooks/use-web-socket"
 import config from "@/config"
 import { showPromiseToast } from "@/utils/notifications/toast"
+import { difference, now, toDateTime, formatDateTime } from "@/utils/time"
 
 type TableStatus = "disponivel" | "ocupada" | "conta_pedida" | "chamando_funcionario"
 
@@ -66,11 +67,9 @@ const getStatusConfig = (status: TableStatus) => {
 }
 
 const formatDuration = (startTime: string) => {
-    const start = new Date(startTime)
-    const now = new Date()
-    const diff = now.getTime() - start.getTime()
-    const hours = Math.floor(diff / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+    const diffInMinutes = difference(startTime, now(), "minutes")
+    const hours = Math.floor(diffInMinutes / 60)
+    const minutes = Math.floor(diffInMinutes % 60)
     return `${hours}h ${minutes}m`
 }
 
@@ -250,7 +249,10 @@ export default function TableMonitor() {
     const firstOrderTime = useMemo(() => {
         if (sessionOrders.length === 0) return null
         return sessionOrders.reduce((earliest, order) =>
-            new Date(order.orderTime).getTime() < new Date(earliest.orderTime).getTime() ? order : earliest
+            toDateTime(order.orderTime).toMillis() <
+            toDateTime(earliest.orderTime).toMillis()
+                ? order
+                : earliest
         ).orderTime
     }, [sessionOrders])
 
@@ -379,7 +381,7 @@ export default function TableMonitor() {
                                                         <>
                                                             <div className="flex justify-between">
                                                                 <span className="text-gray-600">Início:</span>
-                                                                <span>{new Date(firstOrderTime).toLocaleString("pt-BR")}</span>
+                                                                <span>{formatDateTime(firstOrderTime, "dd/MM/yyyy HH:mm")}</span>
                                                             </div>
                                                             <div className="flex justify-between">
                                                                 <span className="text-gray-600">Duração:</span>
