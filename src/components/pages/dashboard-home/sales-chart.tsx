@@ -3,6 +3,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Info } from "lucide-react"
 import { useDashboardHomeContext } from "@/context/dashboard-home-context"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { formatDate } from "@/utils/time"
 
 export default function SalesChart() {
     const { lastSevenDaysOrdersCount, isLastSevenDaysOrdersCountLoading } = useDashboardHomeContext()
@@ -53,7 +54,7 @@ export default function SalesChart() {
                         <ul className="space-y-2">
                             {salesData.map(data => (
                                 <li key={data.date} className="flex items-center justify-between text-sm">
-                                    <span>{dayMap[data.day] ?? data.day} ({`${data.date.slice(8, 10)}/${data.date.slice(5, 7)}`})</span>
+                                    <span>{dayMap[data.day] ?? data.day} ({formatDate(data.date, "dd/LL")})</span>
                                     <span className="font-medium">{data.sales} pedidos</span>
                                 </li>
                             ))}
@@ -71,7 +72,7 @@ export default function SalesChart() {
                                                 />
                                                 <div className="flex flex-col items-center space-y-1">
                                                     <span className="text-xs text-muted-foreground">{dayMap[data.day] ?? data.day}</span>
-                                                    <span className="text-xs text-muted-foreground">{`${data.date.slice(8, 10)}/${data.date.slice(5, 7)}/${data.date.slice(0, 4)}`}</span>
+                                                    <span className="text-xs text-muted-foreground">{formatDate(data.date, "dd/LL/yyyy")}</span>
                                                 </div>
                                             </div>
                                         </TooltipTrigger>
