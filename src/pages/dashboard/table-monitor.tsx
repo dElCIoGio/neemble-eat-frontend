@@ -248,11 +248,12 @@ export default function TableMonitor() {
 
     const firstOrderTime = useMemo(() => {
         if (sessionOrders.length === 0) return null
-        return sessionOrders.reduce((earliest, order) =>
-            toDateTime(order.orderTime).toMillis() <
-            toDateTime(earliest.orderTime).toMillis()
-                ? order
-                : earliest
+        return sessionOrders.reduce((earliest, order) => {
+                if (toDateTime(order.orderTime).toMillis() < toDateTime(earliest.orderTime).toMillis()){
+                    return order
+                }
+                return earliest
+            }
         ).orderTime
     }, [sessionOrders])
 

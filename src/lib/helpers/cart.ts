@@ -16,7 +16,8 @@ export interface CartItem {
 }
 
 const getCartKey = (restaurantSlug: string, sessionId: string, menuId: string) => {
-    return `neembleeat_cart_${restaurantSlug}_${sessionId}_${menuId}`
+    sessionId.toLowerCase()
+    return `neembleeat_cart_${restaurantSlug}_${menuId}`
 }
 
 

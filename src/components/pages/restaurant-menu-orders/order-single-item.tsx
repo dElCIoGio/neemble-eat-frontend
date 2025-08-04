@@ -8,9 +8,8 @@ interface Props {
 }
 
 export function OrderSingleItem({order}: Props) {
-    const {day, month, time} = formatDateString(order.orderTime)
+    const {day, month, time} = formatDateString(order.createdAt)
     const [expanded, setExpanded] = useState(false)
-
 
     return (
         <div className='text-sm cursor-pointer' onClick={() => setExpanded(!expanded)}>

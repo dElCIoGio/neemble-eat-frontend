@@ -40,7 +40,7 @@ export function TableInfo() {
             <Button
                 variant={needsAssistance ? "destructive" : "secondary"}
                 size="sm"
-                className="px-3 text-xs rounded-lg text-zinc-600"
+                className={`px-3 text-xs rounded-lg ${needsAssistance? "": "text-zinc-600"}`}
                 disabled={isPending}
                 onClick={() => toggleAssistance()}
             >
