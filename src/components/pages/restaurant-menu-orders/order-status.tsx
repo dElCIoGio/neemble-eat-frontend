@@ -16,7 +16,7 @@ export function Cancelled() {
 export function InProgress() {
     return <p
         className='bg-purple-100 border border-purple-600 font-semibold text-purple-600 w-fit text-sm px-2 py-0.5 rounded-lg flex justify-center items-center'>
-        A ser preparado
+        Em preparo
     </p>
 }
 
