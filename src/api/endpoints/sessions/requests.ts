@@ -49,5 +49,15 @@ export const sessionApi = {
     cancelCheckout: async (sessionId: string) => {
         const response = await apiClient.post<TableSession>(`${baseRoute}/${sessionId}/cancel-checkout`);
         return response.data;
+    },
+
+    requestAssistance: async (sessionId: string) => {
+        const request = await apiClient.post<TableSession>(`${baseRoute}/${sessionId}/request-assistance`);
+        return request.data
+    },
+
+    cancelAssistanceRequest: async (sessionId: string) => {
+        const request = await apiClient.post<TableSession>(`${baseRoute}/${sessionId}/cancel-assistance`);
+        return request.data
     }
 }

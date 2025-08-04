@@ -18,4 +18,5 @@ export type TableSession = {
     status: TableSessionStatus;
     total?: number | null;
     review?: TableSessionReview | null;
+    needsAssistance?: boolean
 };
