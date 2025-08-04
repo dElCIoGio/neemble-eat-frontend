@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
 import { Loader } from "@/components/ui/loader"
-import { Clock, Users, CreditCard, AlertTriangle, Trash2, CheckCircle, XCircle } from "lucide-react"
+import { Clock, Users, CreditCard, AlertTriangle, Trash2, CheckCircle, XCircle, Bell } from "lucide-react"
 import type { Table } from "@/types/table"
 import type { TableSession } from "@/types/table-session"
 import { useDashboardContext } from "@/context/dashboard-context"
@@ -26,6 +26,7 @@ const getTableStatus = (
 ): TableStatus => {
     const session = sessions[table._id]
     if (!session) return "disponivel"
+    if (session.needsAssistance) return "chamando_funcionario"
     if (session.status === "needs bill") return "conta_pedida"
     if (session.orders && session.orders.length > 0) return "ocupada"
     return "disponivel"
@@ -118,9 +119,14 @@ export default function TableMonitor() {
     const wsUrl = `${config.api.apiUrl.replace("http", "ws")}/ws/${restaurant._id}/session-status`
     useWebSocket(wsUrl, { onMessage: handleSessionUpdate, reconnectInterval: 2000 })
 
+    const assistanceWsUrl = `${config.api.apiUrl.replace("http", "ws")}/ws/${restaurant._id}/assistance`
+    useWebSocket(assistanceWsUrl, { onMessage: handleSessionUpdate, reconnectInterval: 2000 })
+
     const [selectedFilter, setSelectedFilter] = useState<TableStatus | "todas">("todas")
     const [selectedTable, setSelectedTable] = useState<Table | null>(null)
     const [isSheetOpen, setIsSheetOpen] = useState(false)
+
+    const selectedTableStatus = selectedTable ? getTableStatus(selectedTable, sessions) : null
 
     const filteredTables = useMemo(() => {
         if (selectedFilter === "todas") return tables
@@ -182,6 +188,22 @@ export default function TableMonitor() {
         setIsSheetOpen(false)
     }
 
+    const handleResolveAssistance = (sessionId: string) => {
+        const promise = sessionApi.cancelAssistanceRequest(sessionId).then(() => {
+            setSessions((prev) => {
+                const entry = Object.values(prev).find((s) => s._id === sessionId)
+                if (!entry) return prev
+                return { ...prev, [entry.tableId]: { ...entry, needsAssistance: false } }
+            })
+        })
+        showPromiseToast(promise, {
+            loading: "Atualizando...",
+            success: "Chamado resolvido",
+            error: "Erro ao atualizar chamado",
+        })
+        setIsSheetOpen(false)
+    }
+
     const filters = [
         { key: "todas" as const, label: "Todas", count: tables.length },
         {
@@ -198,6 +220,11 @@ export default function TableMonitor() {
             key: "conta_pedida" as const,
             label: "Conta Pedida",
             count: tables.filter((t) => getTableStatus(t, sessions) === "conta_pedida").length,
+        },
+        {
+            key: "chamando_funcionario" as const,
+            label: "Chamando Funcionário",
+            count: tables.filter((t) => getTableStatus(t, sessions) === "chamando_funcionario").length,
         },
     ]
 
@@ -283,7 +310,19 @@ export default function TableMonitor() {
                                     </div>
                                 </CardHeader>
                                 <CardContent className="pt-0">
-                                    <Badge className={`${statusConfig.color} text-xs font-medium`}>{statusConfig.label}</Badge>
+                                    <div className="flex flex-wrap gap-1">
+                                        <Badge className={`${statusConfig.color} text-xs font-medium`}>{statusConfig.label}</Badge>
+                                        {session?.status === "needs bill" && status !== "conta_pedida" && (
+                                            <Badge className={`${getStatusConfig("conta_pedida").color} text-xs font-medium`}>
+                                                {getStatusConfig("conta_pedida").label}
+                                            </Badge>
+                                        )}
+                                        {session?.needsAssistance && status !== "chamando_funcionario" && (
+                                            <Badge className={`${getStatusConfig("chamando_funcionario").color} text-xs font-medium`}>
+                                                {getStatusConfig("chamando_funcionario").label}
+                                            </Badge>
+                                        )}
+                                    </div>
                                     {session && session.orders.length > 0 && (
                                         <div className="mt-2 space-y-1 text-xs text-gray-600">
                                             <div className="flex items-center gap-1">
@@ -309,9 +348,23 @@ export default function TableMonitor() {
                                 <SheetHeader>
                                     <SheetTitle className="flex items-center gap-2">
                                         Mesa {selectedTable.number}
-                                        <Badge className={getStatusConfig(getTableStatus(selectedTable, sessions)).color}>
-                                            {getStatusConfig(getTableStatus(selectedTable, sessions)).label}
-                                        </Badge>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedTableStatus && (
+                                                <Badge className={getStatusConfig(selectedTableStatus).color}>
+                                                    {getStatusConfig(selectedTableStatus).label}
+                                                </Badge>
+                                            )}
+                                            {selectedSession?.status === "needs bill" && selectedTableStatus !== "conta_pedida" && (
+                                                <Badge className={getStatusConfig("conta_pedida").color}>
+                                                    {getStatusConfig("conta_pedida").label}
+                                                </Badge>
+                                            )}
+                                            {selectedSession?.needsAssistance && selectedTableStatus !== "chamando_funcionario" && (
+                                                <Badge className={getStatusConfig("chamando_funcionario").color}>
+                                                    {getStatusConfig("chamando_funcionario").label}
+                                                </Badge>
+                                            )}
+                                        </div>
                                     </SheetTitle>
                                 </SheetHeader>
 
@@ -385,6 +438,12 @@ export default function TableMonitor() {
 
                                             {/* Actions */}
                                             <div className="space-y-3">
+                                                {selectedSession.needsAssistance && (
+                                                    <Button onClick={() => handleResolveAssistance(selectedSession._id)} variant="outline" className="w-full" size="lg">
+                                                        <Bell className="h-4 w-4 mr-2" />
+                                                        Assistência Resolvida
+                                                    </Button>
+                                                )}
                                                 {selectedSession.status === "needs bill" && (
                                                     <Button onClick={() => handleCancelCheckout(selectedSession._id)} variant="outline" className="w-full" size="lg">
                                                         <XCircle className="h-4 w-4 mr-2" />
