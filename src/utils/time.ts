@@ -15,13 +15,17 @@ export const toDateTime = (value: DateInput): DateTime => {
 
 export const now = (): DateTime => DateTime.now().setZone(WAT_ZONE);
 
-export const formatDate = (value: DateInput, format = 'dd LLL yyyy'): string =>
-    toDateTime(value).toFormat(format);
+export const formatDate = (
+    value: DateInput,
+    format = 'dd LLL yyyy',
+    locale = 'en'
+): string => toDateTime(value).setLocale(locale).toFormat(format);
 
 export const formatDateTime = (
     value: DateInput,
-    format = 'dd LLL yyyy HH:mm'
-): string => toDateTime(value).toFormat(format);
+    format = 'dd LLL yyyy HH:mm',
+    locale = 'en'
+): string => toDateTime(value).setLocale(locale).toFormat(format);
 
 export const formatLocaleString = (
     value: DateInput,

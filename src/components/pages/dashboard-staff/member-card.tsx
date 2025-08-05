@@ -13,8 +13,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Edit, Eye, MoreHorizontal, Phone, Trash2 } from "lucide-react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+import { formatDateTime } from "@/utils/time"
 import { useDashboardStaff } from "@/context/dashboard-staff-context"
 import { useDashboardContext } from "@/context/dashboard-context"
 import { useListRestaurantRoles } from "@/hooks/use-list-restaurant-roles"
@@ -123,7 +122,7 @@ export function MemberCard({ member }: MemberCardProps) {
                 </div>
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Último acesso:</span>
-                    <span className="text-sm">{format(member.updatedAt, "dd/MM/yyyy HH:mm", { locale: ptBR })}</span>
+                    <span className="text-sm">{formatDateTime(member.updatedAt, "dd/MM/yyyy HH:mm")}</span>
                 </div>
                 <div className="flex items-center gap-1 text-sm">
                     <Phone className="w-3 h-3" />
