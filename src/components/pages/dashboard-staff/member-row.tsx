@@ -21,8 +21,7 @@ import { TableRow, TableCell } from "@/components/ui/table"
 import { useDashboardStaff } from "@/context/dashboard-staff-context"
 import { useDashboardContext } from "@/context/dashboard-context"
 import { useListRestaurantRoles } from "@/hooks/use-list-restaurant-roles"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+import { formatDateTime } from "@/utils/time"
 import { Clock, Eye, Mail, MoreHorizontal, Phone, Trash2 } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
@@ -139,7 +138,7 @@ export default function MemberRow({ user }: MemberRowProps) {
                 <TableCell>
                     <div className="flex items-center gap-1 text-sm">
                         <Clock className="w-3 h-3" />
-                        {format(user.lastLogged ? user.lastLogged : user.updatedAt, "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                        {formatDateTime(user.lastLogged ? user.lastLogged : user.updatedAt, "dd/MM/yyyy HH:mm")}
                     </div>
                 </TableCell>
                 <TableCell>

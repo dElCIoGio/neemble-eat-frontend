@@ -1,6 +1,5 @@
 import { useState } from "react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+import { formatDate } from "@/utils/time"
 import { useQueryClient } from "@tanstack/react-query"
 import { Copy, Trash2 } from "lucide-react"
 
@@ -82,7 +81,7 @@ export function InvitationCard({ invitation }: { invitation: Invitation }) {
             </div>
             <div className="text-sm text-gray-500">{roleName}</div>
             <div className="text-sm">
-                {format(new Date(invitation.createdAt), "dd/MM/yyyy", { locale: ptBR })}
+                {formatDate(invitation.createdAt, "dd/MM/yyyy")}
             </div>
         </Card>
     )

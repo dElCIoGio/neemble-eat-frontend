@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { formatDate } from "@/utils/time";
 import { Invitation } from "@/types/invitation";
 import { Button } from "@/components/ui/button";
 import { Copy, Trash2 } from "lucide-react";
@@ -72,7 +71,7 @@ function InvitationRow({ invitation }: { invitation: Invitation }) {
         <TableRow>
             <TableCell>{invitation.name}</TableCell>
             <TableCell>{roleName}</TableCell>
-            <TableCell>{format(new Date(invitation.createdAt), "dd/MM/yyyy", { locale: ptBR })}</TableCell>
+            <TableCell>{formatDate(invitation.createdAt, "dd/MM/yyyy")}</TableCell>
             <TableCell className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={handleCopy}>
                     <Copy className="w-4 h-4" />
