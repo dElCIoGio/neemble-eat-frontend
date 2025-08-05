@@ -1,5 +1,6 @@
 import {useOrdersTrackingContext} from "@/context/orders-tracking-context";
 import {OrderListing} from "@/components/pages/dashboard-orders/order-listing";
+import { toDateTime } from "@/utils/time";
 
 
 export function OrdersDisplay() {
@@ -11,8 +12,8 @@ export function OrdersDisplay() {
         const matchesTableFilter = tableFilter === "all" || tableFilter === null || tableFilter === (order.tableNumber?.toString() ?? null);
         return matchesFilterMode && matchesTableFilter;
     }).sort((a, b) => {
-        const timeA = new Date(a.orderTime).getTime();
-        const timeB = new Date(b.orderTime).getTime();
+        const timeA = toDateTime(a.orderTime).toMillis();
+        const timeB = toDateTime(b.orderTime).toMillis();
 
         if (sorting === "asc") {
             return timeA - timeB;
