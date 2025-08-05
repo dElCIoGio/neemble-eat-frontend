@@ -399,9 +399,9 @@ export default function RolesPage() {
                     </div>
                     <div>
                         <Label>Permissões</Label>
-                        <div className="mt-2 space-y-4 overflow-y-auto">
+                        <div className="mt-2 flex gap-4 overflow-x-auto pb-4">
                             {Object.entries(groupedPermissions).map(([category, permissions]) => (
-                                <div key={category}>
+                                <div key={category} className="min-w-[16rem]">
                                     <h4 className="font-medium text-sm text-gray-700 mb-2">{category}</h4>
                                     <div className="space-y-2 ml-4">
                                         {permissions.map(permission => (
