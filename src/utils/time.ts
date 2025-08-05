@@ -1,4 +1,4 @@
-import { DateTime, DurationUnit, DateTimeFormatOptions } from 'luxon';
+import { DateTime, DurationUnit, DateTimeFormatOptions, Duration } from 'luxon';
 
 // West Africa Standard Time zone
 export const WAT_ZONE = 'Africa/Lagos';
@@ -55,17 +55,28 @@ export const difference = (
     unit: DurationUnit = 'milliseconds'
 ): number => toDateTime(end).diff(toDateTime(start), unit).as(unit);
 
+const buildDuration = (amount: number, unit: DurationUnit): Duration =>
+    Duration.fromObject({ [unit]: amount }).shiftTo(
+        'years',
+        'months',
+        'days',
+        'hours',
+        'minutes',
+        'seconds',
+        'milliseconds'
+    );
+
 export const add = (
     value: DateInput,
     amount: number,
     unit: DurationUnit
-): DateTime => toDateTime(value).plus({ [unit]: amount });
+): DateTime => toDateTime(value).plus(buildDuration(amount, unit));
 
 export const subtract = (
     value: DateInput,
     amount: number,
     unit: DurationUnit
-): DateTime => toDateTime(value).minus({ [unit]: amount });
+): DateTime => toDateTime(value).minus(buildDuration(amount, unit));
 
 export const isPast = (value: DateInput): boolean =>
     toDateTime(value).toMillis() < now().toMillis();
