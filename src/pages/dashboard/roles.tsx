@@ -79,7 +79,7 @@ function SortableRoleCard({
 function LevelColumn({ level, roles, onEdit, onDelete }: { level: number; roles: Role[]; onEdit: (role: Role) => void; onDelete: (id: string) => void }) {
     const {setNodeRef} = useDroppable({ id: `level-${level}`, data: { level } })
     return (
-        <div ref={setNodeRef} className="min-w-[16rem] w-64 p-3 rounded-lg border flex flex-col gap-2 bg-muted/50">
+        <div ref={setNodeRef} className="w-full p-3 rounded-lg border flex flex-col gap-2 bg-muted/50">
             <h3 className="font-semibold mb-2">Nível {level}</h3>
             <SortableContext items={roles.map(r => r._id)} strategy={verticalListSortingStrategy}>
                 <div className="flex flex-col gap-2">
@@ -99,7 +99,7 @@ function AddLevelCard({ onAdd }: { onAdd: () => void }) {
             ref={setNodeRef}
             onClick={onAdd}
             className={cn(
-                'min-w-[16rem] w-64 p-3 rounded-lg border flex items-center justify-center cursor-pointer text-3xl text-muted-foreground',
+                'w-full p-3 rounded-lg border flex items-center justify-center cursor-pointer text-3xl text-muted-foreground',
                 isOver && 'bg-muted'
             )}
         >
@@ -371,7 +371,7 @@ export default function RolesPage() {
                         </AlertDescription>
                     </Alert>
                     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-                        <div className="flex gap-4 overflow-x-auto pb-4">
+                        <div className="flex flex-col gap-4 overflow-y-auto pb-4">
                             {levels.filter(l => l.roles.some(r => r.name !== "no_role") || l.roles.length === 0).map(l => (
                                 <LevelColumn
                                     key={l.level}
