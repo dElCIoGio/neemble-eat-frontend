@@ -1635,23 +1635,25 @@ export default function StockManagement() {
                                                 })()}
                                             </div>
                                             <div className="flex gap-1">
-                                                <Select
-                                                    value={ingredient.displayUnit || ingredient.unit}
-                                                    onValueChange={(value) => {
-                                                        const updated = [...editRecipe.ingredients]
-                                                        updated[index] = { ...ingredient, displayUnit: value }
-                                                        setEditRecipe({ ...editRecipe, ingredients: updated })
-                                                    }}
-                                                >
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
-                                                        {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
-                                                        {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
-                                                    </SelectContent>
-                                                </Select>
+                                               <Select
+                                                   value={ingredient.displayUnit || ingredient.unit}
+                                                   onValueChange={(value) => {
+                                                       const updated = [...editRecipe.ingredients]
+                                                       updated[index] = { ...ingredient, displayUnit: value }
+                                                       setEditRecipe({ ...editRecipe, ingredients: updated })
+                                                   }}
+                                               >
+                                                   <SelectTrigger>
+                                                       <SelectValue />
+                                                   </SelectTrigger>
+                                                   <SelectContent>
+                                                       {ingredient.unit && (
+                                                           <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
+                                                       )}
+                                                       {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
+                                                       {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
+                                                   </SelectContent>
+                                               </Select>
                                                 {editRecipe.ingredients.length > 1 && (
                                                     <Button
                                                         type="button"
