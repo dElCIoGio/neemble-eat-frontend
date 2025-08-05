@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { NewBooking, Booking } from "@/types/booking"
 import { useGetRestaurantUpcomingBookings } from "@/api/endpoints/booking/hooks"
+import { useListRestaurantTables } from "@/api/endpoints/tables/hooks"
 
 interface NewBookingSheetProps {
     open: boolean
@@ -23,25 +24,6 @@ interface NewBookingSheetProps {
     onSubmit: (booking: NewBooking) => void
     restaurantId: string
 }
-
-// Mesas disponíveis
-const availableTables = [
-    "Mesa 1",
-    "Mesa 2",
-    "Mesa 3",
-    "Mesa 4",
-    "Mesa 5",
-    "Mesa 6",
-    "Mesa 7",
-    "Mesa 8",
-    "Mesa 9",
-    "Mesa 10",
-    "Mesa 11",
-    "Mesa 12",
-    "Mesa 13",
-    "Mesa 14",
-    "Mesa 15",
-]
 
 // Ocasiões comuns
 const commonOccasions = [
@@ -58,6 +40,7 @@ const commonOccasions = [
 
 export function NewBookingSheet({ open, onOpenChange, onSubmit, restaurantId }: NewBookingSheetProps) {
     const { data: existingBookings = [] } = useGetRestaurantUpcomingBookings({ restaurantId })
+    const { data: tables = [] } = useListRestaurantTables(restaurantId)
     
     const [formData, setFormData] = useState<NewBooking>({
         restaurantId,
@@ -363,9 +346,9 @@ export function NewBookingSheet({ open, onOpenChange, onSubmit, restaurantId }: 
                                         <SelectValue placeholder="Selecionar mesa" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {availableTables.map((table) => (
-                                            <SelectItem key={table} value={table}>
-                                                {table}
+                                        {tables.map((table) => (
+                                            <SelectItem key={table._id} value={table._id}>
+                                                Mesa {table.number}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
