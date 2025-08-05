@@ -8,6 +8,7 @@ import {Order, OrderPrepStatus} from "@/types/order";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {ordersApi} from "@/api/endpoints/orders/requests";
 import {New, InProgress, Ready, Cancelled} from "@/components/pages/dashboard-orders/order-tag";
+import { formatDateTime } from "@/utils/time";
 
 
 
@@ -18,17 +19,8 @@ interface OrderInfoProps {
 export function OrderInfo({order}: OrderInfoProps) {
 
     const { handleOrderDeselected, updateOrderStatus } = useOrdersTrackingContext()
-    const Time = new Date(order.orderTime)
+    const formattedTime = formatDateTime(order.orderTime, "HH:mm")
     const price = formatCurrency(order.total)
-
-
-    function formatNumberToTwoDigits(number: number): string {
-        return number < 10 ? `0${number}` : `${number}`
-    }
-
-    function formatTime(time: Date) {
-        return `${formatNumberToTwoDigits(time.getHours())}:${formatNumberToTwoDigits(time.getMinutes())}`
-    }
 
     function update(status: OrderPrepStatus) {
 
@@ -77,7 +69,7 @@ export function OrderInfo({order}: OrderInfoProps) {
                         Hora
                     </h1>
                     <span className="font-poppins-semibold text-amethyst-300">
-                        {formatTime(Time)}
+                        {formattedTime}
                     </span>
                 </div>
                 <div className="w-full flex justify-between">
