@@ -45,14 +45,32 @@ function SortableRoleCard({
     onEdit: (role: Role) => void
     onDelete: (id: string) => void
 }) {
-    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({ id: role._id, data: { level } })
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: role._id, data: { level } })
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
     }
     return (
-        <div ref={setNodeRef} style={style} className="flex items-center justify-between p-3 border rounded-lg bg-background">
-            <button className="mr-2 cursor-grab" {...attributes} {...listeners}>
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={cn(
+                "flex items-center justify-between p-3 border rounded-lg bg-background",
+                isDragging && "cursor-grabbing opacity-50"
+            )}
+        >
+            <button
+                className={cn("mr-2 cursor-grab", isDragging && "cursor-grabbing")}
+                {...attributes}
+                {...listeners}
+            >
                 <DotsSixVertical className="w-4 h-4 text-muted-foreground" />
             </button>
             <div className="flex-1">
