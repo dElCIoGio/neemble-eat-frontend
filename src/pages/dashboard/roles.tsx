@@ -4,7 +4,6 @@ import {getSectionLabel} from "@/lib/helpers/section-label"
 import {useDashboardContext} from "@/context/dashboard-context"
 import {useListRestaurantRoles} from "@/hooks/use-list-restaurant-roles"
 import {Button} from "@/components/ui/button"
-import {Badge} from "@/components/ui/badge"
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 import {Input} from "@/components/ui/input"
 import {Textarea} from "@/components/ui/textarea"
@@ -15,36 +14,38 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {useMutation} from "@tanstack/react-query"
 import {roleApi} from "@/api/endpoints/role/requests"
 import {useUpdateRole} from "@/api/endpoints/role/hook"
-import {showSuccessToast, showErrorToast, showPromiseToast} from "@/utils/notifications/toast"
+import {showSuccessToast, showErrorToast} from "@/utils/notifications/toast"
 import {PermissionGate} from "@/components/ui/permission-gate"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
     DndContext,
-    closestCenter,
     PointerSensor,
     useSensor,
     useSensors,
     DragEndEvent,
+    useDroppable,
 } from "@dnd-kit/core"
 import {
     SortableContext,
     verticalListSortingStrategy,
-    arrayMove,
     useSortable,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { DotsSixVertical } from "@phosphor-icons/react"
+import { cn } from "@/lib/utils"
 
 function SortableRoleCard({
     role,
+    level,
     onEdit,
     onDelete,
 }: {
     role: Role
+    level: number
     onEdit: (role: Role) => void
     onDelete: (id: string) => void
 }) {
-    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({ id: role._id })
+    const {attributes, listeners, setNodeRef, transform, transition} = useSortable({ id: role._id, data: { level } })
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
@@ -55,12 +56,8 @@ function SortableRoleCard({
                 <DotsSixVertical className="w-4 h-4 text-muted-foreground" />
             </button>
             <div className="flex-1">
-                <div className="flex items-center gap-2">
-                    <Badge>{role.name}</Badge>
-                    <Badge variant="outline">Personalizada</Badge>
-                    <Badge variant="secondary">Nível {role.level}</Badge>
-                </div>
-                <p className="text-sm text-gray-600 mt-1">{role.description}</p>
+                <p className="font-medium">{role.name}</p>
+                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{role.description}</p>
                 <p className="text-xs text-gray-500 mt-1">{role.permissions.length} permissões</p>
             </div>
             <div className="flex gap-2">
@@ -75,6 +72,38 @@ function SortableRoleCard({
                     </Button>
                 </PermissionGate>
             </div>
+        </div>
+    )
+}
+
+function LevelColumn({ level, roles, onEdit, onDelete }: { level: number; roles: Role[]; onEdit: (role: Role) => void; onDelete: (id: string) => void }) {
+    const {setNodeRef} = useDroppable({ id: `level-${level}`, data: { level } })
+    return (
+        <div ref={setNodeRef} className="min-w-[16rem] w-64 p-3 rounded-lg border flex flex-col gap-2 bg-muted/50">
+            <h3 className="font-semibold mb-2">Nível {level}</h3>
+            <SortableContext items={roles.map(r => r._id)} strategy={verticalListSortingStrategy}>
+                <div className="flex flex-col gap-2">
+                    {roles.map(role => (
+                        <SortableRoleCard key={role._id} role={role} level={level} onEdit={onEdit} onDelete={onDelete} />
+                    ))}
+                </div>
+            </SortableContext>
+        </div>
+    )
+}
+
+function AddLevelCard({ onAdd }: { onAdd: () => void }) {
+    const {setNodeRef, isOver} = useDroppable({ id: 'add-level' })
+    return (
+        <div
+            ref={setNodeRef}
+            onClick={onAdd}
+            className={cn(
+                'min-w-[16rem] w-64 p-3 rounded-lg border flex items-center justify-center cursor-pointer text-3xl text-muted-foreground',
+                isOver && 'bg-muted'
+            )}
+        >
+            +
         </div>
     )
 }
@@ -131,12 +160,21 @@ export default function RolesPage() {
     const { restaurant } = useDashboardContext()
     const { data: roles, addRole, removeRole, updateRole } = useListRestaurantRoles(restaurant._id)
 
-    const [orderedRoles, setOrderedRoles] = useState<Role[]>([])
+    const [levels, setLevels] = useState<{level: number; roles: Role[]}[]>([])
     const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
 
     useEffect(() => {
-        const sorted = [...(roles ?? [])].sort((a, b) => a.level - b.level)
-        setOrderedRoles(sorted)
+        const grouped = (roles ?? []).reduce((acc, role) => {
+            const lvl = role.level
+            const group = acc.get(lvl) || []
+            group.push(role)
+            acc.set(lvl, group)
+            return acc
+        }, new Map<number, Role[]>())
+        const arr = Array.from(grouped.entries())
+            .sort((a, b) => a[0] - b[0])
+            .map(([level, roles]) => ({ level, roles }))
+        setLevels(arr)
     }, [roles])
 
     const [roleForm, setRoleForm] = useState<RoleCreate>({
@@ -227,34 +265,65 @@ export default function RolesPage() {
         setNewPermission({ section: "", permissions: { canView: false, canEdit: false, canDelete: false } })
     }
 
-    const persistOrder = (newOrder: Role[]) => {
-        const promises = newOrder.map((role, idx) => {
-            const newLevel = idx + 1
-            if (role.level !== newLevel) {
-                return roleApi.updateRole(role._id, { level: newLevel }).then(updated => {
-                    updateRole(updated)
-                })
-            }
-            return null
-        }).filter(Boolean) as Promise<unknown>[]
+    const maxLevel = levels.reduce((max, l) => Math.max(max, l.level), 0)
 
-        if (promises.length > 0) {
-            showPromiseToast(Promise.all(promises), {
-                loading: "Atualizando níveis...",
-                success: "Hierarquia atualizada!",
-                error: "Erro ao atualizar níveis",
-            })
-        }
+    const handleAddLevel = () => {
+        const nextLevel = maxLevel + 1
+        setLevels(prev => [...prev, { level: nextLevel, roles: [] }])
     }
 
     const handleDragEnd = ({active, over}: DragEndEvent) => {
-        if (!over || active.id === over.id) return
-        const oldIndex = orderedRoles.findIndex(r => r._id === active.id)
-        const newIndex = orderedRoles.findIndex(r => r._id === over.id)
-        if (oldIndex === -1 || newIndex === -1) return
-        const newOrder = arrayMove(orderedRoles, oldIndex, newIndex).map((r, idx) => ({ ...r, level: idx + 1 }))
-        setOrderedRoles(newOrder)
-        persistOrder(newOrder)
+        if (!over) return
+        const activeRoleId = active.id as string
+        const activeLevel = active.data.current?.level as number
+
+        let newLevel: number | null = null
+        let overRoleId: string | null = null
+
+        if (over.id === 'add-level') {
+            newLevel = maxLevel + 1
+        } else if (typeof over.id === 'string' && over.id.startsWith('level-')) {
+            newLevel = parseInt((over.id as string).replace('level-', ''), 10)
+        } else {
+            overRoleId = over.id as string
+            const containerId = over.data.current?.sortable?.containerId as string
+            if (containerId && containerId.startsWith('level-')) {
+                newLevel = parseInt(containerId.replace('level-', ''), 10)
+            }
+        }
+
+        if (newLevel === null) return
+
+        setLevels(prev => {
+            const copy = prev.map(l => ({ level: l.level, roles: [...l.roles] }))
+            const sourceIdx = copy.findIndex(l => l.level === activeLevel)
+            if (sourceIdx === -1) return prev
+            const sourceGroup = copy[sourceIdx]
+            const roleIdx = sourceGroup.roles.findIndex(r => r._id === activeRoleId)
+            if (roleIdx === -1) return prev
+            const [movedRole] = sourceGroup.roles.splice(roleIdx, 1)
+            const updatedRole = { ...movedRole, level: newLevel }
+
+            let targetIdx = copy.findIndex(l => l.level === newLevel)
+            if (targetIdx === -1) {
+                copy.push({ level: newLevel, roles: [] })
+                copy.sort((a, b) => a.level - b.level)
+                targetIdx = copy.findIndex(l => l.level === newLevel)
+            }
+            const targetGroup = copy[targetIdx]
+            let insertIndex = targetGroup.roles.length
+            if (overRoleId) {
+                const idx = targetGroup.roles.findIndex(r => r._id === overRoleId)
+                if (idx !== -1) insertIndex = idx
+            }
+            targetGroup.roles.splice(insertIndex, 0, updatedRole)
+            return copy
+        })
+
+        updateRoleMutation.mutate(
+            { roleId: activeRoleId, data: { level: newLevel } },
+            { onSuccess: (updated) => updateRole(updated) }
+        )
     }
 
     const handleSaveRole = () => {
@@ -298,18 +367,22 @@ export default function RolesPage() {
                 <TabsContent value="existing" className="space-y-4">
                     <Alert>
                         <AlertDescription>
-                            Arraste as funções para cima ou para baixo para alterar a ordem hierárquica. A função com nível
-                            menor fica acima das demais.
+                            Arraste as funções entre os níveis para organizar a hierarquia. Arraste para o cartão "+" para criar um novo nível.
                         </AlertDescription>
                     </Alert>
-                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                        <SortableContext items={orderedRoles.filter(r => r.name !== "no_role").map(r => r._id)} strategy={verticalListSortingStrategy}>
-                            <div className="space-y-3 overflow-y-auto">
-                                {orderedRoles.filter(r => r.name !== "no_role").map((role) => (
-                                    <SortableRoleCard key={role._id} role={role} onEdit={handleEditRole} onDelete={handleDeleteRole} />
-                                ))}
-                            </div>
-                        </SortableContext>
+                    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                        <div className="flex gap-4 overflow-x-auto pb-4">
+                            {levels.filter(l => l.roles.some(r => r.name !== "no_role") || l.roles.length === 0).map(l => (
+                                <LevelColumn
+                                    key={l.level}
+                                    level={l.level}
+                                    roles={l.roles.filter(r => r.name !== "no_role")}
+                                    onEdit={handleEditRole}
+                                    onDelete={handleDeleteRole}
+                                />
+                            ))}
+                            <AddLevelCard onAdd={handleAddLevel} />
+                        </div>
                     </DndContext>
                 </TabsContent>
 
