@@ -42,13 +42,13 @@ export default function DashboardHomeHeader() {
                 {dateFilter === "custom" && (
                     <Popover open={isRangeOpen} onOpenChange={setIsRangeOpen}>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" className="w-full sm:w-52 justify-start text-left font-normal">
+                            <Button variant="outline" className="w-full justify-start text-left font-normal">
                                 <CalendarIcon className="mr-2 h-4 w-4" />
                                 {rangeLabel}
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start" side="bottom" sideOffset={4}>
-                            <div className="p-3 bg-background">
+                        <PopoverContent className="w-auto rounded-lg p-0" align="start" side="bottom" sideOffset={4}>
+                            <div className="p-3">
                                 <Calendar
                                     mode="range"
                                     numberOfMonths={2}
@@ -56,7 +56,7 @@ export default function DashboardHomeHeader() {
                                     selected={customDateRange}
                                     onSelect={(range: DateRange | undefined) => setCustomDateRange(range)}
                                     locale={pt}
-                                    className="rounded-md border"
+                                    className=""
                                 />
                             </div>
                         </PopoverContent>

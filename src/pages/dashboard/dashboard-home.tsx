@@ -85,38 +85,47 @@ export default function RestaurantDashboard(): JSX.Element {
         filter: DateFilter | ItemsTimeRange,
         custom?: DateRange
     ) => {
-        let from = now()
-        let to: ReturnType<typeof now> | undefined
+        let from = now();
+        let to: ReturnType<typeof now> | undefined;
 
         switch (filter) {
             case "today":
-                from = startOfDay(from)
-                break
+                from = startOfDay(from);
+                break;
+
             case "yesterday":
-                from = startOfDay(subtract(from, 1, "days"))
-                to = endOfDay(from)
-                break
+                from = startOfDay(subtract(from, 1, "days"));
+                to = endOfDay(from);
+                break;
+
             case "7days":
             case "week":
-                from = subtract(from, 7, "days")
-                break
+                // Keep the same time as 'now', but move back 7 days
+                from = subtract(from, 7, "days");
+                break;
+
             case "30days":
             case "month":
-                from = subtract(from, 30, "days")
-                break
+                // Keep the same time as 'now', but move back 30 days
+                from = subtract(from, 30, "days");
+                break;
+
             case "custom":
-                if (custom?.from) from = toDateTime(custom.from)
-                if (custom?.to) {
-                    to = toDateTime(custom.to)
+                if (custom?.from) {
+                    console.log("date as Date:", custom.from);
+                    from = toDateTime(custom.from);
+                    console.log("After conversion:", from)
                 }
-                break
+                if (custom?.to) to = toDateTime(custom.to);
+
+                break;
         }
 
         return {
             from: toISO(from)!,
             to: to ? toISO(to)! : undefined
-        }
-    }
+        };
+    };
 
     const dateRange = useMemo(
         () => getDateRangeFromFilter(dateFilter, customDateRange),
