@@ -3,13 +3,8 @@ import {
     Plus,
     Trash2,
     Search,
-    Download,
-    AlertTriangle,
-    Package,
-    ChefHat,
-    BarChart3,
+    Download
 } from "lucide-react"
-import { formatCurrency } from "@/lib/helpers/format-currency"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -43,7 +38,7 @@ import {
     showPromiseToast,
 } from "@/utils/notifications/toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -79,6 +74,11 @@ import PaginationManager from "@/components/ui/pagination-manager";
 import {PermissionGate} from "@/components/ui/permission-gate";
 import {Sections} from "@/types/role";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
+import {StockCard} from "./components/stock-card";
+import {RecipeCard} from "./components/recipe-card";
+import {MovementCard} from "./components/movement-card";
+import {StockSummary} from "./components/stock-summary";
+import {StockContext} from "@/context/stock-context";
 
 
 interface PaginatedStockResponse {
@@ -88,131 +88,6 @@ interface PaginatedStockResponse {
     hasMore: boolean
 }
 
-interface StockCardProps {
-    item: StockItem
-    onView: (item: StockItem) => void
-    onEdit: (item: StockItem) => void
-    onAdd: (item: StockItem) => void
-    onDelete: (item: StockItem) => void
-}
-
-function StockCard({ item, onView, onEdit, onAdd, onDelete }: StockCardProps) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{item.name}</CardTitle>
-                <CardDescription>{item.category}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                    <span>Quantidade:</span>
-                    <span>{item.currentQuantity} {item.unit}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                    <span>Estado:</span>
-                    <Badge
-                        className={`${item.status === "Baixo" && "bg-yellow-600"}`}
-                        variant={
-                            item.status === "OK"
-                                ? "default"
-                                : item.status === "Baixo"
-                                    ? "secondary"
-                                    : "destructive"
-                        }
-                    >
-                        {item.status}
-                    </Badge>
-                </div>
-                <div className="flex justify-between">
-                    <span>Última Entrada:</span>
-                    <span>{formatIsosDate(new Date(item.lastEntry))}</span>
-                </div>
-            </CardContent>
-            <CardFooter className="justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => onView(item)}>
-                    Detalhes
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => onEdit(item)}>
-                    Editar
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => onAdd(item)}>
-                    Adicionar
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => onDelete(item)}>
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
-            </CardFooter>
-        </Card>
-    )
-}
-
-interface RecipeCardProps {
-    recipe: Recipe
-    menuItems: Item[]
-    onEdit: (recipe: Recipe) => void
-    onDelete: (id: string) => void
-}
-
-function RecipeCard({ recipe, menuItems, onEdit, onDelete }: RecipeCardProps) {
-    const dishName = menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{dishName}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                    <span>Porções:</span>
-                    <span>{recipe.servings}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Custo:</span>
-                    <span>Kz {recipe.cost.toFixed(2)}</span>
-                </div>
-            </CardContent>
-            <CardFooter className="justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => onEdit(recipe)}>
-                    Editar
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => onDelete(recipe._id)}>
-                    <Trash2 className="h-4 w-4" />
-                </Button>
-            </CardFooter>
-        </Card>
-    )
-}
-
-interface MovementCardProps {
-    movement: Movement
-}
-
-function MovementCard({ movement }: MovementCardProps) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{movement.productName}</CardTitle>
-                <CardDescription>{formatIsosDate(new Date(movement.date))}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                    <span>Tipo:</span>
-                    <span className="capitalize">{movement.type}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Quantidade:</span>
-                    <span>{movement.quantity} {movement.unit}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span>Utilizador:</span>
-                    <span>{movement.user}</span>
-                </div>
-                <div>
-                    <span className="font-medium">Razão:</span> {movement.reason}
-                </div>
-            </CardContent>
-        </Card>
-    )
-}
 
 export default function StockManagement() {
 
@@ -402,12 +277,6 @@ export default function StockManagement() {
         return new Date()
     }
 
-    // Calculate total stock value
-    const getTotalStockValue = () => {
-        return stockItems.reduce((total, item) => {
-            return total + item.currentQuantity * (item.cost || 0)
-        }, 0)
-    }
 
     // Filter logic
     const filteredItems = stockItems.filter((item) => {
@@ -417,13 +286,6 @@ export default function StockManagement() {
         return matchesSearch && matchesCategory && matchesStatus
     })
 
-    const lowStockItems = stockItems.filter((item) => item.status == "Baixo")
-    const criticalStockItems = stockItems.filter((item) => item.status === "Critico")
-
-    // const autoReorderSuggestions = getAutoReorderSuggestions()
-    const totalProducts = stockItems.length
-    const okItems = stockItems.filter((item) => item.status === "OK").length
-    const totalStockValue = getTotalStockValue()
 
     // Simulate sale and reduce stock
     const simulateSale = () => {
@@ -919,7 +781,8 @@ export default function StockManagement() {
 
 
     return (
-        <div className="mx-auto w-full space-y-6">
+        <StockContext.Provider value={{ stockItems, recipes }}>
+                <div className="mx-auto w-full space-y-6">
             {/* Header */}
             <div className="flex justify-end items-center">
                 <div className="flex gap-2">
@@ -935,56 +798,7 @@ export default function StockManagement() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total de Produtos</CardTitle>
-                        <Package className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{totalProducts}</div>
-                        <p className="text-xs text-muted-foreground">
-                            {okItems} produtos em estado normal
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Stock Baixo</CardTitle>
-                        <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{lowStockItems.length}</div>
-                        <p className="text-xs text-muted-foreground">
-                            {criticalStockItems.length} em estado crítico
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
-                        <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">Kz {formatCurrency(totalStockValue)}</div>
-                        <p className="text-xs text-muted-foreground">
-                            Valor total do inventário
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Receitas</CardTitle>
-                        <ChefHat className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{recipes.length}</div>
-                        <p className="text-xs text-muted-foreground">
-                            Receitas cadastradas
-                        </p>
-                    </CardContent>
-                </Card>
-            </div>
+            <StockSummary />
 
             {/* Main Content */}
             <Tabs defaultValue="stock" className="space-y-4">
@@ -1173,7 +987,7 @@ export default function StockManagement() {
                                     ))
                                 ) : paginatedItems.length === 0 ? (
                                     <div className="text-center py-6">Nenhum produto encontrado</div>
-                                ) : (
+) : (
                                     paginatedItems.map((item) => (
                                         <StockCard
                                             key={item._id}
@@ -2509,7 +2323,8 @@ export default function StockManagement() {
                 </DialogContent>
             </Dialog>
         </div>
-    )
+    </StockContext.Provider>
+)
 }
 
 
