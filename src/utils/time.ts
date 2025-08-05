@@ -1,4 +1,4 @@
-import { DateTime, DurationUnit } from 'luxon';
+import { DateTime, DurationUnit, DateTimeFormatOptions } from 'luxon';
 
 // West Africa Standard Time zone
 export const WAT_ZONE = 'Africa/Lagos';
@@ -22,6 +22,12 @@ export const formatDateTime = (
     value: DateInput,
     format = 'dd LLL yyyy HH:mm'
 ): string => toDateTime(value).toFormat(format);
+
+export const formatLocaleString = (
+    value: DateInput,
+    locale = 'en',
+    format: DateTimeFormatOptions = DateTime.DATETIME_SHORT_WITH_SECONDS
+): string => toDateTime(value).setLocale(locale).toLocaleString(format);
 
 export const parseDate = (value: string, format?: string): DateTime => {
     if (format) {

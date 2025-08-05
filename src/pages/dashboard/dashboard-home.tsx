@@ -24,7 +24,7 @@ import type {
     ItemsTimeRange,
 } from "@/types/dashboard"
 import {downloadCSV, downloadPDF} from "@/lib/helpers/export";
-import { toLocalISOString } from "@/lib/helpers/to-local-iso-string";
+import { now, startOfDay, endOfDay, subtract, toISO, toDateTime, formatLocaleString } from "@/utils/time";
 import {toast} from "sonner";
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
@@ -85,38 +85,36 @@ export default function RestaurantDashboard(): JSX.Element {
         filter: DateFilter | ItemsTimeRange,
         custom?: DateRange
     ) => {
-        const from = new Date()
-        let to: Date | undefined
+        let from = now()
+        let to: ReturnType<typeof now> | undefined
 
         switch (filter) {
             case "today":
-                from.setHours(0, 0, 0, 0)
+                from = startOfDay(from)
                 break
             case "yesterday":
-                from.setDate(from.getDate() - 1)
-                from.setHours(0, 0, 0, 0)
-                to = new Date(from)
-                to.setHours(23, 59, 59, 999)
+                from = startOfDay(subtract(from, 1, "days"))
+                to = endOfDay(from)
                 break
             case "7days":
             case "week":
-                from.setDate(from.getDate() - 7)
+                from = subtract(from, 7, "days")
                 break
             case "30days":
             case "month":
-                from.setDate(from.getDate() - 30)
+                from = subtract(from, 30, "days")
                 break
             case "custom":
-                if (custom?.from) from.setTime(custom.from.getTime())
+                if (custom?.from) from = toDateTime(custom.from)
                 if (custom?.to) {
-                    to = new Date(custom.to)
+                    to = toDateTime(custom.to)
                 }
                 break
         }
 
         return {
-            from: toLocalISOString(from),
-            to: to ? toLocalISOString(to) : undefined
+            from: toISO(from)!,
+            to: to ? toISO(to)! : undefined
         }
     }
 
@@ -234,7 +232,7 @@ export default function RestaurantDashboard(): JSX.Element {
             sessionsData,
             insights: [],
             dailySales: dailySalesData,
-            exportDate: new Date().toLocaleString("pt-PT"),
+            exportDate: formatLocaleString(now(), "pt-PT"),
             dateFilter: getDateFilterLabel(dateFilter),
             shiftFilter: getShiftFilterLabel(shiftFilter),
         }
