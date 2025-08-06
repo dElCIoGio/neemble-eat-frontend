@@ -244,8 +244,11 @@ export default function Subscription() {
 
     // 6. Pausar Conta Temporariamente
     const handlePauseAccount = async () => {
+        const subscriptionId = currentSubscription?._id
+        if (!subscriptionId) return
+
         showPromiseToast(
-            pauseSubscriptionMutation.mutateAsync({}).then(() => {
+            pauseSubscriptionMutation.mutateAsync({ subscriptionId }).then(() => {
                 setShowPauseDialog(false)
             }),
             {
