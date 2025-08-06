@@ -2,7 +2,7 @@ import {Card} from "@/components/ui/card";
 import {Tag, QrCode, Clock} from "@phosphor-icons/react"
 import {Separator} from "@/components/ui/separator";
 import { Order } from "@/types/order";
-import {formatCurrency} from "@/lib/helpers/format-currency";
+import {formatCurrency} from "@/utils/format-currency";
 import {useOrdersTrackingContext} from "@/context/orders-tracking-context";
 import {OrderBadge} from "@/components/pages/dashboard-orders/order-badge";
 import {Cancelled, InProgress, New, Ready} from "@/components/pages/dashboard-orders/order-tag";
@@ -58,7 +58,7 @@ export function OrderListing({order, viewMode}: OrderCardProps) {
                         {time}
                     </OrderBadge>
                     <OrderBadge icon={Tag}>
-                        Kz {price}
+                        {price}
                     </OrderBadge>
                 </div>
                 <div className={"lg:hidden"}>
@@ -72,7 +72,7 @@ export function OrderListing({order, viewMode}: OrderCardProps) {
                     </div>
                     <div className="flex space-x-1.5 items-center text-zinc-600 font-poppins-regular">
                         <Tag color={"#70469f"}/>
-                        <h3>Preço: <span className="text-zinc-800 font-poppins-medium">Kz {price}</span></h3>
+                        <h3>Preço: <span className="text-zinc-800 font-poppins-medium">{price}</span></h3>
                     </div>
 
                 </div>

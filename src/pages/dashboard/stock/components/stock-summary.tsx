@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Package, AlertTriangle, BarChart3, ChefHat} from "lucide-react";
-import {formatCurrency} from "@/lib/helpers/format-currency";
+import {formatCurrency} from "@/utils/format-currency";
 import {useStockContext} from "@/context/stock-context";
 
 export function StockSummary() {
@@ -46,7 +46,7 @@ export function StockSummary() {
                     <BarChart3 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">Kz {formatCurrency(totalStockValue)}</div>
+                    <div className="text-2xl font-bold">{formatCurrency(totalStockValue)}</div>
                     <p className="text-xs text-muted-foreground">
                         Valor total do inventário
                     </p>

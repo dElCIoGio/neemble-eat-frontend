@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { TrendingDown, TrendingUp, Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { MetricFormat } from "@/types/dashboard"
+import { formatCurrency } from "@/utils/format-currency"
 
 interface MetricCardProps {
     title: string
@@ -16,7 +17,7 @@ interface MetricCardProps {
 function formatValue(val: number, format: MetricFormat): string {
     switch (format) {
         case "currency":
-            return `Kz ${val.toLocaleString("pt-PT", { minimumFractionDigits: 2 })}`
+            return formatCurrency(val)
         case "percentage":
             return `${val.toFixed(1)}%`
         default:

@@ -1,4 +1,5 @@
 import type { ExportData } from "@/types/dashboard"
+import { formatCurrency } from "@/utils/format-currency"
 
 export const generateCSV = (data: ExportData): string => {
     const headers = ["Métrica", "Valor", "Crescimento (%)", "Categoria"]
@@ -6,18 +7,18 @@ export const generateCSV = (data: ExportData): string => {
     const rows: string[][] = [
         headers,
         // Sales Data
-        ["Total de Vendas", `Kz ${data.salesData.totalSales.toFixed(2)}`, data.salesData.salesGrowth.toString(), "Vendas"],
+        ["Total de Vendas", formatCurrency(data.salesData.totalSales), data.salesData.salesGrowth.toString(), "Vendas"],
         ["Faturas Emitidas", data.salesData.invoiceCount.toString(), data.salesData.invoiceGrowth.toString(), "Vendas"],
         [
             "Valor Médio por Fatura",
-            `Kz ${data.salesData.averageInvoice.toFixed(2)}`,
+            formatCurrency(data.salesData.averageInvoice),
             data.salesData.averageGrowth.toString(),
             "Vendas",
         ],
         ["Mesas Servidas", data.salesData.distinctTables.toString(), data.salesData.tableGrowth.toString(), "Vendas"],
         [
             "Receita por Mesa",
-            `Kz ${data.salesData.revenuePerTable.toFixed(2)}`,
+            formatCurrency(data.salesData.revenuePerTable),
             data.salesData.revenueGrowth.toString(),
             "Vendas",
         ],
@@ -109,7 +110,7 @@ export const generatePDFContent = (data: ExportData): string => {
         <div class="metrics-grid">
             <div class="metric-card">
                 <div>Total de Vendas</div>
-                <div class="metric-value">Kz ${data.salesData.totalSales.toFixed(2)}</div>
+                <div class="metric-value">${formatCurrency(data.salesData.totalSales)}</div>
                 <div class="metric-growth ${data.salesData.salesGrowth > 0 ? "positive" : "negative"}">
                     ${data.salesData.salesGrowth > 0 ? "+" : ""}${data.salesData.salesGrowth.toFixed(1)}%
                 </div>
@@ -123,7 +124,7 @@ export const generatePDFContent = (data: ExportData): string => {
             </div>
             <div class="metric-card">
                 <div>Valor Médio por Fatura</div>
-                <div class="metric-value">Kz ${data.salesData.averageInvoice.toFixed(2)}</div>
+                <div class="metric-value">${formatCurrency(data.salesData.averageInvoice)}</div>
                 <div class="metric-growth ${data.salesData.averageGrowth > 0 ? "positive" : "negative"}">
                     ${data.salesData.averageGrowth > 0 ? "+" : ""}${data.salesData.averageGrowth.toFixed(1)}%
                 </div>
@@ -137,7 +138,7 @@ export const generatePDFContent = (data: ExportData): string => {
             </div>
             <div class="metric-card">
                 <div>Receita por Mesa</div>
-                <div class="metric-value">Kz ${data.salesData.revenuePerTable.toFixed(2)}</div>
+                <div class="metric-value">${formatCurrency(data.salesData.revenuePerTable)}</div>
                 <div class="metric-growth ${data.salesData.revenueGrowth > 0 ? "positive" : "negative"}">
                     ${data.salesData.revenueGrowth > 0 ? "+" : ""}${data.salesData.revenueGrowth.toFixed(1)}%
                 </div>
