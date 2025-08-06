@@ -18,6 +18,7 @@ import useWebSocket from "@/hooks/use-web-socket"
 import config from "@/config"
 import { showPromiseToast } from "@/utils/notifications/toast"
 import { difference, now, toDateTime, formatDateTime } from "@/utils/time"
+import { formatCurrency } from "@/utils/format-currency"
 
 type TableStatus = "disponivel" | "ocupada" | "conta_pedida" | "chamando_funcionario"
 
@@ -71,13 +72,6 @@ const formatDuration = (startTime: string) => {
     const hours = Math.floor(diffInMinutes / 60)
     const minutes = Math.floor(diffInMinutes % 60)
     return `${hours}h ${minutes}m`
-}
-
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("pt-AO", {
-        style: "currency",
-        currency: "AOA",
-    }).format(amount)
 }
 
 export default function TableMonitor() {

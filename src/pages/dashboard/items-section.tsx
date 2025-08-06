@@ -2,6 +2,7 @@ import { Item } from "@/types/item"
 import { Category } from "@/types/category"
 import { Button } from "@/components/ui/button"
 import { Plus, Settings } from "lucide-react"
+import { formatCurrency } from "@/utils/format-currency"
 
 interface ItemsSectionProps {
     items: Item[]
@@ -43,10 +44,7 @@ export function ItemsSection({ items, selectedCategory, showCategoryName, catego
                                     </p>
                                 )}
                                 <p className="text-sm font-medium mt-2">
-                                    {item.price.toLocaleString("pt-PT", {
-                                        style: "currency",
-                                        currency: "EUR",
-                                    })}
+                                    {formatCurrency(item.price)}
                                 </p>
                             </div>
                             <Button variant="ghost" size="sm">

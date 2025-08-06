@@ -3,7 +3,7 @@ import {X} from "lucide-react"
 import {Button} from "@/components/ui/button";
 import {Card} from "@/components/ui/card";
 import {useOrdersTrackingContext} from "@/context/orders-tracking-context";
-import {formatCurrency} from "@/lib/helpers/format-currency";
+import {formatCurrency} from "@/utils/format-currency";
 import {Order, OrderPrepStatus} from "@/types/order";
 import {showPromiseToast} from "@/utils/notifications/toast";
 import {ordersApi} from "@/api/endpoints/orders/requests";
@@ -77,7 +77,7 @@ export function OrderInfo({order}: OrderInfoProps) {
                         Total
                     </h1>
                     <span className="font-poppins-semibold text-amethyst-300">
-                        Kz {price}
+                        {price}
                     </span>
                 </div>
             </div>
