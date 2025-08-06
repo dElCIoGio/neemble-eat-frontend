@@ -406,18 +406,18 @@ export default function RolesPage() {
 
                 <TabsContent value="create" className="space-y-4">
                     <div className="grid grid-cols-1 gap-4">
-                        <div>
+                        <div className="space-y-2">
                             <Label htmlFor="roleName">Nome da Função</Label>
                             <Input id="roleName" value={roleForm.name} onChange={(e) => setRoleForm({ ...roleForm, name: e.target.value })} placeholder="Ex: Supervisor de Turno" />
                         </div>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                         <Label htmlFor="roleDescription">Descrição</Label>
                         <Textarea id="roleDescription" value={roleForm.description} onChange={(e) => setRoleForm({ ...roleForm, description: e.target.value })} placeholder="Descreva as responsabilidades desta função..." />
                     </div>
                     <div>
                         <Label>Permissões</Label>
-                        <div className="mt-2 flex gap-4 overflow-x-auto pb-4">
+                        <div className="mt-2 gap-4 space-y-6 overflow-x-auto pb-4">
                             {Object.entries(groupedPermissions).map(([category, permissions]) => (
                                 <div key={category} className="min-w-[16rem]">
                                     <h4 className="font-medium text-sm text-gray-700 mb-2">{category}</h4>

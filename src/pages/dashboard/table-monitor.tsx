@@ -328,10 +328,14 @@ export default function TableMonitor() {
                                     </div>
                                     {session && session.orders.length > 0 && (
                                         <div className="mt-2 space-y-1 text-xs text-gray-600">
-                                            <div className="flex items-center gap-1">
-                                                <Clock className="h-3 w-3" />
-                                                {formatDuration(session.startTime)}
-                                            </div>
+                                                {
+                                                    firstOrderTime && (
+                                                        <div className="flex items-center gap-1">
+                                                            <Clock className="h-3 w-3" />
+                                                            {formatDuration(firstOrderTime)}
+                                                        </div>
+                                                    )
+                                                }
                                             {session.total && (
                                                 <div className="font-medium text-gray-900">{formatCurrency(session.total)}</div>
                                             )}

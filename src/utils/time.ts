@@ -3,13 +3,14 @@ import { DateTime, DurationUnit, DateTimeFormatOptions, Duration } from 'luxon';
 // West Africa Standard Time zone
 export const WAT_ZONE = 'Africa/Lagos';
 
-export type DateInput = DateTime | string | Date | number;
+export type DateInput = DateTime | string | Date | number | null | undefined;
 
 export const toDateTime = (value: DateInput): DateTime => {
     if (DateTime.isDateTime(value)) return value.setZone(WAT_ZONE);
     if (typeof value === 'string') return DateTime.fromISO(value, { zone: WAT_ZONE });
     if (value instanceof Date) return DateTime.fromJSDate(value, { zone: WAT_ZONE });
     if (typeof value === 'number') return DateTime.fromMillis(value, { zone: WAT_ZONE });
+    if (value == null) return DateTime.now().setZone(WAT_ZONE);
     throw new Error('Invalid date value');
 };
 
