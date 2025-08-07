@@ -326,13 +326,12 @@ export default function CategoryDetailsPage() {
                                             </Button>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center justify-between group" onClick={() => startEditing("name") }>
-                                            <span className="text-lg font-medium cursor-text">{category.name}</span>
+                                        <div className="flex items-center justify-between p-3 border rounded-md cursor-text" onClick={() => startEditing("name") }>
+                                            <span className="text-lg font-medium">{category.name}</span>
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
                                                 onClick={() => startEditing("name")}
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity"
                                             >
                                                 <Edit2 className="h-4 w-4" />
                                             </Button>
@@ -366,14 +365,14 @@ export default function CategoryDetailsPage() {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="group" onClick={() => startEditing("description") }>
-                                            <div className="flex items-start justify-between p-3 border border-transparent rounded-md hover:border-gray-200 transition-colors cursor-text">
+                                        <div onClick={() => startEditing("description") }>
+                                            <div className="flex items-start justify-between p-3 border rounded-md cursor-text">
                                                 <p className="text-gray-700 flex-1">{category.description}</p>
                                                 <Button
                                                     size="sm"
                                                     variant="ghost"
                                                     onClick={() => startEditing("description")}
-                                                    className="opacity-0 group-hover:opacity-100 transition-opacity ml-2"
+                                                    className="ml-2"
                                                 >
                                                     <Edit2 className="h-4 w-4" />
                                                 </Button>
