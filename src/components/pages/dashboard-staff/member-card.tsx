@@ -26,6 +26,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import {Sections} from "@/types/role";
+import {useGetUserMemberships} from "@/api/endpoints/memberships/hooks";
 
 interface MemberCardProps {
     member: User
@@ -40,8 +41,7 @@ export function MemberCard({ member }: MemberCardProps) {
     } = useDashboardStaff()
     const { restaurant, user: currentUser } = useDashboardContext()
     const { data: roles } = useListRestaurantRoles(restaurant._id)
-
-    const membership = member.memberships[0]
+    const { data: membership } = useGetUserMemberships(member._id, restaurant._id)
     const role = roles?.find((r) => r._id === membership?.roleId)
     const roleName = role?.name === "no_role" || !role ? "Sem função" : role.name
 
@@ -113,12 +113,12 @@ export function MemberCard({ member }: MemberCardProps) {
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Função:</span>
                     <Badge>
-                        {getRoleName(member.memberships[0]?.roleId)}
+                        {getRoleName(membership?.roleId)}
                     </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Estado:</span>
-                    {getStatusBadge(member.isActive ? "ativo" : "desativado")}
+                    {getStatusBadge(membership ? (membership.isActive ? "ativo" : "desativado") : "ativo")}
                 </div>
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Último acesso:</span>
