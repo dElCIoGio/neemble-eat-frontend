@@ -234,8 +234,24 @@ export function ItemsTab() {
                 )}
             </div>
 
+            {/* Items Cards (Mobile) */}
+            <div className="sm:hidden space-y-4">
+                {filteredItems.map((item) => (
+                    <ItemCard
+                        key={item._id}
+                        item={item}
+                        selectedItems={selectedItems}
+                        getCategoryName={getCategoryName}
+                        handleSelectItem={handleSelectItem}
+                        setItemToDelete={setItemToDelete}
+                        setDeleteDialogOpen={setDeleteDialogOpen}
+                        handleToggleAvailability={handleToggleAvailability}
+                    />
+                ))}
+            </div>
+
             {/* Items Table */}
-            <div className="border rounded-lg overflow-hidden">
+            <div className="border rounded-lg overflow-hidden hidden sm:block">
                 <div className="overflow-x-auto">
                     <Table>
                         <TableHeader>
@@ -433,4 +449,85 @@ function ItemRow({
         </TableRow>
     )
 
+}
+
+function ItemCard({
+    item,
+    selectedItems,
+    getCategoryName,
+    handleSelectItem,
+    setItemToDelete,
+    setDeleteDialogOpen,
+    handleToggleAvailability
+                 }: {
+    item: Item,
+    selectedItems: string[]
+    getCategoryName: (categoryId: string) => string
+    handleSelectItem: (itemId: string, checked: boolean) => void
+    setItemToDelete: (item: Item | null) => void
+    setDeleteDialogOpen: (isOpen: boolean) => void
+    handleToggleAvailability: (item: Item) => void
+}) {
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
+    const navigate = useNavigate()
+
+    return (
+        <div className="border rounded-lg p-4 space-y-4" onClick={() => navigate(`items/${item.slug}`)}>
+            <div className="flex justify-between items-start">
+                <div className="flex gap-3">
+                    <img
+                        src={item.imageUrl || "/placeholder.svg"}
+                        alt={item.name}
+                        className="w-16 h-16 rounded object-cover"
+                    />
+                    <div>
+                        <div className="font-medium">{item.name}</div>
+                        <Badge variant="outline" className="mt-1">{getCategoryName(item.categoryId)}</Badge>
+                        <div className="mt-1 flex items-center gap-1 text-sm">
+                            Kz
+                            <span>{item.price.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+                <Checkbox
+                    checked={selectedItems.includes(item._id)}
+                    onCheckedChange={(checked) => handleSelectItem(item._id, !!checked)}
+                    onClick={(e) => e.stopPropagation()}
+                />
+            </div>
+            <div className="flex items-center justify-between">
+                <Badge variant={item.isAvailable ? "default" : "secondary"}>
+                    {item.isAvailable ? "Disponível" : "Indisponível"}
+                </Badge>
+                <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                        <DropdownMenuItem onClick={() => navigate(`items/${item.slug}`)}>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleToggleAvailability(item)}>
+                            {item.isAvailable ? "Marcar como indisponível" : "Marcar como disponível"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onSelect={() => {
+                                setIsDropdownOpen(false)
+                                setItemToDelete(item)
+                                setDeleteDialogOpen(true)
+                            }}
+                            className="text-red-600"
+                        >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Excluir
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </div>
+    )
 }
