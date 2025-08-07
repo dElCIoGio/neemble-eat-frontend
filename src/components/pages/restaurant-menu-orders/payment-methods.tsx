@@ -2,12 +2,9 @@ import {ReactNode} from "react";
 import {useOrdersContext} from "@/context/order-context";
 import {SwipeToConfirmButton} from "@/components/pages/restaurant-menu-orders/swipe-to-confirm";
 import {Banknote, CreditCard} from "lucide-react";
-import {showPromiseToast} from "@/utils/notifications/toast";
 import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
 import {useMarkSessionNeedsBill} from "@/api/endpoints/sessions/hooks";
 import {useParams} from "react-router";
-
-
 
 interface Props {
     children: ReactNode;
@@ -22,7 +19,7 @@ export function PaymentMethods({children}: Props) {
 }
 
 PaymentMethods.Confirm = function Confirm() {
-    const {refreshOrders, setBillDialogOpen} = useOrdersContext()
+    const {refreshOrders, setBillDialogOpen, setBillRequested} = useOrdersContext()
     const { session, restaurant } = useRestaurantMenuContext()
     const { tableNumber } = useParams() as unknown as { tableNumber: string }
 
@@ -32,21 +29,16 @@ PaymentMethods.Confirm = function Confirm() {
         tableNumber: Number(tableNumber)
     })
 
-
     const handleRequestBill = async () => {
         setBillDialogOpen(true)
+        setBillRequested(true)
 
-        showPromiseToast(
-            requestBill.mutateAsync()
-                .then(() => {
-                    refreshOrders()
-                }),
-            {
-                loading: "Pedindo a conta...",
-                success: "Conta está a caminho!",
-                error: "Falha ao pedir a conta. Tente novamente."
-            }
-        )
+        try {
+            await requestBill.mutateAsync()
+            refreshOrders()
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return (

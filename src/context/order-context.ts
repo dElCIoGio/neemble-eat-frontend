@@ -10,6 +10,7 @@ interface ContextProps {
     cleanList: () => void
     setBillDialogOpen: (open: boolean) => void
     billRequested: boolean
+    setBillRequested: (requested: boolean) => void
 }
 
 export const OrdersContext = createContext<ContextProps | undefined>(undefined)

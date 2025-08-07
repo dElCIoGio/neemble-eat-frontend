@@ -88,6 +88,7 @@ export function Orders() {
             cleanList,
             setBillDialogOpen: setIsPopupOpen,
             billRequested,
+            setBillRequested,
         }}>
             <div className="p-4">
                 <Background className={`bg-gray-100`}/>
