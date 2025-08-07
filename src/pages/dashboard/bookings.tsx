@@ -18,6 +18,7 @@ import { NewBookingSheet } from "@/components/pages/dashboard-booking/new-bookin
 import { EditBookingSheet } from "@/components/pages/dashboard-booking/edit-booking-sheet"
 import {useDashboardContext} from "@/context/dashboard-context";
 import {useCreateBooking, useGetRestaurantBookingsByDate, useUpdateBooking} from "@/api/endpoints/booking/hooks";
+import {Plus} from "@phosphor-icons/react";
 
 
 
@@ -89,8 +90,8 @@ export default function ReservationsPage() {
         <div className="mx-auto w-full space-y-6">
             {/* Cabeçalho */}
             <div className="flex justify-end space-y-2 sm:space-y-0">
-                <Button size="sm" onClick={() => setIsNewBookingOpen(true)} className="sm:w-auto">
-                    + Nova Reserva
+                <Button effect="expandIcon" icon={Plus} iconPlacement="left" size="sm" onClick={() => setIsNewBookingOpen(true)} className="sm:w-auto">
+                    Nova Reserva
                 </Button>
             </div>
 

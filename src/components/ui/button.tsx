@@ -16,6 +16,7 @@ const buttonVariants = cva(
           secondary: 'bg-zinc-100 text-secondary-foreground hover:bg-zinc-200 cursor-pointer',
           ghost: 'hover:bg-accent hover:text-accent-foreground',
           link: 'text-primary underline-offset-4 hover:underline',
+            modern: "transition-fg relative inline-flex w-fit items-center justify-center overflow-hidden rounded-md outline-none disabled:bg-ui-bg-disabled disabled:border-ui-border-base disabled:text-ui-fg-disabled disabled:shadow-buttons-neutral disabled:after:hidden after:transition-fg after:absolute after:inset-0 after:content-[''] shadow-buttons-inverted text-ui-contrast-fg-primary bg-ui-button-inverted after:button-inverted-gradient hover:bg-ui-button-inverted-hover hover:after:button-inverted-hover-gradient active:bg-ui-button-inverted-pressed active:after:button-inverted-pressed-gradient focus-visible:!shadow-buttons-inverted-focus txt-compact-large-plus gap-x-1.5 px-5 py-3.5"
         },
         effect: {
           expandIcon: 'group gap-0 relative',
@@ -73,8 +74,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps
             {Icon &&
                 iconPlacement === 'left' &&
                 (effect === 'expandIcon' ? (
-                    <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-100 group-hover:pr-2 group-hover:opacity-100">
-                      <Icon />
+                    <div className="w-0 text-white translate-x-[0%] pr-0 opacity-0 hover:opacity-100 transition-all duration-200 group-hover:w-5 group-hover:-translate-x-0.5 group-hover:pr-2 group-hover:opacity-100">
+                      <Icon/>
                     </div>
                 ) : (
                     <Icon />
