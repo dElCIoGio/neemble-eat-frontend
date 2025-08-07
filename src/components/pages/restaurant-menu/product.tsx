@@ -330,10 +330,10 @@ export function ProductContent() {
                             {rule.name}{rule.isRequired && <span className='text-red-500 ml-1'>*</span>}
                         </h2>
                         <span className='text-xs'>
-                            {rule.limitType === "EXACTLY" && `Choose ${rule.limit}`}
-                            {rule.limitType === "UP_TO" && `Up to ${rule.limit}`}
-                            {rule.limitType === "AT_LEAST" && `At least ${rule.limit}`}
-                            {rule.limitType === "ALL" && "Choose all"}
+                            {rule.limitType === "EXACTLY" && `Escolha ${rule.limit}`}
+                            {rule.limitType === "UP_TO" && `Escolha ${rule.limit > 1 && "até"} ${rule.limit} ${rule.limit > 1? "opções": "opção"}`}
+                            {rule.limitType === "AT_LEAST" && `Escolha pelo menos ${rule.limit} ${rule.limit > 1? "opções": "opção"}`}
+                            {rule.limitType === "ALL" && "Escolha todos"}
                         </span>
                     </div>
                     {rule.isRequired && !isRequiredRuleSatisfied(rule) && (

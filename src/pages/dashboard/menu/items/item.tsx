@@ -652,7 +652,7 @@ export default function ItemDetailsPage() {
                                                     </div>
                                                 </div>
 
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div className="space-y-4 mt-10">
                                                     <div className="flex items-center space-x-2">
                                                         <Switch
                                                             checked={customization.isRequired}
@@ -660,114 +660,134 @@ export default function ItemDetailsPage() {
                                                         />
                                                         <Label>Obrigatório</Label>
                                                     </div>
-
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center gap-1">
-                                                            <Label>Tipo de Limite</Label>
-                                                            <TooltipProvider>
-                                                                <Tooltip>
-                                                                    <TooltipTrigger asChild>
-                                                                        <Info className="h-4 w-4 text-muted-foreground" />
-                                                                    </TooltipTrigger>
-                                                                    <TooltipContent>
-                                                                        Defina como os clientes podem escolher as opções. Exemplo: "Até" permite selecionar até o valor limite.
-                                                                    </TooltipContent>
-                                                                </Tooltip>
-                                                            </TooltipProvider>
+                                                    <div className="flex space-x-4">
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center gap-1">
+                                                                <Label>Tipo de Limite</Label>
+                                                                <TooltipProvider>
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <Info
+                                                                                className="h-4 w-4 text-muted-foreground"/>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent>
+                                                                            Defina como os clientes podem escolher as
+                                                                            opções. Exemplo: "Até" permite selecionar
+                                                                            até o valor limite.
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                </TooltipProvider>
+                                                            </div>
+                                                            <Select
+                                                                value={customization.limitType}
+                                                                onValueChange={(value) =>
+                                                                    handleUpdateCustomization(customIndex, "limitType", value as LimitType)
+                                                                }
+                                                            >
+                                                                <SelectTrigger>
+                                                                    <SelectValue/>
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {limitTypeOptions.map((option) => (
+                                                                        <SelectItem key={option.value}
+                                                                                    value={option.value}>
+                                                                            <div>
+                                                                                <div
+                                                                                    className="font-medium">{option.label}</div>
+                                                                                <div
+                                                                                    className="text-xs text-gray-500">{option.description}</div>
+                                                                            </div>
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
                                                         </div>
-                                                        <Select
-                                                            value={customization.limitType}
-                                                            onValueChange={(value) =>
-                                                                handleUpdateCustomization(customIndex, "limitType", value as LimitType)
-                                                            }
-                                                        >
-                                                            <SelectTrigger>
-                                                                <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                {limitTypeOptions.map((option) => (
-                                                                    <SelectItem key={option.value} value={option.value}>
-                                                                        <div>
-                                                                            <div className="font-medium">{option.label}</div>
-                                                                            <div className="text-xs text-gray-500">{option.description}</div>
-                                                                        </div>
-                                                                    </SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
+
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center gap-1">
+                                                                <Label>Limite</Label>
+                                                                <TooltipProvider>
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger asChild>
+                                                                            <Info
+                                                                                className="h-4 w-4 text-muted-foreground"/>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent>
+                                                                            Quantidade permitida conforme o tipo de
+                                                                            limite selecionado.
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                </TooltipProvider>
+                                                            </div>
+                                                            <Input
+                                                                type="number"
+                                                                min="1"
+                                                                value={customization.limit}
+                                                                onChange={(e) =>
+                                                                    handleUpdateCustomization(customIndex, "limit", Number.parseInt(e.target.value) || 1)
+                                                                }
+                                                            />
+                                                        </div>
                                                     </div>
 
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center gap-1">
-                                                            <Label>Limite</Label>
-                                                            <TooltipProvider>
-                                                                <Tooltip>
-                                                                    <TooltipTrigger asChild>
-                                                                        <Info className="h-4 w-4 text-muted-foreground" />
-                                                                    </TooltipTrigger>
-                                                                    <TooltipContent>
-                                                                        Quantidade permitida conforme o tipo de limite selecionado.
-                                                                    </TooltipContent>
-                                                                </Tooltip>
-                                                            </TooltipProvider>
-                                                        </div>
-                                                        <Input
-                                                            type="number"
-                                                            min="1"
-                                                            value={customization.limit}
-                                                            onChange={(e) =>
-                                                                handleUpdateCustomization(customIndex, "limit", Number.parseInt(e.target.value) || 1)
-                                                            }
-                                                        />
-                                                    </div>
+
                                                 </div>
 
-                                                <Separator />
+                                                <Separator/>
 
                                                 {/* Options */}
                                                 <div className="space-y-4">
                                                     <div className="flex items-center justify-between">
                                                         <Label className="text-base font-medium">Opções</Label>
-                                                        <Button variant="outline" size="sm" onClick={() => handleAddOption(customIndex)}>
-                                                            <Plus className="h-4 w-4 mr-2" />
+                                                        <Button variant="outline" size="sm"
+                                                                onClick={() => handleAddOption(customIndex)}>
+                                                            <Plus className="h-4 w-4 mr-2"/>
                                                             Adicionar Opção
                                                         </Button>
                                                     </div>
 
                                                     {customization.options.length === 0 ? (
                                                         <Alert>
-                                                        <AlertDescription>Adicione pelo menos uma opção para os clientes escolherem.</AlertDescription>
+                                                            <AlertDescription>Adicione pelo menos uma opção para os
+                                                                clientes escolherem.</AlertDescription>
                                                         </Alert>
                                                     ) : (
                                                         <div className="space-y-3">
                                                             {customization.options.map((option, optionIndex) => (
-                                                                <div key={optionIndex} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                                                    <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                                <div key={optionIndex}
+                                                                     className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                                                    <div
+                                                                        className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
                                                                         <div className="space-y-1">
-                                                                            <Label className="text-xs">Nome da Opção</Label>
+                                                                            <Label className="text-xs">Nome da
+                                                                                Opção</Label>
                                                                             <Input
-                                                            value={option.name}
-                                                            onChange={(e) => handleUpdateOption(customIndex, optionIndex, "name", e.target.value)}
-                                                            placeholder="ex.: Pequeno, Grande"
+                                                                                value={option.name}
+                                                                                onChange={(e) => handleUpdateOption(customIndex, optionIndex, "name", e.target.value)}
+                                                                                placeholder="ex.: Pequeno, Grande"
                                                                             />
                                                                         </div>
 
                                                                         <div className="space-y-1">
                                                                             <div className="flex items-center gap-1">
-<Label className="text-xs">Modificador de Preço</Label>
+                                                                                <Label className="text-xs">Modificador
+                                                                                    de Preço</Label>
                                                                                 <TooltipProvider>
                                                                                     <Tooltip>
                                                                                         <TooltipTrigger asChild>
-                                                                                            <Info className="h-3 w-3 text-muted-foreground" />
+                                                                                            <Info
+                                                                                                className="h-3 w-3 text-muted-foreground"/>
                                                                                         </TooltipTrigger>
                                                                                         <TooltipContent>
-                                                                                            Valor extra somado ao preço do item quando selecionado.
+                                                                                            Valor extra somado ao preço
+                                                                                            do item quando selecionado.
                                                                                         </TooltipContent>
                                                                                     </Tooltip>
                                                                                 </TooltipProvider>
                                                                             </div>
                                                                             <div className="relative">
-                                                                                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+                                                                                <DollarSign
+                                                                                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3"/>
                                                                                 <Input
                                                                                     type="number"
                                                                                     step="0.01"

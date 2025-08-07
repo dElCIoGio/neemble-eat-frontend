@@ -383,7 +383,7 @@ export default function CategoryDetailsPage() {
                                 </div>
 
                                 {/* Position */}
-                                <div className="space-y-2">
+                                <div className="space-y-2 hidden">
                                     <Label>Posição de Exibição</Label>
                                     {isEditing.position ? (
                                         <div className="flex items-center gap-2">

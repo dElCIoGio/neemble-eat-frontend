@@ -21,10 +21,10 @@ export function useUpdateItem() {
             itemsApi.updateItem(itemId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["item"]})
-            showSuccessToast("Item updated successfully")
+            showSuccessToast("Item atualizado com sucesso")
         },
         onError: () => {
-            showErrorToast("Failed to update item")
+            showErrorToast("Houve uma falha ao atualizar o item")
         }
     })
 }
