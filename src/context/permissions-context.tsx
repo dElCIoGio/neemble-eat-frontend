@@ -16,6 +16,7 @@ export function PermissionsProvider({ children }: { children: ReactNode }) {
     const hasPermission = useCallback(
         (section: string, operation: Permissions) => {
             if (!role) return false
+            if (role && role.name == "Administrador") return true
             return checkRolePermission(role, section, operation)
         },
         [role]

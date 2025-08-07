@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/tooltip"
 import {Sections} from "@/types/role";
 import {usePermissions} from "@/context/permissions-context";
+import {useGetUserMemberships} from "@/api/endpoints/memberships/hooks";
 
 interface MemberRowProps {
     user: User
@@ -54,7 +55,10 @@ export default function MemberRow({ user }: MemberRowProps) {
     const { data: roles } = useListRestaurantRoles(restaurant._id)
     const filteredRoles = (roles ?? []).filter(r => r.name !== "no_role")
 
-    const membership = user.memberships[0]
+    const {
+        data: membership,
+    } = useGetUserMemberships(user._id, restaurant._id)
+
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isSheetOpen, setIsSheetOpen] = useState(false)
 
@@ -66,6 +70,7 @@ export default function MemberRow({ user }: MemberRowProps) {
         setIsMenuOpen(false)
         setIsSheetOpen(true)
     }
+
 
     return (
         <>
