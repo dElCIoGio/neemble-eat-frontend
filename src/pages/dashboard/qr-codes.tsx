@@ -12,6 +12,16 @@ import {cn} from "@/lib/utils";
 import {Table} from "@/types/table";
 import {PermissionGate} from "@/components/ui/permission-gate";
 import {Sections} from "@/types/role";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const MAXIMUM_TABLES = 20;
 
@@ -20,6 +30,8 @@ export default function QrTables() {
 
     const [isAdding, setIsAdding] = useState<boolean>(false);
     const [isReducing, setIsReducing] = useState<boolean>(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [tableToRemove, setTableToRemove] = useState<Table | null>(null);
 
     const isDesktop = !useIsMobile();
     const {restaurant} = useDashboardContext();
@@ -28,13 +40,16 @@ export default function QrTables() {
     function handleRemoveTable(tableID: string) {
         setIsAdding(false);
         setIsReducing(true);
-        showPromiseToast(tableApi.deleteTable(tableID)
+        const promise = tableApi.deleteTable(tableID)
             .then(() => {
                 removeTable(tableID);
+            })
+            .finally(() => {
                 setIsReducing(false);
-            }).catch(() => {
-                setIsReducing(false);
-            }), {
+                setDeleteDialogOpen(false);
+                setTableToRemove(null);
+            });
+        showPromiseToast(promise, {
             loading: "Removendo mesa...",
             success: "Mesa removida com sucesso!",
             error: "Erro ao remover mesa. Tente novamente."
@@ -91,8 +106,10 @@ export default function QrTables() {
                         className="hover:bg-zinc-200 w-fit border border-zinc-200"
                         onClick={() => {
                             const last = tables.at(-1);
-                            if (last != undefined)
-                                handleRemoveTable(last._id);
+                            if (last != undefined) {
+                                setTableToRemove(last);
+                                setDeleteDialogOpen(true);
+                            }
                         }}
                     >
                         {isReducing ? (
@@ -137,6 +154,23 @@ export default function QrTables() {
                     <TableQRCodeDisplay table={table} index={index} key={index}/>
                 ))}
             </div>
+
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Remover mesa</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Reduzir o número de mesas pode afetar pedidos em andamento, a disponibilidade do QR Code e os relatórios do restaurante. Tem certeza que deseja continuar?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => tableToRemove && handleRemoveTable(tableToRemove._id)} className="bg-red-600 hover:bg-red-700">
+                            Remover
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
