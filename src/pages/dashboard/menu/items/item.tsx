@@ -24,6 +24,7 @@ import {
     useDeleteCustomization,
 } from "@/api/endpoints/item/hooks"
 import { showErrorToast } from "@/utils/notifications/toast"
+import { formatCurrency } from "@/utils/format-currency"
 
 const limitTypeOptions = [
     { value: "UP_TO", label: "Até", description: "Permite selecionar até o número máximo de opções" },
@@ -40,11 +41,6 @@ export default function ItemDetailsPage() {
     const toggleAvailability = useToggleItemAvailability()
     const updateItemImage = useUpdateItemImage()
     const deleteCustomization = useDeleteCustomization()
-
-    const getCategoryName = (categoryId: string) => {
-        const category = categories?.find((cat) => cat._id === categoryId)
-        return category?.name || "Desconhecida"
-    }
 
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({})
     const [editValues, setEditValues] = useState<PartialItem | null>(null)
@@ -363,21 +359,20 @@ export default function ItemDetailsPage() {
                                                         className={errors.name ? "border-red-500" : ""}
                                                         autoFocus
                                                     />
-                                                    <Button size="sm" onClick={() => saveField("name")}>
+                                                    <Button size="sm" onClick={() => saveField("name")}> 
                                                         <Save className="h-4 w-4" />
                                                     </Button>
-                                                    <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("name")}>
+                                                    <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("name")}> 
                                                         <X className="h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center justify-between group" onClick={() => startEditing("name") }>
-                                                    <span className="text-lg font-medium cursor-text">{item.name}</span>
+                                                <div className="flex items-center justify-between p-2 border rounded-md cursor-text" onClick={() => startEditing("name") }>
+                                                    <span className="text-lg font-medium">{item.name}</span>
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
                                                         onClick={() => startEditing("name")}
-                                                        className="opacity-0 group-hover:opacity-100 transition-opacity"
                                                     >
                                                         <Edit2 className="h-4 w-4" />
                                                     </Button>
@@ -405,21 +400,20 @@ export default function ItemDetailsPage() {
                                                             autoFocus
                                                         />
                                                     </div>
-                                                    <Button size="sm" onClick={() => saveField("price")}>
+                                                    <Button size="sm" onClick={() => saveField("price")}> 
                                                         <Save className="h-4 w-4" />
                                                     </Button>
-                                                    <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("price")}>
+                                                    <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("price")}> 
                                                         <X className="h-4 w-4" />
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center justify-between group" onClick={() => startEditing("price") }>
-                                                    <span className="text-lg font-medium text-green-600 cursor-text">${item.price.toFixed(2)}</span>
+                                                <div className="flex items-center justify-between p-2 border rounded-md cursor-text" onClick={() => startEditing("price") }>
+                                                    <span className="text-lg font-medium text-green-600">{formatCurrency(item.price)}</span>
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
                                                         onClick={() => startEditing("price")}
-                                                        className="opacity-0 group-hover:opacity-100 transition-opacity"
                                                     >
                                                         <Edit2 className="h-4 w-4" />
                                                     </Button>
@@ -431,43 +425,29 @@ export default function ItemDetailsPage() {
                                         {/* Category */}
                                         <div className="space-y-2">
                                             <Label>Categoria</Label>
-                                            {isEditing.categoryId ? (
-                                                <div className="flex items-center gap-2">
-                                                    <Select
-                                                        value={editValues?.categoryId || ""}
-                                                        onValueChange={(value) => {handleInputChange("categoryId", value); saveField("categoryId")}}
-                                                    >
-                                                        <SelectTrigger className={errors.categoryId ? "border-red-500" : ""}>
-                                                            <SelectValue placeholder="Selecione a categoria" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {categories?.map((category) => (
-                                                                <SelectItem key={category._id} value={category._id}>
-                                                                    {category.name}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                    <Button size="sm" onClick={() => saveField("categoryId")}> 
-                                                        <Save className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("categoryId")}>
-                                                        <X className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex items-center justify-between group" onClick={() => startEditing("categoryId") }>
-                                                    <span className="text-lg font-medium cursor-text">{getCategoryName(item.categoryId)}</span>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        onClick={() => startEditing("categoryId")}
-                                                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    >
-                                                        <Edit2 className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            )}
+                                            <div className="flex items-center gap-2">
+                                                <Select
+                                                    value={editValues?.categoryId || ""}
+                                                    onValueChange={(value) => handleInputChange("categoryId", value)}
+                                                >
+                                                    <SelectTrigger className={errors.categoryId ? "border-red-500" : ""}>
+                                                        <SelectValue placeholder="Selecione a categoria" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {categories?.map((category) => (
+                                                            <SelectItem key={category._id} value={category._id}>
+                                                                {category.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                <Button size="sm" onClick={() => saveField("categoryId")}> 
+                                                    <Save className="h-4 w-4" />
+                                                </Button>
+                                                <Button size="sm" variant="outline" data-action="cancel" onClick={() => cancelEditing("categoryId")}> 
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                             {errors.categoryId && <p className="text-sm text-red-500">{errors.categoryId}</p>}
                                         </div>
 
@@ -495,14 +475,14 @@ export default function ItemDetailsPage() {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="group" onClick={() => startEditing("description") }>
-                                                    <div className="flex items-start justify-between p-3 border border-transparent rounded-md hover:border-gray-200 transition-colors cursor-text">
+                                                <div onClick={() => startEditing("description") }>
+                                                    <div className="flex items-start justify-between p-3 border rounded-md cursor-text">
                                                         <p className="text-gray-700 flex-1">{item.description || "Nenhuma descrição fornecida"}</p>
                                                         <Button
                                                             size="sm"
                                                             variant="ghost"
                                                             onClick={() => startEditing("description")}
-                                                            className="opacity-0 group-hover:opacity-100 transition-opacity ml-2"
+                                                            className="ml-2"
                                                         >
                                                             <Edit2 className="h-4 w-4" />
                                                         </Button>

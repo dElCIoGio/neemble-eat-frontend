@@ -96,20 +96,20 @@ export function OverviewTab({ menu, onUpdate, isUpdating = false }: OverviewTabP
                                 <Button size="sm" onClick={handleNameSave} disabled={isUpdating}>
                                     {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
                                 </Button>
+                        
                                 <Button size="sm" variant="outline" data-action="cancel" onClick={handleNameCancel} disabled={isUpdating}>
                                     <X className="h-4 w-4" />
                                 </Button>
                             </div>
                         ) : (
-                            <div className="flex items-center gap-2 group" onClick={() => setIsEditingName(true)}>
-                                <div className="flex-1 p-2 border border-transparent rounded-md hover:border-gray-200 transition-colors cursor-text">
+                            <div className="flex items-center gap-2" onClick={() => setIsEditingName(true)}>
+                                <div className="flex-1 p-2 border rounded-md cursor-text">
                                     <span className="text-sm font-medium">{menu.name}</span>
                                 </div>
                                 <Button
                                     size="sm"
                                     variant="ghost"
                                     onClick={() => setIsEditingName(true)}
-                                    className="opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                     <Edit2 className="h-4 w-4" />
                                 </Button>
@@ -143,14 +143,14 @@ export function OverviewTab({ menu, onUpdate, isUpdating = false }: OverviewTabP
                                 </div>
                             </div>
                         ) : (
-                            <div className="group" onClick={() => setIsEditingDescription(true)}>
-                                <div className="p-2 border border-transparent rounded-md hover:border-gray-200 transition-colors min-h-[80px] flex items-start justify-between cursor-text">
+                            <div onClick={() => setIsEditingDescription(true)}>
+                                <div className="p-2 border rounded-md min-h-[80px] flex items-start justify-between cursor-text">
                                     <p className="text-sm text-gray-600 flex-1">{menu.description}</p>
                                     <Button
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => setIsEditingDescription(true)}
-                                        className="opacity-0 group-hover:opacity-100 transition-opacity ml-2"
+                                        className="ml-2"
                                     >
                                         <Edit2 className="h-4 w-4" />
                                     </Button>
