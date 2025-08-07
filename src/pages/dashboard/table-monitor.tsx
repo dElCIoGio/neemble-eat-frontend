@@ -12,6 +12,7 @@ import type { TableSession } from "@/types/table-session"
 import { useDashboardContext } from "@/context/dashboard-context"
 import { useListRestaurantTables } from "@/api/endpoints/tables/hooks"
 import { useGetSessionOrders } from "@/api/endpoints/orders/hooks"
+import { ordersApi } from "@/api/endpoints/orders/requests"
 import { sessionApi } from "@/api/endpoints/sessions/requests"
 import { tableApi } from "@/api/endpoints/tables/requests"
 import useWebSocket from "@/hooks/use-web-socket"
@@ -79,6 +80,7 @@ export default function TableMonitor() {
     const { data: tables = [], isLoading } = useListRestaurantTables(restaurant._id)
 
     const [sessions, setSessions] = useState<Record<string, TableSession>>({})
+    const [firstOrderTimes, setFirstOrderTimes] = useState<Record<string, string>>({})
 
     useEffect(() => {
         sessionApi.listActiveSessions(restaurant._id).then((data) => {
@@ -92,6 +94,40 @@ export default function TableMonitor() {
             setSessions(mapping)
         })
     }, [restaurant._id, tables])
+
+    useEffect(() => {
+        const fetchFirstOrderTimes = async () => {
+            const entries = await Promise.all(
+                Object.values(sessions).map(async (session) => {
+                    if (!session.orders || session.orders.length === 0) return null
+                    try {
+                        const orders = await ordersApi.listSessionOrders(session._id)
+                        if (!orders || orders.length === 0) return null
+                        const earliest = orders.reduce((earliest, order) =>
+                            toDateTime(order.orderTime).toMillis() <
+                            toDateTime(earliest.orderTime).toMillis()
+                                ? order
+                                : earliest
+                        )
+                        return [session.tableId, earliest.orderTime] as [string, string]
+                    } catch (error) {
+                        console.error("Error fetching session orders", error)
+                        return null
+                    }
+                })
+            )
+            const mapping: Record<string, string> = {}
+            entries.forEach((entry) => {
+                if (entry) {
+                    const [tableId, time] = entry
+                    mapping[tableId] = time
+                }
+            })
+            setFirstOrderTimes(mapping)
+        }
+
+        fetchFirstOrderTimes()
+    }, [sessions])
 
     const handleSessionUpdate = useCallback((event: MessageEvent) => {
         try {
@@ -322,10 +358,10 @@ export default function TableMonitor() {
                                     </div>
                                     {session && session.orders.length > 0 && (
                                         <div className="mt-2 space-y-1 text-xs text-gray-600">
-                                            {session.startTime && (
+                                            {firstOrderTimes[table._id] && (
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="h-3 w-3" />
-                                                    {formatDuration(session.startTime)}
+                                                    {formatDuration(firstOrderTimes[table._id])}
                                                 </div>
                                             )}
                                             {session.total && (
