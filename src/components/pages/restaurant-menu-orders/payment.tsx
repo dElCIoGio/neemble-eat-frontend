@@ -14,6 +14,7 @@ export function Payment() {
 
     const [tip, setTip] = useState<number>(0);
     const [paymentMethodShowing, setPaymentMethodShowing] = useState<boolean>(false)
+    const hasUnreadyOrders = orders?.some(order => !["ready", "served", "cancelled"].includes(order.prepStatus)) ?? false
 
     useEffect(() => {
         if (orders) {
@@ -26,7 +27,7 @@ export function Payment() {
     }, [orders]);
 
     function toggleShowPaymentMethods() {
-        if ((sessionPrice + tip) != 0 && !billRequested) {
+        if ((sessionPrice + tip) != 0 && !billRequested && !hasUnreadyOrders) {
             setPaymentMethodShowing(!paymentMethodShowing)
         }
     }
@@ -54,17 +55,18 @@ export function Payment() {
                                 </button>
                             ) : (
                                 <button
-                                    className={`px-7 py-3 ${(sessionPrice + tip) == 0 ? "bg-gray-600 cursor-not-allowed" : "bg-black"} text-sm hover:bg-gray-600 transition duration-100 text-white rounded-full `}
+                                    className={`px-7 py-3 ${(sessionPrice + tip) == 0 || hasUnreadyOrders ? "bg-gray-600 cursor-not-allowed" : "bg-black"} text-sm hover:bg-gray-600 transition duration-100 text-white rounded-full `}
                                     onClick={toggleShowPaymentMethods}
+                                    disabled={(sessionPrice + tip) == 0 || hasUnreadyOrders}
                                 >
-                                    Pedir Conta
+                                    {hasUnreadyOrders ? "Há pedidos em preparo" : "Pedir Conta"}
                                 </button>
                             )
                         }
                     </div>
                 </div>
                 {
-                    paymentMethodShowing && !billRequested &&
+                    paymentMethodShowing && !billRequested && !hasUnreadyOrders &&
                     <div className='mt-3 border-t border-gray-100 pt-3'>
                         <div className='flex mb-3 items-center'>
                             <h1 className='mr-2 hidden'>
