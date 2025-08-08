@@ -99,24 +99,26 @@ export default function MenuManagementPage() {
                 <div className=" mx-auto ">
                     {/* Header */}
                     <div className="flex items-center justify-between py-4">
-                        <div className="flex items-center gap-4">
+                        <div className="flex w-full items-center gap-4">
                             <Link to="..">
                                 <Button variant="ghost" size="sm">
-                                    <ArrowLeft className="h-4 w-4" />
+                                    <ArrowLeft className="h-4 w-4"/>
                                 </Button>
                             </Link>
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-row w-full justify-between items-center gap-3">
                                 <div>
                                     <h1 className="text-2xl font-bold text-gray-900">{menu.name}</h1>
                                 </div>
 
                                 {isCurrentMenu && (
-                                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                    <Badge variant="secondary" className="border border-green-200 bg-green-100 text-green-800">
                                         Cardápio atual
                                     </Badge>
                                 )}
                             </div>
                         </div>
+                    </div>
+                    <div className="flex justify-end">
                         <div className="flex items-center gap-2">
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -131,21 +133,21 @@ export default function MenuManagementPage() {
                                 )}
                             </Tooltip>
                         </div>
+
                     </div>
+
                     <div className="flex justify-end my-8 gap-2">
                         {activeTab === "categories" && (
-                            <Button asChild variant="outline" size="sm">
+                            <Button asChild icon={Plus} iconPlacement="left" effect="expandIcon" variant="outline" size="sm">
                                 <Link to="categories/create">
-                                    <Plus className="h-4 w-4 mr-2" />
                                     Adicionar categoria
                                 </Link>
 
                             </Button>
                         )}
                         {activeTab === "items" && (
-                            <Button asChild variant="outline" size="sm">
+                            <Button asChild icon={Plus} iconPlacement="left" effect="expandIcon" variant="outline" size="sm">
                                 <Link to="items/create">
-                                    <Plus className="h-4 w-4 mr-2" />
                                     Adicionar item
                                 </Link>
                             </Button>
@@ -186,13 +188,13 @@ export default function MenuManagementPage() {
 
                         <div className="mt-6 pb-8">
                             <TabsContent value="overview" className="mt-0">
-                                <OverviewTab menu={menu} onUpdate={handleMenuUpdate} isUpdating={isUpdating} />
+                                <OverviewTab menu={menu} onUpdate={handleMenuUpdate} isUpdating={isUpdating}/>
                             </TabsContent>
                             <TabsContent value="categories" className="mt-0">
-                                <CategoriesTab  />
+                                <CategoriesTab/>
                             </TabsContent>
                             <TabsContent value="items" className="mt-0">
-                                <ItemsTab />
+                                <ItemsTab/>
                             </TabsContent>
                         </div>
                     </Tabs>

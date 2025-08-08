@@ -130,7 +130,7 @@ export default function OnboardingPage() {
     }
 
     return (
-        <OnboardingContext value={{
+        <OnboardingContext.Provider value={{
             handleSubmit
         }}>
             <OnboardingLayout>
@@ -159,6 +159,6 @@ export default function OnboardingPage() {
                     />
                 )}
             </OnboardingLayout>
-        </OnboardingContext>
+        </OnboardingContext.Provider>
     )
 }

@@ -324,7 +324,7 @@ export default function RestaurantDashboard(): JSX.Element {
                     <WelcomeBanner />
                     <DashboardHomeHeader />
 
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                         <MetricCard
                             title="Total de Vendas"
                             value={salesSummary?.totalSales}
@@ -352,15 +352,18 @@ export default function RestaurantDashboard(): JSX.Element {
                             isLoading={isSalesSummaryLoading}
                             info="Média de valor das faturas emitidas"
                         />
-                        <MetricCard
-                            title="Mesas Servidas"
-                            value={salesSummary?.distinctTables}
-                            growth={salesSummary?.distinctTablesGrowth ?? 0}
-                            icon={Users}
-                            format="number"
-                            isLoading={isSalesSummaryLoading}
-                            info="Quantidade de mesas atendidas"
-                        />
+                        <div className="hidden">
+                            <MetricCard
+                                title="Mesas Servidas"
+                                value={salesSummary?.distinctTables}
+                                growth={salesSummary?.distinctTablesGrowth ?? 0}
+                                icon={Users}
+                                format="number"
+                                isLoading={isSalesSummaryLoading}
+                                info="Quantidade de mesas atendidas"
+                            />
+                        </div>
+
                         <MetricCard
                             title="Receita por Mesa"
                             value={salesSummary?.revenuePerTable}

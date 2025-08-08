@@ -25,6 +25,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import {formatCurrency} from "@/utils/format-currency";
 
 
 export function ItemsTab() {
@@ -473,7 +474,7 @@ function ItemCard({
     const navigate = useNavigate()
 
     return (
-        <div className="border rounded-lg p-4 space-y-4" onClick={() => navigate(`items/${item.slug}`)}>
+        <div className="border bg-zinc-100 rounded-lg p-4 space-y-4" onClick={() => navigate(`items/${item.slug}`)}>
             <div className="flex justify-between items-start">
                 <div className="flex gap-3">
                     <img
@@ -483,10 +484,9 @@ function ItemCard({
                     />
                     <div>
                         <div className="font-medium">{item.name}</div>
-                        <Badge variant="outline" className="mt-1">{getCategoryName(item.categoryId)}</Badge>
+                        <Badge className="mt-1">{getCategoryName(item.categoryId)}</Badge>
                         <div className="mt-1 flex items-center gap-1 text-sm">
-                            Kz
-                            <span>{item.price.toFixed(2)}</span>
+                            {formatCurrency(item.price)}
                         </div>
                     </div>
                 </div>

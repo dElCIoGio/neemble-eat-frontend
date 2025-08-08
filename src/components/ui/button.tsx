@@ -74,7 +74,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps & ButtonIconProps
             {Icon &&
                 iconPlacement === 'left' &&
                 (effect === 'expandIcon' ? (
-                    <div className="w-0 text-white translate-x-[0%] pr-0 opacity-0 hover:opacity-100 transition-all duration-200 group-hover:w-5 group-hover:-translate-x-0.5 group-hover:pr-2 group-hover:opacity-100">
+                    <div className={`w-0 ${variant == "default"? "text-white": variant == "outline"? "text-black": ""} translate-x-[0%] pr-0 opacity-0 hover:opacity-100 transition-all duration-200 group-hover:w-5 group-hover:-translate-x-0.5 group-hover:pr-2 group-hover:opacity-100`}>
                       <Icon/>
                     </div>
                 ) : (
