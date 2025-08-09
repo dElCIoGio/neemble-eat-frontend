@@ -1,7 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Lightbulb, Info, TrendingUp, Users, ChefHat } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import type { PerformanceInsightResponse, OccupancyInsightResponse, ItemsInsightResponse } from "@/types/insights"
+import type {
+    PerformanceInsightResponse,
+    OccupancyInsightResponse,
+    ItemsInsightResponse,
+} from "@/types/insights"
 
 interface InsightsCardProps {
     performance?: PerformanceInsightResponse
@@ -11,9 +15,9 @@ interface InsightsCardProps {
 
 export default function InsightsCard({ performance, occupancy, items }: InsightsCardProps) {
     const cards = [
-        { title: "Desempenho", insight: performance?.insight, icon: TrendingUp, color: "blue" },
-        { title: "Ocupação", insight: occupancy?.insight, icon: Users, color: "green" },
-        { title: "Itens", insight: items?.insight, icon: ChefHat, color: "amber" },
+        { title: "Desempenho", insight: performance?.insight, icon: TrendingUp },
+        { title: "Ocupação", insight: occupancy?.insight, icon: Users },
+        { title: "Itens", insight: items?.insight, icon: ChefHat },
     ]
 
     return (
@@ -32,17 +36,17 @@ export default function InsightsCard({ performance, occupancy, items }: Insights
             </div>
             <div className="grid gap-4 md:grid-cols-3">
                 {cards.map(({ title, insight, icon: Icon }, index) => (
-                    <Card className={`font-poppins pb-0 bg-zinc-100`} key={`insight-${index}`}>
-                        <CardHeader className="p-0">
-                            <CardTitle className="flex items-center space-x-2">
-                                <Icon className={`h-4 w-4`} />
-                                <span>{title}</span>
+                    <Card className="bg-zinc-100 py-0 flex flex-col" key={`insight-${index}`}>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                {title}
                             </CardTitle>
+                            <Icon className="h-4 w-4 text-purple-700" />
                         </CardHeader>
-                        <CardContent className="m-0 p-0">
-                            <div className="border p-4 border-purple-200 bg-purple-50 rounded-xl">
-                                <p className="text-sm leading-relaxed">{insight || "Sem dados disponíveis."}</p>
-                            </div>
+                        <CardContent>
+                            <p className="text-sm leading-relaxed">
+                                {insight || "Sem dados disponíveis."}
+                            </p>
                         </CardContent>
                     </Card>
                 ))}
