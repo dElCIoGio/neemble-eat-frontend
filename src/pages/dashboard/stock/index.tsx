@@ -328,8 +328,19 @@ export default function StockManagement() {
 
     // Add new recipe
     const handleAddRecipe = () => {
-        if (!newRecipe.menuItemId || newRecipe.ingredients.some((ing) => !ing.productId || !ing.quantity)) {
+        if (
+            !newRecipe.menuItemId ||
+            newRecipe.ingredients.some((ing) => !ing.productId || !ing.quantity)
+        ) {
             showErrorToast("Erro", "Por favor, preencha todos os campos da receita.")
+            return
+        }
+
+        if (
+            Number.parseInt(newRecipe.servings) <= 0 ||
+            newRecipe.ingredients.some((ing) => Number.parseFloat(ing.quantity) <= 0)
+        ) {
+            showErrorToast("Erro", "As porções e quantidades devem ser maiores que zero.")
             return
         }
 
@@ -427,6 +438,25 @@ export default function StockManagement() {
             return
         }
 
+        const quantity = Number.parseFloat(newProduct.quantity)
+        const minQuantity = Number.parseFloat(newProduct.minQuantity)
+        const maxQuantity = newProduct.maxQuantity ? Number.parseFloat(newProduct.maxQuantity) : undefined
+        const cost = Number.parseFloat(newProduct.cost) || 0
+        const reorderPoint = newProduct.reorderPoint ? Number.parseFloat(newProduct.reorderPoint) : undefined
+        const reorderQuantity = newProduct.reorderQuantity ? Number.parseFloat(newProduct.reorderQuantity) : undefined
+
+        if (
+            quantity < 0 ||
+            minQuantity < 0 ||
+            (maxQuantity !== undefined && maxQuantity < 0) ||
+            cost < 0 ||
+            (reorderPoint !== undefined && reorderPoint < 0) ||
+            (reorderQuantity !== undefined && reorderQuantity < 0)
+        ) {
+            showErrorToast("Erro", "Os valores numéricos não podem ser negativos.")
+            return
+        }
+
         if (newProduct.expiryDate) {
             const today = new Date()
             today.setHours(0, 0, 0, 0)
@@ -441,18 +471,18 @@ export default function StockManagement() {
             name: newProduct.name,
             unit: newProduct.unit,
             category: newProduct.category,
-            currentQuantity: Number.parseFloat(newProduct.quantity),
-            minQuantity: Number.parseFloat(newProduct.minQuantity),
-            maxQuantity: newProduct.maxQuantity ? Number.parseFloat(newProduct.maxQuantity) : undefined,
+            currentQuantity: quantity,
+            minQuantity,
+            maxQuantity,
             supplier: newProduct.supplier,
             lastEntry: getCurrentDate().toISOString(),
             notes: newProduct.notes,
-            cost: Number.parseFloat(newProduct.cost) || 0,
+            cost,
             expiryDate: newProduct.expiryDate,
             location: newProduct.location,
             autoReorder: newProduct.autoReorder,
-            reorderPoint: newProduct.reorderPoint ? Number.parseFloat(newProduct.reorderPoint) : undefined,
-            reorderQuantity: newProduct.reorderQuantity ? Number.parseFloat(newProduct.reorderQuantity) : undefined,
+            reorderPoint,
+            reorderQuantity,
             status: "OK" as const,
             restaurantId: restaurant._id,
         }
@@ -596,6 +626,14 @@ export default function StockManagement() {
 
     const handleEditProduct = () => {
         if (!editProduct) return
+        if (
+            editProduct.currentQuantity < 0 ||
+            editProduct.minQuantity < 0 ||
+            (editProduct.cost || 0) < 0
+        ) {
+            showErrorToast("Erro", "Os valores numéricos não podem ser negativos.")
+            return
+        }
 
         showPromiseToast(
             updateStockItemMutation
@@ -650,6 +688,10 @@ export default function StockManagement() {
         }
 
         const quantity = Number.parseFloat(movementForm.quantity)
+        if (quantity <= 0) {
+            showErrorToast("Erro", "A quantidade deve ser maior que zero.")
+            return
+        }
         const data: MovementCreate = {
             productId: product._id,
             productName: product.name,
@@ -734,9 +776,19 @@ export default function StockManagement() {
 
     const handleUpdateRecipe = () => {
         if (!editRecipe) return
-
-        if (!editRecipe.menuItemId || editRecipe.ingredients.some(ing => !ing.productId || !ing.quantity)) {
+        if (
+            !editRecipe.menuItemId ||
+            editRecipe.ingredients.some(ing => !ing.productId || !ing.quantity)
+        ) {
             showErrorToast("Erro", "Por favor, preencha todos os campos da receita.")
+            return
+        }
+
+        if (
+            Number.parseInt(editRecipe.servings) <= 0 ||
+            editRecipe.ingredients.some(ing => Number.parseFloat(ing.quantity) <= 0)
+        ) {
+            showErrorToast("Erro", "As porções e quantidades devem ser maiores que zero.")
             return
         }
 
@@ -1349,6 +1401,7 @@ export default function StockManagement() {
                                     id="quantity"
                                     type="number"
                                     placeholder="0"
+                                    min="0"
                                     value={newProduct.quantity}
                                     onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
                                 />
@@ -1360,6 +1413,7 @@ export default function StockManagement() {
                                     type="number"
                                     step="0.01"
                                     placeholder="0.00"
+                                    min="0"
                                     value={newProduct.cost}
                                     onChange={(e) => setNewProduct({ ...newProduct, cost: e.target.value })}
                                 />
@@ -1373,6 +1427,7 @@ export default function StockManagement() {
                                     id="minQuantity"
                                     type="number"
                                     placeholder="0"
+                                    min="0"
                                     value={newProduct.minQuantity}
                                     onChange={(e) => setNewProduct({ ...newProduct, minQuantity: e.target.value })}
                                 />
@@ -1383,6 +1438,7 @@ export default function StockManagement() {
                                     id="maxQuantity"
                                     type="number"
                                     placeholder="0"
+                                    min="0"
                                     value={newProduct.maxQuantity}
                                     onChange={(e) => setNewProduct({ ...newProduct, maxQuantity: e.target.value })}
                                 />
@@ -1435,23 +1491,25 @@ export default function StockManagement() {
                             <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg">
                                 <div>
                                     <Label htmlFor="reorderPoint">Ponto de Reposição</Label>
-                                    <Input
-                                        id="reorderPoint"
-                                        type="number"
-                                        placeholder="0"
-                                        value={newProduct.reorderPoint}
-                                        onChange={(e) => setNewProduct({ ...newProduct, reorderPoint: e.target.value })}
-                                    />
+                                <Input
+                                    id="reorderPoint"
+                                    type="number"
+                                    placeholder="0"
+                                    min="0"
+                                    value={newProduct.reorderPoint}
+                                    onChange={(e) => setNewProduct({ ...newProduct, reorderPoint: e.target.value })}
+                                />
                                 </div>
                                 <div>
                                     <Label htmlFor="reorderQuantity">Quantidade a Repor</Label>
-                                    <Input
-                                        id="reorderQuantity"
-                                        type="number"
-                                        placeholder="0"
-                                        value={newProduct.reorderQuantity}
-                                        onChange={(e) => setNewProduct({ ...newProduct, reorderQuantity: e.target.value })}
-                                    />
+                                <Input
+                                    id="reorderQuantity"
+                                    type="number"
+                                    placeholder="0"
+                                    min="0"
+                                    value={newProduct.reorderQuantity}
+                                    onChange={(e) => setNewProduct({ ...newProduct, reorderQuantity: e.target.value })}
+                                />
                                 </div>
                             </div>
                         )}
@@ -1514,7 +1572,12 @@ export default function StockManagement() {
                             </div>
                             <div>
                                 <Label>Quantidade</Label>
-                                <Input type="number" value={movementForm.quantity} onChange={(e) => setMovementForm({ ...movementForm, quantity: e.target.value })} />
+                                <Input
+                                    type="number"
+                                    min="0.01"
+                                    value={movementForm.quantity}
+                                    onChange={(e) => setMovementForm({ ...movementForm, quantity: e.target.value })}
+                                />
                             </div>
                         </div>
                         <div>
@@ -1564,6 +1627,7 @@ export default function StockManagement() {
                                         id="editServings"
                                         type="number"
                                         placeholder="1"
+                                        min={1}
                                         value={editRecipe.servings}
                                         onChange={(e) => setEditRecipe({ ...editRecipe, servings: e.target.value })}
                                     />
@@ -1601,6 +1665,7 @@ export default function StockManagement() {
                                             <Input
                                                 type="number"
                                                 step="0.01"
+                                                min="0.01"
                                                 placeholder="Quantidade"
                                                 value={convertBaseToDisplay(ingredient.quantity, ingredient.unit, ingredient.displayUnit || ingredient.unit)}
                                                 onChange={(e) => {
@@ -1611,9 +1676,9 @@ export default function StockManagement() {
                                                 className={(() => {
                                                     const product = stockItems.find((item) => item._id === ingredient.productId)
                                                     const quantity = Number.parseFloat(ingredient.quantity)
-                                                        return product && quantity > product.currentQuantity ? "border-red-500 bg-red-50" : ""
-                                                    })()}
-                                                />
+                                                    return product && quantity > product.currentQuantity ? "border-red-500 bg-red-50" : ""
+                                                })()}
+                                            />
                                                 {(() => {
                                                     const product = stockItems.find((item) => item._id === ingredient.productId)
                                                     const quantity = Number.parseFloat(ingredient.quantity)
@@ -1635,25 +1700,27 @@ export default function StockManagement() {
                                                 })()}
                                             </div>
                                             <div className="flex gap-1">
-                                               <Select
-                                                   value={ingredient.displayUnit || ingredient.unit}
-                                                   onValueChange={(value) => {
-                                                       const updated = [...editRecipe.ingredients]
-                                                       updated[index] = { ...ingredient, displayUnit: value }
-                                                       setEditRecipe({ ...editRecipe, ingredients: updated })
-                                                   }}
-                                               >
-                                                   <SelectTrigger>
-                                                       <SelectValue />
-                                                   </SelectTrigger>
-                                                   <SelectContent>
-                                                       {ingredient.unit && (
-                                                           <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
-                                                       )}
-                                                       {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
-                                                       {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
-                                                   </SelectContent>
-                                               </Select>
+                                               {ingredient.productId && (
+                                                   <Select
+                                                       value={ingredient.displayUnit || ingredient.unit}
+                                                       onValueChange={(value) => {
+                                                           const updated = [...editRecipe.ingredients]
+                                                           updated[index] = { ...ingredient, displayUnit: value }
+                                                           setEditRecipe({ ...editRecipe, ingredients: updated })
+                                                       }}
+                                                   >
+                                                       <SelectTrigger>
+                                                           <SelectValue />
+                                                       </SelectTrigger>
+                                                       <SelectContent>
+                                                           {ingredient.unit && (
+                                                               <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
+                                                           )}
+                                                           {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
+                                                           {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
+                                                       </SelectContent>
+                                                   </Select>
+                                               )}
                                                 {editRecipe.ingredients.length > 1 && (
                                                     <Button
                                                         type="button"
@@ -1720,6 +1787,7 @@ export default function StockManagement() {
                                     id="servings"
                                     type="number"
                                     placeholder="1"
+                                    min={1}
                                     value={newRecipe.servings}
                                     onChange={(e) => setNewRecipe({ ...newRecipe, servings: e.target.value })}
                                 />
@@ -1764,6 +1832,7 @@ export default function StockManagement() {
                                             <Input
                                                 type="number"
                                                 step="0.01"
+                                                min="0.01"
                                                 placeholder="Quantidade"
                                                 value={convertBaseToDisplay(ingredient.quantity, ingredient.unit, ingredient.displayUnit || ingredient.unit)}
                                                 onChange={(e) => {
@@ -1798,25 +1867,27 @@ export default function StockManagement() {
                                             })()}
                                         </div>
                                         <div className="flex gap-1">
-                                            <Select
-                                                value={ingredient.displayUnit || ingredient.unit}
-                                                onValueChange={(value) => {
-                                                    const updatedIngredients = [...newRecipe.ingredients]
-                                                    updatedIngredients[index] = { ...ingredient, displayUnit: value }
-                                                    setNewRecipe({ ...newRecipe, ingredients: updatedIngredients })
-                                                }}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {ingredient.unit && (
-                                                        <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
-                                                    )}
-                                                    {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
-                                                    {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
-                                                </SelectContent>
-                                            </Select>
+                                            {ingredient.productId && (
+                                                <Select
+                                                    value={ingredient.displayUnit || ingredient.unit}
+                                                    onValueChange={(value) => {
+                                                        const updatedIngredients = [...newRecipe.ingredients]
+                                                        updatedIngredients[index] = { ...ingredient, displayUnit: value }
+                                                        setNewRecipe({ ...newRecipe, ingredients: updatedIngredients })
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {ingredient.unit && (
+                                                            <SelectItem value={ingredient.unit}>{ingredient.unit}</SelectItem>
+                                                        )}
+                                                        {ingredient.unit === "Kg" && <SelectItem value="g">g</SelectItem>}
+                                                        {ingredient.unit === "L" && <SelectItem value="ml">ml</SelectItem>}
+                                                    </SelectContent>
+                                                </Select>
+                                            )}
                                             {newRecipe.ingredients.length > 1 && (
                                                 <Button
                                                     type="button"
@@ -1944,6 +2015,7 @@ export default function StockManagement() {
                                 id="addStockQuantity"
                                 type="number"
                                 placeholder="0"
+                                min="0.01"
                                 value={addStockQuantity}
                                 onChange={(e) => setAddStockQuantity(e.target.value)}
                             />
@@ -2098,6 +2170,7 @@ export default function StockManagement() {
                                     <Input
                                         id="editCurrentQuantity"
                                         type="number"
+                                        min="0"
                                         value={editProduct.currentQuantity}
                                         onChange={(e) =>
                                             setEditProduct({ ...editProduct, currentQuantity: Number.parseFloat(e.target.value) || 0 })
@@ -2109,6 +2182,7 @@ export default function StockManagement() {
                                     <Input
                                         id="editMinQuantity"
                                         type="number"
+                                        min="0"
                                         value={editProduct.minQuantity}
                                         onChange={(e) =>
                                             setEditProduct({ ...editProduct, minQuantity: Number.parseFloat(e.target.value) || 0 })
@@ -2131,6 +2205,7 @@ export default function StockManagement() {
                                         id="editCost"
                                         type="number"
                                         step="0.01"
+                                        min="0"
                                         value={editProduct.cost || 0}
                                         onChange={(e) => setEditProduct({ ...editProduct, cost: Number.parseFloat(e.target.value) || 0 })}
                                     />
@@ -2179,6 +2254,7 @@ export default function StockManagement() {
                                 id="replenishQuantity"
                                 type="number"
                                 placeholder="0"
+                                min="0.01"
                                 value={replenishQuantity}
                                 onChange={(e) => setReplenishQuantity(e.target.value)}
                             />
