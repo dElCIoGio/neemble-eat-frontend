@@ -24,7 +24,7 @@ import type {
     ItemsTimeRange,
 } from "@/types/dashboard"
 import {downloadCSV, downloadPDF} from "@/lib/helpers/export";
-import { now, startOfDay, endOfDay, subtract, toISO, toDateTime, formatLocaleString } from "@/utils/time";
+import { now, startOfDay, endOfDay, subtract, toISO, toDateTime, formatLocaleString, difference } from "@/utils/time";
 import {toast} from "sonner";
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
@@ -36,6 +36,7 @@ import {
     useGetSessionDurationSummary,
     useGetActiveSessionsSummary, useGetLastSevenDaysCount
 } from "@/api/endpoints/analytics/hooks";
+import {useGetFullInsights} from "@/api/endpoints/insights/hooks";
 import WelcomePage from "@/components/layout/dashboard/components/welcome";
 import {DashboardHomeContext} from "@/context/dashboard-home-context";
 import DashboardHomeHeader from "@/components/pages/dashboard-home/header";
@@ -47,26 +48,6 @@ import PopularItemsChart from "@/components/pages/dashboard-home/popular-items-c
 import SessionsCard from "@/components/pages/dashboard-home/sessions-card";
 import InsightsCard from "@/components/pages/dashboard-home/insights-card";
 import ExportButtons from "@/components/pages/dashboard-home/export-buttons";
-
-
-
-const insights: Insight[] = [
-    {
-        type: "positive",
-        message: "As vendas aumentaram 12% esta semana comparando com a anterior.",
-        icon: TrendingUp,
-    },
-    {
-        type: "warning",
-        message: "A taxa de cancelamento ultrapassou 15%, pode ser um sinal de problemas operacionais.",
-        icon: AlertTriangle,
-    },
-    {
-        type: "info",
-        message: "A Francesinha Especial continua a ser o prato mais popular do restaurante.",
-        icon: ChefHat,
-    },
-]
 
 
 export default function RestaurantDashboard(): JSX.Element {
@@ -133,6 +114,25 @@ export default function RestaurantDashboard(): JSX.Element {
     )
     const itemsDateRange = useMemo(() => getDateRangeFromFilter(itemsTimeRange), [itemsTimeRange])
 
+    const insightsDays = useMemo(() => {
+        switch (dateFilter) {
+        case "today":
+        case "yesterday":
+            return 1
+        case "30days":
+            return 30
+        case "7days":
+            return 7
+        case "custom":
+            if (customDateRange?.from && customDateRange?.to) {
+                return Math.max(1, Math.ceil(difference(customDateRange.from, customDateRange.to, "days")) + 1)
+            }
+            return 7
+        default:
+            return 7
+        }
+    }, [dateFilter, customDateRange])
+
 
     // Analytics hooks
     const { data: salesSummary, isLoading: isSalesSummaryLoading } = useGetSalesSummary({
@@ -180,6 +180,11 @@ export default function RestaurantDashboard(): JSX.Element {
         restaurantId: restaurant._id,
     })
 
+    const { data: fullInsights } = useGetFullInsights({
+        restaurantId: restaurant._id,
+        days: insightsDays,
+    })
+
     const getDateFilterLabel = useCallback((filter: DateFilter): string => {
         const labels: Record<DateFilter, string> = {
             today: "Hoje",
@@ -190,6 +195,22 @@ export default function RestaurantDashboard(): JSX.Element {
         }
         return labels[filter]
     }, [])
+
+    const insights = useMemo<Insight[]>(() => {
+        if (!fullInsights?.topRecommendations) return []
+        return fullInsights.topRecommendations.map(rec => {
+            let type: Insight["type"] = "info"
+            let icon = ChefHat
+            if (rec.priority === "high") {
+                type = "warning"
+                icon = AlertTriangle
+            } else if (rec.priority === "low") {
+                type = "positive"
+                icon = TrendingUp
+            }
+            return {type, message: rec.content, icon}
+        })
+    }, [fullInsights])
 
     const getShiftFilterLabel = useCallback((filter: ShiftFilter): string => {
         const labels: Record<ShiftFilter, string> = {
@@ -239,13 +260,13 @@ export default function RestaurantDashboard(): JSX.Element {
             ordersData,
             popularItems: topItemsSummary ? topItemsSummary : [],
             sessionsData,
-            insights: [],
+            insights,
             dailySales: dailySalesData,
             exportDate: formatLocaleString(now(), "pt-PT"),
             dateFilter: getDateFilterLabel(dateFilter),
             shiftFilter: getShiftFilterLabel(shiftFilter),
         }
-    }, [salesSummary, invoiceSummary, ordersSummary, cancelledOrdersSummary, topItemsSummary, sessionDurationSummary, activeSessionsSummary, lastSevenDaysOrdersCount, dateFilter, shiftFilter, getDateFilterLabel, getShiftFilterLabel])
+    }, [salesSummary, invoiceSummary, ordersSummary, cancelledOrdersSummary, topItemsSummary, sessionDurationSummary, activeSessionsSummary, lastSevenDaysOrdersCount, dateFilter, shiftFilter, getDateFilterLabel, getShiftFilterLabel, insights])
 
     const handleExportCSV = useCallback(async (): Promise<void> => {
         try {
@@ -263,7 +284,7 @@ export default function RestaurantDashboard(): JSX.Element {
         } finally {
             setIsExporting(false)
         }
-    }, [prepareExportData, toast])
+    }, [prepareExportData])
 
     const handleExportPDF = useCallback(async (): Promise<void> => {
         try {
@@ -281,7 +302,7 @@ export default function RestaurantDashboard(): JSX.Element {
         } finally {
             setIsExporting(false)
         }
-    }, [prepareExportData, toast])
+    }, [prepareExportData])
 
 
     if (restaurant._id == "notfound"){
