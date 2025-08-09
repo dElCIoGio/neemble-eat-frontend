@@ -26,7 +26,7 @@ export default function DashboardHomeHeader() {
     return (
         <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-                <Select value={dateFilter} onValueChange={(value: DateFilter) => setDateFilter(value)}>
+                <Select defaultValue="today" value={dateFilter} onValueChange={(value: DateFilter) => setDateFilter(value)}>
                     <SelectTrigger className="w-full sm:w-48">
                         <CalendarIcon className="h-4 w-4 mr-2" />
                         <SelectValue />
