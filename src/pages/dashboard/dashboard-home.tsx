@@ -23,7 +23,7 @@ import type {
     ItemsTimeRange,
 } from "@/types/dashboard"
 import {downloadCSV, downloadPDF} from "@/lib/helpers/export";
-import { now, startOfDay, endOfDay, subtract, toISO, toDateTime, formatLocaleString } from "@/utils/time";
+import { now, startOfDay, endOfDay, subtract, toISO, toDateTime, formatLocaleString, difference } from "@/utils/time";
 import {toast} from "sonner";
 import {useDashboardContext} from "@/context/dashboard-context";
 import {
@@ -113,24 +113,24 @@ export default function RestaurantDashboard(): JSX.Element {
     )
     const itemsDateRange = useMemo(() => getDateRangeFromFilter(itemsTimeRange), [itemsTimeRange])
 
-    // const insightsDays = useMemo(() => {
-    //     switch (dateFilter) {
-    //     case "today":
-    //     case "yesterday":
-    //         return 1
-    //     case "30days":
-    //         return 30
-    //     case "7days":
-    //         return 7
-    //     case "custom":
-    //         if (customDateRange?.from && customDateRange?.to) {
-    //             return Math.max(1, Math.ceil(difference(customDateRange.from, customDateRange.to, "days")) + 1)
-    //         }
-    //         return 7
-    //     default:
-    //         return 7
-    //     }
-    // }, [dateFilter, customDateRange])
+    const insightsDays = useMemo(() => {
+        switch (dateFilter) {
+        case "today":
+        case "yesterday":
+            return 1
+        case "30days":
+            return 30
+        case "7days":
+            return 7
+        case "custom":
+            if (customDateRange?.from && customDateRange?.to) {
+                return Math.max(1, Math.ceil(difference(customDateRange.from, customDateRange.to, "days")) + 1)
+            }
+            return 7
+        default:
+            return 7
+        }
+    }, [dateFilter, customDateRange])
 
 
     // Analytics hooks
@@ -181,15 +181,15 @@ export default function RestaurantDashboard(): JSX.Element {
 
     const { data: performanceInsights } = useGetPerformanceInsights({
         restaurantId: restaurant._id,
-        days: 3, //insightsDays
+        days: insightsDays,
     })
     const { data: occupancyInsights } = useGetOccupancyInsights({
         restaurantId: restaurant._id,
-        days: 3, //insightsDays
+        days: insightsDays,
     })
     const { data: itemsInsights } = useGetItemsInsights({
         restaurantId: restaurant._id,
-        days: 3, //insightsDays
+        days: insightsDays,
     })
 
     const getDateFilterLabel = useCallback((filter: DateFilter): string => {
