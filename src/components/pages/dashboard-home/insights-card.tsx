@@ -36,7 +36,7 @@ export default function InsightsCard({ performance, occupancy, items }: Insights
             </div>
             <div className="grid gap-4 md:grid-cols-3">
                 {cards.map(({ title, insight, icon: Icon }, index) => (
-                    <Card className="bg-zinc-100 py-0 flex flex-col" key={`insight-${index}`}>
+                    <Card className="bg-zinc-100 flex flex-col" key={`insight-${index}`}>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium text-muted-foreground">
                                 {title}
