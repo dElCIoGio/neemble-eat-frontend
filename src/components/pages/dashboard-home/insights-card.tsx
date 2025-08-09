@@ -64,7 +64,7 @@ function InsightCardItem({ title, insight, icon: Icon, metrics }: InsightCardIte
 }
 
 export default function InsightsCard({ performance, occupancy, items }: InsightsCardProps) {
-    const cards = [
+    const cards: InsightCardItemProps[] = [
         {
             title: "Desempenho",
             insight: performance?.insight,
