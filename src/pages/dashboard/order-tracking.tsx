@@ -174,8 +174,10 @@ export function OrdersTracking() {
                                                     {
                                                         isDesktop ?
                                                             <div
-                                                                className={` transition-all duration-150 ease-in-out ${orderSelected === null ? 'lg:hidden' : 'lg:block lg:w-1/2 lg:sticky lg:top-0'}`}> 
-                                                                {orderSelected && <OrderInfo order={orderSelected}/>}
+                                                                className={`transition-all duration-150 ease-in-out ${orderSelected === null ? 'lg:hidden' : 'lg:block lg:w-1/2'}`}>
+                                                                <div className="lg:sticky lg:top-0 lg:max-h-dvh lg:overflow-y-auto">
+                                                                    {orderSelected && <OrderInfo order={orderSelected}/>}
+                                                                </div>
                                                             </div> :
                                                             <MobileOrderInfo order={orderSelected}
                                                                              setOrder={handleState}/>
