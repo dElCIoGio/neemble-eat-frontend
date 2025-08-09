@@ -149,7 +149,7 @@ export function OrdersTracking() {
                                 <div className="space-y-4 h-max lg:flex lg:flex-1 lg:flex-col">
                                     <Header customOrderUrl={`/custom-order/${restaurant.slug}`} />
                                     <div
-                                        className={`flex flex-1 rounded-2xl w-full overflow-hidden`}>
+                                        className={`flex flex-1 rounded-2xl w-full overflow-hidden lg:overflow-visible`}>
                                         {
                                             orders.length == 0 ?
                                                 <div
