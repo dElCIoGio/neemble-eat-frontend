@@ -8,7 +8,6 @@ import {
     ShoppingCart,
     Users,
     TrendingUp,
-    AlertTriangle,
     ChefHat,
 } from "lucide-react"
 
@@ -36,7 +35,7 @@ import {
     useGetSessionDurationSummary,
     useGetActiveSessionsSummary, useGetLastSevenDaysCount
 } from "@/api/endpoints/analytics/hooks";
-import {useGetFullInsights} from "@/api/endpoints/insights/hooks";
+import { useGetPerformanceInsights, useGetOccupancyInsights, useGetItemsInsights } from "@/api/endpoints/insights/hooks";
 import WelcomePage from "@/components/layout/dashboard/components/welcome";
 import {DashboardHomeContext} from "@/context/dashboard-home-context";
 import DashboardHomeHeader from "@/components/pages/dashboard-home/header";
@@ -180,7 +179,15 @@ export default function RestaurantDashboard(): JSX.Element {
         restaurantId: restaurant._id,
     })
 
-    const { data: fullInsights } = useGetFullInsights({
+    const { data: performanceInsights } = useGetPerformanceInsights({
+        restaurantId: restaurant._id,
+        days: insightsDays,
+    })
+    const { data: occupancyInsights } = useGetOccupancyInsights({
+        restaurantId: restaurant._id,
+        days: insightsDays,
+    })
+    const { data: itemsInsights } = useGetItemsInsights({
         restaurantId: restaurant._id,
         days: insightsDays,
     })
@@ -197,20 +204,18 @@ export default function RestaurantDashboard(): JSX.Element {
     }, [])
 
     const insights = useMemo<Insight[]>(() => {
-        if (!fullInsights?.topRecommendations) return []
-        return fullInsights.topRecommendations.map(rec => {
-            let type: Insight["type"] = "info"
-            let icon = ChefHat
-            if (rec.priority === "high") {
-                type = "warning"
-                icon = AlertTriangle
-            } else if (rec.priority === "low") {
-                type = "positive"
-                icon = TrendingUp
-            }
-            return {type, message: rec.content, icon}
-        })
-    }, [fullInsights])
+        const list: Insight[] = []
+        if (performanceInsights?.insight) {
+            list.push({ type: "info", message: performanceInsights.insight, icon: TrendingUp })
+        }
+        if (occupancyInsights?.insight) {
+            list.push({ type: "info", message: occupancyInsights.insight, icon: Users })
+        }
+        if (itemsInsights?.insight) {
+            list.push({ type: "info", message: itemsInsights.insight, icon: ChefHat })
+        }
+        return list
+    }, [performanceInsights, occupancyInsights, itemsInsights])
 
     const getShiftFilterLabel = useCallback((filter: ShiftFilter): string => {
         const labels: Record<ShiftFilter, string> = {
@@ -403,7 +408,11 @@ export default function RestaurantDashboard(): JSX.Element {
                         <PopularItemsChart />
                         <SessionsCard />
                     </div>
-                    <InsightsCard />
+                    <InsightsCard
+                        performance={performanceInsights}
+                        occupancy={occupancyInsights}
+                        items={itemsInsights}
+                    />
                     <ExportButtons />
                 </div>
             </div>
