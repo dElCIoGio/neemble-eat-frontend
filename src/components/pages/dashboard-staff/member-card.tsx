@@ -113,7 +113,7 @@ export function MemberCard({ member }: MemberCardProps) {
                 <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Função:</span>
                     <Badge>
-                        {getRoleName(membership?.roleId)}
+                        {membership? getRoleName(membership?.roleId): ""}
                     </Badge>
                 </div>
                 <div className="flex items-center justify-between">
