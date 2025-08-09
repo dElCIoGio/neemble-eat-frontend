@@ -24,7 +24,7 @@ export default function InsightsCard({ performance, occupancy, items }: Insights
         <section className="space-y-4">
             <div className="flex items-center space-x-2">
                 <Lightbulb className="h-5 w-5" />
-                <span className="text-lg font-semibold">Insights com IA</span>
+                <span className="text-lg font-semibold">Neemble AI</span>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <span className="cursor-default">
