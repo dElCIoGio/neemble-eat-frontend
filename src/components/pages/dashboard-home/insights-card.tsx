@@ -11,9 +11,9 @@ interface InsightsCardProps {
 
 export default function InsightsCard({ performance, occupancy, items }: InsightsCardProps) {
     const cards = [
-        { title: "Desempenho", insight: performance?.insight, icon: TrendingUp },
-        { title: "Ocupação", insight: occupancy?.insight, icon: Users },
-        { title: "Itens", insight: items?.insight, icon: ChefHat },
+        { title: "Desempenho", insight: performance?.insight, icon: TrendingUp, color: "blue" },
+        { title: "Ocupação", insight: occupancy?.insight, icon: Users, color: "green" },
+        { title: "Itens", insight: items?.insight, icon: ChefHat, color: "amber" },
     ]
 
     return (
@@ -32,15 +32,17 @@ export default function InsightsCard({ performance, occupancy, items }: Insights
             </div>
             <div className="grid gap-4 md:grid-cols-3">
                 {cards.map(({ title, insight, icon: Icon }, index) => (
-                    <Card key={`insight-${index}`}>
-                        <CardHeader>
+                    <Card className={`font-poppins pb-0 bg-zinc-100`} key={`insight-${index}`}>
+                        <CardHeader className="p-0">
                             <CardTitle className="flex items-center space-x-2">
-                                <Icon className="h-4 w-4" />
+                                <Icon className={`h-4 w-4`} />
                                 <span>{title}</span>
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-sm leading-relaxed">{insight || "Sem dados disponíveis."}</p>
+                        <CardContent className="m-0 p-0">
+                            <div className="border p-4 border-purple-200 bg-purple-50 rounded-xl">
+                                <p className="text-sm leading-relaxed">{insight || "Sem dados disponíveis."}</p>
+                            </div>
                         </CardContent>
                     </Card>
                 ))}
