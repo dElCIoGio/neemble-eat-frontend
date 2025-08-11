@@ -79,6 +79,7 @@ import {StockCard} from "./components/stock-card";
 import {RecipeCard} from "./components/recipe-card";
 import {MovementCard} from "./components/movement-card";
 import {StockSummary} from "./components/stock-summary";
+import {RecipeCostSheet} from "./components/recipe-cost-sheet";
 import {StockContext} from "@/context/stock-context";
 
 
@@ -180,11 +181,13 @@ export default function StockManagement() {
     const [isAddMovementOpen, setIsAddMovementOpen] = useState(false)
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [isNewOrderOpen, setIsNewOrderOpen] = useState(false)
+    const [isRecipeCostOpen, setIsRecipeCostOpen] = useState(false)
     const [selectedSupplier, ] = useState<Supplier | null>(null)
 
     // Selected item states
     const [selectedItem, setSelectedItem] = useState<StockItem | null>(null)
     const [itemToDelete, setItemToDelete] = useState<StockItem | null>(null)
+    const [selectedRecipeCost, setSelectedRecipeCost] = useState<Recipe | null>(null)
 
     // Form states
     const [newProduct, setNewProduct] = useState({
@@ -745,6 +748,11 @@ export default function StockManagement() {
         )
     }
 
+    const handleViewRecipeCost = (recipe: Recipe) => {
+        setSelectedRecipeCost(recipe)
+        setIsRecipeCostOpen(true)
+    }
+
     const handleOpenEditRecipe = (recipe: Recipe) => {
         setEditRecipe({
             _id: recipe._id,
@@ -1132,7 +1140,12 @@ export default function StockManagement() {
                                                             <TableCell>{item?.name || recipe.dishName}</TableCell>
                                                             <TableCell>{recipe.servings}</TableCell>
                                                             <TableCell>{formatCurrency(recipe.cost)}</TableCell>
-                                                            <TableCell className={profit < 0 ? "text-red-500" : undefined}>{formatCurrency(profit)}</TableCell>
+                                                            <TableCell
+                                                                onClick={() => handleViewRecipeCost(recipe)}
+                                                                className={`${profit < 0 ? "text-red-500" : ""} cursor-pointer underline-offset-4 hover:underline`}
+                                                            >
+                                                                {formatCurrency(profit)}
+                                                            </TableCell>
                                                             <PermissionGate section={Sections.STOCK_RECIPES}
                                                                             operation="update" mode="hide">
                                                                 <TableCell className="text-right">
@@ -1171,6 +1184,7 @@ export default function StockManagement() {
                                             menuItems={menuItems}
                                             onEdit={handleOpenEditRecipe}
                                             onDelete={handleDeleteRecipe}
+                                            onViewCost={handleViewRecipeCost}
                                         />
                                     ))
                                 )}
@@ -1596,12 +1610,22 @@ export default function StockManagement() {
                         <Button onClick={() => setIsAddMovementOpen(false)} variant="outline" className="flex-1">Cancelar</Button>
                         <Button onClick={handleAddMovement} className="flex-1">Adicionar</Button>
                     </div>
-                </DialogContent>
-            </Dialog>
+        </DialogContent>
+    </Dialog>
 
-            {/* Edit Recipe Modal */}
-            <Dialog open={isEditRecipeOpen} onOpenChange={setIsEditRecipeOpen}>
-                <DialogContent className="sm:max-w-2xl">
+    <RecipeCostSheet
+        open={isRecipeCostOpen}
+        onOpenChange={(open) => {
+            setIsRecipeCostOpen(open)
+            if (!open) setSelectedRecipeCost(null)
+        }}
+        recipe={selectedRecipeCost}
+        menuItem={menuItems.find(i => i._id === selectedRecipeCost?.menuItemId)}
+    />
+
+    {/* Edit Recipe Modal */}
+    <Dialog open={isEditRecipeOpen} onOpenChange={setIsEditRecipeOpen}>
+        <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>Editar Receita</DialogTitle>
                         <DialogDescription>Altere os detalhes da receita.</DialogDescription>
