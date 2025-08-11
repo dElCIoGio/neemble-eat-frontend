@@ -4,6 +4,7 @@ import {useStockContext} from "@/context/stock-context";
 import type {Recipe} from "@/types/stock";
 import type {Item} from "@/types/item";
 import {formatCurrency} from "@/utils/format-currency";
+import {ResponsiveContainer, PieChart, Pie, Cell, Tooltip as RechartTooltip, Legend} from "recharts";
 
 interface RecipeCostSheetProps {
   recipe: Recipe | null;
@@ -32,6 +33,19 @@ export function RecipeCostSheet({recipe, menuItem, open, onOpenChange}: RecipeCo
     };
   });
 
+  const pieData = ingredients.map((ing) => ({
+    name: ing.productName,
+    value: ing.cost,
+  }));
+
+  const COLORS = [
+    "var(--chart-1)",
+    "var(--chart-2)",
+    "var(--chart-3)",
+    "var(--chart-4)",
+    "var(--chart-5)",
+  ];
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
@@ -52,6 +66,25 @@ export function RecipeCostSheet({recipe, menuItem, open, onOpenChange}: RecipeCo
               <span>Lucro</span>
               <span className={profit < 0 ? "text-red-500" : undefined}>{formatCurrency(profit)}</span>
             </div>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="name"
+                  labelLine={false}
+                  label={({percent}) => `${(percent * 100).toFixed(0)}%`}
+                >
+                  {pieData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <RechartTooltip formatter={(value: number) => formatCurrency(value)} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
           <Table>
             <TableHeader>
