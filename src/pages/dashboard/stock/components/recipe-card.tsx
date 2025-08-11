@@ -3,6 +3,7 @@ import {Card, CardHeader, CardTitle, CardContent, CardFooter} from "@/components
 import {Trash2} from "lucide-react";
 import {Recipe} from "@/types/stock";
 import type {Item} from "@/types/item";
+import {formatCurrency} from "@/utils/format-currency";
 
 interface RecipeCardProps {
     recipe: Recipe;
@@ -12,7 +13,9 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({recipe, menuItems, onEdit, onDelete}: RecipeCardProps) {
-    const dishName = menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName;
+    const item = menuItems.find(i => i._id === recipe.menuItemId);
+    const dishName = item?.name || recipe.dishName;
+    const profit = (item?.price ?? 0) - recipe.cost;
     return (
         <Card>
             <CardHeader>
@@ -25,7 +28,11 @@ export function RecipeCard({recipe, menuItems, onEdit, onDelete}: RecipeCardProp
                 </div>
                 <div className="flex justify-between">
                     <span>Custo:</span>
-                    <span>Kz {recipe.cost.toFixed(2)}</span>
+                    <span>{formatCurrency(recipe.cost)}</span>
+                </div>
+                <div className="flex justify-between">
+                    <span>Lucro:</span>
+                    <span className={profit < 0 ? "text-red-500" : undefined}>{formatCurrency(profit)}</span>
                 </div>
             </CardContent>
             <CardFooter className="justify-end gap-2">

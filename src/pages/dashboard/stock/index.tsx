@@ -68,6 +68,7 @@ import type {MovementCreate} from "@/types/stock";
 import {formatIsosDate} from "@/lib/helpers/format-isos-date";
 import {usePaginatedQuery} from "@/hooks/use-paginate";
 import {recipesClient, stockItemClient, stockMovementClient} from "@/api";
+import {formatCurrency} from "@/utils/format-currency";
 
 import { useQueryClient } from "@tanstack/react-query"
 import PaginationManager from "@/components/ui/pagination-manager";
@@ -1108,6 +1109,7 @@ export default function StockManagement() {
                                                 <TableHead>Prato</TableHead>
                                                 <TableHead>Porções</TableHead>
                                                 <TableHead>Custo</TableHead>
+                                                <TableHead>Lucro</TableHead>
                                                 <PermissionGate section={Sections.STOCK_RECIPES} operation="update"
                                                                 mode="hide">
                                                     <TableHead className="text-right">Ações</TableHead>
@@ -1118,36 +1120,41 @@ export default function StockManagement() {
                                         <TableBody>
                                             {recipes.length === 0 ? (
                                                 <TableRow>
-                                                    <TableCell colSpan={4} className="text-center py-6">Nenhuma receita
+                                                    <TableCell colSpan={5} className="text-center py-6">Nenhuma receita
                                                         cadastrada</TableCell>
                                                 </TableRow>
                                             ) : (
-                                                recipes.map((recipe) => (
-                                                    <TableRow key={recipe._id}>
-                                                        <TableCell>{menuItems.find(i => i._id === recipe.menuItemId)?.name || recipe.dishName}</TableCell>
-                                                        <TableCell>{recipe.servings}</TableCell>
-                                                        <TableCell>Kz {recipe.cost.toFixed(2)}</TableCell>
-                                                        <PermissionGate section={Sections.STOCK_RECIPES}
-                                                                        operation="update" mode="hide">
-                                                            <TableCell className="text-right">
-                                                                <div className="flex justify-end gap-2">
-                                                                    <Button
-                                                                        variant="ghost"
-                                                                        size="sm"
-                                                                        onClick={() => handleOpenEditRecipe(recipe)}
-                                                                    >
-                                                                        Editar
-                                                                    </Button>
-                                                                    <Button variant="ghost" size="sm"
-                                                                            onClick={() => handleDeleteRecipe(recipe._id)}>
-                                                                        <Trash2 className="h-4 w-4"/>
-                                                                    </Button>
-                                                                </div>
-                                                            </TableCell>
-                                                        </PermissionGate>
+                                                recipes.map((recipe) => {
+                                                    const item = menuItems.find(i => i._id === recipe.menuItemId);
+                                                    const profit = (item?.price ?? 0) - recipe.cost;
+                                                    return (
+                                                        <TableRow key={recipe._id}>
+                                                            <TableCell>{item?.name || recipe.dishName}</TableCell>
+                                                            <TableCell>{recipe.servings}</TableCell>
+                                                            <TableCell>{formatCurrency(recipe.cost)}</TableCell>
+                                                            <TableCell className={profit < 0 ? "text-red-500" : undefined}>{formatCurrency(profit)}</TableCell>
+                                                            <PermissionGate section={Sections.STOCK_RECIPES}
+                                                                            operation="update" mode="hide">
+                                                                <TableCell className="text-right">
+                                                                    <div className="flex justify-end gap-2">
+                                                                        <Button
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            onClick={() => handleOpenEditRecipe(recipe)}
+                                                                        >
+                                                                            Editar
+                                                                        </Button>
+                                                                        <Button variant="ghost" size="sm"
+                                                                                onClick={() => handleDeleteRecipe(recipe._id)}>
+                                                                            <Trash2 className="h-4 w-4"/>
+                                                                        </Button>
+                                                                    </div>
+                                                                </TableCell>
+                                                            </PermissionGate>
 
-                                                    </TableRow>
-                                                ))
+                                                        </TableRow>
+                                                    );
+                                                })
                                             )}
                                         </TableBody>
                                     </Table>
