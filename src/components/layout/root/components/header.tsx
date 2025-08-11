@@ -23,7 +23,8 @@ export function Header() {
 
     useEffect(() => {
         setIsOpen(false)
-    }, [location]);
+    }, [location])
+
 
 
 
