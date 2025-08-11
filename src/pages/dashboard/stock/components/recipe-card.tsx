@@ -10,9 +10,10 @@ interface RecipeCardProps {
     menuItems: Item[];
     onEdit: (recipe: Recipe) => void;
     onDelete: (id: string) => void;
+    onViewCost?: (recipe: Recipe) => void;
 }
 
-export function RecipeCard({recipe, menuItems, onEdit, onDelete}: RecipeCardProps) {
+export function RecipeCard({recipe, menuItems, onEdit, onDelete, onViewCost}: RecipeCardProps) {
     const item = menuItems.find(i => i._id === recipe.menuItemId);
     const dishName = item?.name || recipe.dishName;
     const profit = (item?.price ?? 0) - recipe.cost;
@@ -28,11 +29,16 @@ export function RecipeCard({recipe, menuItems, onEdit, onDelete}: RecipeCardProp
                 </div>
                 <div className="flex justify-between">
                     <span>Custo:</span>
-                    <span className="font-semibold">{formatCurrency(recipe.cost)}</span>
+                    <span>{formatCurrency(recipe.cost)}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Lucro:</span>
-                    <span className={`${profit < 0 ? "text-red-500" : undefined} font-semibold`}>{formatCurrency(profit)}</span>
+                    <span
+                        className={`${profit < 0 ? "text-red-500" : ""} ${onViewCost ? "cursor-pointer underline-offset-4 hover:underline" : ""}`}
+                        onClick={() => onViewCost?.(recipe)}
+                    >
+                        {formatCurrency(profit)}
+                    </span>
                 </div>
             </CardContent>
             <CardFooter className="justify-end gap-2">
