@@ -28,11 +28,11 @@ export function RecipeCard({recipe, menuItems, onEdit, onDelete}: RecipeCardProp
                 </div>
                 <div className="flex justify-between">
                     <span>Custo:</span>
-                    <span>{formatCurrency(recipe.cost)}</span>
+                    <span className="font-semibold">{formatCurrency(recipe.cost)}</span>
                 </div>
                 <div className="flex justify-between">
                     <span>Lucro:</span>
-                    <span className={profit < 0 ? "text-red-500" : undefined}>{formatCurrency(profit)}</span>
+                    <span className={`${profit < 0 ? "text-red-500" : undefined} font-semibold`}>{formatCurrency(profit)}</span>
                 </div>
             </CardContent>
             <CardFooter className="justify-end gap-2">
