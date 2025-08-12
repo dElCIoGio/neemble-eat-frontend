@@ -81,6 +81,7 @@ import {MovementCard} from "./components/movement-card";
 import {StockSummary} from "./components/stock-summary";
 import {RecipeCostSheet} from "./components/recipe-cost-sheet";
 import {StockContext} from "@/context/stock-context";
+import { ChartDonut } from "@phosphor-icons/react"
 
 
 interface PaginatedStockResponse {
@@ -1141,10 +1142,19 @@ export default function StockManagement() {
                                                             <TableCell>{recipe.servings}</TableCell>
                                                             <TableCell>{formatCurrency(recipe.cost)}</TableCell>
                                                             <TableCell
-                                                                onClick={() => handleViewRecipeCost(recipe)}
-                                                                className={`${profit < 0 ? "text-red-500" : ""} cursor-pointer underline-offset-4 hover:underline`}
+                                                                className={` cursor-pointer space-x-2 items-center underline-offset-4 hover:underline`}
                                                             >
-                                                                {formatCurrency(profit)}
+                                                                <span className={`${profit < 0 ? "text-red-500" : ""}`}>
+                                                                    {formatCurrency(profit)}
+                                                                </span>
+
+                                                                <Button
+                                                                    onClick={() => handleViewRecipeCost(recipe)}
+                                                                    variant="ghost"
+                                                                    size="sm"
+                                                                >
+                                                                    <ChartDonut size={16} />
+                                                                </Button>
                                                             </TableCell>
                                                             <PermissionGate section={Sections.STOCK_RECIPES}
                                                                             operation="update" mode="hide">

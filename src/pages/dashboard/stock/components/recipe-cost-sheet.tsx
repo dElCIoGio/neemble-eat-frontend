@@ -52,18 +52,18 @@ export function RecipeCostSheet({recipe, menuItem, open, onOpenChange}: RecipeCo
         <SheetHeader>
           <SheetTitle>Custo de {menuItem?.name || recipe.dishName}</SheetTitle>
         </SheetHeader>
-        <div className="space-y-4 mt-4">
+        <div className="space-y-4 mt-4 px-4">
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span>Preço</span>
+              <span className="font-bold">Preço</span>
               <span>{formatCurrency(price)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Custo</span>
+              <span className="font-bold">Custo</span>
               <span>{formatCurrency(totalCost)}</span>
             </div>
             <div className="flex justify-between">
-              <span>Lucro</span>
+              <span className="font-bold">Lucro</span>
               <span className={profit < 0 ? "text-red-500" : undefined}>{formatCurrency(profit)}</span>
             </div>
           </div>
