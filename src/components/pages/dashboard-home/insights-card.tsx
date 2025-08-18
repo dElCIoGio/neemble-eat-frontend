@@ -26,7 +26,7 @@ function InsightCardItem({ title, insight, icon: Icon, metrics }: InsightCardIte
     const [expanded, setExpanded] = useState(false)
 
     return (
-        <Card className="bg-zinc-100 py-0 flex flex-col">
+        <Card className="bg-zinc-100 w-full lg:w-1/3 py-0 flex flex-col">
             <Card className="border-none border-b flex-1 my-0 shadow-sm space-x-1">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -116,7 +116,7 @@ export default function InsightsCard({ performance, occupancy, items }: Insights
                     <TooltipContent>Sugestões automatizadas baseadas nos seus dados</TooltipContent>
                 </Tooltip>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="lg:flex space-y-3 items-start justify-between space-x-3">
                 {cards.map((card, index) => (
                     <InsightCardItem key={`insight-${index}`} {...card} />
                 ))}

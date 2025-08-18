@@ -1,5 +1,7 @@
 export type TableSessionStatus = "active" | "closed" | "cancelled" | "paid" | "needs bill";
 
+export type TableSessionPaymentMethod = "card" | "cash"
+
 export type TableSessionReview = {
     stars: number; // 1 to 5
     comment?: string | null;
@@ -19,4 +21,5 @@ export type TableSession = {
     total?: number | null;
     review?: TableSessionReview | null;
     needsAssistance?: boolean
+    paymentMethod?: TableSessionPaymentMethod
 };
