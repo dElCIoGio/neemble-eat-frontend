@@ -6,7 +6,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
 import { Loader } from "@/components/ui/loader"
-import { Clock, Users, CreditCard, AlertTriangle, Trash2, CheckCircle, XCircle, Bell } from "lucide-react"
+import {
+    Clock,
+    Users,
+    CreditCard,
+    AlertTriangle,
+    Trash2,
+    CheckCircle,
+    XCircle,
+    Bell,
+    Banknote,
+} from "lucide-react"
 import type { Table } from "@/types/table"
 import type { TableSession } from "@/types/table-session"
 import { useDashboardContext } from "@/context/dashboard-context"
@@ -355,6 +365,19 @@ export default function TableMonitor() {
                                                 {getStatusConfig("chamando_funcionario").label}
                                             </Badge>
                                         )}
+                                        {session?.status === "needs bill" && session.paymentMethod && (
+                                            <Badge variant="secondary" className="text-xs font-medium flex items-center gap-1">
+                                                {session.paymentMethod === "card" ? (
+                                                    <>
+                                                        <CreditCard className="h-3 w-3" /> Cartão
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Banknote className="h-3 w-3" /> Dinheiro
+                                                    </>
+                                                )}
+                                            </Badge>
+                                        )}
                                     </div>
                                     {session && session.orders.length > 0 && (
                                         <div className="mt-2 space-y-1 text-xs text-gray-600">
@@ -426,6 +449,22 @@ export default function TableMonitor() {
                                                         <span className="text-gray-600">Total Atual:</span>
                                                         <span>{formatCurrency(sessionTotal)}</span>
                                                     </div>
+                                                    {selectedSession.status === "needs bill" && selectedSession.paymentMethod && (
+                                                        <div className="flex justify-between">
+                                                            <span className="text-gray-600">Pagamento:</span>
+                                                            <span className="flex items-center gap-1">
+                                                                {selectedSession.paymentMethod === "card" ? (
+                                                                    <>
+                                                                        <CreditCard className="h-4 w-4" /> Cartão
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Banknote className="h-4 w-4" /> Dinheiro
+                                                                    </>
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
 
