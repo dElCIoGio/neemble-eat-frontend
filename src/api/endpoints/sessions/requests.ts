@@ -1,5 +1,5 @@
 import {apiClient} from "@/api/axios";
-import {TableSession} from "@/types/table-session";
+import {TableSession, TableSessionPaymentMethod} from "@/types/table-session";
 
 
 const baseRoute = "/sessions";
@@ -41,8 +41,8 @@ export const sessionApi = {
         return response.data;
     },
 
-    markSessionNeedsBill: async (sessionId: string) => {
-        const response = await apiClient.post<TableSession>(`${baseRoute}/${sessionId}/needs-bill`);
+    markSessionNeedsBill: async (sessionId: string, paymentMethod: TableSessionPaymentMethod) => {
+        const response = await apiClient.post<TableSession>(`${baseRoute}/${sessionId}/needs-bill/${paymentMethod}`);
         return response.data;
     },
 

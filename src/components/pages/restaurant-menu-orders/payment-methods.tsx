@@ -5,6 +5,7 @@ import {Banknote, CreditCard} from "lucide-react";
 import {useRestaurantMenuContext} from "@/context/restaurant-menu-context";
 import {useMarkSessionNeedsBill} from "@/api/endpoints/sessions/hooks";
 import {useParams} from "react-router";
+import {TableSessionPaymentMethod} from "@/types/table-session";
 
 interface Props {
     children: ReactNode;
@@ -29,12 +30,12 @@ PaymentMethods.Confirm = function Confirm() {
         tableNumber: Number(tableNumber)
     })
 
-    const handleRequestBill = async () => {
+    const handleRequestBill = async (paymentMethod: TableSessionPaymentMethod) => {
         setBillDialogOpen(true)
         setBillRequested(true)
 
         try {
-            await requestBill.mutateAsync()
+            await requestBill.mutateAsync(paymentMethod)
             refreshOrders()
         } catch (error) {
             console.error(error)
@@ -48,7 +49,7 @@ PaymentMethods.Confirm = function Confirm() {
                 icon={<Banknote className="h-4 w-4 mr-2" />}
                 onConfirm={async () => {
                     try {
-                        await handleRequestBill()
+                        await handleRequestBill("cash")
                     } catch (error) {
                         console.error(error)
                     }
@@ -60,7 +61,7 @@ PaymentMethods.Confirm = function Confirm() {
                 icon={<CreditCard className="h-4 w-4 mr-2" />}
                 onConfirm={async () => {
                     try {
-                        await handleRequestBill()
+                        await handleRequestBill("card")
                     } catch (error) {
                         console.error(error)
                     }

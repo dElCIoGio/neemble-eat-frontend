@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { sessionApi } from "@/api/endpoints/sessions/requests";
-import { TableSession } from "@/types/table-session";
+import {TableSession, TableSessionPaymentMethod} from "@/types/table-session";
 
 interface Props {
     restaurantId?: string
@@ -78,7 +78,7 @@ export function useMarkSessionNeedsBill({sessionId, restaurantId, tableNumber}: 
     const queryKey = ["active", tableNumber, restaurantId]
 
     return useMutation({
-        mutationFn: () => sessionApi.markSessionNeedsBill(sessionId),
+        mutationFn: (paymentMethod: TableSessionPaymentMethod) => sessionApi.markSessionNeedsBill(sessionId, paymentMethod),
         onSuccess: (updatedSession) => {
             queryClient.setQueryData<TableSession>(queryKey, updatedSession)
         },
