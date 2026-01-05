@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import {LoadingScreen} from "@/components/pages/onboarding/loading-screen";
 import {OnboardingProgress} from "@/components/pages/onboarding/onboarding-progress";
 import {UserInfoStep} from "@/components/pages/onboarding/user-info-step";
@@ -10,23 +10,15 @@ import {Navigate, useNavigate} from "react-router";
 import {toast} from "sonner";
 import {OnboardingContext} from "@/context/onboarding-context";
 import {useAuth} from "@/context/auth-context";
-import {userApi} from "@/api/endpoints/user/endpoints";
 import {authApi} from "@/api/endpoints/auth/endpoints";
 
 // Check if the authenticated user already has a profile in the backend
-async function userExists(): Promise<{ exists: boolean; userData?: User }> {
-    const exists = await userApi.userExists()
-    if (exists) {
-        const userData = await authApi.me()
-        return { exists: true, userData }
-    }
-    return { exists: false }
-}
+
 
 export default function OnboardingPage() {
     const [currentStep, setCurrentStep] = useState(0)
-    const [isLoading, setIsLoading] = useState(true)
-    const [userExistsFlag, setUserExistsFlag] = useState(false)
+    const [isLoading, ] = useState(false)
+    const [userExistsFlag, ] = useState(false)
 
     const navigate = useNavigate();
 
@@ -49,31 +41,6 @@ export default function OnboardingPage() {
         isVerified: false,
         isOnboardingCompleted: false,
     })
-
-    useEffect(() => {
-        const checkUserStatus = async () => {
-            try {
-                const { exists, userData: existingUserData } = await userExists()
-                setUserExistsFlag(exists)
-
-                // If user exists, skip to welcome step and use their data
-                if (exists && existingUserData) {
-                    setUserData((prevData) => ({
-                        ...prevData,
-                        ...existingUserData,
-                    }))
-                    setCurrentStep(1) // Skip to welcome step
-                }
-
-                setIsLoading(false)
-            } catch (error) {
-                console.error("Error checking user status:", error)
-                setIsLoading(false)
-            }
-        }
-
-        checkUserStatus()
-    }, [])
 
     const nextStep = () => {
         setCurrentStep((prev) => prev + 1)

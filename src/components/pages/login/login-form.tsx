@@ -17,6 +17,7 @@ import {toast} from "sonner";
 import {Link, useNavigate} from "react-router";
 import {Eye, EyeClosed} from "@phosphor-icons/react";
 import {showSuccessToast} from "@/utils/notifications/toast";
+import {AxiosError} from "axios";
 
 
 
@@ -47,33 +48,37 @@ export function LoginForm({ className, onLoggedIn, ...props }: LoginFormProps) {
 
     async function onSubmit(data: LoginFormValues): Promise<void> {
         setIsLoading(true)
-
+        
         try {
             const credential = await signInWithEmailAndPassword(auth, data.email, data.password)
             const token = await credential.user.getIdToken()
-            
+            await authApi.logout()
             await authApi.login({ idToken: token })
             showSuccessToast("Login realizado com sucesso")
-
-            const exists = await userApi.userExists()
-            if (!exists) {
-                toast.error("Deve completar o onboarding para poder continuar")
-                navigate("/onboarding")
+            if (onLoggedIn) {
+                await onLoggedIn()
             } else {
-                if (onLoggedIn) {
-                    await onLoggedIn()
-                } else {
-                    navigate("/dashboard")
-                }
+                navigate("/dashboard")
             }
+
         } catch (e: unknown) {
-            const error = e as Error
+            
+            const error = e as AxiosError<{
+                    detail: string
+            }>
+            console.log(error.response?.data.detail)
             if (error.message === "Firebase: Error (auth/invalid-credential).")
                 toast.error("Palavra passe ou email errados. Tente novamente.")
             else if (error.message === "Firebase: Error (auth/user-not-found).")
                 toast.error("Usuário não encontrado. Tente novamente.")
+            else if (error.response?.data.detail == "User not found"){
+                toast.error("Deve completar o onboarding para poder continuar")
+                navigate("/onboarding")
+            }
             else
                 toast.error("Erro ao fazer login. Verifique suas credenciais.")
+
+
         } finally {
             setIsLoading(false)
         }
@@ -83,6 +88,8 @@ export function LoginForm({ className, onLoggedIn, ...props }: LoginFormProps) {
         setIsLoading(true)
         try {
             const { token } = await signInWithGoogle()
+
+            await authApi.logout()
             await authApi.login({ idToken: token })
             showSuccessToast("Login realizado com sucesso")
 
@@ -98,9 +105,14 @@ export function LoginForm({ className, onLoggedIn, ...props }: LoginFormProps) {
                 }
             }
         } catch (e: unknown) {
-            const error = e as Error
+            const error = e as AxiosError<{
+                detail: string
+            }>
             if (error.message === "Firebase: Error (auth/popup-closed-by-user).") {
                 toast.error("Autenticação cancelada pelo usuário.")
+            }
+            else if (error.response?.data.detail == "User not found"){
+                navigate("/onboarding")
             } else {
                 toast.error("Erro ao fazer login. Tente novamente.")
             }

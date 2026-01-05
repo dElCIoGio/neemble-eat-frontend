@@ -34,6 +34,7 @@ PaymentMethods.Confirm = function Confirm() {
         setBillDialogOpen(true)
         setBillRequested(true)
 
+        console.log(paymentMethod)
         try {
             await requestBill.mutateAsync(paymentMethod)
             refreshOrders()

@@ -3,15 +3,19 @@ import { Navigate, Outlet, useLocation } from 'react-router';
 import { Loader } from '@/components/ui/loader';
 import {useAuth} from "@/context/auth-context"; // Optional: your own loading spinner
 
-const ProtectedRoute = () => {
+interface Props {
+    authRequired?: boolean;
+}
+
+const ProtectedRoute = ({ authRequired = true }: Props) => {
     const { user, loading } = useAuth();
     const location = useLocation();
 
     if (loading) {
-        return <Loader />; // Or any fallback loading component
+        return <Loader />;
     }
 
-    if (!user) {
+    if (!user && authRequired == true) {
         return <Navigate to="/auth/login" replace state={{ from: location }} />;
     }
 

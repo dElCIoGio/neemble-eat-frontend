@@ -13,9 +13,10 @@ import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import {SignupFormValues, signupSchema} from "@/lib/schemas/auth";
 import {useNavigate} from "react-router";
-import {createUserWithEmailAndPassword} from "firebase/auth";
+import {createUserWithEmailAndPassword } from "firebase/auth";
 import {auth} from "@/firebase/config";
 import {useGoogleAuth} from "@/hooks/use-google-auth";
+import {useAuth} from "@/context/auth-context";
 
 interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
     className?: string
@@ -27,6 +28,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false)
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const {logout} = useAuth()
 
     const navigate = useNavigate()
     const form = useForm<SignupFormValues>({
@@ -42,6 +44,13 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
 
     async function onSubmitWithGoogle() {
         setIsLoading(true)
+
+        try {
+            await logout()
+        } finally {
+            console.log("logged in")
+        }
+
         try {
             await signInWithGoogle()
             navigate("/onboarding")
@@ -60,6 +69,13 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
 
     function onSubmit(data: SignupFormValues) {
         setIsLoading(true)
+
+        try {
+            logout()
+        } finally {
+            console.log("logged in")
+        }
+
         const { email, password } = data
         createUserWithEmailAndPassword(
             auth,

@@ -112,7 +112,7 @@ export function UserInfoStep({ userData, updateUserData, onNext }: UserInfoStepP
                             <FormItem>
                                 <FormLabel>Telefone</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="(11) 98765-4321" type="tel" autoComplete="tel" disabled={isLoading} {...field} />
+                                    <Input placeholder="+244 912 345 678" type="tel" autoComplete="tel" disabled={isLoading} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

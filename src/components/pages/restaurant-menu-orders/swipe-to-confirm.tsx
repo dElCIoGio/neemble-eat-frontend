@@ -42,7 +42,8 @@ export function SwipeToConfirmButton({label, onConfirm, color, icon}: SwipeToCon
     };
 
     const handleMove = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-        event.preventDefault()
+        event.preventDefault();
+
         if (dragging && !confirmed) {
             const clientX = (event as React.MouseEvent).clientX || (event as React.TouchEvent).touches[0].clientX;
             const containerLeft = containerRef.current?.getBoundingClientRect().left || 0;

@@ -8,6 +8,7 @@ import {useMe} from "@/api/endpoints/auth/hooks";
 import {Loader} from "@/components/ui/loader";
 import {useGetCurrentRestaurant, useGetUserRestaurants, useSetCurrentRestaurant} from "@/api/endpoints/user/hooks";
 import {Restaurant} from "@/types/restaurant";
+import {PermissionsProvider} from "@/context/permissions-context";
 
 
 const dummyRestaurant: Restaurant = {
@@ -71,29 +72,32 @@ function DashboardLayout() {
     }
 
     return (
-        <DashboardContext.Provider value={{
-            page: route,
-            user,
-            restaurant: restaurant? restaurant : dummyRestaurant
-        }}>
-            <SidebarProvider>
-                <div className="flex min-h-screen w-full">
-                    <DashboardSidebar/>
-                    <main className="flex-1 flex-col flex">
-                        <DashboardNavbar/>
-                        <div className="w-full flex-1 flex flex-col bg-zinc-50">
-                            <div className="px-4">
-                                {/*<Header/>*/}
+        <PermissionsProvider>
+            <DashboardContext.Provider value={{
+                page: route,
+                user,
+                restaurant: restaurant? restaurant : dummyRestaurant
+            }}>
+                <SidebarProvider>
+                    <div className="flex min-h-screen w-full">
+                        <DashboardSidebar/>
+                        <main className="flex-1 flex-col flex">
+                            <DashboardNavbar/>
+                            <div className="w-full flex-1 flex flex-col bg-zinc-50">
+                                <div className="px-4">
+                                    {/*<Header/>*/}
+                                </div>
+                                <div className="p-4 flex flex-col flex-1 overflow-x-hidden">
+                                    <Outlet/>
+                                </div>
                             </div>
-                            <div className="p-4 flex flex-col flex-1 overflow-x-hidden">
-                                <Outlet/>
-                            </div>
-                        </div>
 
-                    </main>
-                </div>
-            </SidebarProvider>
-        </DashboardContext.Provider>
+                        </main>
+                    </div>
+                </SidebarProvider>
+            </DashboardContext.Provider>
+        </PermissionsProvider>
+
     );
 }
 

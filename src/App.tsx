@@ -70,7 +70,7 @@ function App() {
                         <Route path=":articleId" element={<ArticlePage/>}/>
                     </Route>
 
-                    <Route element={<ProtectedRoute/>}>
+                    <Route element={<ProtectedRoute authRequired={false}/>}>
                         <Route path="onboarding" element={<OnboardingPage/>}/>
                     </Route>
 
@@ -85,7 +85,7 @@ function App() {
                     <Route path="demo" element={<Demo/>}/>
                     <Route path="contact" element={<ContactPage/>}/>
                     <Route path="about-us" element={<AboutUs/>}/>
-                    <Route path="price" element={<Pricing/>}/>AboutUs.tsx
+                    <Route path="price" element={<Pricing/>}/>
 
 
                 </Route>
