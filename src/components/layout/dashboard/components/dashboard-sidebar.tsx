@@ -3,7 +3,6 @@ import {
     BookmarkSimple,
     CallBell,
     Chair,
-    CreditCard,
     Gear,
     House,
     type Icon,
@@ -139,11 +138,11 @@ const navigation: NavigationGroup[] = [
     {
         label: 'Administração',
         items: [
-            {
-                label: 'Subscrição',
-                icon: CreditCard,
-                href: 'subscription',
-            },
+            // {
+            //     label: 'Subscrição',
+            //     icon: CreditCard,
+            //     href: 'subscription',
+            // },
             {
                 label: 'Definições',
                 icon: Gear,
